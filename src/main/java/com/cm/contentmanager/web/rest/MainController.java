@@ -9,11 +9,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-
 @Controller
 public class MainController {
 	private static final Logger LOGGER = Logger.getLogger(MainController.class
 			.getName());
+
+	/**
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/", method = RequestMethod.GET)
+	public ModelAndView doMain(ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering doMain");
+		try {
+			return new ModelAndView("index", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting doMain");
+		}
+	}
 
 	/**
 	 * @param model
@@ -36,14 +51,14 @@ public class MainController {
 	 * @return
 	 */
 	@RequestMapping(value = "/content", method = RequestMethod.GET)
-	public ModelAndView doMain(ModelMap model) {
+	public ModelAndView doContent(ModelMap model) {
 		if (LOGGER.isLoggable(Level.INFO))
-			LOGGER.info("Entering doMain");
+			LOGGER.info("Entering doContent");
 		try {
 			return new ModelAndView("content", model);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting doMain");
+				LOGGER.info("Exiting doContent");
 		}
 	}
 

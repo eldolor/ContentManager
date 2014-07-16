@@ -72,7 +72,8 @@
 				src="resources/images/wait.gif" style="display: none; float: right"
 				id="login_wait" />  <a
 				class="btn btn-primary" href="javascript:void(0)"
-				onclick="document.loginForm.submit()">sign in</a>
+				onclick="document.loginForm.submit()">sign in</a><button id="user_sign_in_cancel_button" class="btn" data-dismiss="modal"
+				aria-hidden="true" onclick="window.location.href = '/'">cancel</button>
 		</div>
 
 	</div>

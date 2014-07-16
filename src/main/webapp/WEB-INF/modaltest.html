@@ -1,0 +1,59 @@
+
+<!doctype html>
+<!--[if IE 9]><html class="lt-ie10" lang="en" > <![endif]-->
+<html class="no-js" lang="en"
+	data-useragent="Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)">
+<html>
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<meta http-equiv="CACHE-CONTROL" content="NO-CACHE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Content Manager</title>
+
+
+<!-- Begin Foundation Related -->
+<link rel="stylesheet"
+	href="http://localhost:8888/resources/css/foundation/foundation.css"
+	type="text/css" />
+<script type="text/javascript"
+	src="http://localhost:8888/resources/js/jquery/jquery.js"></script>
+<script type="text/javascript"
+	src="http://localhost:8888/resources/js/foundation/foundation.min.js"></script>
+<script type="text/javascript"
+	src="http://localhost:8888/resources/js/foundation/foundation.reveal.js"></script>
+<!-- Begin Foundation Related -->
+
+
+<script>
+	$(document).foundation();
+
+	jQuery(function($) {
+		try {
+			$('#myModal').foundation('reveal', 'open');
+		} catch (err) {
+			handleError("function($)", err);
+			// close wait div
+			;
+		}
+		log("function($)", "Exiting")
+	});
+</script>
+
+</head>
+<body>
+
+	<a href="#" data-reveal-id="myModal">Click Me For A Modal</a>
+
+	<div id="myModal" class="reveal-modal" data-reveal>
+		<h2>Awesome. I have it.</h2>
+		<p class="lead">Your couch. It is mine.</p>
+		<p>Im a cool paragraph that lives inside of an even cooler modal.
+			Wins</p>
+		<a class="close-reveal-modal">&#215;</a>
+	</div>
+
+
+</body>
+</html>

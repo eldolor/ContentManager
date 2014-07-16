@@ -1,0 +1,170 @@
+ 
+body {
+  position: relative;
+  padding-top: 40px;
+}
+#error {
+	display: block;
+    margin-left: auto;
+    margin-right: auto
+}
+
+#entries {
+  position: relative;
+  padding-top: 40px;
+}
+
+.breadcrumb-fixed-top  {
+  position: fixed;
+  padding-top: 40px;
+  z-index:1030;
+}
+
+#field {
+	width: 940px;
+	color: #373532;
+	margin: auto;
+	background-color: white;
+	//background-color: #eee;
+	display: none;
+}
+
+#main {
+	padding: 17px 29px 31px 34px;
+}
+
+.popupViewMedia {
+	display: none;
+}
+
+.popupViewWait {
+	display: none;
+}
+
+
+.popupFieldLabel {
+	padding-top: 0px;
+	padding-left: 10px;
+	padding-bottom: 0px;
+}
+
+.popupFieldInput {
+	padding-top: 2px;
+	padding-bottom: 10px;
+	padding-left: 10px;
+	width: 95%;
+}
+
+.popupFieldShortInput {
+	padding-top: 2px;
+	padding-bottom: 10px;
+	padding-left: 10px;
+	width: 45%;
+}
+
+.popupFieldDateInput {
+	padding-top: 2px;
+	padding-bottom: 10px;
+	padding-left: 10px;
+	width: 50%;
+}
+
+.popupSubmitButtons {
+	padding-top: 2px;
+	padding-bottom: 30px;
+	width: 95%;
+}
+
+.popupFieldInput input {
+	width: 95%;
+}
+
+.popupFieldInput textarea {
+	width: 95%;
+}
+
+.popupForm {
+	padding: 5px;
+}
+
+/* Overlay */
+#confirm-overlay {
+	background-color: #eee;
+	cursor: wait;
+}
+
+/* Container */
+#confirm-container {
+	height: 140px;
+	width: 420px;
+	font: 16px/22px 'Trebuchet MS', Verdana, Arial;
+	text-align: left;
+	background: #fff;
+	border: 2px solid #336699;
+}
+
+#confirm-container .header {
+	height: 30px;
+	line-height: 30px;
+	width: 100%;
+	background: url(../img/confirm/header.gif) repeat-x;
+	color: #fff;
+	font-weight: bold;
+}
+
+#confirm-container .header span {
+	padding-left: 8px;
+}
+
+#confirm-container .message {
+	color: #333;
+	font-size: 14px;
+	margin: 0;
+	padding: 12px 4px 12px 8px;
+}
+
+#confirm-container .buttons {
+	line-height: 26px;
+	width: 160px;
+	float: right;
+	padding: 10px 8px 0;
+}
+
+#confirm-container .buttons div {
+	float: right;
+	margin-left: 4px;
+	width: 70px;
+	height: 26px;
+	color: #666;
+	font-weight: bold;
+	text-align: center;
+	background: url(../img/confirm/button.gif) repeat-x;
+	border: 1px solid #bbb;
+	cursor: pointer;
+}
+
+#confirm-container a.modal-close,#confirm-container a.modal-close:link,#confirm-container a.modal-close:active,#confirm-container a.modal-close:visited
+	{
+	text-decoration: none;
+	font-weight: bold;
+	position: absolute;
+	right: 10px;
+	top: 2px;
+	color: #fff;
+}
+
+#confirm-container a.modal-close:hover {
+	color: #ccc;
+}
+
+#simplemodal-container a.modalCloseImg {
+	background:url(../images/x.png) no-repeat; /* adjust url as required */
+	width:25px;
+	height:29px;
+	display:inline;
+	z-index:3200;
+	position:absolute;
+	top:-15px;
+	right:-18px;
+	cursor:pointer;
+}

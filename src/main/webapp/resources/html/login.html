@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<meta http-equiv="CACHE-CONTROL" content="NO-CACHE" />
+<link href="resources/css/main.css" media="screen" rel="stylesheet"
+	type="text/css" />
+<script type="text/javascript" src="resources/js/mavin_cm_globals.js"></script>
+<script type="text/javascript" src="resources/js/mavin_cm_utilities.js"></script>
+
+<!-- Popup related includes -->
+<script type="text/javascript" src="resources/js/jquery-1.8.1.min.js"></script>
+<script type="text/javascript"
+	src="resources/js/jquery.jmpopups-0.5.1.js"></script>
+<script type="text/javascript"
+	src="resources/js/jquery-ui-1.7.2.custom.min.js"></script>
+<script type="text/javascript"
+	src="resources/js/jquery.simplemodal-1.3.5.min.js"></script>
+<!--  End popup includes -->
+
+<!--  JQuery Lightbox includes -->
+<script type="text/javascript"
+	src="resources/js/jquery.lightbox-0.5.min.js"></script>
+<link rel="stylesheet" href="resources/css/jquery.lightbox-0.5.css"
+	type="text/css" media="screen" />
+<!--  End JQuery Lightbox includes -->
+
+<link href="resources/css/jquery-ui.css" rel="stylesheet"
+	type="text/css" />
+<title>Login</title>
+</head>
+<body>
+	<!-- Begin Login -->
+	<div id="login_div" class="travellog_popup">
+		<h1>Sign in</h1>
+		<form action="j_spring_security_check" name="loginForm" method="post">
+			<div id="login_errors" class="error">&nbsp;</div>
+			<div class="popupFieldLabel">
+				<br />Username:
+			</div>
+			<div class="popupFieldInput">
+				<input name="j_username" />
+			</div>
+
+			<div class="popupFieldLabel">Password:</div>
+			<div class="popupFieldInput">
+				<input type="password" name="j_password" />
+			</div>
+
+			<input type="hidden" value="on" name="_spring_security_remember_me"
+				style="display: none" />
+
+			<div class="popupSubmitButtons">
+				<a class="saveButton" href="javascript:void(0)"
+					onclick="document.loginForm.submit()">sign in</a> <a
+					class="cancelButton" href="javascript:void(0)"
+					onclick=";">cancel</a><a class="saveButton"
+					href="javascript:void(0)" onclick="document.loginForm.submit()">create
+					account</a>
+
+			</div>
+		</form>
+	</div>
+
+</body>
+</html>

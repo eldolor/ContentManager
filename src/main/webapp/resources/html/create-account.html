@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<!-- Begin Login -->
+	<div class="travellog_popup" id="create_account_div">
+		<h1>Create Account</h1>
+		<form id="createAccountForm" name="createAccountForm" action="account"
+			method="post" onsubmit="wait('create_account_wait')">
+			<div id="create_account_errors" class="error">&nbsp;</div>
+			<div class="popupFieldLabel">Username:</div>
+			<div class="popupFieldInput">
+				<input type="text" id="username" name="username" />
+			</div>
+
+			<div class="popupFieldLabel">Password:</div>
+			<div class="popupFieldInput">
+				<input type="password" id="password" name="password" />
+			</div>
+
+			<div class="popupFieldLabel">Re-Type Password:</div>
+			<div class="popupFieldInput">
+				<input type="password" id="password2" name="password2" />
+			</div>
+
+			<div class="popupSubmitButtons">
+				<img src="resources/images/wait.gif"
+					style="display: none; float: right" id="create_account_wait" /> <a
+					class="cancelButton" href="javascript:void(0)"
+					onclick=";">cancel</a> <a id="create_account_button"
+					class="saveButton" href="javascript:void(0)"
+					onclick="createAccount();">create account</a>
+			</div>
+
+
+		</form>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,177 @@
+package com.cm.usermanagement.user.dao;
+
+import java.util.List;
+
+import javax.jdo.PersistenceManager;
+import javax.jdo.Query;
+import javax.persistence.NoResultException;
+
+import org.springframework.stereotype.Component;
+
+import com.cm.accountmanagement.account.entity.Account;
+import com.cm.usermanagement.user.entity.User;
+import com.cm.util.PMF;
+import com.cm.util.Util;
+
+@Component
+public class UserDao {
+	// private static final Logger LOGGER =
+	// Logger.getLogger(UserDao.class.getName());
+
+	public List<Account> getAccounts() {
+		PersistenceManager pm = null;
+
+		try {
+			pm = PMF.get().getPersistenceManager();
+			Query q = pm.newQuery(Account.class);
+
+			return (List<Account>) q.execute();
+		} finally {
+			if (pm != null) {
+				pm.close();
+			}
+		}
+	}
+
+	public List<User> getAllUsers() {
+		PersistenceManager pm = null;
+
+		try {
+			pm = PMF.get().getPersistenceManager();
+			Query q = pm.newQuery(User.class);
+
+			return (List<User>) q.execute();
+		} finally {
+			if (pm != null) {
+				pm.close();
+			}
+		}
+	}
+
+	public List<User> getUsersByAccountId(Long accountId) {
+		PersistenceManager pm = null;
+
+		try {
+			pm = PMF.get().getPersistenceManager();
+			Query q = pm.newQuery(User.class);
+			q.setFilter("accountId == accountIdParam");
+			q.declareParameters("String accountIdParam");
+			return (List<User>) q.execute(accountId);
+		} catch (NoResultException e) {
+			// No matching result so return null
+			return null;
+		} finally {
+			if (pm != null) {
+				pm.close();
+			}
+		}
+	}
+
+	public User getUserByUserName(String userName) {
+		PersistenceManager pm = null;
+
+		try {
+			pm = PMF.get().getPersistenceManager();
+			Query q = pm.newQuery(User.class);
+			q.setFilter("username == userNameParam");
+			q.declareParameters("String userNameParam");
+			List<User> users = (List<User>) q.execute(userName);
+			User user = null;
+			if (users != null && (users.size() > 0)) {
+				user = users.get(0);
+			}
+			return user;
+		} catch (NoResultException e) {
+			// No matching result so return null
+			return null;
+		} finally {
+			if (pm != null) {
+				pm.close();
+			}
+		}
+	}
+
+	public User getUserByAccountId(Long accountId, Long userId) {
+		PersistenceManager pm = null;
+
+		try {
+			pm = PMF.get().getPersistenceManager();
+			Query q = pm.newQuery(User.class);
+			q.setFilter("accountId == accountIdParam");
+			q.declareParameters("String accountIdParam");
+			List<User> users = (List<User>) q.execute(accountId);
+			User lUser = null;
+			for (User user : users) {
+				if (user.getId().equals(userId)) {
+					lUser = user;
+					break;
+				}
+			}
+			return lUser;
+		} catch (NoResultException e) {
+			// No matching result so return null
+			return null;
+		} finally {
+			if (pm != null) {
+				pm.close();
+			}
+		}
+	}
+
+	public void saveUser(User user) {
+		PersistenceManager pm = null;
+		try {
+			pm = PMF.get().getPersistenceManager();
+			pm.makePersistent(user);
+
+		} finally {
+			if (pm != null) {
+				pm.close();
+			}
+		}
+	}
+
+	public void updateUser(User user) {
+		PersistenceManager pm = null;
+		try {
+			pm = PMF.get().getPersistenceManager();
+			User _user = pm.getObjectById(User.class, user.getId());
+			_user.setEmail(user.getEmail());
+			_user.setEnabled(user.isEnabled());
+			_user.setFirstName(user.getFirstName());
+			_user.setLastName(user.getLastName());
+			if (!Util.isEmpty(user.getPassword())) {
+				_user.setPassword(user.getPassword());
+			}
+			_user.setRole(user.getRole());
+			_user.setAccountId(user.getAccountId());
+			_user.setTimeUpdatedMs(user.getTimeUpdatedMs());
+			_user.setTimeUpdatedTimeZoneOffsetMs(user
+					.getTimeUpdatedTimeZoneOffsetMs());
+
+		} finally {
+			if (pm != null) {
+				pm.close();
+			}
+		}
+	}
+
+	public User getUser(Long id) {
+		PersistenceManager pm = null;
+
+		try {
+			pm = PMF.get().getPersistenceManager();
+			User _user = pm.getObjectById(User.class, id);
+			return _user;
+
+		} catch (NoResultException e) {
+			// No matching result so return null
+			return null;
+		} finally {
+			if (pm != null) {
+				pm.close();
+			}
+		}
+	}
+
+}

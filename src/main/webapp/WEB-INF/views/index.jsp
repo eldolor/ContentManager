@@ -3,69 +3,31 @@
 <!--[if IE 9]><html class="lt-ie10" lang="en" > <![endif]-->
 <html class="no-js" lang="en"
 	data-useragent="Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)">
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
-<html>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@ taglib prefix="sec"
+	uri="http://www.springframework.org/security/tags"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@page
+	import="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"%>
 
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Foundation Template | Workspace</title>
-<meta name="description"
-	content="Documentation and reference library for ZURB Foundation. JavaScript, CSS, components, grid and more." />
-<meta name="author"
-	content="ZURB, inc. ZURB network also includes zurb.com" />
-<meta name="copyright" content="ZURB, inc. Copyright (c) 2013" />
-<link rel="stylesheet" href="resources/css/foundation/foundation.css"
-	type="text/css" />
+<title>Content Manager</title>
 
-<script type="text/javascript" src="resources/js/modernizr/modernizr.js"></script>
-<script type="text/javascript" src="resources/js/jquery/jquery-2.1.1.min.js"></script>
-<script type="text/javascript" src="resources/js/foundation/foundation.js"></script>
+<jsp:include page="resources.jsp" flush="true"></jsp:include>
+
+<!-- Begin: Custom -->
 <script type="text/javascript" src="resources/js/cm.index.js"></script>
-<script type="text/javascript" src="resources/js/mavin.utilities.js"></script>
+<!-- End: Custom -->
 
-<script>
-	$(document).foundation();
 
-	var doc = document.documentElement;
-	doc.setAttribute('data-useragent', navigator.userAgent);
-</script>
 
 </head>
 <body>
-	<div class="row">
-		<div class="large-12 columns">
-
-			<nav class="top-bar" data-topbar>
-				<ul class="title-area">
-
-					<li class="name">
-						<h1>
-							<a href="#">Content Manager</a>
-						</h1>
-					</li>
-					<li class="toggle-topbar menu-icon"><a href="#"><span>menu</span></a>
-					</li>
-				</ul>
-				<section class="top-bar-section">
-					<ul class="left">
-						<li><a href="#">Link 1</a></li>
-						<li><a href="#">Link 2</a></li>
-					</ul>
-					<ul class="right">
-						<li class="search">
-							<form>
-								<input type="search">
-							</form>
-						</li>
-						<li class="has-button"><a class="small button" href="#">Search</a>
-						</li>
-					</ul>
-				</section>
-			</nav>
-		</div>
-	</div>
+	<jsp:include page="header.jsp"></jsp:include>
 	<div class="row">
 		<div class="large-12 columns">
 
@@ -122,8 +84,8 @@
 									vitae, sollicitudin eget urna. Donec dignissim nibh fermentum
 									odio ornare sagittis.</h5>
 								<div class="show-for-small" style="text-align: center">
-									<a class="small radius button" >Sign In!</a><br>
-									<a class="small radius button" >Sign Up!</a>
+									<a class="small radius button">Sign In!</a><br> <a
+										class="small radius button">Sign Up!</a>
 								</div>
 							</div>
 							<div class="large-6 small-6 columns">
@@ -152,23 +114,6 @@
 			</div>
 		</div>
 	</div>
-	<footer class="row">
-		<div class="large-12 columns">
-			<hr>
-			<div class="row">
-				<div class="large-6 columns">
-					<p>© Copyright Coconut Martini Inc.</p>
-				</div>
-				<div class="large-6 columns">
-					<ul class="inline-list right">
-						<li><a href="#">Link 1</a></li>
-						<li><a href="#">Link 2</a></li>
-						<li><a href="#">Link 3</a></li>
-						<li><a href="#">Link 4</a></li>
-					</ul>
-				</div>
-			</div>
-		</div>
-	</footer>
+	<jsp:include page="footer.jsp" flush="false"></jsp:include>
 </body>
 </html>

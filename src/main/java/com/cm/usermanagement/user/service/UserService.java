@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -65,8 +67,17 @@ public class UserService {
 	}
 
 	public User getLoggedInUser() {
-		User user = (User) SecurityContextHolder.getContext()
-				.getAuthentication().getPrincipal();
+		User user = null;
+
+		SecurityContext lSc = SecurityContextHolder.getContext();
+		if (lSc == null)
+			return null;
+		Authentication lAuth = lSc.getAuthentication();
+		if (lAuth == null)
+			return null;
+		Object lPrincipal = lAuth.getPrincipal();
+		if (lPrincipal != null && lPrincipal instanceof User)
+			user = (User) lPrincipal;
 		return user;
 	}
 

@@ -24,7 +24,7 @@
 
 		<!-- Override default login and logout pages -->
 		<security:form-login login-page="/login"
-			default-target-url="/content" authentication-failure-url="/loginfailure" />
+			default-target-url="/contentgroups" authentication-failure-url="/loginfailure" />
 		<security:logout invalidate-session="true"
 			logout-success-url="/login" />
 

@@ -1,17 +1,23 @@
 jQuery(function($) {
-//    $('a[href="#TODO"]').click(function() {
-//        alert('Nothing to see here, boss.');
-//    });
-    
-    $('#user_sign_in').bind('click', loginRedirect);
-//    $('#user_sign_in_submit_button').bind('click', document.loginForm.submit());
-//    $('#user_sign_in_cancel_button').bind('click', function() {
-//		$('#user_sign_in_submit_button').unbind();
-//		;
-//	});
+	log("function($)", "Entering");
+	try {
+		$('#user_sign_in').bind('click', loginRedirect);
+	} catch (err) {
+		handleError("function($)", err);
+	} finally {
+		log("function($)", "Exiting");
+	}
 });
 
-function loginRedirect(){
-	$('#user_sign_in').unbind();
-	window.location.href = "/login";
+function loginRedirect() {
+	log("loginRedirect", "Entering");
+	try {
+		$('#user_sign_in').unbind();
+		window.location.href = "/login";
+	} catch (err) {
+		handleError("loginRedirect", err);
+	} finally {
+		log("loginRedirect", "Exiting");
+	}
+
 }

@@ -1,6 +1,8 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+
+<!doctype html>
+<!--[if IE 9]><html class="lt-ie10" lang="en" > <![endif]-->
+<html class="no-js" lang="en"
+	data-useragent="Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)">
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib prefix="sec"
@@ -8,83 +10,69 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@page
-	import="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"%><html>
+	import="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"%>
+
+
+
 <head>
-
-
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <meta http-equiv="CACHE-CONTROL" content="NO-CACHE" />
-<link href="resources/css/main.css" media="screen" rel="stylesheet"
-	type="text/css" />
 
-<title>Campaign Management Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Content Manager</title>
 
-<!-- JQuery related includes -->
-<script src="resources/js/jquery/jquery-1.8.1.min.js"></script>
-<script src="resources/js/jquery/jquery-ui-1.10.0.custom.min.js"></script>
-<link href="resources/css/jquery-ui-1.10.0.custom.min.css"
-	rel="stylesheet" type="text/css" />
-<!--  End JQuery includes -->
+<jsp:include page="resources.jsp" flush="true"></jsp:include>
 
-<!-- Bootstrap  -->
-<script type="text/javascript"
-	src="resources/js/jquery/bootstrap.min.js"></script>
-<link href="resources/css/bootstrap.min.css" rel="stylesheet"
-	type="text/css" />
-<!-- Bootstrap  -->
 
-<script type="text/javascript" src="resources/js/mavin.user.js"></script>
-<script type="text/javascript" src="resources/js/mavin.globals.js"></script>
-<script type="text/javascript" src="resources/js/mavin.utilities.js"></script>
-<script type="text/javascript" src="resources/js/json2.js"></script>
+<!-- Begin Custom -->
+<script type="text/javascript" src="resources/js/cm.login.js"></script>
+<!-- End Custom -->
+
 
 
 </head>
+<body>
+	<jsp:include page="header.jsp"></jsp:include>
+	<br>
+	<jsp:include page="breadcrumbs.jsp"></jsp:include>
+	<br>
 
-<body onload="openPopup('login_div');">
-	<!-- Begin Login -->
-	<div class="modal hide fade" id="login_div" aria-hidden="true">
+	<div class="row">
+		<div class="large-4 columns">
 
-		<div class="modal-header">
-			<h3 id="loginModalLabel">Sign In</h3>
-		</div>
-		<div class="modal-body">
-			<form action="j_spring_security_check" name="loginForm" method="post"
-				onsubmit="wait('login_wait')">
-
-
-				<div class="popupFieldLabel">Username:</div>
-				<div class="popupFieldInput">
-					<input type="text" name="j_username" />
+			<h3 id="contentGroupModalLabel">Sign In</h3>
+			<form action="j_spring_security_check" name="loginForm" method="post">
+				<div class="row">
+					<label>Username: <input type="text" id="j_username"
+						name="j_username" />
+					</label>
 				</div>
-
-				<div class="popupFieldLabel">Password:</div>
-				<div class="popupFieldInput">
-					<input type="password" name="j_password" />
+				<div class="row">
+					<label>Password: <input type="password" id="j_password"
+						name="j_password" />
+					</label>
 				</div>
-
-				<input type="hidden" value="on" name="_spring_security_remember_me"
-					style="display: none" />
+				<input type="hidden" value="on" id="_spring_security_remember_me"
+					name="_spring_security_remember_me" style="display: none" />
+				<div>&nbsp;</div>
 			</form>
+			<div>
+				<span id="login_errors" class="label label-important"></span>
+				<button id="user_sign_in_submit_button" class="button">sign
+					in</button>
+				<button id="user_sign_in_cancel_button" class="button">cancel</button>
+			</div>
 		</div>
-		<div class="modal-footer">
-			<span id="login_errors" class="label label-important"></span> <img
-				src="resources/images/wait.gif" style="display: none; float: right"
-				id="login_wait" />  <a
-				class="btn btn-primary" href="javascript:void(0)"
-				onclick="document.loginForm.submit()">sign in</a><button id="user_sign_in_cancel_button" class="btn" data-dismiss="modal"
-				aria-hidden="true" onclick="window.location.href = '/'">cancel</button>
-		</div>
-
+		
 	</div>
-	<!-- End Login -->
 
 
-	<!-- Begin Wait Div -->
-	<div id="wait_div" class="popupViewWait">
-		<img src="resources/images/wait_large.gif" id="wait" />
-	</div>
-	<!-- End Wait Div -->
+
+
+
+
+	<jsp:include page="footer.jsp" flush="false"></jsp:include>
+
 
 </body>
 </html>

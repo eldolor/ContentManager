@@ -24,11 +24,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.cm.contentmanager.contentgroup.ContentGroup;
 import com.cm.contentmanager.contentgroup.ContentGroupService;
@@ -45,6 +47,22 @@ public class ContentGroupController {
 
 	private static final Logger LOGGER = Logger
 			.getLogger(ContentGroupController.class.getName());
+
+	/**
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/contentgroups", method = RequestMethod.GET)
+	public ModelAndView displayContentGroups(ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering displayContentGroups");
+		try {
+			return new ModelAndView("content_groups", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting displayContentGroups");
+		}
+	}
 
 	/**
 	 * 
@@ -111,7 +129,7 @@ public class ContentGroupController {
 	 * @param uuid
 	 * @param response
 	 */
-	@RequestMapping(value = "/secured/contentgroup/{id}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/secured/contentgroup/{id}/{timeUpdatedMs}/{timeUpdatedTimeZoneOffsetMs}", method = RequestMethod.DELETE)
 	public void deleteContentGroup(@PathVariable Long id,
 			@PathVariable Long timeUpdatedMs,
 			@PathVariable Long timeUpdatedTimeZoneOffsetMs,

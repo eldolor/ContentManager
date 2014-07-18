@@ -201,11 +201,13 @@ function handleError(functionName, err) {
 	}
 }
 
-function log(tag, message) {
+function log(pFunctionName, message) {
 	if (mDebugEnabled = "Y") {
-		console.log(tag + ' ' + message);
+		console.log(pFunctionName + '():: ' + message);
 	}
 }
+
+
 function wait(waitElementId) {
 	try {
 		waitElement = document.getElementById(waitElementId);

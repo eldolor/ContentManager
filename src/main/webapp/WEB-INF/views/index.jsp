@@ -20,7 +20,7 @@
 <jsp:include page="resources.jsp" flush="true"></jsp:include>
 
 <!-- Begin: Custom -->
-<script type="text/javascript" src="resources/js/cm.index.js"></script>
+<script type="text/javascript" src="/resources/js/cm.index.js"></script>
 <!-- End: Custom -->
 
 
@@ -33,15 +33,18 @@
 
 			<div class="hide-for-small">
 				<div id="featured">
-					<img alt="slide image"
-						src="http://placehold.it/1000x400&amp;text=Slide%20Image">
+					<!-- <img alt="slide image"
+						src="http://placehold.it/1000x400&amp;text=Slide%20Image"> -->
+					<img alt="slide image" src="/resources/images/index/index.jpg">
 				</div>
 			</div>
 
 			<div class="row">
 				<div class="small-12 show-for-small">
-					<br> <img
-						src="http://placehold.it/1000x600&amp;text=For%20Small%20Screens">
+					<br>
+					<!-- <img
+						src="http://placehold.it/1000x600&amp;text=For%20Small%20Screens"> -->
+					<img alt="slide image" src="/resources/images/index/index.jpg">s
 				</div>
 			</div>
 		</div>
@@ -52,19 +55,23 @@
 			<div class="row">
 
 				<div class="large-3 small-6 columns">
-					<img src="http://placehold.it/250x250&amp;text=Thumbnail">
+					<!-- <img src="http://placehold.it/250x250&amp;text=Thumbnail"> -->
+					<img src="/resources/images/index/thumbnail_1.jpg">
 					<h6 class="panel">Description</h6>
 				</div>
 				<div class="large-3 small-6 columns">
-					<img src="http://placehold.it/250x250&amp;text=Thumbnail">
+					<!-- <img src="http://placehold.it/250x250&amp;text=Thumbnail"> -->
+					<img src="/resources/images/index/thumbnail_2.jpg">
 					<h6 class="panel">Description</h6>
 				</div>
 				<div class="large-3 small-6 columns">
-					<img src="http://placehold.it/250x250&amp;text=Thumbnail">
+					<!-- <img src="http://placehold.it/250x250&amp;text=Thumbnail"> -->
+					<img src="/resources/images/index/thumbnail_3.jpg">
 					<h6 class="panel">Description</h6>
 				</div>
 				<div class="large-3 small-6 columns">
-					<img src="http://placehold.it/250x250&amp;text=Thumbnail">
+					<!-- <img src="http://placehold.it/250x250&amp;text=Thumbnail"> -->
+					<img src="/resources/images/index/thumbnail_4.jpg">
 					<h6 class="panel">Description</h6>
 				</div>
 			</div>

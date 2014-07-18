@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package com.cm.contentmanager.web.rest;
+package com.cm.contentmanager.contentgroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +32,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.cm.contentmanager.contentgroup.ContentGroup;
-import com.cm.contentmanager.contentgroup.ContentGroupService;
 import com.cm.usermanagement.user.entity.User;
 import com.cm.usermanagement.user.service.UserService;
 import com.cm.util.ValidationError;
@@ -194,7 +192,7 @@ public class ContentGroupController {
 				return errors;
 			} else {
 				contentGroupService.updateContentGroup(contentGroup);
-				response.setStatus(HttpServletResponse.SC_CREATED);
+				response.setStatus(HttpServletResponse.SC_OK);
 				return null;
 			}
 		} finally {
@@ -211,6 +209,14 @@ public class ContentGroupController {
 			error.setDescription("Name cannot be blank");
 			errors.add(error);
 			LOGGER.log(Level.WARNING, "Name cannot be blank");
+		}
+		if (((contentGroup.getStartDateIso8601() != null) && (contentGroup.getStartDateIso8601()
+				.length() == 0)) || (contentGroup.getStartDateIso8601() == null)) {
+			ValidationError error = new ValidationError();
+			error.setCode("start date");
+			error.setDescription("Start Date cannot be blank");
+			errors.add(error);
+			LOGGER.log(Level.WARNING, "Start Date cannot be blank");
 		}
 
 		if (LOGGER.isLoggable(Level.INFO))

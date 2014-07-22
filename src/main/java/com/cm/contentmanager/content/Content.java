@@ -31,6 +31,8 @@ public class Content {
 	@Persistent
 	private String type;
 	@Persistent
+	private String uri;
+	@Persistent
 	public Boolean deleted = false;
 	@Persistent
 	public Boolean enabled = true;
@@ -147,6 +149,12 @@ public class Content {
 		this.userId = userId;
 	}
 
-	
+	public String getUri() {
+		return uri;
+	}
+	public void setUri(String uri) {
+		this.uri = uri;
+	}
+
 
 }

@@ -12,7 +12,8 @@
 	type="text/css" />
 
 <!-- Begin Foundation Related -->
-<script type="text/javascript" src="/resources/js/modernizr/modernizr.js"></script>
+<script type="text/javascript"
+	src="/resources/js/modernizr/modernizr.js"></script>
 <script type="text/javascript"
 	src="/resources/js/jquery-2.1.1/jquery.min.js"></script>
 <script src="/resources/js/jquery-ui-1.11.0/jquery-ui.min.js"></script>
@@ -76,21 +77,16 @@
 </script>
 
 
-
+<!-- Jquery File drop-->
+<script type="text/javascript"
+	src="/resources/js/cm.content.file.upload.js"></script>
+<script type="text/javascript"
+	src="/resources/js/jquery/jquery.filedrop.js"></script>
+<link href="/resources/css/content.dropbox.css" media="screen"
+	rel="stylesheet" type="text/css" />
+<!-- Jquery File drop-->
 
 <!-- Custom Scripts -->
 <script type="text/javascript" src="/resources/js/cm.utilities.js"></script>
 <script type="text/javascript" src="/resources/js/cm.globals.js"></script>
-
-
-<script type="text/javascript"
-	src="/resources/js/mavin.image.file.upload.js"></script>
-<script type="text/javascript"
-	src="/resources/js/mavin.video.file.upload.js"></script>
-<script type="text/javascript"
-	src="/resources/js/mavin.reminder.file.upload.js"></script>
-<script type="text/javascript"
-	src="/resources/js/mavin.voice.file.upload.js"></script>
-<script type="text/javascript"
-	src="/resources/js/jquery/jquery.filedrop.js"></script>
 <!-- Custom Scripts -->

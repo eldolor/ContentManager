@@ -86,13 +86,18 @@
 
 					<div class="row">
 						<div class="large-12 columns">
-							<div class="switch radius">
-								<input id="contentgroup_enabled" type="checkbox"
-									checked="checked"> <label for="contentgroup_enabled">Enabled</label>
-							</div>
+							<label>Enabled:</label>
 						</div>
 					</div>
-					<div>&nbsp;</div>
+					<div class="row">
+						<div class="large-12 columns">
+							<input id="contentgroup_enabled" type="checkbox">
+							<!-- <div class="switch radius">
+								<input id="contentgroup_enabled" type="checkbox"
+									checked="checked"> <label for="contentgroup_enabled">Enabled</label>
+							</div> -->
+						</div>
+					</div>
 				</form>
 				<button id="contentgroup_save_button" class="button radius">create</button>
 				<button id="contentgroup_cancel_button" class="button radius">cancel</button>

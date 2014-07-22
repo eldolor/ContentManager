@@ -41,7 +41,7 @@ function setupLeftNavBar() {
 		$('#left_nav_bar')
 				.empty()
 				.html(
-						'<a id=\"left_nav_bar_link_1\" href=\"#\" >Create Content Group</a></li>');
+						'<a id=\"left_nav_bar_link_1\" href=\"javascript:void(0);\" >Create Content Group</a></li>');
 		$('#left_nav_bar_link_1').unbind();
 		$('#left_nav_bar_link_1').click(function() {
 			// $('#content_group_create_modal').foundation('reveal', 'open');
@@ -234,8 +234,7 @@ function editContentGroup(id) {
 	log("editContentGroup", "Entering");
 	try {
 		$('#contentgroup_errors').hide();
-		
-		
+
 		$('#contentgroup_cancel_button').unbind();
 		$('#contentgroup_cancel_button').click(function() {
 			$('#content_group_create').hide();
@@ -267,34 +266,15 @@ function editContentGroup(id) {
 							$('#contentgroup_userid').val(
 									contentgroup.sponsoredUserId);
 
-							if (contentgroup.hasOwnProperty('enabled')) {
-								log("editContentGroup",
-										"ContentGroup enabled: "
-												+ contentgroup.enabled);
-								if (contentgroup.enabled == true) {
-									$('#contentgroup_enabled').attr('checked',
-											'checked');
-									$('#contentgroup_status').html('Enabled');
-								} else {
-									$('#contentgroup_enabled').removeAttr(
-											'checked');
-									$('#contentgroup_status').html('Disabled');
-								}
+							log("editContentGroup", "ContentGroup enabled: "
+									+ contentgroup.enabled);
+							if (contentgroup.enabled == true) {
+								$('#contentgroup_enabled').attr('checked',
+										'checked');
+							} else {
+								$('#contentgroup_enabled')
+										.removeAttr('checked');
 							}
-							$('#contentgroup_enabled').unbind();
-							$('#contentgroup_enabled').bind(
-									'click',
-									function() {
-										if ($('#contentgroup_enabled').is(
-												':checked')) {
-											$('#contentgroup_status').html(
-													'Enabled');
-										} else {
-											$('#contentgroup_status').html(
-													'Disabled');
-										}
-									});
-
 							$('#contentgroup_save_button').html('update');
 
 							// unbind click listener to reset
@@ -328,7 +308,7 @@ function newContentGroup() {
 	log("newContentGroup", "Entering");
 	try {
 		$('#contentgroup_errors').hide();
-		
+
 		$('#contentgroup_save_button').html('create');
 		// unbind click listener to reset
 		$('#contentgroup_save_button').unbind();
@@ -349,14 +329,6 @@ function newContentGroup() {
 
 		// set default
 		$('#contentgroup_enabled').attr('checked', 'checked');
-		$('#contentgroup_enabled').unbind();
-		$('#contentgroup_enabled').bind('click', function() {
-			if ($('#contentgroup_enabled').is(':checked')) {
-				$('#contentgroup_status').html('Enabled');
-			} else {
-				$('#contentgroup_status').html('Disabled');
-			}
-		});
 
 		$('#contentgroup_errors').empty();
 	} catch (err) {

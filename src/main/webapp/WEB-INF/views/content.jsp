@@ -51,7 +51,9 @@
 				<h3 id="contentModalLabel">Content Setup</h3>
 				<form id="contentForm" name="contentForm">
 					<input type="hidden" id="content_id" name="content_id" /> <input
-						type="hidden" id="contentgroup_id" name="contentgroup_id" />
+						type="hidden" id="contentgroup_id" name="contentgroup_id" /><input
+						type="hidden" id="content_uri" name="content_uri" /><input
+						type="hidden" id="content_type" name="content_type" />
 
 					<div class="row">
 						<div class="large-12 columns">
@@ -69,21 +71,17 @@
 					</div>
 					<div class="row">
 						<div class="large-12 columns">
-							<a class="button radius" data-dropdown="content_type">Content
-								Type &raquo;</a>
-							<ul id="content_type" class="medium f-dropdown"
-								data-dropdown-content>
-								<li><a onselect="alert('image')">Image</a></li>
-								<li><a onselect="alert('image')">Video</a></li>
-							</ul>
-
-							<a href="#" data-dropdown="drop1" class="button dropdown">Dropdown
-								Button</a><br>
-							<ul id="drop1" data-dropdown-content class="f-dropdown">
-								<li>This is a link</li>
-								<li><a href="#">This is another</a></li>
-								<li><a href="#">Yet another</a></li>
-							</ul>
+							<label>Content Type:</label>
+						</div>
+					</div>
+					<div class="row">
+						<div class="large-12 columns">
+							<!-- Using radio buttons each switch turns off the other two -->
+							<label>Image: <input id="content_type_image" type="radio"
+								checked name="content_type_group"></label><label>Video:
+								<input id="content_type_video" type="radio"
+								name="content_type_group">
+							</label>
 						</div>
 					</div>
 					<div class="row">
@@ -111,13 +109,32 @@
 
 					<div class="row">
 						<div class="large-12 columns">
+							<label>Enabled:</label>
+						</div>
+					</div>
+					<div class="row">
+						<div class="large-12 columns">
+							<input id="content_enabled" type="checkbox">
+						</div>
+					</div>
+					<!-- 					<div class="row">
+						<div class="large-12 columns">
 							<div class="switch radius">
 								<input id="content_enabled" type="checkbox" checked="checked">
 								<label for="content_enabled">Enabled</label>
 							</div>
 						</div>
+					</div> -->
+					<div class="row">
+						<div class="large-12 columns">
+							<a id="upload_content" href="javascript:void(0);">Click here to upload content</a>
+							<div id="content_dropbox">
+								<span class="secondary radius label">Drop content here to
+									upload</span>
+							</div>
+						</div>
 					</div>
-					<div>&nbsp;</div>
+
 				</form>
 				<button id="content_save_button" class="button radius">create</button>
 				<button id="content_cancel_button" class="button radius">cancel</button>

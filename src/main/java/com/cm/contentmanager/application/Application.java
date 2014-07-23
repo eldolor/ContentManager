@@ -1,4 +1,4 @@
-package com.cm.contentmanager.contentgroup;
+package com.cm.contentmanager.application;
 
 import java.io.Serializable;
 
@@ -8,12 +8,14 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 @PersistenceCapable
-public class ContentGroup implements Serializable {
+public class Application implements Serializable {
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Long id;
+
 	@Persistent
-	private Long applicationId;
+	private String trackingId;
+
 	@Persistent
 	private Long accountId;
 
@@ -25,17 +27,6 @@ public class ContentGroup implements Serializable {
 
 	@Persistent
 	private String description;
-	@Persistent
-	private String startDateIso8601;
-
-	@Persistent
-	private String endDateIso8601;
-
-	@Persistent
-	private Long startDateMs;
-
-	@Persistent
-	private Long endDateMs;
 
 	// default to true
 	@Persistent
@@ -61,12 +52,12 @@ public class ContentGroup implements Serializable {
 		this.id = id;
 	}
 
-	public Long getApplicationId() {
-		return applicationId;
+	public String getTrackingId() {
+		return trackingId;
 	}
 
-	public void setApplicationId(Long applicationId) {
-		this.applicationId = applicationId;
+	public void setTrackingId(String trackingId) {
+		this.trackingId = trackingId;
 	}
 
 	public Boolean isEnabled() {
@@ -75,22 +66,6 @@ public class ContentGroup implements Serializable {
 
 	public void setEnabled(Boolean enabled) {
 		this.enabled = enabled;
-	}
-
-	public Long getStartDateMs() {
-		return startDateMs;
-	}
-
-	public void setStartDateMs(Long startDateMs) {
-		this.startDateMs = startDateMs;
-	}
-
-	public Long getEndDateMs() {
-		return endDateMs;
-	}
-
-	public void setEndDateMs(Long endDateMs) {
-		this.endDateMs = endDateMs;
 	}
 
 	public void setName(String name) {
@@ -155,22 +130,6 @@ public class ContentGroup implements Serializable {
 
 	public void setUserId(Long userId) {
 		this.userId = userId;
-	}
-
-	public String getStartDateIso8601() {
-		return startDateIso8601;
-	}
-
-	public void setStartDateIso8601(String startDateIso8601) {
-		this.startDateIso8601 = startDateIso8601;
-	}
-
-	public String getEndDateIso8601() {
-		return endDateIso8601;
-	}
-
-	public void setEndDateIso8601(String endDateIso8601) {
-		this.endDateIso8601 = endDateIso8601;
 	}
 
 	public Long getAccountId() {

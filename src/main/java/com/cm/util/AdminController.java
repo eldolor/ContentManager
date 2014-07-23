@@ -32,10 +32,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.cm.accountmanagement.account.entity.Account;
+import com.cm.accountmanagement.account.Account;
 import com.cm.common.entity.Result;
-import com.cm.usermanagement.user.entity.User;
-import com.cm.usermanagement.user.service.UserService;
+import com.cm.usermanagement.user.User;
+import com.cm.usermanagement.user.UserService;
 import com.google.appengine.api.blobstore.BlobInfo;
 import com.google.appengine.api.blobstore.BlobInfoFactory;
 import com.google.appengine.api.blobstore.BlobstoreService;
@@ -50,7 +50,7 @@ public class AdminController {
 	@Autowired
 	private UserService userService;
 	@Autowired
-	private com.cm.accountmanagement.account.service.AccountService accountService;
+	private com.cm.accountmanagement.account.AccountService accountService;
 
 	@RequestMapping(value = "/tasks/deleteusers", method = RequestMethod.GET, produces = "application/json")
 	public void deleteUsers(HttpServletResponse response) {

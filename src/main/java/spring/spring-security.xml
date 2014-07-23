@@ -11,22 +11,29 @@
 
 	<security:http auto-config="true" disable-url-rewriting="true">
 		<!-- Restrict URLs based on role -->
-		<security:intercept-url pattern="/am/**"
+<!-- 		<security:intercept-url pattern="/am/**"
 			access="ROLE_SUPER_ADMIN" />
 		<security:intercept-url pattern="/um/**"
 			access="ROLE_ADMIN, ROLE_SUPER_ADMIN" />
-		<security:intercept-url pattern="/content/**"
+		<security:intercept-url pattern="/applications/**"
 			access="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER" />
-		<security:intercept-url pattern="/**"
+		<security:intercept-url pattern="/resources/**"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<security:intercept-url pattern="/login*"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+ -->		<security:intercept-url pattern="/**"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+
+		<security:intercept-url pattern="/secured/**"
+			access="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER" />
 
 		<security:anonymous granted-authority="IS_AUTHENTICATED_ANONYMOUSLY" />
 
 		<!-- Override default login and logout pages -->
 		<security:form-login login-page="/login"
-			default-target-url="/contentgroups" authentication-failure-url="/loginfailure" />
+			default-target-url="/applications" authentication-failure-url="/loginfailure" />
 		<security:logout invalidate-session="true"
-			logout-success-url="/login" />
+			logout-success-url="/" />
 
 
 		<security:remember-me key="rememberMeKey" />
@@ -34,7 +41,8 @@
 		<security:access-denied-handler ref="accessDeniedHandler" />
 	</security:http>
 
-	<bean id="accessDeniedHandler" class="com.cm.contentmanager.auth.web.rest.AccessDeniedExceptionHandler">
+	<bean id="accessDeniedHandler"
+		class="com.cm.contentmanager.auth.web.rest.AccessDeniedExceptionHandler">
 	</bean>
 
 	<bean id="rememberMeFilter"

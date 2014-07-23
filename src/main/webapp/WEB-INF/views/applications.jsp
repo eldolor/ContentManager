@@ -23,11 +23,8 @@
 <jsp:include page="resources.jsp" flush="true"></jsp:include>
 
 <!-- Begin Custom -->
-<script type="text/javascript" src="/resources/js/cm.content.group.js"></script>
+<script type="text/javascript" src="/resources/js/cm.application.js"></script>
 <!-- End Custom -->
-<script type="text/javascript">
-	setSelectedApplication(${applicationId});
-</script>
 
 
 </head>
@@ -42,53 +39,26 @@
 	<div class="row">
 
 		<div class="large-9 push-3 columns" id="content_area">
-			<div class="row">
-				<span id="application_name" class="secondary radius label"></span>
-			</div>
-			<div>&nbsp;</div>
-			<div id="content_groups_list"></div>
+			<div id="applications_list"></div>
 			<!-- Begin Content Group -->
-			<div id="content_group_create" style="display: none">
-				<h3 id="contentGroupModalLabel">Content Group Setup</h3>
+			<div id="application_create" style="display: none">
+				<h3 id="contentGroupModalLabel">Application Setup</h3>
 				<form id="contentGroupForm" name="contentGroupForm">
 					<input type="hidden" id="application_id" name="application_id" />
-					<input type="hidden" id="contentgroup_id" name="contentgroup_id" />
 					<input type="hidden" />
 
 					<div class="row">
 						<div class="large-12 columns">
-							<label>Name: <input type="text" id="contentgroup_name"
-								name="contentgroup_name" />
+							<label>Name: <input type="text" id="application_name"
+								name="application_name" />
 							</label>
 						</div>
 					</div>
 					<div class="row">
 						<div class="large-12 columns">
 							<label>Description: <textarea rows="5"
-									id="contentgroup_description" name="contentgroup_description"></textarea>
+									id="application_description" name="application_description"></textarea>
 							</label>
-						</div>
-					</div>
-					<div class="row">
-						<div class="large-12 columns">
-							<label>Start Date:
-								<div id="contentgroup_start_datepicker">
-									<input type="text" id="contentgroup_start_date"
-										name="contentgroup_start_date" /> <br />
-								</div>
-							</label>
-						</div>
-					</div>
-
-					<div class="row">
-						<div class="large-12 columns">
-							<label><span data-tooltip class="has-tip"
-								title="Specify an End Date only if you want the content to expire after a certain date, or else leave it empty.">End
-									Date:</span>
-								<div id="contentgroup_end_datepicker">
-									<input type="text" id="contentgroup_end_date"
-										name="contentgroup_end_date" /> <br />
-								</div> </label>
 						</div>
 					</div>
 
@@ -99,17 +69,17 @@
 					</div>
 					<div class="row">
 						<div class="large-12 columns">
-							<input id="contentgroup_enabled" type="checkbox">
+							<input id="application_enabled" type="checkbox">
 							<!-- <div class="switch radius">
-								<input id="contentgroup_enabled" type="checkbox"
-									checked="checked"> <label for="contentgroup_enabled">Enabled</label>
+								<input id="application_enabled" type="checkbox"
+									checked="checked"> <label for="application_enabled">Enabled</label>
 							</div> -->
 						</div>
 					</div>
 				</form>
-				<button id="contentgroup_save_button" class="button radius">create</button>
-				<button id="contentgroup_cancel_button" class="button radius">cancel</button>
-				<span id="contentgroup_errors" class="alert radius label"></span>
+				<button id="application_save_button" class="button radius">create</button>
+				<button id="application_cancel_button" class="button radius">cancel</button>
+				<span id="application_errors" class="alert radius label"></span>
 			</div>
 			<!-- End Content Group -->
 		</div>
@@ -125,14 +95,14 @@
 
 	<!-- At the bottom of your page but inside of the body tag -->
 	<ol class="joyride-list" data-joyride>
-		<li data-id="breadcrumb_content_groups" data-text="Next"
+		<li data-id="breadcrumb_applications" data-text="Next"
 			data-options="tip_location: bottom;timer:2000;tip_animation:fade">
-			<p>You will first need to create a Content Group</p>
+			<p>You will first need to create a Application</p>
 		</li>
 		<li data-id="left_nav_bar_link_1"
 			data-options="tip_location:bottom;tip_animation:fade"
 			data-text="Next">
-			<p>Click here to create a new Content Group</p>
+			<p>Click here to create a new Application</p>
 		</li>
 	</ol>
 </body>

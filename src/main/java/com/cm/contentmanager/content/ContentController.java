@@ -34,7 +34,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.cm.contentmanager.contentgroup.ContentGroup;
 import com.cm.contentmanager.contentgroup.ContentGroupService;
-import com.cm.usermanagement.user.service.UserService;
+import com.cm.usermanagement.user.UserService;
 import com.cm.util.ValidationError;
 
 @Controller
@@ -51,8 +51,8 @@ public class ContentController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value = "/{contentGroupId}/content", method = RequestMethod.GET)
-	public ModelAndView displayContent(@PathVariable Long contentGroupId,
+	@RequestMapping(value = "/{applicationId}/{contentGroupId}/content", method = RequestMethod.GET)
+	public ModelAndView displayContent(@PathVariable Long applicationId, @PathVariable Long contentGroupId,
 			ModelMap model) {
 		if (LOGGER.isLoggable(Level.INFO))
 			LOGGER.info("Entering displayContent");
@@ -72,9 +72,9 @@ public class ContentController {
 	 * @param response
 	 * @return
 	 */
-	@RequestMapping(value = "/secured/{contentGroupId}/content", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/secured/{applicationId}/{contentGroupId}/content", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody
-	List<Content> getAllContent(@PathVariable Long contentGroupId,
+	List<Content> getAllContent(@PathVariable Long applicationId, @PathVariable Long contentGroupId,
 			HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -86,7 +86,7 @@ public class ContentController {
 				return null;
 			}
 			List<Content> content = contentService
-					.getAllContent(contentGroupId);
+					.getAllContent(applicationId, contentGroupId);
 			if (content != null) {
 				if (LOGGER.isLoggable(Level.INFO))
 					LOGGER.info(content.size() + " Content found");
@@ -285,9 +285,9 @@ public class ContentController {
 		}
 	}
 
-	@RequestMapping(value = "/secured/{contentGroupId}/content/{type}", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/secured/{applicationId}/{contentGroupId}/content/{type}", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody
-	List<Content> getContent(@PathVariable Long contentGroupId,
+	List<Content> getContent(@PathVariable Long applicationId, @PathVariable Long contentGroupId,
 			@PathVariable String type, HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -298,7 +298,7 @@ public class ContentController {
 					LOGGER.info("No contentGroupId Found!");
 				return null;
 			}
-			List<Content> content = contentService.getAllContent(
+			List<Content> content = contentService.getAllContent(applicationId, 
 					contentGroupId, type);
 			if (content != null) {
 				if (LOGGER.isLoggable(Level.INFO))

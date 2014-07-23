@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cm.usermanagement.user.entity.User;
+import com.cm.usermanagement.user.User;
 import com.cm.util.Util;
 
 @Service
@@ -18,24 +18,24 @@ public class ContentService {
 	private static final Logger LOGGER = Logger.getLogger(ContentService.class
 			.getName());
 
-	public List<Content> getAllContent(Long contentGroupId) {
+	public List<Content> getAllContent(Long applicationId, Long contentGroupId) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getAllContent");
-			return contentDao.getAllContent(contentGroupId);
+			return contentDao.getAllContent(applicationId, contentGroupId);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting getAllContent");
 		}
 	}
 
-	public List<Content> getAllContent(Long contentGroupId, String type) {
+	public List<Content> getAllContent(Long applicationId, Long contentGroupId, String type) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getAllContent");
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("contentGroupId: " + contentGroupId + " Type: " + type);
-			return contentDao.getAllContent(contentGroupId, type);
+			return contentDao.getAllContent(applicationId, contentGroupId, type);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting getAllContent");
@@ -135,12 +135,12 @@ public class ContentService {
 		}
 	}
 
-	public void deleteAllContent(Long contentGroupId, Long timeUpdatedMs,
+	public void deleteAllContent(Long applicationId, Long contentGroupId, Long timeUpdatedMs,
 			Long timeUpdatedTimeZoneOffsetMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering deleteAllContents");
-			contentDao.deleteAllContent(contentGroupId, timeUpdatedMs,
+			contentDao.deleteAllContent(applicationId, contentGroupId, timeUpdatedMs,
 					timeUpdatedTimeZoneOffsetMs);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))

@@ -10,6 +10,6 @@
 <title>Uh-oh!</title>
 </head>
 <body>
-	<img id="error" alt="uh-oh" src="resources/images/website-error.jpg">
+	<img id="error" alt="uh-oh" src="/resources/images/website-error.jpg">
 </body>
 </html>

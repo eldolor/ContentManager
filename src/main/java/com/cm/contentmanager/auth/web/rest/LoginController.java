@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.cm.usermanagement.user.service.UserService;
+import com.cm.usermanagement.user.UserService;
 import com.cm.util.ValidationError;
 
 @Controller
@@ -67,13 +67,13 @@ public class LoginController {
 	 */
 	@RequestMapping(value = "/secured/isroleadmin/{id}", method = RequestMethod.GET)
 	public void isRoleAdmin(@PathVariable Long id, HttpServletResponse response) {
-		com.cm.usermanagement.user.entity.User user = userService.getUser(id);
+		com.cm.usermanagement.user.User user = userService.getUser(id);
 		Collection<GrantedAuthority> authorities = user.getAuthorities();
 		for (Iterator iterator = authorities.iterator(); iterator.hasNext();) {
 			GrantedAuthority grantedAuthority = (GrantedAuthority) iterator
 					.next();
 			if (grantedAuthority.getAuthority().equals(
-					com.cm.usermanagement.user.entity.User.ROLE_ADMIN)) {
+					com.cm.usermanagement.user.User.ROLE_ADMIN)) {
 				response.setStatus(HttpServletResponse.SC_OK);
 				return;
 			}
@@ -89,13 +89,13 @@ public class LoginController {
 	@RequestMapping(value = "/secured/isrolesuperadmin/{id}", method = RequestMethod.GET)
 	public void isRoleSuperAdmin(@PathVariable Long id,
 			HttpServletResponse response) {
-		com.cm.usermanagement.user.entity.User user = userService.getUser(id);
+		com.cm.usermanagement.user.User user = userService.getUser(id);
 		Collection<GrantedAuthority> authorities = user.getAuthorities();
 		for (Iterator iterator = authorities.iterator(); iterator.hasNext();) {
 			GrantedAuthority grantedAuthority = (GrantedAuthority) iterator
 					.next();
 			if (grantedAuthority.getAuthority().equals(
-					com.cm.usermanagement.user.entity.User.ROLE_SUPER_ADMIN)) {
+					com.cm.usermanagement.user.User.ROLE_SUPER_ADMIN)) {
 				response.setStatus(HttpServletResponse.SC_OK);
 				return;
 			}
@@ -166,7 +166,7 @@ public class LoginController {
 			LOGGER.log(Level.WARNING, "Passwords do not match");
 		}
 		// check to make sure we don't have a user account already
-		com.cm.usermanagement.user.entity.User user = userService
+		com.cm.usermanagement.user.User user = userService
 				.getUserByUserName(userAccount.getUserName());
 		if (user != null) {
 			ValidationError error = new ValidationError();

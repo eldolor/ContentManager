@@ -57,13 +57,13 @@
 				<div>&nbsp;</div>
 			</form>
 			<div>
-				<span id="login_errors" class="label label-important"></span>
 				<button id="user_sign_in_submit_button" class="button">sign
 					in</button>
 				<button id="user_sign_in_cancel_button" class="button">cancel</button>
+				<span id="login_errors" class="alert radius label"></span>
 			</div>
 		</div>
-		
+
 	</div>
 
 

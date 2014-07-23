@@ -3,7 +3,7 @@ jQuery(function($) {
 		log("function($)", "Entering");
 		setup();
 		// call this post setup
-		$(document).foundation('joyride', 'start');
+		// $(document).foundation('joyride', 'start');
 	} catch (err) {
 		handleError("function($)", err);
 	} finally {
@@ -25,9 +25,11 @@ function setup() {
 			altFormat : 'mm/dd/yy',
 			altField : '#contentgroup_end_date'
 		});
+		// set application and content group name
+		$('#application_name').html('Application:&nbsp;' + mSelectedApplication.name);
 
 		// $('#cm_action').bind('click', alert('clicked'));
-		getContentGroups();
+		getContentGroups(mSelectedApplication.id);
 	} catch (err) {
 		handleError("setup", err);
 	} finally {
@@ -64,7 +66,10 @@ function setupBreadcrumbs() {
 		$('#breadcrumbs')
 				.html(
 						lHtml
-								+ "<a id=\"breadcrumb_content_groups\" href=\"/contentgroups\">Content Groups</a>");
+								+ "<a id=\"breadcrumb_applications\" href=\"/applications\">Applications</a>"
+								+ "<a id=\"breadcrumb_content_groups\" href=\"/"
+								+ mSelectedApplication.id
+								+ "/contentgroups\">Content Groups</a>");
 
 	} catch (err) {
 		handleError("setupBreadcrumbs", err);
@@ -72,14 +77,37 @@ function setupBreadcrumbs() {
 		log("setupBreadcrumbs", "Exiting");
 	}
 }
-function getContentGroups() {
+function setSelectedApplication(id) {
+	log("setSelectedApplication", "Entering");
+	try {
+		// load entry info via sync call
+		var url = "/secured/application/" + id;
+		var jqxhr = $.ajax({
+			url : url,
+			type : "GET",
+			contentType : "application/json",
+			async : false,
+			statusCode : {
+				200 : function(application) {
+					mSelectedApplication = application;
+				}
+			}
+		});
+	} catch (err) {
+		handleError("setSelectedApplication", err);
+	} finally {
+		log("setSelectedApplication", "Entering");
+	}
+}
+
+function getContentGroups(pApplicationId) {
 	log("getContentGroups", "Entering");
 	try {
 		// open wait div
 		openWait();
 
 		var jqxhr = $.ajax({
-			url : "secured/contentgroups",
+			url : "/secured/" + pApplicationId + "/contentgroups",
 			type : "GET",
 			contentType : "application/json",
 			async : false,
@@ -109,8 +137,11 @@ function handleDisplayContentGroups_Callback(pContentGroups) {
 		var lInnerHtml = "<div class=\"row\"> <div class=\"large-6 columns\">";
 		for (var int = 0; int < pContentGroups.length; int++) {
 			var lContentGroup = pContentGroups[int];
-			lInnerHtml += "<p><span data-tooltip class=\"has-tip\" title=\"Click here to view the content in this Content Group\"><a href=\"javascript:void(0)\" onclick=\"displayContent("
-					+ lContentGroup.id + ")\"><strong>";
+			lInnerHtml += "<p><span data-tooltip class=\"has-tip\" title=\"Click here to view the content in this Content Group\"><a href=\"javascript:void(0)\" onclick=\"displayContent(";
+			lInnerHtml += lContentGroup.applicationId;
+			lInnerHtml += ", ";
+			lInnerHtml += lContentGroup.id;
+			lInnerHtml += ")\"><strong>";
 			lInnerHtml += lContentGroup.name;
 			lInnerHtml += "</strong></a></span></p>";
 
@@ -130,12 +161,13 @@ function handleDisplayContentGroups_Callback(pContentGroups) {
 	}
 }
 
-function displayContent(pContentGroupId) {
+function displayContent(pApplicationId, pContentGroupId) {
 	// load entry info via ajax
 	log("displayContent", "Entering");
 	try {
 
-		window.location.href = '/' + pContentGroupId + '/content';
+		window.location.href = '/' + pApplicationId + '/' + pContentGroupId
+				+ '/content';
 	} catch (err) {
 		handleError("displayContent", err);
 	} finally {
@@ -170,8 +202,8 @@ function updateContentGroupEnabled(pContentGroupId, pContentGroupEnabled,
 			async : false,
 			statusCode : {
 				201 : function() {
-					// getContentGroups();
-					window.location.href = '/contentgroups';
+					getContentGroups(mSelectedApplication.id);
+					// window.location.href = '/contentgroups';
 				},
 				400 : function(text) {
 					try {
@@ -252,6 +284,8 @@ function editContentGroup(id) {
 					statusCode : {
 						200 : function(contentgroup) {
 
+							$('#application_id')
+									.val(contentgroup.applicationId);
 							$('#contentgroup_id').val(contentgroup.id);
 							$('#contentgroup_name').val(contentgroup.name);
 							$('#contentgroup_description').val(
@@ -320,6 +354,7 @@ function newContentGroup() {
 			$('#content_groups_list').show();
 		});
 
+		$('#application_id').val(mSelectedApplication.id);
 		$('#contentgroup_id').val('');
 		$('#contentgroup_name').val('');
 		$('#contentgroup_description').val('');
@@ -354,6 +389,7 @@ function createContentGroup() {
 
 		var contentgroupObj = {
 			id : $('#contentgroup_id').val(),
+			applicationId : $('#application_id').val(),
 			name : $('#contentgroup_name').val(),
 			description : $('#contentgroup_description').val(),
 			startDateIso8601 : getTransferDate($('#contentgroup_start_date')
@@ -380,7 +416,7 @@ function createContentGroup() {
 			statusCode : {
 				201 : function() {
 					$('#content_group_create').hide();
-					getContentGroups();
+					getContentGroups(mSelectedApplication.id);
 					$('#content_groups_list').show();
 				},
 				400 : function(text) {
@@ -421,6 +457,7 @@ function updateContentGroup() {
 		var _date = new Date();
 		var contentgroupObj = {
 			id : $('#contentgroup_id').val(),
+			applicationId : $('#application_id').val(),
 			name : $('#contentgroup_name').val(),
 			description : $('#contentgroup_description').val(),
 			startDateIso8601 : getTransferDate($('#contentgroup_start_date')
@@ -442,7 +479,7 @@ function updateContentGroup() {
 			statusCode : {
 				200 : function() {
 					$('#content_group_create').hide();
-					getContentGroups();
+					getContentGroups(mSelectedApplication.id);
 					$('#content_groups_list').show();
 				},
 				400 : function(text) {
@@ -487,7 +524,7 @@ function deleteContentGroup(id) {
 						contentType : "application/json",
 						statusCode : {
 							200 : function() {
-								getContentGroups();
+								getContentGroups(mSelectedApplication.id);
 							}
 						}
 					});

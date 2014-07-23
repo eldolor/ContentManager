@@ -1,4 +1,4 @@
-package com.cm.accountmanagement.account.dao;
+package com.cm.accountmanagement.account;
 
 import java.util.List;
 import java.util.logging.Level;
@@ -10,15 +10,14 @@ import javax.persistence.NoResultException;
 
 import org.springframework.stereotype.Component;
 
-import com.cm.accountmanagement.account.entity.Account;
 import com.cm.util.PMF;
 
 @Component
-public class AccountDao {
+ class AccountDao {
 	private static final Logger LOGGER = Logger.getLogger(AccountDao.class
 			.getName());
 
-	public List<Account> getAccounts() {
+	 List<Account> getAccounts() {
 		PersistenceManager pm = null;
 
 		try {
@@ -37,7 +36,7 @@ public class AccountDao {
 		}
 	}
 
-	public Account getAccountByAccountName(String accountName) {
+	 Account getAccountByAccountName(String accountName) {
 		PersistenceManager pm = null;
 
 		try {
@@ -65,7 +64,7 @@ public class AccountDao {
 		}
 	}
 
-	public void saveAccount(Account account) {
+	 void saveAccount(Account account) {
 		PersistenceManager pm = null;
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -82,7 +81,7 @@ public class AccountDao {
 		}
 	}
 
-	public void updateAccount(Account account) {
+	 void updateAccount(Account account) {
 		PersistenceManager pm = null;
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -105,7 +104,7 @@ public class AccountDao {
 		}
 	}
 
-	public Account getAccount(Long id) {
+	 Account getAccount(Long id) {
 		PersistenceManager pm = null;
 
 		try {
@@ -127,7 +126,7 @@ public class AccountDao {
 		}
 	}
 
-	public void updateApiKey(Account account) {
+	 void updateApiKey(Account account) {
 		PersistenceManager pm = null;
 		try {
 			if (LOGGER.isLoggable(Level.INFO))

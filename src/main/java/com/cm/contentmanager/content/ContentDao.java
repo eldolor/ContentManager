@@ -12,11 +12,11 @@ import org.springframework.stereotype.Component;
 import com.cm.util.PMF;
 
 @Component
-public class ContentDao {
+ class ContentDao {
 	private static final Logger LOGGER = Logger.getLogger(ContentDao.class
 			.getName());
 
-	public void saveContent(Content content) {
+	 void saveContent(Content content) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering saveContent");
@@ -36,7 +36,7 @@ public class ContentDao {
 		}
 	}
 
-	public Content getContent(Long id) {
+	 Content getContent(Long id) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getContent");
@@ -58,7 +58,7 @@ public class ContentDao {
 		}
 	}
 
-	public List<Content> getAllContent(Long contentGroupId) {
+	 List<Content> getAllContent(Long applicationId, Long contentGroupId) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getAllContent");
@@ -67,10 +67,15 @@ public class ContentDao {
 			try {
 				pm = PMF.get().getPersistenceManager();
 				Query q = pm.newQuery(Content.class);
-				q.setFilter("contentGroupId == contentGroupIdParam && deleted == deletedParam");
-				q.declareParameters("Long contentGroupIdParam, Boolean deletedParam");
-				return (List<Content>) q.execute(contentGroupId, new Boolean(
-						false));
+				q.setFilter("applicationId == applicationIdParam && contentGroupId == contentGroupIdParam && deleted == deletedParam && enabled == enabledParam");
+				q.declareParameters("Long applicationIdParam, Long contentGroupIdParam, Boolean deletedParam, Boolean enabledParam");
+				q.setOrdering("timeUpdatedMs desc");
+				Object[] _array = new Object[4];
+				_array[0] = applicationId;
+				_array[1] = contentGroupId;
+				_array[2] = Boolean.valueOf(false);
+				_array[3] = Boolean.valueOf(true);
+				return (List<Content>) q.executeWithArray(_array);
 			} finally {
 				if (pm != null) {
 					pm.close();
@@ -82,7 +87,7 @@ public class ContentDao {
 		}
 	}
 
-	public List<Content> getAllContent(Long contentGroupId, String type) {
+	 List<Content> getAllContent(Long applicationId, Long contentGroupId, String type) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getAllContent");
@@ -94,14 +99,15 @@ public class ContentDao {
 			try {
 				pm = PMF.get().getPersistenceManager();
 				Query q = pm.newQuery(Content.class);
-				q.setFilter("contentGroupId == contentGroupIdParam && type == typeParam && deleted == deletedParam && enabled == enabledParam");
-				q.declareParameters("Long contentGroupIdParam, String typeParam, Boolean deletedParam, Boolean enabledParam");
+				q.setFilter("applicationId == applicationIdParam && contentGroupId == contentGroupIdParam && type == typeParam && deleted == deletedParam && enabled == enabledParam");
+				q.declareParameters("Long applicationIdParam, Long contentGroupIdParam, String typeParam, Boolean deletedParam, Boolean enabledParam");
 				q.setOrdering("enabled desc");
 				Object[] _array = new Object[4];
-				_array[0] = contentGroupId;
-				_array[1] = type;
-				_array[2] = new Boolean(false);
-				_array[3] = new Boolean(true);
+				_array[0] = applicationId;
+				_array[1] = contentGroupId;
+				_array[2] = type;
+				_array[3] = Boolean.valueOf(false);
+				_array[4] = Boolean.valueOf(true);
 				return (List<Content>) q.executeWithArray(_array);
 
 			} finally {
@@ -115,7 +121,7 @@ public class ContentDao {
 		}
 	}
 
-	public List<Content> getAllContent() {
+	 List<Content> getAllContent() {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getAllContent");
@@ -143,7 +149,7 @@ public class ContentDao {
 		}
 	}
 
-	public void deleteContent(Long id, Long timeUpdatedMs,
+	 void deleteContent(Long id, Long timeUpdatedMs,
 			Long timeUpdatedTimeZoneOffsetMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -173,7 +179,7 @@ public class ContentDao {
 		}
 	}
 
-	public void restoreContent(Long id, Long timeUpdatedMs,
+	 void restoreContent(Long id, Long timeUpdatedMs,
 			Long timeUpdatedTimeZoneOffsetMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -203,7 +209,7 @@ public class ContentDao {
 		}
 	}
 
-	public void deleteAllContent(Long contentGroupId, Long timeUpdatedMs,
+	 void deleteAllContent(Long applicationId, Long contentGroupId, Long timeUpdatedMs,
 			Long timeUpdatedTimeZoneOffsetMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -213,11 +219,11 @@ public class ContentDao {
 			try {
 				pm = PMF.get().getPersistenceManager();
 				Query q = pm.newQuery(Content.class);
-				q.setFilter("contentGroupId == contentGroupIdParam && deleted == deletedParam");
-				q.declareParameters("Long contentGroupIdParam, Boolean deletedParam");
+				q.setFilter("applicationId == applicationIdParam && contentGroupId == contentGroupIdParam && deleted == deletedParam");
+				q.declareParameters("Long applicationIdParam, Long contentGroupIdParam, Boolean deletedParam");
 				pm.deletePersistentAll();
 				List<Content> contents = (List<Content>) q.execute(
-						contentGroupId, new Boolean(false));
+						applicationId, contentGroupId, new Boolean(false));
 				for (Content content : contents) {
 					content.setDeleted(true);
 					content.setTimeUpdatedMs(timeUpdatedMs);
@@ -237,7 +243,7 @@ public class ContentDao {
 		}
 	}
 
-	public void updateContent(Content content) {
+	 void updateContent(Content content) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering updateContent");
@@ -247,7 +253,8 @@ public class ContentDao {
 				pm = PMF.get().getPersistenceManager();
 				Content _content = pm.getObjectById(Content.class,
 						content.getId());
-				_content.setContentGroupId(content.getContentGroupId());
+				//do not set applicationId or contentGroupId on update
+				
 				_content.setStartDateIso8601(content.getStartDateIso8601());
 				_content.setEndDateIso8601(content.getEndDateIso8601());
 				_content.setStartDateMs(content.getStartDateMs());

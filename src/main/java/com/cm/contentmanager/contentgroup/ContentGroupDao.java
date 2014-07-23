@@ -38,7 +38,7 @@ public class ContentGroupDao {
 		}
 	}
 
-	public ContentGroup getContentGroup(Long id) {
+	ContentGroup getContentGroup(Long id) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getContentGroup");
@@ -63,7 +63,7 @@ public class ContentGroupDao {
 		}
 	}
 
-	public List<ContentGroup> getAllContentGroups() {
+	List<ContentGroup> getContentGroupsByApplicationId(Long applicationId) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getAllContentGroups");
@@ -72,9 +72,9 @@ public class ContentGroupDao {
 			try {
 				pm = PMF.get().getPersistenceManager();
 				Query q = pm.newQuery(ContentGroup.class);
-				q.setFilter("deleted == deletedParam");
-				q.declareParameters("Boolean deletedParam");
-				return (List<ContentGroup>) q.execute(new Boolean(false));
+				q.setFilter("applicationId == applicationIdParam && deleted == deletedParam");
+				q.declareParameters("Long applicationIdParam, Boolean deletedParam");
+				return (List<ContentGroup>) q.execute(applicationId, new Boolean(false));
 			} finally {
 				if (pm != null) {
 					pm.close();
@@ -86,7 +86,7 @@ public class ContentGroupDao {
 		}
 	}
 
-	public List<ContentGroup> getContentGroupsByUserId(Long userId) {
+	 List<ContentGroup> getContentGroupsByUserId(Long userId) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getContentGroupsByUserId");
@@ -110,7 +110,7 @@ public class ContentGroupDao {
 		}
 	}
 
-	public List<ContentGroup> getContentGroupsByAccountId(Long userId) {
+	 List<ContentGroup> getContentGroupsByAccountId(Long userId) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getContentGroupsByAccountId");
@@ -134,7 +134,7 @@ public class ContentGroupDao {
 		}
 	}
 
-	public void deleteContentGroup(Long id, Long timeUpdatedMs,
+	 void deleteContentGroup(Long id, Long timeUpdatedMs,
 			Long timeUpdatedTimeZoneOffsetMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -167,7 +167,7 @@ public class ContentGroupDao {
 		}
 	}
 
-	public void restoreContentGroup(Long id, Long timeUpdatedMs,
+	 void restoreContentGroup(Long id, Long timeUpdatedMs,
 			Long timeUpdatedTimeZoneOffsetMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -200,7 +200,7 @@ public class ContentGroupDao {
 		}
 	}
 
-	public void updateContentGroup(ContentGroup contentGroup) {
+	 void updateContentGroup(ContentGroup contentGroup) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering updateContentGroup");
@@ -210,6 +210,7 @@ public class ContentGroupDao {
 				pm = PMF.get().getPersistenceManager();
 				ContentGroup _contentGroup = pm.getObjectById(
 						ContentGroup.class, contentGroup.getId());
+				//do not update applicationId
 				_contentGroup.setDescription(contentGroup.getDescription());
 				_contentGroup.setName(contentGroup.getName());
 				_contentGroup.setStartDateIso8601(contentGroup

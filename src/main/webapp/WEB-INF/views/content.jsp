@@ -26,7 +26,8 @@
 <script type="text/javascript" src="/resources/js/cm.content.js"></script>
 <!-- End Custom -->
 <script type="text/javascript">
-	setSelectedContentGroup(${contentGroupId});
+setSelectedApplication(${applicationId});
+setSelectedContentGroup(${contentGroupId});
 </script>
 
 </head>
@@ -42,6 +43,7 @@
 
 		<div class="large-9 push-3 columns" id="content_area">
 			<div class="row">
+				<span id="application_name" class="secondary radius label"></span>
 				<span id="contentgroup_name" class="secondary radius label"></span>
 			</div>
 			<div>&nbsp;</div>
@@ -51,6 +53,7 @@
 				<h3 id="contentModalLabel">Content Setup</h3>
 				<form id="contentForm" name="contentForm">
 					<input type="hidden" id="content_id" name="content_id" /> <input
+						type="hidden" id="application_id" name="application_id" /> <input
 						type="hidden" id="contentgroup_id" name="contentgroup_id" /><input
 						type="hidden" id="content_uri" name="content_uri" /><input
 						type="hidden" id="content_type" name="content_type" />
@@ -127,7 +130,8 @@
 					</div> -->
 					<div class="row">
 						<div class="large-12 columns">
-							<a id="upload_content" href="javascript:void(0);">Click here to upload content</a>
+							<a id="upload_content" href="javascript:void(0);">Click here
+								to upload content</a>
 							<div id="content_dropbox">
 								<span class="secondary radius label">Drop content here to
 									upload</span>

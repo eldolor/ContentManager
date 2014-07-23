@@ -32,8 +32,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.cm.usermanagement.user.entity.User;
-import com.cm.usermanagement.user.service.UserService;
+import com.cm.usermanagement.user.User;
+import com.cm.usermanagement.user.UserService;
 import com.cm.util.ValidationError;
 
 @Controller
@@ -47,11 +47,13 @@ public class ContentGroupController {
 			.getLogger(ContentGroupController.class.getName());
 
 	/**
+	 * Entry point
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value = "/contentgroups", method = RequestMethod.GET)
-	public ModelAndView displayContentGroups(ModelMap model) {
+	@RequestMapping(value = "/{applicationId}/contentgroups", method = RequestMethod.GET)
+	public ModelAndView displayContentGroups(@PathVariable Long applicationId,
+			ModelMap model) {
 		if (LOGGER.isLoggable(Level.INFO))
 			LOGGER.info("Entering displayContentGroups");
 		try {
@@ -59,6 +61,47 @@ public class ContentGroupController {
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting displayContentGroups");
+		}
+	}
+	
+	/**
+	 * 
+	 * @param campaignUuid
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/secured/{applicationId}/contentgroups", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody
+	List<ContentGroup> getContentGroups(@PathVariable Long applicationId,
+			HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering getContentGroups");
+			User user = userService.getLoggedInUser();
+			List<ContentGroup> contentGroups = null;
+
+			if (user.getRole().equals(User.ROLE_SUPER_ADMIN))
+				contentGroups = contentGroupService
+						.getContentGroupsByApplicationId(applicationId);
+			else if (user.getRole().equals(User.ROLE_ADMIN))
+				contentGroups = contentGroupService
+						.getContentGroupsByAccountId(user.getAccountId());
+			else if (user.getRole().equals(User.ROLE_USER))
+				contentGroups = contentGroupService
+						.getContentGroupsByUserId(user.getId());
+
+			if (contentGroups != null) {
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info(contentGroups.size() + " Content Groups found");
+			} else {
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("No Content Groups Found!");
+			}
+			response.setStatus(HttpServletResponse.SC_OK);
+			return contentGroups;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting getContentGroups");
 		}
 	}
 
@@ -83,44 +126,6 @@ public class ContentGroupController {
 		}
 	}
 
-	/**
-	 * 
-	 * @param campaignUuid
-	 * @param response
-	 * @return
-	 */
-	@RequestMapping(value = "/secured/contentgroups", method = RequestMethod.GET, produces = "application/json")
-	public @ResponseBody
-	List<ContentGroup> getContentGroups(HttpServletResponse response) {
-		try {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering getContentGroups");
-			User user = userService.getLoggedInUser();
-			List<ContentGroup> contentGroups = null;
-
-			if (user.getRole().equals(User.ROLE_SUPER_ADMIN))
-				contentGroups = contentGroupService.getAllContentGroups();
-			else if (user.getRole().equals(User.ROLE_ADMIN))
-				contentGroups = contentGroupService
-						.getContentGroupsByAccountId(user.getAccountId());
-			else if (user.getRole().equals(User.ROLE_USER))
-				contentGroups = contentGroupService
-						.getContentGroupsByUserId(user.getId());
-
-			if (contentGroups != null) {
-				if (LOGGER.isLoggable(Level.INFO))
-					LOGGER.info(contentGroups.size() + " Content Groups found");
-			} else {
-				if (LOGGER.isLoggable(Level.INFO))
-					LOGGER.info("No Content Groups Found!");
-			}
-			response.setStatus(HttpServletResponse.SC_OK);
-			return contentGroups;
-		} finally {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting getContentGroups");
-		}
-	}
 
 	/**
 	 * 
@@ -210,8 +215,9 @@ public class ContentGroupController {
 			errors.add(error);
 			LOGGER.log(Level.WARNING, "Name cannot be blank");
 		}
-		if (((contentGroup.getStartDateIso8601() != null) && (contentGroup.getStartDateIso8601()
-				.length() == 0)) || (contentGroup.getStartDateIso8601() == null)) {
+		if (((contentGroup.getStartDateIso8601() != null) && (contentGroup
+				.getStartDateIso8601().length() == 0))
+				|| (contentGroup.getStartDateIso8601() == null)) {
 			ValidationError error = new ValidationError();
 			error.setCode("start date");
 			error.setDescription("Start Date cannot be blank");

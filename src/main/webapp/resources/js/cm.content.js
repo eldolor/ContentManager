@@ -3,7 +3,7 @@ jQuery(function($) {
 		log("function($)", "Entering");
 		setup();
 		// call this post setup
-//		$(document).foundation('joyride', 'start');
+		// $(document).foundation('joyride', 'start');
 	} catch (err) {
 		handleError("function($)", err);
 	} finally {
@@ -25,9 +25,10 @@ function setup() {
 			altFormat : 'mm/dd/yy',
 			altField : '#content_end_date'
 		});
-		// set content group name
-		$('#contentgroup_name').html(
-				'Content Group:&nbsp;' + mSelectedContentGroup.name);
+		// set application and content group name
+		$('#application_name').html('Application:&nbsp;' + mSelectedApplication.name);
+		$('#contentgroup_name').html('Content Group:&nbsp;' + mSelectedContentGroup.name);
+		
 		$("#jquery_jplayer_1").jPlayer({
 			swfPath : "/resources/js/jquery",
 			supplied : "webmv, ogv, m4v",
@@ -50,7 +51,7 @@ function setup() {
 											"<span class=\"message\">Drop content here to upload</span>");
 						});
 
-		getContent(mSelectedContentGroup.id);
+		getContent(mSelectedApplication.id, mSelectedContentGroup.id);
 	} catch (err) {
 		handleError("setup", err);
 	} finally {
@@ -86,8 +87,9 @@ function setupBreadcrumbs() {
 		$('#breadcrumbs')
 				.html(
 						lHtml
-								+ "<a id=\"breadcrumb_content_groups\" href=\"/contentgroups\">Content Groups</a>"
-								+ "<a id=\"breadcrumb_content\" href=\"#\">Content</a>");
+								+ "<a id=\"breadcrumb_applications\" href=\"/applications\">Applications</a>"
+								+ "<a id=\"breadcrumb_content_groups\" href=\"/" + mSelectedApplication.id + "/contentgroups\">Content Groups</a>"
+								+ "<a id=\"breadcrumb_content_groups\" href=\"/" + mSelectedApplication.id + "/" + mSelectedContentGroup.id+"/content\">Content</a>");
 
 	} catch (err) {
 		handleError("setupBreadcrumbs", err);
@@ -95,7 +97,28 @@ function setupBreadcrumbs() {
 		log("setupBreadcrumbs", "Exiting");
 	}
 }
-
+function setSelectedApplication(id) {
+	log("setSelectedApplication", "Entering");
+	try {
+		// load entry info via sync call
+		var url = "/secured/application/" + id;
+		var jqxhr = $.ajax({
+			url : url,
+			type : "GET",
+			contentType : "application/json",
+			async : false,
+			statusCode : {
+				200 : function(application) {
+					mSelectedApplication = application;
+				}
+			}
+		});
+	} catch (err) {
+		handleError("setSelectedApplication", err);
+	} finally {
+		log("setSelectedApplication", "Entering");
+	}
+}
 function setSelectedContentGroup(id) {
 	log("selectedContentGroup", "Entering");
 	try {
@@ -119,12 +142,13 @@ function setSelectedContentGroup(id) {
 	}
 }
 
-function getContent(pContentGroupId) {
+function getContent(pApplicationId, pContentGroupId) {
 	log("getContent", "Entering");
 	try {
 
 		var jqxhr = $.ajax({
-			url : "/secured/" + pContentGroupId + "/content/",
+			url : "/secured/" + pApplicationId + '/' + pContentGroupId
+					+ "/content/",
 			type : "GET",
 			contentType : "application/json",
 			async : false,
@@ -282,6 +306,8 @@ function editContent(id) {
 				200 : function(content) {
 
 					$('#content_id').val(content.id);
+					//set the application id
+					$('#application_id').val(content.applicationId);
 					// set the content group id
 					$('#contentgroup_id').val(content.contentGroupId);
 
@@ -395,7 +421,8 @@ function viewContent(pContentId) {
 											}
 										});
 
-								$('#view_image_container').foundation('reveal', 'open');
+								$('#view_image_container').foundation('reveal',
+										'open');
 							} else if (content.type == 'video') {
 								var _url = "/dropbox/" + content.uri;
 								log("viewVideo", _url);
@@ -446,7 +473,8 @@ function viewContent(pContentId) {
 function newContent() {
 	log("newContent", "Entering");
 	try {
-
+		// set the application id
+		$('#application_id').val(mSelectedApplication.id);
 		// set the content group id
 		$('#contentgroup_id').val(mSelectedContentGroup.id);
 		$('#content_id').val('');
@@ -524,6 +552,7 @@ function createContent() {
 
 		var contentObj = {
 			id : $('#content_id').val(),
+			applicationId : $('#application_id').val(),
 			contentGroupId : $('#contentgroup_id').val(),
 			name : $('#content_name').val(),
 			description : $('#content_description').val(),
@@ -552,7 +581,8 @@ function createContent() {
 			statusCode : {
 				201 : function() {
 					$('#content_create').hide();
-					getContent(mSelectedContentGroup.id);
+					getContent(mSelectedApplication.id,
+							mSelectedContentGroup.id);
 					$('#content_list').show();
 				},
 				400 : function(text) {
@@ -598,6 +628,7 @@ function updateContent() {
 	try {
 		var contentObj = {
 			id : $('#content_id').val(),
+			applicationId : $('#application_id').val(),
 			contentGroupId : $('#contentgroup_id').val(),
 			name : $('#content_name').val(),
 			description : $('#content_description').val(),
@@ -621,7 +652,8 @@ function updateContent() {
 			statusCode : {
 				200 : function() {
 					$('#content_create').hide();
-					getContent(mSelectedContentGroup.id);
+					getContent(mSelectedApplication.id,
+							mSelectedContentGroup.id);
 					$('#content_list').show();
 				},
 				400 : function(text) {
@@ -665,7 +697,8 @@ function deleteContent(id) {
 						contentType : "application/json",
 						statusCode : {
 							200 : function() {
-								getContent(mSelectedContentGroup.id);
+								getContent(mSelectedApplication.id,
+										mSelectedContentGroup.id);
 							}
 						}
 					});

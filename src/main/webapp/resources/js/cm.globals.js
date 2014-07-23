@@ -1,5 +1,6 @@
 //Global Variables
 var mDebugEnabled = 'Y';
+var mSelectedApplication;
 var mSelectedContentGroup;
 var mSelectedContent;
 

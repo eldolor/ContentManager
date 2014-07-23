@@ -15,6 +15,7 @@ function setup() {
 	try {
 		setupLeftNavBar();
 		setupBreadcrumbs();
+		$('#login_errors').hide();
 
 		$('#user_sign_in_submit_button').unbind();
 		$('#user_sign_in_submit_button').bind('click', function() {
@@ -87,6 +88,7 @@ function login() {
 				400 : function(text) {
 					try {
 						$('#login_errors').html(getErrorMessages(text));
+						$('#login_errors').show();
 					} catch (err) {
 						handleError("login", err);
 					}
@@ -138,6 +140,7 @@ function createAccount() {
 					try {
 						$('#create_account_errors')
 								.html(getErrorMessages(text));
+						$('#create_account_errors').show();
 					} catch (err) {
 						handleError("createAccount", err);
 					}

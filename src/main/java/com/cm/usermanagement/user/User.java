@@ -1,4 +1,4 @@
-package com.cm.usermanagement.user.entity;
+package com.cm.usermanagement.user;
 
 import java.io.Serializable;
 import java.util.Collection;

@@ -46,8 +46,7 @@ public class ContentServerService {
 						lApplicationId, lContentGroup.getId())));
 			}
 
-			//TODO: flatten out event location while persisting contentRequest
-			//contentServerDao.saveContentRequest(pContentRequest);
+			contentServerDao.saveContentRequest(pContentRequest);
 			return lContents;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))

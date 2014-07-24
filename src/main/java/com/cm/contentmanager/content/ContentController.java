@@ -32,8 +32,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.cm.contentmanager.contentgroup.ContentGroup;
-import com.cm.contentmanager.contentgroup.ContentGroupService;
 import com.cm.usermanagement.user.UserService;
 import com.cm.util.ValidationError;
 

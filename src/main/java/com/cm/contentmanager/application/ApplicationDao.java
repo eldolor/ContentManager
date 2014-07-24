@@ -68,7 +68,6 @@ class ApplicationDao {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getApplicationByTrackingId");
 			PersistenceManager pm = null;
-			Application lApplication = null;
 
 			try {
 				pm = PMF.get().getPersistenceManager();
@@ -77,9 +76,11 @@ class ApplicationDao {
 				q.declareParameters("String trackingIdParam, Boolean deletedParam");
 				List<Application> lApplications = (List<Application>) q
 						.execute(trackingId, new Boolean(false));
-				lApplication = (lApplications != null) ? lApplications.get(0)
-						: null;
-				return lApplication;
+				if (lApplications != null && (!lApplications.isEmpty()))
+					return lApplications.get(0);
+				else
+					return null;
+
 			} catch (JDOObjectNotFoundException e) {
 				LOGGER.log(Level.WARNING, e.getMessage());
 				return null;
@@ -273,8 +274,8 @@ class ApplicationDao {
 				pm = PMF.get().getPersistenceManager();
 				Application lApplication = pm.getObjectById(Application.class,
 						pApplication.getId());
-				//do not update trackingId
-				
+				// do not update trackingId
+
 				lApplication.setDescription(pApplication.getDescription());
 				lApplication.setName(pApplication.getName());
 				lApplication.setEnabled(pApplication.isEnabled());

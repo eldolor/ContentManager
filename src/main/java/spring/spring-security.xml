@@ -8,25 +8,39 @@
 	<!-- SECURITY -->
 	<security:global-method-security
 		secured-annotations="enabled" />
+	<security:http pattern="/resources/**" security="none" />
+	<security:http pattern="/login**" security="none" />
+	<security:http pattern="/dropbox**" security="none" />
+	<security:http pattern="/contentserver**" security="none" />
+	<security:http pattern="/eventtracker**" security="none" />
+
 
 	<security:http auto-config="true" disable-url-rewriting="true">
-		<!-- Restrict URLs based on role -->
-<!-- 		<security:intercept-url pattern="/am/**"
+
+		<!-- Restrict URLs based on role. evaluated in the order listed and the 
+			first match will be used. So you must put the most specific matches at the 
+			top. -->
+		<security:intercept-url pattern="/am/**"
 			access="ROLE_SUPER_ADMIN" />
 		<security:intercept-url pattern="/um/**"
 			access="ROLE_ADMIN, ROLE_SUPER_ADMIN" />
-		<security:intercept-url pattern="/applications/**"
-			access="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER" />
-		<security:intercept-url pattern="/resources/**"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<security:intercept-url pattern="/login*"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
- -->		<security:intercept-url pattern="/**"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-
 		<security:intercept-url pattern="/secured/**"
-			access="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER" />
-
+			access="ROLE_SUPER_ADMIN, 
+			ROLE_ADMIN, ROLE_USER" />
+		<security:intercept-url pattern="/logout**"
+			access="ROLE_SUPER_ADMIN, 
+			ROLE_ADMIN, ROLE_USER" />
+		<security:intercept-url pattern="/applications"
+			access="ROLE_SUPER_ADMIN, 
+			ROLE_ADMIN, ROLE_USER" />
+		<security:intercept-url pattern="/**/content"
+			access="ROLE_SUPER_ADMIN, 
+			ROLE_ADMIN, ROLE_USER" />
+		<security:intercept-url pattern="/**/contentgroups"
+			access="ROLE_SUPER_ADMIN, 
+			ROLE_ADMIN, ROLE_USER" />
+		<security:intercept-url pattern="/**"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<security:anonymous granted-authority="IS_AUTHENTICATED_ANONYMOUSLY" />
 
 		<!-- Override default login and logout pages -->
@@ -56,13 +70,15 @@
 		<property name="userDetailsService" ref="springAuthenticator" />
 		<property name="key" value="rememberMeKey" />
 	</bean>
-	<bean id="encoder"
+	<bean id="standardPasswordEncoder"
 		class="org.springframework.security.crypto.password.StandardPasswordEncoder">
 	</bean>
+	<bean name="bcryptEncoder"
+		class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
 	<security:authentication-manager alias="authManager">
 		<security:authentication-provider
 			user-service-ref="springAuthenticator">
-			<security:password-encoder ref="encoder" />
+			<security:password-encoder ref="bcryptEncoder" />
 		</security:authentication-provider>
 	</security:authentication-manager>
 

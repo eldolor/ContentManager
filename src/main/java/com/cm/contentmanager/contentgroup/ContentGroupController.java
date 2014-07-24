@@ -48,6 +48,7 @@ public class ContentGroupController {
 
 	/**
 	 * Entry point
+	 * 
 	 * @param model
 	 * @return
 	 */
@@ -63,7 +64,7 @@ public class ContentGroupController {
 				LOGGER.info("Exiting displayContentGroups");
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @param campaignUuid
@@ -125,7 +126,6 @@ public class ContentGroupController {
 				LOGGER.info("Exiting getContentGroup");
 		}
 	}
-
 
 	/**
 	 * 

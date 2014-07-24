@@ -15,6 +15,7 @@
 
 package com.cm.contentserver;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -46,7 +47,8 @@ public class ContentServerController {
 	 */
 	@RequestMapping(value = "/contentserver/content", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	public @ResponseBody
-	List<Content> getContent(@RequestBody ContentRequest pContentRequest,
+	List<com.cm.contentserver.transfer.Content> getContent(
+			@RequestBody ContentRequest pContentRequest,
 			HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -57,8 +59,8 @@ public class ContentServerController {
 				return null;
 			}
 
-			List<Content> contentList = contentServerService
-					.getContent(pContentRequest);
+			List<com.cm.contentserver.transfer.Content> contentList = convertToTransferFormat(contentServerService
+					.getContent(pContentRequest));
 			if (contentList != null) {
 				if (LOGGER.isLoggable(Level.INFO))
 					LOGGER.info(contentList.size() + " Content found");
@@ -73,11 +75,11 @@ public class ContentServerController {
 				LOGGER.info("Exiting getContent");
 		}
 	}
-	
+
 	@RequestMapping(value = "/contentserver/content/{trackingId}", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody
-	List<Content> getContentTest(@PathVariable String trackingId,
-			HttpServletResponse response) {
+	List<com.cm.contentserver.transfer.Content> getContentTest(
+			@PathVariable String trackingId, HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getContent");
@@ -88,8 +90,8 @@ public class ContentServerController {
 			}
 			ContentRequest lContentRequest = new ContentRequest();
 			lContentRequest.setApplicationId(trackingId);
-			List<Content> contentList = contentServerService
-					.getContent(lContentRequest);
+			List<com.cm.contentserver.transfer.Content> contentList = convertToTransferFormat(contentServerService
+					.getContent(lContentRequest));
 			if (contentList != null) {
 				if (LOGGER.isLoggable(Level.INFO))
 					LOGGER.info(contentList.size() + " Content found");
@@ -98,12 +100,36 @@ public class ContentServerController {
 					LOGGER.info("No Content Found!");
 			}
 			response.setStatus(HttpServletResponse.SC_OK);
-			//TODO: convert to transfer format and remove any unnecessary/sensitive fields
+			// TODO: convert to transfer format and remove any
+			// unnecessary/sensitive fields
 			return contentList;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting getContent");
 		}
+	}
+
+	private List<com.cm.contentserver.transfer.Content> convertToTransferFormat(
+			List<Content> pContentList) {
+		List<com.cm.contentserver.transfer.Content> lContentListTransferFormat = new ArrayList<com.cm.contentserver.transfer.Content>();
+		for (Content lContent : pContentList) {
+			lContentListTransferFormat.add(convertToTransferFormat(lContent));
+		}
+		return lContentListTransferFormat;
+	}
+
+	private com.cm.contentserver.transfer.Content convertToTransferFormat(
+			Content pContent) {
+		com.cm.contentserver.transfer.Content lContent = new com.cm.contentserver.transfer.Content();
+		lContent.setApplicationId(pContent.getApplicationId());
+		lContent.setId(pContent.getId());
+		lContent.setName(pContent.getName());
+		lContent.setTimeCreatedMs(pContent.getTimeCreatedMs());
+		lContent.setTimeUpdatedMs(pContent.getTimeUpdatedMs());
+		lContent.setType(pContent.getType());
+		lContent.setUri(pContent.getUri());
+		return lContent;
+
 	}
 
 }

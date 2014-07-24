@@ -32,8 +32,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.cm.accountmanagement.account.Account;
-import com.cm.accountmanagement.account.AccountService;
 import com.cm.usermanagement.user.User;
 import com.cm.usermanagement.user.UserService;
 import com.cm.util.ValidationError;
@@ -190,7 +188,8 @@ public class ApplicationController {
 					.getApplicationsByAccountId(lAccountId, true);
 
 			String lTrackingId = "AI_" + lAccountId + "_"
-					+ (lApplications.size() + 1); //the collection will have size 0 at first
+					+ (lApplications.size() + 1); // the collection will have
+													// size 0 at first
 
 			return lTrackingId;
 

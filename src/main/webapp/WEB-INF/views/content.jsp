@@ -39,12 +39,13 @@ setSelectedContentGroup(${contentGroupId});
 	<br>
 	<jsp:include page="breadcrumbs.jsp"></jsp:include>
 	<br>
+
 	<div class="row">
 
 		<div class="large-9 push-3 columns" id="content_area">
 			<div class="row">
-				<span id="application_name" class="secondary radius label"></span>
-				<span id="contentgroup_name" class="secondary radius label"></span>
+				<span id="application_name" class="secondary radius label"></span> <span
+					id="contentgroup_name" class="secondary radius label"></span>
 			</div>
 			<div>&nbsp;</div>
 			<div id="content_list"></div>
@@ -148,7 +149,6 @@ setSelectedContentGroup(${contentGroupId});
 		</div>
 
 		<jsp:include page="left_nav_bar.jsp" flush="true"></jsp:include>
-
 
 	</div>
 

@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.cm.accountmanagement.account.Account;
+import com.cm.usermanagement.user.User;
 import com.cm.usermanagement.user.UserService;
 import com.cm.util.Util;
 import com.cm.util.ValidationError;
@@ -26,6 +29,8 @@ import com.cm.util.ValidationError;
 public class UserManagementController {
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private com.cm.accountmanagement.account.AccountService accountService;
 
 	private static final Logger LOGGER = Logger
 			.getLogger(UserManagementController.class.getName());
@@ -47,12 +52,83 @@ public class UserManagementController {
 	}
 
 	/**
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/signup", method = RequestMethod.GET)
+	public ModelAndView displaySignup(ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering displaySignup");
+		try {
+			return new ModelAndView("signup", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting displaySignup");
+		}
+	}
+
+	@RequestMapping(value = "/signup", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	public @ResponseBody
+	List<ValidationError> doSignup(
+			@RequestBody com.cm.usermanagement.user.transfer.User userAccount,
+			HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering doSignup");
+			List<ValidationError> errors = validateOnCreate(userAccount);
+			if (!errors.isEmpty()) {
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				return errors;
+			} else {
+				long lTime = System.currentTimeMillis();
+				Account lAccount = new Account();
+				lAccount.setName(userAccount.getUserName());
+				lAccount.setDescription("This is the default account for the user");
+				lAccount.setTimeCreatedMs(lTime);
+				lAccount.setTimeCreatedTimeZoneOffsetMs(0L);
+				lAccount.setTimeUpdatedMs(lTime);
+				lAccount.setTimeUpdatedTimeZoneOffsetMs(0L);
+				accountService.saveAccount(lAccount);
+
+				lAccount = accountService.getAccountByAccountName(userAccount
+						.getUserName());
+
+				com.cm.usermanagement.user.User lUser = new com.cm.usermanagement.user.User();
+				lUser.setUsername(userAccount.getUserName());
+				// userName is the email address
+				lUser.setEmail(userAccount.getUserName());
+				lUser.setPassword(new BCryptPasswordEncoder()
+						.encode(userAccount.getPassword()));
+				lUser.setRole(User.ROLE_USER);
+				// default to true
+				lUser.setEnabled(true);
+				lUser.setAccountId(lAccount.getId());
+				lUser.setTimeCreatedMs(userAccount.getTimeCreatedMs());
+				lUser.setTimeCreatedTimeZoneOffsetMs(userAccount
+						.getTimeCreatedTimeZoneOffsetMs());
+				lUser.setTimeUpdatedMs(userAccount.getTimeUpdatedMs());
+				lUser.setTimeUpdatedTimeZoneOffsetMs(userAccount
+						.getTimeUpdatedTimeZoneOffsetMs());
+
+				userService.saveUser(lUser);
+				response.setStatus(HttpServletResponse.SC_CREATED);
+				return null;
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting doSignup");
+		}
+
+	}
+
+	/**
 	 * @param response
 	 * @return
 	 */
 	@RequestMapping(value = "/secured/loggedinuser", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody
-	com.cm.usermanagement.user.transfer.User getLoggedInUser(HttpServletResponse response) {
+	com.cm.usermanagement.user.transfer.User getLoggedInUser(
+			HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getUser");
@@ -89,7 +165,8 @@ public class UserManagementController {
 				lUser.setEmail(userAccount.getEmail());
 				lUser.setFirstName(userAccount.getFirstName());
 				lUser.setLastName(userAccount.getLastName());
-				lUser.setPassword(new StandardPasswordEncoder().encode(userAccount.getPassword()));
+				lUser.setPassword(new BCryptPasswordEncoder()
+						.encode(userAccount.getPassword()));
 				lUser.setTimeUpdatedMs(userAccount.getTimeUpdatedMs());
 				lUser.setTimeUpdatedTimeZoneOffsetMs(userAccount
 						.getTimeUpdatedTimeZoneOffsetMs());
@@ -111,7 +188,8 @@ public class UserManagementController {
 	 */
 	@RequestMapping(value = "/um/users", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody
-	List<com.cm.usermanagement.user.transfer.User> getUsers(HttpServletResponse response) {
+	List<com.cm.usermanagement.user.transfer.User> getUsers(
+			HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getUsers");
@@ -193,7 +271,8 @@ public class UserManagementController {
 				}
 
 				lUser.setUsername(user.getUserName());
-				lUser.setPassword(new StandardPasswordEncoder().encode(user.getPassword()));
+				lUser.setPassword(new StandardPasswordEncoder().encode(user
+						.getPassword()));
 
 				lUser.setTimeCreatedMs(user.getTimeCreatedMs());
 				lUser.setTimeCreatedTimeZoneOffsetMs(user
@@ -233,7 +312,8 @@ public class UserManagementController {
 				lUser.setLastName(user.getLastName());
 				lUser.setEnabled(user.getEnabled());
 				lUser.setUsername(user.getUserName());
-				lUser.setPassword(new StandardPasswordEncoder().encode(user.getPassword()));
+				lUser.setPassword(new StandardPasswordEncoder().encode(user
+						.getPassword()));
 				if (user.getRole().equals("admin")) {
 					lUser.setRole(com.cm.usermanagement.user.User.ROLE_ADMIN);
 					// use the associated account id. only super admins can
@@ -271,27 +351,27 @@ public class UserManagementController {
 			LOGGER.info("Entering validate");
 		List<ValidationError> errors = new ArrayList<ValidationError>();
 		// Verify user info submission
-		if (Util.isEmpty(userAccount.getFirstName())) {
-			ValidationError error = new ValidationError();
-			error.setCode("firstName");
-			error.setDescription("First Name cannot be blank");
-			errors.add(error);
-			LOGGER.log(Level.WARNING, "First Name cannot be blank");
-		}
-		if (Util.isEmpty(userAccount.getLastName())) {
-			ValidationError error = new ValidationError();
-			error.setCode("lastName");
-			error.setDescription("Last Name cannot be blank");
-			errors.add(error);
-			LOGGER.log(Level.WARNING, "Last Name cannot be blank");
-		}
-		if (Util.isEmpty(userAccount.getEmail())) {
-			ValidationError error = new ValidationError();
-			error.setCode("email");
-			error.setDescription("Email cannot be blank");
-			errors.add(error);
-			LOGGER.log(Level.WARNING, "Email cannot be blank");
-		}
+		// if (Util.isEmpty(userAccount.getFirstName())) {
+		// ValidationError error = new ValidationError();
+		// error.setCode("firstName");
+		// error.setDescription("First Name cannot be blank");
+		// errors.add(error);
+		// LOGGER.log(Level.WARNING, "First Name cannot be blank");
+		// }
+		// if (Util.isEmpty(userAccount.getLastName())) {
+		// ValidationError error = new ValidationError();
+		// error.setCode("lastName");
+		// error.setDescription("Last Name cannot be blank");
+		// errors.add(error);
+		// LOGGER.log(Level.WARNING, "Last Name cannot be blank");
+		// }
+		// if (Util.isEmpty(userAccount.getEmail())) {
+		// ValidationError error = new ValidationError();
+		// error.setCode("email");
+		// error.setDescription("Email cannot be blank");
+		// errors.add(error);
+		// LOGGER.log(Level.WARNING, "Email cannot be blank");
+		// }
 		if (Util.isEmpty(userAccount.getUserName())) {
 			ValidationError error = new ValidationError();
 			error.setCode("username");
@@ -306,13 +386,13 @@ public class UserManagementController {
 			errors.add(error);
 			LOGGER.log(Level.WARNING, "Password cannot be blank");
 		}
-		if (!userAccount.getPassword().equals(userAccount.getPassword2())) {
-			ValidationError error = new ValidationError();
-			error.setCode("password");
-			error.setDescription("Passwords do not match");
-			errors.add(error);
-			LOGGER.log(Level.WARNING, "Passwords do not match");
-		}
+		// if (!userAccount.getPassword().equals(userAccount.getPassword2())) {
+		// ValidationError error = new ValidationError();
+		// error.setCode("password");
+		// error.setDescription("Passwords do not match");
+		// errors.add(error);
+		// LOGGER.log(Level.WARNING, "Passwords do not match");
+		// }
 		// check to make sure we don't have a user account already
 		com.cm.usermanagement.user.User user = userService
 				.getUserByUserName(userAccount.getUserName());
@@ -334,27 +414,27 @@ public class UserManagementController {
 			LOGGER.info("Entering validate");
 		List<ValidationError> errors = new ArrayList<ValidationError>();
 		// Verify user info submission
-		if (Util.isEmpty(userAccount.getFirstName())) {
-			ValidationError error = new ValidationError();
-			error.setCode("firstName");
-			error.setDescription("First Name cannot be blank");
-			errors.add(error);
-			LOGGER.log(Level.WARNING, "First Name cannot be blank");
-		}
-		if (Util.isEmpty(userAccount.getLastName())) {
-			ValidationError error = new ValidationError();
-			error.setCode("lastName");
-			error.setDescription("Last Name cannot be blank");
-			errors.add(error);
-			LOGGER.log(Level.WARNING, "Last Name cannot be blank");
-		}
-		if (Util.isEmpty(userAccount.getEmail())) {
-			ValidationError error = new ValidationError();
-			error.setCode("email");
-			error.setDescription("Email cannot be blank");
-			errors.add(error);
-			LOGGER.log(Level.WARNING, "Email cannot be blank");
-		}
+		// if (Util.isEmpty(userAccount.getFirstName())) {
+		// ValidationError error = new ValidationError();
+		// error.setCode("firstName");
+		// error.setDescription("First Name cannot be blank");
+		// errors.add(error);
+		// LOGGER.log(Level.WARNING, "First Name cannot be blank");
+		// }
+		// if (Util.isEmpty(userAccount.getLastName())) {
+		// ValidationError error = new ValidationError();
+		// error.setCode("lastName");
+		// error.setDescription("Last Name cannot be blank");
+		// errors.add(error);
+		// LOGGER.log(Level.WARNING, "Last Name cannot be blank");
+		// }
+		// if (Util.isEmpty(userAccount.getEmail())) {
+		// ValidationError error = new ValidationError();
+		// error.setCode("email");
+		// error.setDescription("Email cannot be blank");
+		// errors.add(error);
+		// LOGGER.log(Level.WARNING, "Email cannot be blank");
+		// }
 		if (Util.isEmpty(userAccount.getUserName())) {
 			ValidationError error = new ValidationError();
 			error.setCode("userName");
@@ -362,15 +442,22 @@ public class UserManagementController {
 			errors.add(error);
 			LOGGER.log(Level.WARNING, "Username cannot be blank");
 		}
-		if ((!Util.isEmpty(userAccount.getPassword()))
-				&& (!userAccount.getPassword().equals(
-						userAccount.getPassword2()))) {
+		if (Util.isEmpty(userAccount.getPassword())) {
 			ValidationError error = new ValidationError();
 			error.setCode("password");
-			error.setDescription("Passwords do not match");
+			error.setDescription("Password cannot be blank");
 			errors.add(error);
-			LOGGER.log(Level.WARNING, "Passwords do not match");
+			LOGGER.log(Level.WARNING, "Password cannot be blank");
 		}
+		// if ((!Util.isEmpty(userAccount.getPassword()))
+		// && (!userAccount.getPassword().equals(
+		// userAccount.getPassword2()))) {
+		// ValidationError error = new ValidationError();
+		// error.setCode("password");
+		// error.setDescription("Passwords do not match");
+		// errors.add(error);
+		// LOGGER.log(Level.WARNING, "Passwords do not match");
+		// }
 		if (LOGGER.isLoggable(Level.INFO))
 			LOGGER.info("Exiting validate");
 		return errors;
@@ -449,9 +536,11 @@ public class UserManagementController {
 		userAccount.setEmail(user.getEmail());
 		userAccount.setEnabled(user.isEnabled());
 		if (user.getRole() != null) {
-			if (user.getRole().equals(com.cm.usermanagement.user.User.ROLE_ADMIN))
+			if (user.getRole().equals(
+					com.cm.usermanagement.user.User.ROLE_ADMIN))
 				userAccount.setRole("admin");
-			if (user.getRole().equals(com.cm.usermanagement.user.User.ROLE_USER))
+			if (user.getRole()
+					.equals(com.cm.usermanagement.user.User.ROLE_USER))
 				userAccount.setRole("user");
 		}
 		userAccount.setAccountId(user.getAccountId());

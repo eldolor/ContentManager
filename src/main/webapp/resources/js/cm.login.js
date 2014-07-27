@@ -19,9 +19,9 @@ function setup() {
 
 		$('#user_sign_in_submit_button').unbind();
 		$('#user_sign_in_submit_button').bind('click', function() {
-			document.loginForm.submit();
-			//TODO: make an ajax call
-			//login();
+			// document.loginForm.submit();
+			// TODO: make an ajax call
+			login();
 		});
 		$('#user_sign_in_cancel_button').unbind();
 		$('#user_sign_in_cancel_button').bind('click', function() {
@@ -39,6 +39,10 @@ function setup() {
 function setupLeftNavBar() {
 	log("setupLeftNavBar", "Entering");
 	try {
+		$('#left_nav_bar')
+				.empty()
+				.html(
+						'<a id=\"left_nav_bar_link_1\" href=\"javascript:void(0);\" >Sign In</a></li>');
 
 	} catch (err) {
 		handleError("setupLeftNavBar", err);
@@ -83,7 +87,7 @@ function login() {
 			async : false,
 			statusCode : {
 				201 : function() {
-					window.location.href = '/content';
+					window.location.href = '/applications';
 				},
 				400 : function(text) {
 					try {

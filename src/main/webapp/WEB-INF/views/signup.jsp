@@ -71,6 +71,39 @@
 					</div>
 				</div>
 			</div>
+
+			<!-- hidden login form for post signup auto-login -->
+			<div class="row" style="display: none">
+				<div class="large-6 columns">
+					<h3 id="contentGroupModalLabel">Sign In</h3>
+					<form action="j_spring_security_check" name="loginForm"
+						method="post">
+						<div class="row">
+							<div class="large-12 columns">
+								<label>Username: <input type="text" id="j_username"
+									name="j_username" />
+								</label>
+							</div>
+						</div>
+						<div class="row">
+							<div class="large-12 columns">
+								<label>Password: <input type="password" id="j_password"
+									name="j_password" />
+								</label>
+							</div>
+						</div>
+						<input type="hidden" value="on" id="_spring_security_remember_me"
+							name="_spring_security_remember_me" style="display: none" />
+						<div>&nbsp;</div>
+					</form>
+					<div>
+						<button id="user_sign_in_submit_button" class="button">sign
+							in</button>
+						<button id="user_sign_in_cancel_button" class="button">cancel</button>
+						<span id="login_errors" class="alert radius label"></span>
+					</div>
+				</div>
+			</div>
 		</div>
 		<jsp:include page="left_nav_bar.jsp" flush="true"></jsp:include>
 

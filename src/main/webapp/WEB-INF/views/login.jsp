@@ -73,6 +73,8 @@
 					</div>
 				</div>
 			</div>
+
+
 		</div>
 
 		<jsp:include page="left_nav_bar.jsp" flush="true"></jsp:include>

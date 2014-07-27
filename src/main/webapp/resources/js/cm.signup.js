@@ -80,31 +80,31 @@ function signup() {
 		var objString = JSON.stringify(signupObj, null, 2);
 		// alert(contentgroupObjString);
 		// create via sync call
-		var jqxhr = $
-				.ajax({
-					url : "/signup",
-					type : "POST",
-					data : objString,
-					processData : false,
-					dataType : "json",
-					contentType : "application/json",
-					async : false,
-					statusCode : {
-						201 : function() {
-							postSignupLogin($('#userName').val(),
-									$('#password').val());
-						},
-						400 : function(text) {
-							try {
-								$('#signup_errors')
-										.html(getErrorMessages(text));
-								$('#signup_errors').show();
-							} catch (err) {
-								handleError("signup", err);
-							}
-						}
+		var jqxhr = $.ajax({
+			url : "/signup",
+			type : "POST",
+			data : objString,
+			processData : false,
+			dataType : "json",
+			contentType : "application/json",
+			async : false,
+			statusCode : {
+				201 : function() {
+					postSignupAutoLogin($('#userName').val(), $('#password')
+							.val());
+				},
+				400 : function(text) {
+					try {
+						// TODO: how do display error during post signup auto
+						// login
+						$('#signup_errors').html(getErrorMessages(text));
+						$('#signup_errors').show();
+					} catch (err) {
+						handleError("signup", err);
 					}
-				});
+				}
+			}
+		});
 		jqxhr.always(function() {
 			// close wait div
 			closeWait();
@@ -118,50 +118,18 @@ function signup() {
 	}
 }
 
-function postSignupLogin(pUserName, pPassword) {
-	log("postSignupLogin", "Entering");
+function postSignupAutoLogin(pUserName, pPassword) {
+	log("postSignupAutoLogin", "Entering");
 	try {
+		// setup values on the hidden form
+		$('#j_username').val(pUserName);
+		$('#j_password').val(pPassword);
 
-		var loginObj = {
-			j_username : pUserName,
-			j_password : pPassword
-		};
-		var objString = JSON.stringify(loginObj, null, 2);
-		alert(objString);
-		// create via sync call
-		var jqxhr = $.ajax({
-			url : "j_spring_security_check",
-			type : "POST",
-			data : objString,
-			processData : false,
-			dataType : "json",
-			contentType : "application/json",
-			async : false,
-			statusCode : {
-				201 : function() {
-					window.location.href = '/applications';
-				},
-				400 : function(text) {
-					try {
-						// display failure to login on the signup form
-						$('#signup_errors').html(getErrorMessages(text));
-						$('#signup_errors').show();
-					} catch (err) {
-						handleError("login", err);
-					}
-				}
-			}
-		});
-		jqxhr.always(function() {
-			// close wait div
-			closeWait();
-		});
-
-		return false;
+		document.loginForm.submit();
 	} catch (err) {
-		handleError("postSignupLogin", err);
+		handleError("postSignupAutoLogin", err);
 	} finally {
-		log("postSignupLogin", "Exiting");
+		log("postSignupAutoLogin", "Exiting");
 	}
 }
 

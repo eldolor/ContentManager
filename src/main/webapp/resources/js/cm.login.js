@@ -19,9 +19,9 @@ function setup() {
 
 		$('#user_sign_in_submit_button').unbind();
 		$('#user_sign_in_submit_button').bind('click', function() {
-			// document.loginForm.submit();
+			document.loginForm.submit();
 			// TODO: make an ajax call
-			login();
+			// login();
 		});
 		$('#user_sign_in_cancel_button').unbind();
 		$('#user_sign_in_cancel_button').bind('click', function() {

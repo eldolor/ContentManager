@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<datastore-indexes autoGenerate="true">
+
+	<datastore-index kind="Content" ancestor="false"
+		source="auto">
+		<property name="applicationId" direction="asc" />
+		<property name="contentGroupId" direction="asc" />
+		<property name="deleted" direction="asc" />
+		<property name="enabled" direction="asc" />
+		<property name="timeUpdatedMs" direction="desc" />
+	</datastore-index>
+</datastore-indexes>

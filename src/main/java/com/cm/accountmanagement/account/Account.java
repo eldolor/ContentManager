@@ -1,4 +1,4 @@
-package com.cm.accountmanagement.account.entity;
+package com.cm.accountmanagement.account;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;

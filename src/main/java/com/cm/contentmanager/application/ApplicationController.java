@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package com.cm.contentmanager.web.rest;
+package com.cm.contentmanager.application;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,35 +32,33 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.cm.contentmanager.contentgroup.ContentGroup;
-import com.cm.contentmanager.contentgroup.ContentGroupService;
-import com.cm.usermanagement.user.entity.User;
-import com.cm.usermanagement.user.service.UserService;
+import com.cm.usermanagement.user.User;
+import com.cm.usermanagement.user.UserService;
 import com.cm.util.ValidationError;
 
 @Controller
-public class ContentGroupController {
+public class ApplicationController {
 	@Autowired
-	private ContentGroupService contentGroupService;
+	private ApplicationService applicationService;
 	@Autowired
 	private UserService userService;
 
 	private static final Logger LOGGER = Logger
-			.getLogger(ContentGroupController.class.getName());
+			.getLogger(ApplicationController.class.getName());
 
 	/**
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value = "/contentgroups", method = RequestMethod.GET)
-	public ModelAndView displayContentGroups(ModelMap model) {
+	@RequestMapping(value = "/applications", method = RequestMethod.GET)
+	public ModelAndView displayApplications(ModelMap model) {
 		if (LOGGER.isLoggable(Level.INFO))
-			LOGGER.info("Entering displayContentGroups");
+			LOGGER.info("Entering displayApplications");
 		try {
-			return new ModelAndView("content_groups", model);
+			return new ModelAndView("applications", model);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting displayContentGroups");
+				LOGGER.info("Exiting displayApplications");
 		}
 	}
 
@@ -70,18 +68,18 @@ public class ContentGroupController {
 	 * @param response
 	 * @return
 	 */
-	@RequestMapping(value = "/secured/contentgroup/{id}", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/secured/application/{id}", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody
-	ContentGroup getContentGroup(@PathVariable Long id,
+	Application getApplication(@PathVariable Long id,
 			HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering getContentGroup");
+				LOGGER.info("Entering getApplication");
 			response.setStatus(HttpServletResponse.SC_OK);
-			return contentGroupService.getContentGroup(id);
+			return applicationService.getApplication(id);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting getContentGroup");
+				LOGGER.info("Exiting getApplication");
 		}
 	}
 
@@ -91,36 +89,36 @@ public class ContentGroupController {
 	 * @param response
 	 * @return
 	 */
-	@RequestMapping(value = "/secured/contentgroups", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/secured/applications", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody
-	List<ContentGroup> getContentGroups(HttpServletResponse response) {
+	List<Application> getApplications(HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering getContentGroups");
+				LOGGER.info("Entering getApplications");
 			User user = userService.getLoggedInUser();
-			List<ContentGroup> contentGroups = null;
+			List<Application> applications = null;
 
 			if (user.getRole().equals(User.ROLE_SUPER_ADMIN))
-				contentGroups = contentGroupService.getAllContentGroups();
+				applications = applicationService.getAllApplications();
 			else if (user.getRole().equals(User.ROLE_ADMIN))
-				contentGroups = contentGroupService
-						.getContentGroupsByAccountId(user.getAccountId());
+				applications = applicationService
+						.getApplicationsByAccountId(user.getAccountId());
 			else if (user.getRole().equals(User.ROLE_USER))
-				contentGroups = contentGroupService
-						.getContentGroupsByUserId(user.getId());
+				applications = applicationService.getApplicationsByUserId(user
+						.getId());
 
-			if (contentGroups != null) {
+			if (applications != null) {
 				if (LOGGER.isLoggable(Level.INFO))
-					LOGGER.info(contentGroups.size() + " Content Groups found");
+					LOGGER.info(applications.size() + " Content Groups found");
 			} else {
 				if (LOGGER.isLoggable(Level.INFO))
 					LOGGER.info("No Content Groups Found!");
 			}
 			response.setStatus(HttpServletResponse.SC_OK);
-			return contentGroups;
+			return applications;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting getContentGroups");
+				LOGGER.info("Exiting getApplications");
 		}
 	}
 
@@ -129,22 +127,22 @@ public class ContentGroupController {
 	 * @param uuid
 	 * @param response
 	 */
-	@RequestMapping(value = "/secured/contentgroup/{id}/{timeUpdatedMs}/{timeUpdatedTimeZoneOffsetMs}", method = RequestMethod.DELETE)
-	public void deleteContentGroup(@PathVariable Long id,
+	@RequestMapping(value = "/secured/application/{id}/{timeUpdatedMs}/{timeUpdatedTimeZoneOffsetMs}", method = RequestMethod.DELETE)
+	public void deleteApplication(@PathVariable Long id,
 			@PathVariable Long timeUpdatedMs,
 			@PathVariable Long timeUpdatedTimeZoneOffsetMs,
 			HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering deleteContentGroup");
+				LOGGER.info("Entering deleteApplication");
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Content Group ID: " + id);
 			response.setStatus(HttpServletResponse.SC_OK);
-			contentGroupService.deleteContentGroup(id, timeUpdatedMs,
+			applicationService.deleteApplication(id, timeUpdatedMs,
 					timeUpdatedTimeZoneOffsetMs);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting deleteContentGroup");
+				LOGGER.info("Exiting deleteApplication");
 		}
 	}
 
@@ -152,28 +150,52 @@ public class ContentGroupController {
 	 * 
 	 * @return
 	 */
-	@RequestMapping(value = "/secured/contentgroup", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/secured/application", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	public @ResponseBody
-	List<ValidationError> doCreateContentGroup(
-			@RequestBody ContentGroup contentGroup, HttpServletResponse response) {
+	List<ValidationError> doCreateApplication(
+			@RequestBody Application application, HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering doCreateContentGroup");
+				LOGGER.info("Entering doCreateApplication");
 
-			List<ValidationError> errors = validate(contentGroup);
+			List<ValidationError> errors = validate(application);
 
 			if (!errors.isEmpty()) {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return errors;
 			} else {
-				contentGroupService.saveContentGroup(
-						userService.getLoggedInUser(), contentGroup);
+				applicationService.saveApplication(
+						userService.getLoggedInUser(),
+						createTrackingId(application), application);
 				response.setStatus(HttpServletResponse.SC_CREATED);
 				return null;
 			}
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting doCreateContentGroup");
+				LOGGER.info("Exiting doCreateApplication");
+		}
+	}
+
+	private String createTrackingId(Application application) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering createTrackingId");
+			Long lAccountId = userService.getLoggedInUser().getAccountId();
+
+			// include all deleted applications, to ensure that the tracking id
+			// of a deleted application is not reassigned.
+			List<Application> lApplications = applicationService
+					.getApplicationsByAccountId(lAccountId, true);
+
+			String lTrackingId = "AI_" + lAccountId + "_"
+					+ (lApplications.size() + 1); // the collection will have
+													// size 0 at first
+
+			return lTrackingId;
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting createTrackingId");
 		}
 	}
 
@@ -181,31 +203,31 @@ public class ContentGroupController {
 	 * 
 	 * @return
 	 */
-	@RequestMapping(value = "/secured/contentgroup", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/secured/application", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
 	public @ResponseBody
-	List<ValidationError> doUpdateContentGroup(
-			@RequestBody ContentGroup contentGroup, HttpServletResponse response) {
+	List<ValidationError> doUpdateApplication(
+			@RequestBody Application application, HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering doUpdateContentGroup");
-			List<ValidationError> errors = validate(contentGroup);
+				LOGGER.info("Entering doUpdateApplication");
+			List<ValidationError> errors = validate(application);
 			if (!errors.isEmpty()) {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return errors;
 			} else {
-				contentGroupService.updateContentGroup(contentGroup);
-				response.setStatus(HttpServletResponse.SC_CREATED);
+				applicationService.updateApplication(application);
+				response.setStatus(HttpServletResponse.SC_OK);
 				return null;
 			}
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting doUpdateContentGroup");
+				LOGGER.info("Exiting doUpdateApplication");
 		}
 	}
 
-	private List<ValidationError> validate(ContentGroup contentGroup) {
+	private List<ValidationError> validate(Application application) {
 		List<ValidationError> errors = new ArrayList<ValidationError>();
-		if (contentGroup.getName().length() == 0) {
+		if (application.getName().length() == 0) {
 			ValidationError error = new ValidationError();
 			error.setCode("name");
 			error.setDescription("Name cannot be blank");

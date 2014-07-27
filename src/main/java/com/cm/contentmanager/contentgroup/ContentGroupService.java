@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cm.usermanagement.user.entity.User;
+import com.cm.usermanagement.user.User;
 import com.cm.util.Util;
 
 @Service
@@ -18,12 +18,12 @@ public class ContentGroupService {
 	private static final Logger LOGGER = Logger
 			.getLogger(ContentGroupService.class.getName());
 
-	public List<ContentGroup> getAllContentGroups() {
+	public List<ContentGroup> getContentGroupsByApplicationId(Long applicationId) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getAllContentGroups");
 			List<ContentGroup> contentGroups = contentGroupDao
-					.getAllContentGroups();
+					.getContentGroupsByApplicationId(applicationId);
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Returning " + contentGroups.size()
 						+ " content groups");

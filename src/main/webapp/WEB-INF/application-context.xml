@@ -6,7 +6,7 @@
 
 	<!-- <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" 
 		/> -->
-	<bean id="multipartResolver" class="org.gmr.web.multipart.GMultipartResolver" />
+	<!-- anshu: commented out as I am not sure if this is needed <bean id="multipartResolver" class="org.gmr.web.multipart.GMultipartResolver" /> -->
 
 	<bean
 		class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">

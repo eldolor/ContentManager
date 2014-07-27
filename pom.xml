@@ -17,30 +17,10 @@
 		<spring.security.version>3.2.4.RELEASE</spring.security.version>
 	</properties>
 	<repositories>
-		<repository>
-			<id>gmultipart</id>
-			<url>http://gmultipart.googlecode.com/svn/repo/m2</url>
-		</repository>
-		<repository>
-			<id>DN_M2_Repo</id>
-			<name>DataNucleus Repository</name>
-			<url>http://www.datanucleus.org/downloads/maven2</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
+		<!-- anshu: commented out as I am not sure if this is needed -->
+		<!-- <repository> <id>gmultipart</id> <url>http://gmultipart.googlecode.com/svn/repo/m2</url> 
+			</repository> -->
 	</repositories>
-
-
-	<pluginRepositories>
-		<pluginRepository>
-			<id>DataNucleus_2</id>
-			<url>http://www.datanucleus.org/downloads/maven2/</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
 	<dependencies>
 		<!-- Compile/runtime dependencies -->
 		<!-- begin::google appengine -->
@@ -54,23 +34,26 @@
 			<artifactId>datanucleus-appengine</artifactId>
 			<version>2.1.2</version>
 		</dependency>
-		<dependency>
-			<groupId>org.datanucleus</groupId>
-			<artifactId>datanucleus-core</artifactId>
-			<version>[4.0.0-m1, )</version>
-		</dependency>
+		<!-- datanucleus-api-jdo must be included as dependency datanucleus-appengine 
+			does not include it automatically under web-inf/lib -->
 		<dependency>
 			<groupId>org.datanucleus</groupId>
 			<artifactId>datanucleus-api-jdo</artifactId>
-			<version>[4.0.0-m1, )</version>
+			<version>3.1.3</version>
 		</dependency>
+		<!-- <dependency> <groupId>javax.jdo</groupId> <artifactId>jdo-api</artifactId> 
+			<version>3.0.1</version> </dependency> <dependency> <groupId>org.datanucleus</groupId> 
+			<artifactId>datanucleus-core</artifactId> <version>3.1.3</version> <scope>runtime</scope> 
+			</dependency> <dependency> <groupId>org.datanucleus</groupId> <artifactId>datanucleus-api-jdo</artifactId> 
+			<version>3.1.3</version> </dependency> <dependency> <groupId>com.google.appengine.orm</groupId> 
+			<artifactId>datanucleus-appengine</artifactId> <version>2.1.2</version> </dependency> -->
+		<!-- end::google appengine -->
 		<dependency>
-			<groupId>javax.jdo</groupId>
-			<artifactId>jdo-api</artifactId>
-			<version>[3.0, )</version>
+			<groupId>com.ganyo</groupId>
+			<artifactId>gcm-server</artifactId>
+			<version>1.0.2</version>
 		</dependency>
 
-		<!-- end::google appengine -->
 		<dependency>
 			<groupId>javax.persistence</groupId>
 			<artifactId>persistence-api</artifactId>
@@ -90,18 +73,10 @@
 		</dependency>
 
 		<!-- Test Dependencies -->
-		<dependency>
-			<groupId>com.google.appengine</groupId>
-			<artifactId>appengine-testing</artifactId>
-			<version>${appengine.target.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.google.appengine</groupId>
-			<artifactId>appengine-api-stubs</artifactId>
-			<version>${appengine.target.version}</version>
-			<scope>test</scope>
-		</dependency>
+		<!-- <dependency> <groupId>com.google.appengine</groupId> <artifactId>appengine-testing</artifactId> 
+			<version>${appengine.target.version}</version> <scope>test</scope> </dependency> 
+			<dependency> <groupId>com.google.appengine</groupId> <artifactId>appengine-api-stubs</artifactId> 
+			<version>${appengine.target.version}</version> <scope>test</scope> </dependency> -->
 		<!-- begin::SpringFramework[] -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -147,11 +122,9 @@
 		</dependency>
 
 		<!-- end::Spring Security -->
-		<dependency>
-			<groupId>gmultipart</groupId>
-			<artifactId>gmultipart</artifactId>
-			<version>0.4</version>
-		</dependency>
+		<!-- anshu: commented out as I am not sure if this is needed -->
+		<!-- <dependency> <groupId>gmultipart</groupId> <artifactId>gmultipart</artifactId> 
+			<version>0.4</version> </dependency> -->
 		<!-- begin::jackson mapper -->
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
@@ -190,13 +163,25 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<version>2.3</version>
 				<configuration>
-					<archiveClasses>true</archiveClasses>
+					<!-- Whether a JAR file will be created for the classes in the webapp. 
+						Using this optional configuration parameter will make the compiled classes 
+						to be archived into a JAR file and the classes directory will then be excluded 
+						from the webapp. -->
+					<archiveClasses>false</archiveClasses>
 					<webResources>
 						<!-- in order to interpolate version from pom into appengine-web.xml -->
 						<resource>
 							<directory>${basedir}/src/main/webapp/WEB-INF</directory>
 							<filtering>true</filtering>
 							<targetPath>WEB-INF</targetPath>
+						</resource>
+						<resource>
+							<!-- ANSHU: to include jdoconfig.xml under web-inf/classes -->
+							<directory>src/main/java</directory>
+							<includes>
+								<include>META-INF</include>
+							</includes>
+							<targetPath>src/main/webapp/WEB-INF/classes</targetPath>
 						</resource>
 					</webResources>
 				</configuration>
@@ -206,7 +191,19 @@
 				<groupId>com.google.appengine</groupId>
 				<artifactId>appengine-maven-plugin</artifactId>
 				<version>${appengine.target.version}</version>
+				<configuration>
+					<!-- http://bigmichi1.github.io/appengine-maven-plugin/update-mojo.html -->
+					<!-- Jar the WEB-INF/classes content. -->
+					<enableJarClasses>false</enableJarClasses>
+				</configuration>
 			</plugin>
+
+			<!-- anshu: experimental remove later -->
+			<!-- <plugin> <groupId>org.datanucleus</groupId> <artifactId>maven-datanucleus-plugin</artifactId> 
+				<version>3.1.2</version> <configuration> <log4jConfiguration>${basedir}/log4j.properties</log4jConfiguration> 
+				<verbose>false</verbose> <fork>false</fork> </configuration> <executions> 
+				<execution> <phase>process-classes</phase> <goals> <goal>enhance</goal> </goals> 
+				</execution> </executions> </plugin> -->
 		</plugins>
 	</build>
 

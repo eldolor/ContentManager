@@ -8,7 +8,7 @@
 	import="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"%><html>
 
 
-<div class="large-3 pull-9 columns panel">
+<div class="large-3 pull-9 columns">
 
 	<ul class="side-nav" id="left_nav_bar">
 

@@ -1,8 +1,8 @@
 //Global Variables
 var mDebugEnabled = 'Y';
-var mSelectedCampaign;
-var mSelectedAdGroup;
-var mSelectedAd;
+var mSelectedApplication;
+var mSelectedContentGroup;
+var mSelectedContent;
 
 /** ***************************** */
 $.ajaxSetup ({

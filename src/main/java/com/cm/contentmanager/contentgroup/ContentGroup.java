@@ -13,6 +13,8 @@ public class ContentGroup implements Serializable {
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Long id;
 	@Persistent
+	private Long applicationId;
+	@Persistent
 	private Long accountId;
 
 	@Persistent
@@ -57,6 +59,14 @@ public class ContentGroup implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Long getApplicationId() {
+		return applicationId;
+	}
+
+	public void setApplicationId(Long applicationId) {
+		this.applicationId = applicationId;
 	}
 
 	public Boolean isEnabled() {

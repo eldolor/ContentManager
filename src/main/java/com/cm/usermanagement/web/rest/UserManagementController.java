@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.cm.usermanagement.user.service.UserService;
+import com.cm.usermanagement.user.UserService;
 import com.cm.util.Util;
 import com.cm.util.ValidationError;
 
@@ -56,7 +56,7 @@ public class UserManagementController {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getUser");
-			com.cm.usermanagement.user.entity.User user = userService
+			com.cm.usermanagement.user.User user = userService
 					.getLoggedInUser();
 			if (user == null) {
 				if (LOGGER.isLoggable(Level.INFO))
@@ -83,7 +83,7 @@ public class UserManagementController {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return errors;
 			} else {
-				com.cm.usermanagement.user.entity.User lUser = new com.cm.usermanagement.user.entity.User();
+				com.cm.usermanagement.user.User lUser = new com.cm.usermanagement.user.User();
 				lUser.setId(userAccount.getId());
 				lUser.setUsername(userAccount.getUserName());
 				lUser.setEmail(userAccount.getEmail());
@@ -115,7 +115,7 @@ public class UserManagementController {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getUsers");
-			List<com.cm.usermanagement.user.entity.User> users = userService
+			List<com.cm.usermanagement.user.User> users = userService
 					.getUsers();
 			if (users != null) {
 				if (LOGGER.isLoggable(Level.INFO))
@@ -143,7 +143,7 @@ public class UserManagementController {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getUser");
-			com.cm.usermanagement.user.entity.User user = userService.getUser(id);
+			com.cm.usermanagement.user.User user = userService.getUser(id);
 			if (user == null) {
 				if (LOGGER.isLoggable(Level.INFO))
 					LOGGER.info("No User Found!");
@@ -169,20 +169,20 @@ public class UserManagementController {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return errors;
 			} else {
-				com.cm.usermanagement.user.entity.User lUser = new com.cm.usermanagement.user.entity.User();
+				com.cm.usermanagement.user.User lUser = new com.cm.usermanagement.user.User();
 				lUser.setEmail(user.getEmail());
 				lUser.setFirstName(user.getFirstName());
 				lUser.setLastName(user.getLastName());
 				// default to true
 				lUser.setEnabled(true);
 				if (user.getRole().equals("admin")) {
-					lUser.setRole(com.cm.usermanagement.user.entity.User.ROLE_ADMIN);
+					lUser.setRole(com.cm.usermanagement.user.User.ROLE_ADMIN);
 					// use the associated account id. only super admins can
 					// create an admin user.
 					lUser.setAccountId(user.getAccountId());
 				}
 				if (user.getRole().equals("user")) {
-					lUser.setRole(com.cm.usermanagement.user.entity.User.ROLE_USER);
+					lUser.setRole(com.cm.usermanagement.user.User.ROLE_USER);
 					/**
 					 * For a user role, tie the account id to the logged in
 					 * admin account, as only admins can create a user
@@ -226,7 +226,7 @@ public class UserManagementController {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return errors;
 			} else {
-				com.cm.usermanagement.user.entity.User lUser = new com.cm.usermanagement.user.entity.User();
+				com.cm.usermanagement.user.User lUser = new com.cm.usermanagement.user.User();
 				lUser.setId(user.getId());
 				lUser.setEmail(user.getEmail());
 				lUser.setFirstName(user.getFirstName());
@@ -235,13 +235,13 @@ public class UserManagementController {
 				lUser.setUsername(user.getUserName());
 				lUser.setPassword(new StandardPasswordEncoder().encode(user.getPassword()));
 				if (user.getRole().equals("admin")) {
-					lUser.setRole(com.cm.usermanagement.user.entity.User.ROLE_ADMIN);
+					lUser.setRole(com.cm.usermanagement.user.User.ROLE_ADMIN);
 					// use the associated account id. only super admins can
 					// create an admin user.
 					lUser.setAccountId(user.getAccountId());
 				}
 				if (user.getRole().equals("user")) {
-					lUser.setRole(com.cm.usermanagement.user.entity.User.ROLE_USER);
+					lUser.setRole(com.cm.usermanagement.user.User.ROLE_USER);
 					/**
 					 * For a user role, tie the account id to the logged in
 					 * admin account, as only admins can create a user
@@ -314,7 +314,7 @@ public class UserManagementController {
 			LOGGER.log(Level.WARNING, "Passwords do not match");
 		}
 		// check to make sure we don't have a user account already
-		com.cm.usermanagement.user.entity.User user = userService
+		com.cm.usermanagement.user.User user = userService
 				.getUserByUserName(userAccount.getUserName());
 		if (user != null) {
 			ValidationError error = new ValidationError();
@@ -418,19 +418,19 @@ public class UserManagementController {
 	}
 
 	private List<com.cm.usermanagement.user.transfer.User> convert(
-			List<com.cm.usermanagement.user.entity.User> users) {
+			List<com.cm.usermanagement.user.User> users) {
 		List<com.cm.usermanagement.user.transfer.User> userAccounts = new ArrayList<com.cm.usermanagement.user.transfer.User>();
-		for (com.cm.usermanagement.user.entity.User user : users) {
+		for (com.cm.usermanagement.user.User user : users) {
 			com.cm.usermanagement.user.transfer.User userAccount = new com.cm.usermanagement.user.transfer.User();
 			userAccount.setId(user.getId());
 			userAccount.setEmail(user.getEmail());
 			userAccount.setEnabled(user.isEnabled());
 			if (user.getRole() != null) {
 				if (user.getRole().equals(
-						com.cm.usermanagement.user.entity.User.ROLE_ADMIN))
+						com.cm.usermanagement.user.User.ROLE_ADMIN))
 					userAccount.setRole("admin");
 				if (user.getRole().equals(
-						com.cm.usermanagement.user.entity.User.ROLE_USER))
+						com.cm.usermanagement.user.User.ROLE_USER))
 					userAccount.setRole("user");
 			}
 			userAccount.setAccountId(user.getAccountId());
@@ -443,15 +443,15 @@ public class UserManagementController {
 	}
 
 	private com.cm.usermanagement.user.transfer.User convert(
-			com.cm.usermanagement.user.entity.User user) {
+			com.cm.usermanagement.user.User user) {
 		com.cm.usermanagement.user.transfer.User userAccount = new com.cm.usermanagement.user.transfer.User();
 		userAccount.setId(user.getId());
 		userAccount.setEmail(user.getEmail());
 		userAccount.setEnabled(user.isEnabled());
 		if (user.getRole() != null) {
-			if (user.getRole().equals(com.cm.usermanagement.user.entity.User.ROLE_ADMIN))
+			if (user.getRole().equals(com.cm.usermanagement.user.User.ROLE_ADMIN))
 				userAccount.setRole("admin");
-			if (user.getRole().equals(com.cm.usermanagement.user.entity.User.ROLE_USER))
+			if (user.getRole().equals(com.cm.usermanagement.user.User.ROLE_USER))
 				userAccount.setRole("user");
 		}
 		userAccount.setAccountId(user.getAccountId());

@@ -8,7 +8,7 @@
 	</listener>
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>classpath:bootstrap.xml</param-value>
+		<param-value>/WEB-INF/bootstrap.xml</param-value>
 	</context-param>
 	<!-- <context-param> <param-name>log4jConfigLocation</param-name> <param-value>classpath:log4j.properties</param-value> 
 		</context-param> <listener> <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class> 
@@ -51,7 +51,7 @@
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
 
-  	<security-constraint>
+	<security-constraint>
 		<web-resource-collection>
 			<url-pattern>/tasks/*</url-pattern>
 			<url-pattern>/admin/*</url-pattern>
@@ -62,15 +62,24 @@
 	</security-constraint>
 	<security-constraint>
 		<web-resource-collection>
-			<url-pattern>/content/*</url-pattern>
+			<url-pattern>/applications</url-pattern>
+			<url-pattern>/**/content</url-pattern>
+			<url-pattern>/**/contentgroups</url-pattern>
+			<url-pattern>/resources/*</url-pattern>
+			<url-pattern>/dropbox**</url-pattern>
+			<url-pattern>/contentserver**</url-pattern>
+			<url-pattern>/eventtracker**</url-pattern>
+			<url-pattern>/secured/*</url-pattern>
 			<url-pattern>/admin/*</url-pattern>
-			<url-pattern>/login/*</url-pattern>
+			<url-pattern>/login**</url-pattern>
+			<url-pattern>/am**</url-pattern>
+			<url-pattern>/um**</url-pattern>
 		</web-resource-collection>
 		<user-data-constraint>
 			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
 		</user-data-constraint>
 	</security-constraint>
-	
+
 
 
 </web-app>

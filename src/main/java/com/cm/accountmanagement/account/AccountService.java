@@ -1,4 +1,4 @@
-package com.cm.accountmanagement.account.service;
+package com.cm.accountmanagement.account;
 
 import java.util.List;
 import java.util.UUID;
@@ -8,9 +8,6 @@ import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
-import com.cm.accountmanagement.account.dao.AccountDao;
-import com.cm.accountmanagement.account.entity.Account;
 
 @Service
 public class AccountService {

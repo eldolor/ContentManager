@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.cm.usermanagement.user.entity.User;
-import com.cm.usermanagement.user.service.UserService;
+import com.cm.usermanagement.user.User;
+import com.cm.usermanagement.user.UserService;
 
 @Controller
 public class MainController {
@@ -37,7 +37,7 @@ public class MainController {
 			} else {
 				if (LOGGER.isLoggable(Level.INFO))
 					LOGGER.info("User is logged in ");
-				return new ModelAndView("content_groups", model);
+				return new ModelAndView("applications", model);
 			}
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))

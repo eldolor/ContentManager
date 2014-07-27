@@ -16,7 +16,6 @@
 package com.cm.util;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,17 +24,17 @@ import javax.jdo.Query;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.cm.accountmanagement.account.entity.Account;
+import com.cm.accountmanagement.account.Account;
 import com.cm.common.entity.Result;
-import com.cm.usermanagement.user.entity.User;
-import com.cm.usermanagement.user.service.UserService;
+import com.cm.usermanagement.user.User;
+import com.cm.usermanagement.user.UserService;
 import com.google.appengine.api.blobstore.BlobInfo;
 import com.google.appengine.api.blobstore.BlobInfoFactory;
 import com.google.appengine.api.blobstore.BlobstoreService;
@@ -50,7 +49,7 @@ public class AdminController {
 	@Autowired
 	private UserService userService;
 	@Autowired
-	private com.cm.accountmanagement.account.service.AccountService accountService;
+	private com.cm.accountmanagement.account.AccountService accountService;
 
 	@RequestMapping(value = "/tasks/deleteusers", method = RequestMethod.GET, produces = "application/json")
 	public void deleteUsers(HttpServletResponse response) {
@@ -133,7 +132,8 @@ public class AdminController {
 				lUser.setAccountId(lAccount.getId());
 
 				lUser.setUsername(User.DEFAULT_SUPER_ADMIN_USER_NAME);
-				StandardPasswordEncoder encoder = new StandardPasswordEncoder();
+				//Match the password encoder configured in spring-security.xml
+				BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 				lUser.setPassword(encoder
 						.encode(User.DEFAULT_SUPER_ADMIN_PASSWORD));
 

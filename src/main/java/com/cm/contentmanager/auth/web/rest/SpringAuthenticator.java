@@ -25,10 +25,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.cm.accountmanagement.account.entity.Account;
-import com.cm.accountmanagement.account.service.AccountService;
-import com.cm.usermanagement.user.entity.User;
-import com.cm.usermanagement.user.service.UserService;
+import com.cm.accountmanagement.account.Account;
+import com.cm.accountmanagement.account.AccountService;
+import com.cm.usermanagement.user.User;
+import com.cm.usermanagement.user.UserService;
 
 @Service
 public class SpringAuthenticator implements UserDetailsService {

@@ -1,4 +1,4 @@
-package com.cm.usermanagement.user.dao;
+package com.cm.usermanagement.user;
 
 import java.util.List;
 
@@ -8,17 +8,16 @@ import javax.persistence.NoResultException;
 
 import org.springframework.stereotype.Component;
 
-import com.cm.accountmanagement.account.entity.Account;
-import com.cm.usermanagement.user.entity.User;
+import com.cm.accountmanagement.account.Account;
 import com.cm.util.PMF;
 import com.cm.util.Util;
 
 @Component
-public class UserDao {
+ class UserDao {
 	// private static final Logger LOGGER =
 	// Logger.getLogger(UserDao.class.getName());
 
-	public List<Account> getAccounts() {
+	 List<Account> getAccounts() {
 		PersistenceManager pm = null;
 
 		try {
@@ -33,7 +32,7 @@ public class UserDao {
 		}
 	}
 
-	public List<User> getAllUsers() {
+	 List<User> getAllUsers() {
 		PersistenceManager pm = null;
 
 		try {
@@ -48,7 +47,7 @@ public class UserDao {
 		}
 	}
 
-	public List<User> getUsersByAccountId(Long accountId) {
+	 List<User> getUsersByAccountId(Long accountId) {
 		PersistenceManager pm = null;
 
 		try {
@@ -67,7 +66,7 @@ public class UserDao {
 		}
 	}
 
-	public User getUserByUserName(String userName) {
+	 User getUserByUserName(String userName) {
 		PersistenceManager pm = null;
 
 		try {
@@ -91,7 +90,7 @@ public class UserDao {
 		}
 	}
 
-	public User getUserByAccountId(Long accountId, Long userId) {
+	 User getUserByAccountId(Long accountId, Long userId) {
 		PersistenceManager pm = null;
 
 		try {
@@ -118,7 +117,7 @@ public class UserDao {
 		}
 	}
 
-	public void saveUser(User user) {
+	 void saveUser(User user) {
 		PersistenceManager pm = null;
 		try {
 			pm = PMF.get().getPersistenceManager();
@@ -131,7 +130,7 @@ public class UserDao {
 		}
 	}
 
-	public void updateUser(User user) {
+	 void updateUser(User user) {
 		PersistenceManager pm = null;
 		try {
 			pm = PMF.get().getPersistenceManager();
@@ -156,7 +155,7 @@ public class UserDao {
 		}
 	}
 
-	public User getUser(Long id) {
+	 User getUser(Long id) {
 		PersistenceManager pm = null;
 
 		try {

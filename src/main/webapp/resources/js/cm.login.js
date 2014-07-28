@@ -16,17 +16,25 @@ function setup() {
 		setupLeftNavBar();
 		setupBreadcrumbs();
 		$('#login_errors').hide();
-
-		$('#user_sign_in_submit_button').unbind();
-		$('#user_sign_in_submit_button').bind('click', function() {
-			document.loginForm.submit();
-			// TODO: make an ajax call
-			// login();
-		});
+		// now using foundation abide
+		// $('#user_sign_in_submit_button').unbind();
+		// $('#user_sign_in_submit_button').bind('click', function() {
+		// document.loginForm.submit();
+		// // TODO: make an ajax call
+		// // login();
+		// });
 		$('#user_sign_in_cancel_button').unbind();
 		$('#user_sign_in_cancel_button').bind('click', function() {
 			$('#user_sign_in_submit_button').unbind();
 			window.location.href = '/';
+		});
+		// enable abide form validation
+		$('#loginForm').on('invalid', function() {
+			var invalid_fields = $(this).find('[data-invalid]');
+			console.log(invalid_fields);
+		});
+		$('#loginForm').on('valid', function() {
+			document.loginForm.submit();
 		});
 	} catch (err) {
 		handleError("setup", err);
@@ -91,7 +99,8 @@ function login() {
 				},
 				400 : function(text) {
 					try {
-						$('#login_errors').html('<p>'+ getErrorMessages(text)+'</p>');
+						$('#login_errors').html(
+								'<p>' + getErrorMessages(text) + '</p>');
 						$('#login_errors').show();
 					} catch (err) {
 						handleError("login", err);
@@ -109,57 +118,5 @@ function login() {
 		handleError("login", err);
 	} finally {
 		log("login", "Exiting");
-	}
-}
-
-function createAccount() {
-	log("createAccount", "Entering");
-	try {
-		var _date = new Date();
-		var _timeCreated = _date.getTime();
-		var obj = {
-			userName : $('#username').val(),
-			password : $('#password').val(),
-			password2 : $('#password2').val(),
-			timeCreatedMs : _timeCreated,
-			timeCreatedTimeZoneOffsetMs : (_date.getTimezoneOffset() * 60 * 1000),
-			timeUpdatedMs : _timeCreated,
-			timeUpdatedTimeZoneOffsetMs : (_date.getTimezoneOffset() * 60 * 1000)
-		};
-		var objString = JSON.stringify(obj, null, 2);
-		var jqxhr = $.ajax({
-			url : "/admin/account",
-			type : "POST",
-			data : objString,
-			processData : false,
-			dataType : "json",
-			contentType : "application/json",
-			async : false,
-			statusCode : {
-				201 : function() {
-					;
-					window.location.href = "/secured";
-				},
-				400 : function(text) {
-					try {
-						$('#create_account_errors')
-								.html('<p>'+ getErrorMessages(text)+'</p>');
-						$('#create_account_errors').show();
-					} catch (err) {
-						handleError("createAccount", err);
-					}
-				}
-			}
-		});
-
-		jqxhr.always(function(msg) {
-			clearWait('create_account_wait');
-		});
-
-		return false;
-	} catch (err) {
-		handleError("createAccount", err);
-	} finally {
-		log("createAccount", "Exiting");
 	}
 }

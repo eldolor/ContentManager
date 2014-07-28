@@ -44,40 +44,44 @@
 
 			<div class="row">
 				<div class="large-6 columns">
-					<h3 id="contentGroupModalLabel">Sign In</h3>
-					<form action="j_spring_security_check" name="loginForm"
-						method="post">
-						<div class="row">
-							<div class="large-12 columns">
-								<label>Username: <input type="text" id="j_username"
-									name="j_username" />
-								</label>
+					<form id="loginForm" action="j_spring_security_check" name="loginForm"
+						method="post" data-abide>
+						<fieldset>
+							<legend>Sign In</legend>
+							<div class="row">
+								<div class="large-12 columns">
+									<label for="password">Email <small>required</small></label> <input
+										type="email" id="j_username" name="j_username"
+										placeholder="bruce.almighty@gmail.com" required /> <small
+										class="error">Valid email required.</small>
+								</div>
 							</div>
-						</div>
-						<div class="row">
-							<div class="large-12 columns">
-								<label>Password: <input type="password" id="j_password"
-									name="j_password" />
-								</label>
+							<div class="row">
+								<div class="large-12 columns">
+									<label for="password">Password <small>required</small></label><input
+										type="password" id="j_password" name="j_password"
+										placeholder="LittleW0men." required />
+								</div>
 							</div>
-						</div>
-						<input type="hidden" value="on" id="_spring_security_remember_me"
-							name="_spring_security_remember_me" style="display: none" />
-						<div>&nbsp;</div>
+							<input type="hidden" value="on" id="_spring_security_remember_me"
+								name="_spring_security_remember_me" style="display: none" />
+							<div>&nbsp;</div>
+							<div class="row">
+								<div class="large-12 columns">
+									<span id="login_errors" class="alert radius label"></span>
+								</div>
+							</div>
+							<div class="row">
+								<div class="large-12 columns">
+									<button id="user_sign_in_submit_button" class="button">sign
+										in</button>
+									<button id="user_sign_in_cancel_button" class="button">cancel</button>
+									<br> <span id="login_errors" class="alert radius label"></span>
+								</div>
+							</div>
+						</fieldset>
 					</form>
-					<div class="row">
-						<div class="large-12 columns">
-							<span id="login_errors" class="alert radius label"></span>
-						</div>
-					</div>
-					<div class="row">
-						<div class="large-12 columns">
-							<button id="user_sign_in_submit_button" class="button">sign
-								in</button>
-							<button id="user_sign_in_cancel_button" class="button">cancel</button>
-							<br> <span id="login_errors" class="alert radius label"></span>
-						</div>
-					</div>
+
 				</div>
 			</div>
 

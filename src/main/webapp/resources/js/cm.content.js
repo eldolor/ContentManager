@@ -229,7 +229,7 @@ function updateContentEnabled(pContentId, pContentEnabled, pElementName) {
 				},
 				400 : function(text) {
 					try {
-						$('#content_errors').html(getErrorMessages(text));
+						$('#content_errors').html('<p>'+ getErrorMessages(text)+'</p>');
 					} catch (err) {
 						handleError("updateContentEnabled", err);
 					}
@@ -587,7 +587,7 @@ function createContent() {
 				},
 				400 : function(text) {
 					try {
-						$('#content_errors').html(getErrorMessages(text));
+						$('#content_errors').html('<p>'+ getErrorMessages(text)+'</p>');
 						$('#content_errors').show();
 					} catch (err) {
 						handleError("createContent", err);
@@ -658,7 +658,7 @@ function updateContent() {
 				},
 				400 : function(text) {
 					try {
-						$('#content_errors').html(getErrorMessages(text));
+						$('#content_errors').html('<p>'+ getErrorMessages(text)+'</p>');
 						$('#content_errors').show();
 					} catch (err) {
 						handleError("updateContent", err);

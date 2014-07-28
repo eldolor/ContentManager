@@ -91,7 +91,7 @@ function login() {
 				},
 				400 : function(text) {
 					try {
-						$('#login_errors').html(getErrorMessages(text));
+						$('#login_errors').html('<p>'+ getErrorMessages(text)+'</p>');
 						$('#login_errors').show();
 					} catch (err) {
 						handleError("login", err);
@@ -143,7 +143,7 @@ function createAccount() {
 				400 : function(text) {
 					try {
 						$('#create_account_errors')
-								.html(getErrorMessages(text));
+								.html('<p>'+ getErrorMessages(text)+'</p>');
 						$('#create_account_errors').show();
 					} catch (err) {
 						handleError("createAccount", err);

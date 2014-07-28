@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.cm.accountmanagement.account.Account;
 import com.cm.usermanagement.user.User;
 import com.cm.usermanagement.user.UserService;
 import com.cm.util.Util;
@@ -29,8 +28,6 @@ import com.cm.util.ValidationError;
 public class UserManagementController {
 	@Autowired
 	private UserService userService;
-	@Autowired
-	private com.cm.accountmanagement.account.AccountService accountService;
 
 	private static final Logger LOGGER = Logger
 			.getLogger(UserManagementController.class.getName());
@@ -70,47 +67,35 @@ public class UserManagementController {
 	@RequestMapping(value = "/signup", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	public @ResponseBody
 	List<ValidationError> doSignup(
-			@RequestBody com.cm.usermanagement.user.transfer.User userAccount,
+			@RequestBody com.cm.usermanagement.user.transfer.User pUser,
 			HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering doSignup");
-			List<ValidationError> errors = validateOnCreate(userAccount);
+			List<ValidationError> errors = validateOnCreate(pUser);
 			if (!errors.isEmpty()) {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return errors;
 			} else {
-				long lTime = System.currentTimeMillis();
-				Account lAccount = new Account();
-				lAccount.setName(userAccount.getUserName());
-				lAccount.setDescription("This is the default account for the user");
-				lAccount.setTimeCreatedMs(lTime);
-				lAccount.setTimeCreatedTimeZoneOffsetMs(0L);
-				lAccount.setTimeUpdatedMs(lTime);
-				lAccount.setTimeUpdatedTimeZoneOffsetMs(0L);
-				accountService.saveAccount(lAccount);
-
-				lAccount = accountService.getAccountByAccountName(userAccount
-						.getUserName());
-
+				// create the basic user object, additional work will be
+				// performed in the DAO (transactionally)
 				com.cm.usermanagement.user.User lUser = new com.cm.usermanagement.user.User();
-				lUser.setUsername(userAccount.getUserName());
+				lUser.setUsername(pUser.getUserName());
 				// userName is the email address
-				lUser.setEmail(userAccount.getUserName());
-				lUser.setPassword(new BCryptPasswordEncoder()
-						.encode(userAccount.getPassword()));
+				lUser.setEmail(pUser.getUserName());
+				lUser.setPassword(new BCryptPasswordEncoder().encode(pUser
+						.getPassword()));
 				lUser.setRole(User.ROLE_USER);
 				// default to true
 				lUser.setEnabled(true);
-				lUser.setAccountId(lAccount.getId());
-				lUser.setTimeCreatedMs(userAccount.getTimeCreatedMs());
-				lUser.setTimeCreatedTimeZoneOffsetMs(userAccount
+				lUser.setTimeCreatedMs(pUser.getTimeCreatedMs());
+				lUser.setTimeCreatedTimeZoneOffsetMs(pUser
 						.getTimeCreatedTimeZoneOffsetMs());
-				lUser.setTimeUpdatedMs(userAccount.getTimeUpdatedMs());
-				lUser.setTimeUpdatedTimeZoneOffsetMs(userAccount
+				lUser.setTimeUpdatedMs(pUser.getTimeUpdatedMs());
+				lUser.setTimeUpdatedTimeZoneOffsetMs(pUser
 						.getTimeUpdatedTimeZoneOffsetMs());
 
-				userService.saveUser(lUser);
+				userService.signUpUser(lUser);
 				response.setStatus(HttpServletResponse.SC_CREATED);
 				return null;
 			}

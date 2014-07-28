@@ -762,7 +762,7 @@ function updateAdEnabled(pAdId, pAdEnabled, pElementName) {
 				},
 				400 : function(text) {
 					try {
-						$('#campaign_errors').html(getErrorMessages(text));
+						$('#campaign_errors').html('<p>'+ getErrorMessages(text)+'</p>');
 					} catch (err) {
 						handleError("updateAdEnabled", err);
 					}

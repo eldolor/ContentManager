@@ -107,9 +107,17 @@
 						</div>
 					</div>
 				</form>
-				<button id="contentgroup_save_button" class="button radius">create</button>
-				<button id="contentgroup_cancel_button" class="button radius">cancel</button>
-				<span id="contentgroup_errors" class="alert radius label"></span>
+				<div class="row">
+					<div class="large-12 columns">
+						<span id="contentgroup_errors" class="alert radius label"></span>
+					</div>
+				</div>
+				<div class="row">
+					<div class="large-12 columns">
+						<button id="contentgroup_save_button" class="button radius">create</button>
+						<button id="contentgroup_cancel_button" class="button radius">cancel</button>
+					</div>
+				</div>
 			</div>
 			<!-- End Content Group -->
 		</div>

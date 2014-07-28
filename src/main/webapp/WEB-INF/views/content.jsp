@@ -141,9 +141,17 @@ setSelectedContentGroup(${contentGroupId});
 					</div>
 
 				</form>
-				<button id="content_save_button" class="button radius">create</button>
-				<button id="content_cancel_button" class="button radius">cancel</button>
-				<span id="content_errors" class="alert radius label"></span>
+				<div class="row">
+					<div class="large-12 columns">
+						<span id="content_errors" class="alert radius label"></span>
+					</div>
+				</div>
+				<div class="row">
+					<div class="large-12 columns">
+						<button id="content_save_button" class="button radius">create</button>
+						<button id="content_cancel_button" class="button radius">cancel</button>
+					</div>
+				</div>
 			</div>
 			<!-- End Content  -->
 		</div>

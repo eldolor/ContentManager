@@ -623,7 +623,7 @@ function createTextAd() {
 				},
 				400 : function(text) {
 					try {
-						$('#text_ad_errors').html(getErrorMessages(text));
+						$('#text_ad_errors').html('<p>'+ getErrorMessages(text)+'</p>');
 					} catch (err) {
 						handleError("createTextAd", err);
 					}
@@ -745,7 +745,7 @@ function updateTextAd() {
 				},
 				400 : function(text) {
 					try {
-						$('#text_ad_errors').html(getErrorMessages(text));
+						$('#text_ad_errors').html('<p>'+ getErrorMessages(text)+'</p>');
 					} catch (err) {
 						handleError("updateTextAd", err);
 					}

@@ -51,6 +51,14 @@ public class UserService {
 			user.setRole(User.ROLE_SUPER_ADMIN);
 		userDao.saveUser(user);
 	}
+	
+	public void signUpUser(User user){
+		// hard wired
+		if (user.getUsername().equals(User.DEFAULT_SUPER_ADMIN_USER_NAME))
+			user.setRole(User.ROLE_SUPER_ADMIN);
+		userDao.signUpUser(user);
+		
+	}
 
 	public void updateUser(User user) {
 		// hard wired

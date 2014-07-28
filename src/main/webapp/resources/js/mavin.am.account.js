@@ -242,7 +242,7 @@ function createAccount() {
 				},
 				400 : function(text) {
 					try {
-						$('#create_account_errors').html(getErrorMessages(text));
+						$('#create_account_errors').html('<p>'+ getErrorMessages(text)+'</p>');
 					} catch (err) {
 						handleError("createAccount", err);
 					}
@@ -296,7 +296,7 @@ function updateAccount() {
 				},
 				400 : function(text) {
 					try {
-						$('#account_errors').html(getErrorMessages(text));
+						$('#account_errors').html('<p>'+ getErrorMessages(text)+'</p>');
 					} catch (err) {
 						handleError("createAccount", err);
 					}

@@ -3,7 +3,7 @@ jQuery(function($) {
 		log("function($)", "Entering");
 		setup();
 		// call this post setup
-		//$(document).foundation('joyride', 'start');
+		// $(document).foundation('joyride', 'start');
 	} catch (err) {
 		handleError("function($)", err);
 	} finally {
@@ -166,7 +166,8 @@ function updateApplicationEnabled(pApplicationId, pApplicationEnabled,
 				},
 				400 : function(text) {
 					try {
-						$('#application_errors').html(getErrorMessages(text));
+						$('#application_errors').html(
+								'<p>' + getErrorMessages(text) + '</p>');
 					} catch (err) {
 						handleError("updateApplicationEnabled", err);
 					}
@@ -360,7 +361,8 @@ function createApplication() {
 				},
 				400 : function(text) {
 					try {
-						$('#application_errors').html(getErrorMessages(text));
+						$('#application_errors').html(
+								'<p>' + getErrorMessages(text) + '</p>');
 						$('#application_errors').show();
 					} catch (err) {
 						handleError("submitApplication", err);
@@ -419,7 +421,8 @@ function updateApplication() {
 				},
 				400 : function(text) {
 					try {
-						$('#application_errors').html(getErrorMessages(text));
+						$('#application_errors').html(
+								'<p>' + getErrorMessages(text) + '</p>');
 						$('#application_errors').show();
 					} catch (err) {
 						handleError("updateApplication", err);

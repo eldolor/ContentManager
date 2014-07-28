@@ -207,7 +207,7 @@ function updateContentGroupEnabled(pContentGroupId, pContentGroupEnabled,
 				},
 				400 : function(text) {
 					try {
-						$('#contentgroup_errors').html(getErrorMessages(text));
+						$('#contentgroup_errors').html('<p>'+ getErrorMessages(text)+'</p>');
 					} catch (err) {
 						handleError("updateContentGroupEnabled", err);
 					}
@@ -421,7 +421,7 @@ function createContentGroup() {
 				},
 				400 : function(text) {
 					try {
-						$('#contentgroup_errors').html(getErrorMessages(text));
+						$('#contentgroup_errors').html('<p>'+ getErrorMessages(text)+'</p>');
 						$('#contentgroup_errors').show();
 					} catch (err) {
 						handleError("submitContentGroup", err);
@@ -484,7 +484,7 @@ function updateContentGroup() {
 				},
 				400 : function(text) {
 					try {
-						$('#contentgroup_errors').html(getErrorMessages(text));
+						$('#contentgroup_errors').html('<p>'+ getErrorMessages(text)+'</p>');
 						$('#contentgroup_errors').show();
 					} catch (err) {
 						handleError("updateContentGroup", err);

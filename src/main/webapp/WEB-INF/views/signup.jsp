@@ -96,11 +96,17 @@
 							name="_spring_security_remember_me" style="display: none" />
 						<div>&nbsp;</div>
 					</form>
-					<div>
-						<button id="user_sign_in_submit_button" class="button">sign
-							in</button>
-						<button id="user_sign_in_cancel_button" class="button">cancel</button>
-						<span id="login_errors" class="alert radius label"></span>
+					<div class="row">
+						<div class="large-12 columns">
+							<span id="login_errors" class="alert radius label"></span>
+						</div>
+					</div>
+					<div class="row">
+						<div class="large-12 columns">
+							<button id="user_sign_in_submit_button" class="button">sign
+								in</button>
+							<button id="user_sign_in_cancel_button" class="button">cancel</button>
+						</div>
 					</div>
 				</div>
 			</div>

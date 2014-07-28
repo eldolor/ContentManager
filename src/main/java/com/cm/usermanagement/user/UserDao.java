@@ -4,8 +4,10 @@ import java.util.List;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
+import javax.jdo.Transaction;
 import javax.persistence.NoResultException;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.cm.accountmanagement.account.Account;
@@ -13,11 +15,11 @@ import com.cm.util.PMF;
 import com.cm.util.Util;
 
 @Component
- class UserDao {
+class UserDao {
 	// private static final Logger LOGGER =
 	// Logger.getLogger(UserDao.class.getName());
 
-	 List<Account> getAccounts() {
+	List<Account> getAccounts() {
 		PersistenceManager pm = null;
 
 		try {
@@ -32,7 +34,7 @@ import com.cm.util.Util;
 		}
 	}
 
-	 List<User> getAllUsers() {
+	List<User> getAllUsers() {
 		PersistenceManager pm = null;
 
 		try {
@@ -47,7 +49,7 @@ import com.cm.util.Util;
 		}
 	}
 
-	 List<User> getUsersByAccountId(Long accountId) {
+	List<User> getUsersByAccountId(Long accountId) {
 		PersistenceManager pm = null;
 
 		try {
@@ -66,7 +68,7 @@ import com.cm.util.Util;
 		}
 	}
 
-	 User getUserByUserName(String userName) {
+	User getUserByUserName(String userName) {
 		PersistenceManager pm = null;
 
 		try {
@@ -90,7 +92,7 @@ import com.cm.util.Util;
 		}
 	}
 
-	 User getUserByAccountId(Long accountId, Long userId) {
+	User getUserByAccountId(Long accountId, Long userId) {
 		PersistenceManager pm = null;
 
 		try {
@@ -117,7 +119,44 @@ import com.cm.util.Util;
 		}
 	}
 
-	 void saveUser(User user) {
+	void signUpUser(User user) {
+		PersistenceManager pm = null;
+		Transaction tx = null;
+		try {
+			pm = PMF.get().getPersistenceManager();
+			tx = pm.currentTransaction();
+			tx.begin();
+
+			// create the account
+			long lTime = System.currentTimeMillis();
+			Account lAccount = new Account();
+			lAccount.setName(user.getUsername());
+			lAccount.setDescription("This is the default account for the user");
+			lAccount.setTimeCreatedMs(lTime);
+			lAccount.setTimeCreatedTimeZoneOffsetMs(0L);
+			lAccount.setTimeUpdatedMs(lTime);
+			lAccount.setTimeUpdatedTimeZoneOffsetMs(0L);
+			// returns the saved Account
+			lAccount = pm.makePersistent(lAccount);
+			// set the account id
+			user.setAccountId(lAccount.getId());
+			// save the user
+			pm.makePersistent(user);
+
+			tx.commit();
+
+		} finally {
+			if (tx.isActive()) {
+				tx.rollback();
+			}
+			if (pm != null) {
+				pm.close();
+			}
+		}
+
+	}
+
+	void saveUser(User user) {
 		PersistenceManager pm = null;
 		try {
 			pm = PMF.get().getPersistenceManager();
@@ -130,7 +169,7 @@ import com.cm.util.Util;
 		}
 	}
 
-	 void updateUser(User user) {
+	void updateUser(User user) {
 		PersistenceManager pm = null;
 		try {
 			pm = PMF.get().getPersistenceManager();
@@ -155,7 +194,7 @@ import com.cm.util.Util;
 		}
 	}
 
-	 User getUser(Long id) {
+	User getUser(Long id) {
 		PersistenceManager pm = null;
 
 		try {

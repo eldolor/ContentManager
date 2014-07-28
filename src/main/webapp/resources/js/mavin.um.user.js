@@ -40,7 +40,7 @@ function createUser() {
 				},
 				400 : function(text) {
 					try {
-						$('#user_errors').html(getErrorMessages(text));
+						$('#user_errors').html('<p>'+ getErrorMessages(text)+'</p>');
 					} catch (err) {
 						handleError("createUser", err);
 					}
@@ -101,7 +101,7 @@ function updateUser() {
 				},
 				400 : function(text) {
 					try {
-						$('#user_errors').html(getErrorMessages(text));
+						$('#user_errors').html('<p>'+ getErrorMessages(text)+'</p>');
 					} catch (err) {
 						handleError("updateUser", err);
 					}
@@ -158,7 +158,7 @@ function updateLoggedInUser() {
 				},
 				400 : function(text) {
 					try {
-						$('#user_errors').html(getErrorMessages(text));
+						$('#user_errors').html('<p>'+ getErrorMessages(text)+'</p>');
 					} catch (err) {
 						handleError("updateLoggedInUser", err);
 					}

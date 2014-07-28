@@ -358,7 +358,7 @@ function createAdGroup() {
 				},
 				400 : function(text) {
 					try {
-						$('#adgroup_errors').html(getErrorMessages(text));
+						$('#adgroup_errors').html('<p>'+ getErrorMessages(text)+'</p>');
 					} catch (err) {
 						handleError("createAdGroup", err);
 					}
@@ -410,7 +410,7 @@ function updateAdGroup() {
 				},
 				400 : function(text) {
 					try {
-						$('#adgroup_errors').html(getErrorMessages(text));
+						$('#adgroup_errors').html('<p>'+ getErrorMessages(text)+'</p>');
 					} catch (err) {
 						handleError("updateAdGroup", err);
 					}

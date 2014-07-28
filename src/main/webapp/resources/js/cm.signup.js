@@ -65,7 +65,12 @@ function setupBreadcrumbs() {
 function signup() {
 	log("signup", "Entering");
 	try {
-
+		// validate the email
+		if (!validateEmail($('#userName').val())) {
+			$('#signup_errors').html("<p>Please enter a valid email address</p>");
+			$('#signup_errors').show();
+			return;
+		}
 		var lDate = new Date();
 		var lTimeCreated = lDate.getTime();
 
@@ -97,7 +102,7 @@ function signup() {
 					try {
 						// TODO: how do display error during post signup auto
 						// login
-						$('#signup_errors').html(getErrorMessages(text));
+						$('#signup_errors').html('<p>'+ getErrorMessages(text)+'</p>');
 						$('#signup_errors').show();
 					} catch (err) {
 						handleError("signup", err);
@@ -164,7 +169,7 @@ function postSignupAutoLogin(pUserName, pPassword) {
 // 400 : function(text) {
 // try {
 // $('#create_account_errors')
-// .html(getErrorMessages(text));
+// .html('<p>'+ getErrorMessages(text)+'</p>');
 // $('#create_account_errors').show();
 // } catch (err) {
 // handleError("createAccount", err);

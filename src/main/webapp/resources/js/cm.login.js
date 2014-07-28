@@ -16,6 +16,11 @@ function setup() {
 		setupLeftNavBar();
 		setupBreadcrumbs();
 		$('#login_errors').hide();
+
+		if (mErrors != null) {
+			$('#login_errors').html(getErrorMessage("login_failure", mErrors));
+			$('#login_errors').show();
+		}
 		// now using foundation abide
 		// $('#user_sign_in_submit_button').unbind();
 		// $('#user_sign_in_submit_button').bind('click', function() {
@@ -29,12 +34,13 @@ function setup() {
 			window.location.href = '/';
 		});
 		// enable abide form validation
-		$('#loginForm').on('invalid', function() {
+		$(document).foundation('abide','events'); 
+		$('#loginForm').on('invalid.fndtn.abide', function() {
 			var invalid_fields = $(this).find('[data-invalid]');
 			console.log(invalid_fields);
-		});
-		$('#loginForm').on('valid', function() {
+		}).on('valid.fndtn.abide', function() {
 			document.loginForm.submit();
+			// login();
 		});
 	} catch (err) {
 		handleError("setup", err);
@@ -94,23 +100,22 @@ function login() {
 			contentType : "application/json",
 			async : false,
 			statusCode : {
-				201 : function() {
+				200 : function() {
 					window.location.href = '/applications';
 				},
 				400 : function(text) {
 					try {
-						$('#login_errors').html(
-								'<p>' + getErrorMessages(text) + '</p>');
+						// $('#login_errors').html(
+						// '<p>' + getErrorMessages(text) + '</p>');
 						$('#login_errors').show();
 					} catch (err) {
 						handleError("login", err);
 					}
 				}
+			},
+			complete : function(xhr, textStatus) {
+				console.log(xhr.status);
 			}
-		});
-		jqxhr.always(function() {
-			// close wait div
-			closeWait();
 		});
 
 		return false;

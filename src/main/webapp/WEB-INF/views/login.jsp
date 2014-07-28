@@ -27,6 +27,9 @@
 <!-- Begin Custom -->
 <script type="text/javascript" src="resources/js/cm.login.js"></script>
 <!-- End Custom -->
+<script type="text/javascript">
+setErrors(${errors});
+</script>
 
 
 
@@ -44,23 +47,23 @@
 
 			<div class="row">
 				<div class="large-6 columns">
-					<form id="loginForm" action="j_spring_security_check" name="loginForm"
-						method="post" data-abide>
+					<form id="loginForm" action="j_spring_security_check"
+						name="loginForm" method="post" data-abide>
 						<fieldset>
 							<legend>Sign In</legend>
 							<div class="row">
 								<div class="large-12 columns">
-									<label for="password">Email <small>required</small></label> <input
+									<label for="j_username">Email <small>required</small> <input
 										type="email" id="j_username" name="j_username"
-										placeholder="bruce.almighty@gmail.com" required /> <small
-										class="error">Valid email required.</small>
+										placeholder="bruce.almighty@gmail.com" required="required" /></label>
+									<small class="error">A valid email address is required.</small>
 								</div>
 							</div>
 							<div class="row">
 								<div class="large-12 columns">
-									<label for="password">Password <small>required</small></label><input
+									<label for="j_password">Password <small>required</small><input
 										type="password" id="j_password" name="j_password"
-										placeholder="LittleW0men." required />
+										placeholder="LittleW0men." required="required" /></label>
 								</div>
 							</div>
 							<input type="hidden" value="on" id="_spring_security_remember_me"
@@ -68,7 +71,7 @@
 							<div>&nbsp;</div>
 							<div class="row">
 								<div class="large-12 columns">
-									<span id="login_errors" class="alert radius label"></span>
+									<span id="login_errors" class="alert radius label"></span><br>
 								</div>
 							</div>
 							<div class="row">
@@ -76,7 +79,6 @@
 									<button id="user_sign_in_submit_button" class="button">sign
 										in</button>
 									<button id="user_sign_in_cancel_button" class="button">cancel</button>
-									<br> <span id="login_errors" class="alert radius label"></span>
 								</div>
 							</div>
 						</fieldset>

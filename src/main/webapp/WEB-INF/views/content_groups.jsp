@@ -49,75 +49,92 @@
 			<div id="content_groups_list"></div>
 			<!-- Begin Content Group -->
 			<div id="content_group_create" style="display: none">
-				<h3 id="contentGroupModalLabel">Content Group Setup</h3>
-				<form id="contentGroupForm" name="contentGroupForm">
-					<input type="hidden" id="application_id" name="application_id" />
-					<input type="hidden" id="contentgroup_id" name="contentgroup_id" />
-					<input type="hidden" />
+				<form id="contentGroupForm" name="contentGroupForm" data-abide="ajax">
+					<fieldset>
+						<legend>Content Group Setup</legend>
+						<input type="hidden" id="application_id" name="application_id" />
+						<input type="hidden" id="contentgroup_id" name="contentgroup_id" />
+						<input type="hidden" />
 
-					<div class="row">
-						<div class="large-12 columns">
-							<label>Name: <input type="text" id="contentgroup_name"
-								name="contentgroup_name" />
-							</label>
-						</div>
-					</div>
-					<div class="row">
-						<div class="large-12 columns">
-							<label>Description: <textarea rows="5"
-									id="contentgroup_description" name="contentgroup_description"></textarea>
-							</label>
-						</div>
-					</div>
-					<div class="row">
-						<div class="large-12 columns">
-							<label>Start Date:
-								<div id="contentgroup_start_datepicker">
-									<input type="text" id="contentgroup_start_date"
-										name="contentgroup_start_date" /> <br />
+						<div class="row">
+							<div class="large-12 columns">
+								<div class="name-field">
+									<label>Name <small>required</small><input type="text"
+										id="contentgroup_name" name="contentgroup_name"
+										required="required" 
+										placeholder="My First Content Group" />
+									</label> <small class="error">Name is required</small>
 								</div>
-							</label>
+							</div>
 						</div>
-					</div>
+						<div class="row">
+							<div class="large-12 columns">
+								<div class="input-wrapper">
+									<label>Description <textarea rows="5"
+											id="contentgroup_description" name="contentgroup_description"
+											placeholder="A short description of the content group"></textarea>
+									</label>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="large-12 columns">
+								<div class="input-wrapper">
+									<label>Start Date <small>required</small>
+										<div id="contentgroup_start_datepicker">
+											<input type="text" id="contentgroup_start_date"
+												name="contentgroup_start_date" required="required"
+												pattern="month_day_year" /> <br />
+												<small class="error">Please enter a valid start date MM/DD/YYYY</small>
+										</div>
+									</label>
+								</div>
+							</div>
+						</div>
 
-					<div class="row">
-						<div class="large-12 columns">
-							<label><span data-tooltip class="has-tip"
-								title="Specify an End Date only if you want the content to expire after a certain date, or else leave it empty.">End
-									Date:</span>
-								<div id="contentgroup_end_datepicker">
-									<input type="text" id="contentgroup_end_date"
-										name="contentgroup_end_date" /> <br />
-								</div> </label>
+						<div class="row">
+							<div class="large-12 columns">
+								<div class="input-wrapper">
+									<label><span data-tooltip class="has-tip"
+										title="Specify an End Date only if you want the content to expire after a certain date, or else leave it empty.">End
+											Date</span>
+										<div id="contentgroup_end_datepicker">
+											<input type="text" id="contentgroup_end_date"
+												name="contentgroup_end_date" pattern="month_day_year" /> <br />
+												<small class="error">Please enter a valid end date MM/DD/YYYY</small>
+										</div> </label>
+								</div>
+							</div>
 						</div>
-					</div>
 
-					<div class="row">
-						<div class="large-12 columns">
-							<label>Enabled:</label>
+						<div class="row">
+							<div class="large-12 columns">
+								<label>Enabled:</label>
+							</div>
 						</div>
-					</div>
-					<div class="row">
-						<div class="large-12 columns">
-							<input id="contentgroup_enabled" type="checkbox">
-							<!-- <div class="switch radius">
+						<div class="row">
+							<div class="large-12 columns">
+								<input id="contentgroup_enabled" type="checkbox">
+								<!-- <div class="switch radius">
 								<input id="contentgroup_enabled" type="checkbox"
 									checked="checked"> <label for="contentgroup_enabled">Enabled</label>
 							</div> -->
+							</div>
 						</div>
-					</div>
+						<div>&nbsp;</div>
+						<div class="row">
+							<div class="large-12 columns">
+								<span id="contentgroup_errors" class="alert radius label"></span>
+							</div>
+						</div>
+						<div class="row">
+							<div class="large-12 columns">
+								<button id="contentgroup_save_button" class="button radius">create</button>
+								<button id="contentgroup_cancel_button" class="button radius">cancel</button>
+							</div>
+						</div>
+					</fieldset>
 				</form>
-				<div class="row">
-					<div class="large-12 columns">
-						<span id="contentgroup_errors" class="alert radius label"></span>
-					</div>
-				</div>
-				<div class="row">
-					<div class="large-12 columns">
-						<button id="contentgroup_save_button" class="button radius">create</button>
-						<button id="contentgroup_cancel_button" class="button radius">cancel</button>
-					</div>
-				</div>
 			</div>
 			<!-- End Content Group -->
 		</div>

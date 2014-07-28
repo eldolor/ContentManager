@@ -16,6 +16,8 @@ function setup() {
 		log("setup", "Entering");
 		setupLeftNavBar();
 		setupBreadcrumbs();
+		// enable abide form validation
+		$(document).foundation('abide','events'); 
 
 		$("#contentgroup_start_date").datepicker({
 			altFormat : 'mm/dd/yy',
@@ -311,14 +313,16 @@ function editContentGroup(id) {
 							}
 							$('#contentgroup_save_button').html('update');
 
+							$('#contentGroupForm').on('invalid.fndtn.abide', function() {
+								var invalid_fields = $(this).find('[data-invalid]');
+								console.log(invalid_fields);
+							}).on('valid.fndtn.abide', function() {
+								updateContentGroup();
+							});
 							// unbind click listener to reset
-							$('#contentgroup_save_button').unbind();
-							$('#contentgroup_save_button').bind('click',
-									updateContentGroup);
 
 							$('#contentgroup_cancel_button').unbind();
 							$('#contentgroup_cancel_button').click(function() {
-								$('#contentgroup_save_button').unbind();
 								$('#content_group_create').hide();
 								$('#content_groups_list').show();
 							});
@@ -344,12 +348,14 @@ function newContentGroup() {
 		$('#contentgroup_errors').hide();
 
 		$('#contentgroup_save_button').html('create');
-		// unbind click listener to reset
-		$('#contentgroup_save_button').unbind();
-		$('#contentgroup_save_button').click(createContentGroup);
+		$('#contentGroupForm').on('invalid.fndtn.abide', function() {
+			var invalid_fields = $(this).find('[data-invalid]');
+			console.log(invalid_fields);
+		}).on('valid.fndtn.abide', function() {
+			createContentGroup();
+		});
 		$('#contentgroup_cancel_button').unbind();
 		$('#contentgroup_cancel_button').click(function() {
-			$('#contentgroup_save_button').unbind();
 			$('#content_group_create').hide();
 			$('#content_groups_list').show();
 		});

@@ -16,6 +16,8 @@ function setup() {
 		log("setup", "Entering");
 		setupLeftNavBar();
 		setupBreadcrumbs();
+		// enable abide form validation
+		$(document).foundation('abide','events'); 
 
 		getApplications();
 	} catch (err) {
@@ -258,14 +260,16 @@ function editApplication(id) {
 					}
 					$('#application_save_button').html('update');
 
-					// unbind click listener to reset
-					$('#application_save_button').unbind();
-					$('#application_save_button').bind('click',
-							updateApplication);
+					$('#applicationForm').on('invalid.fndtn.abide', function() {
+						var invalid_fields = $(this).find('[data-invalid]');
+						console.log(invalid_fields);
+					}).on('valid.fndtn.abide', function() {
+						updateApplication();
+					});
 
+					// unbind click listener to reset
 					$('#application_cancel_button').unbind();
 					$('#application_cancel_button').click(function() {
-						$('#application_save_button').unbind();
 						$('#application_create').hide();
 						$('#applications_list').show();
 					});
@@ -292,11 +296,14 @@ function newApplication() {
 
 		$('#application_save_button').html('create');
 		// unbind click listener to reset
-		$('#application_save_button').unbind();
-		$('#application_save_button').click(createApplication);
+		$('#applicationForm').on('invalid.fndtn.abide', function() {
+			var invalid_fields = $(this).find('[data-invalid]');
+			console.log(invalid_fields);
+		}).on('valid.fndtn.abide', function() {
+			createApplication();
+		});
 		$('#application_cancel_button').unbind();
 		$('#application_cancel_button').click(function() {
-			$('#application_save_button').unbind();
 			$('#application_create').hide();
 			$('#applications_list').show();
 		});
@@ -310,6 +317,8 @@ function newApplication() {
 		$('#application_enabled').attr('checked', 'checked');
 
 		$('#application_errors').empty();
+		
+
 	} catch (err) {
 		handleError("newApplication", err);
 	} finally {

@@ -1,4 +1,15 @@
 /** Begin Utilities ******************************** */
+function setErrors(pErrors) {
+	log("setErrors", "Entering");
+	try {
+
+		mErrors = pErrors;
+	} catch (err) {
+		handleError("setErrors", err);
+	} finally {
+		log("setErrors", "Entering");
+	}
+}
 
 function getDropboxUrl() {
 	log("getDropboxUrl", "Entering")
@@ -39,6 +50,24 @@ function getErrorMessages(text) {
 		handleError("getErrorMessages", err);
 	}
 	log("getErrorMessages", "Exiting")
+}
+
+function getErrorMessage(pErrorCode, pErrors) {
+	log("getErrorMessage", "Entering")
+	try {
+		log("getErrorMessage", pErrorCode);
+		var message = '';
+		for (var int = 0; int < pErrors.length; int++) {
+			if (pErrors[int].code == pErrorCode) {
+				message = pErrors[int].description;
+			}
+		}
+		return message;
+
+	} catch (err) {
+		handleError("getErrorMessage", err);
+	}
+	log("getErrorMessage", "Exiting")
 }
 // TODO:
 function isRoleAdmin() {

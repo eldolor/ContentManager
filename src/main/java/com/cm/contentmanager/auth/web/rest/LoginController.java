@@ -62,6 +62,44 @@ public class LoginController {
 	}
 
 	/**
+	 * If we have a login failure this request mapping flags the error to be
+	 * shown in the UI.
+	 * 
+	 * @param model
+	 *            the spring model for the request
+	 */
+	@RequestMapping(value = "/loginfailure", method = { RequestMethod.POST,
+			RequestMethod.GET })
+	public ModelAndView doLoginFailure(ModelMap map) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering doLoginFailure");
+			LOGGER.log(Level.WARNING, "login_failure");
+
+			map.addAttribute(
+					"errors",
+					"[{  \"code\": \"login_failure\", \"description\": \"Either the user does not exist or the password is incorrect\"  }]");
+
+			return new ModelAndView("login", map);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting doLoginFailure");
+		}
+	}
+
+	@RequestMapping(value = "/logout", method = { RequestMethod.GET })
+	public ModelAndView doLogout(ModelMap model) throws IOException {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering doLogout");
+			return new ModelAndView("login", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting doLogout");
+		}
+	}
+
+	/**
 	 * @param uuid
 	 * @param response
 	 */
@@ -102,40 +140,6 @@ public class LoginController {
 		}
 
 		response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-	}
-
-	/**
-	 * If we have a login failure this request mapping flags the error to be
-	 * shown in the UI.
-	 * 
-	 * @param model
-	 *            the spring model for the request
-	 */
-	@RequestMapping(value = "/loginfailure", method = { RequestMethod.POST,
-			RequestMethod.GET })
-	public ModelAndView doLoginFailure(ModelMap map) {
-		try {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering doLoginFailure");
-			// doHome(map);
-			map.addAttribute("popupScreen", "login_div");
-			return new ModelAndView("login", map);
-		} finally {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting doLoginFailure");
-		}
-	}
-
-	@RequestMapping(value = "/logout", method = { RequestMethod.GET })
-	public ModelAndView doLogout(ModelMap model) throws IOException {
-		try {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering doLogout");
-			return new ModelAndView("login", model);
-		} finally {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting doLogout");
-		}
 	}
 
 	private List<ValidationError> validate(

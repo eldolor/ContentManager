@@ -26,7 +26,7 @@
 <script src="/resources/js/foundation/foundation.tooltip.js"></script>
 <script src="/resources/js/foundation/foundation.joyride.js"></script>
 <script src="/resources/js/foundation/foundation.dropdown.js"></script>
-<script src="/resources/jjs/foundation/foundation.abide.js"></script>
+<script src="/resources/js/foundation/foundation.abide.js"></script>
 <script src="/resources/js/jquery-2.1.1/jquery.cookie.js"></script>
 <!-- Begin Foundation Related -->
 

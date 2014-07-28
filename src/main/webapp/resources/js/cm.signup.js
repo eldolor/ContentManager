@@ -16,11 +16,19 @@ function setup() {
 		setupLeftNavBar();
 		setupBreadcrumbs();
 		$('#signup_errors').hide();
-
-		$('#user_sign_up_submit_button').unbind();
-		$('#user_sign_up_submit_button').bind('click', function() {
+		// enable abide form validation
+		$(document).foundation('abide','events'); 
+		$('#signupForm').on('invalid.fndtn.abide', function() {
+			var invalid_fields = $(this).find('[data-invalid]');
+			console.log(invalid_fields);
+		}).on('valid.fndtn.abide', function() {
 			signup();
 		});
+
+//		$('#user_sign_up_submit_button').unbind();
+//		$('#user_sign_up_submit_button').bind('click', function() {
+//			signup();
+//		});
 		$('#user_sign_up_cancel_button').unbind();
 		$('#user_sign_up_cancel_button').bind('click', function() {
 			$('#user_sign_up_submit_button').unbind();
@@ -65,12 +73,12 @@ function setupBreadcrumbs() {
 function signup() {
 	log("signup", "Entering");
 	try {
-		// validate the email
-		if (!validateEmail($('#userName').val())) {
-			$('#signup_errors').html("<p>Please enter a valid email address</p>");
-			$('#signup_errors').show();
-			return;
-		}
+//		// validate the email
+//		if (!validateEmail($('#userName').val())) {
+//			$('#signup_errors').html("<p>Please enter a valid email address</p>");
+//			$('#signup_errors').show();
+//			return;
+//		}
 		var lDate = new Date();
 		var lTimeCreated = lDate.getTime();
 
@@ -83,7 +91,7 @@ function signup() {
 			timeUpdatedTimeZoneOffsetMs : (lDate.getTimezoneOffset() * 60 * 1000)
 		};
 		var objString = JSON.stringify(signupObj, null, 2);
-		// alert(contentgroupObjString);
+		
 		// create via sync call
 		var jqxhr = $.ajax({
 			url : "/signup",
@@ -102,12 +110,15 @@ function signup() {
 					try {
 						// TODO: how do display error during post signup auto
 						// login
-						$('#signup_errors').html('<p>'+ getErrorMessages(text)+'</p>');
+						$('#signup_errors').html(getErrorMessages(text));
 						$('#signup_errors').show();
 					} catch (err) {
 						handleError("signup", err);
 					}
 				}
+			},
+			complete : function(xhr, textStatus) {
+				console.log(xhr.status);
 			}
 		});
 		jqxhr.always(function() {

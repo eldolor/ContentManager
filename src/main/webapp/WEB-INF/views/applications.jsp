@@ -42,44 +42,63 @@
 			<div id="applications_list"></div>
 			<!-- Begin Content Group -->
 			<div id="application_create" style="display: none">
-				<h3 id="contentGroupModalLabel">Application Setup</h3>
-				<form id="contentGroupForm" name="contentGroupForm">
-					<input type="hidden" id="application_id" name="application_id" />
-					<input type="hidden" />
+				<form id="applicationForm" name="applicationForm"
+					data-abide="ajax">
+					<fieldset>
+						<legend>Application Setup</legend>
+						<input type="hidden" id="application_id" name="application_id" />
+						<input type="hidden" />
 
-					<div class="row">
-						<div class="large-12 columns">
-							<label>Name: <input type="text" id="application_name"
-								name="application_name" />
-							</label>
+						<div class="row">
+							<div class="large-12 columns">
+								<div class="name-field">
+									<label>Name <small>required</small><input type="text"
+										id="application_name" name="application_name" required="required"
+										 placeholder="My First Application" />
+									</label> <small class="error">Name is required</small>
+								</div>
+							</div>
 						</div>
-					</div>
-					<div class="row">
-						<div class="large-12 columns">
-							<label>Description: <textarea rows="5"
-									id="application_description" name="application_description"></textarea>
-							</label>
+						<div class="row">
+							<div class="large-12 columns">
+								<div class="input-wrapper">
+									<label>Description: <textarea rows="5"
+											id="application_description" name="application_description"
+											placeholder="A short description of the application"></textarea>
+									</label>
+								</div>
+							</div>
 						</div>
-					</div>
 
-					<div class="row">
-						<div class="large-12 columns">
-							<label>Enabled:</label>
+						<div class="row">
+							<div class="large-12 columns">
+								<label>Enabled:</label>
+							</div>
 						</div>
-					</div>
-					<div class="row">
-						<div class="large-12 columns">
-							<input id="application_enabled" type="checkbox">
-							<!-- <div class="switch radius">
+						<div class="row">
+							<div class="large-12 columns">
+								<input id="application_enabled" type="checkbox">
+								<!-- <div class="switch radius">
 								<input id="application_enabled" type="checkbox"
 									checked="checked"> <label for="application_enabled">Enabled</label>
 							</div> -->
+							</div>
 						</div>
-					</div>
+						<div>&nbsp;</div>
+						<div class="row">
+							<div class="large-12 columns">
+								<span id="application_errors" class="alert radius label"></span><br>
+							</div>
+						</div>
+						<div class="row">
+							<div class="large-12 columns">
+								<button id="application_save_button" class="button radius">create</button>
+								<button id="application_cancel_button" class="button radius">cancel</button>
+							</div>
+						</div>
+					</fieldset>
+
 				</form>
-				<button id="application_save_button" class="button radius">create</button>
-				<button id="application_cancel_button" class="button radius">cancel</button>
-				<span id="application_errors" class="alert radius label"></span>
 			</div>
 			<!-- End Content Group -->
 		</div>

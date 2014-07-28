@@ -3,6 +3,7 @@ var mDebugEnabled = 'Y';
 var mSelectedApplication;
 var mSelectedContentGroup;
 var mSelectedContent;
+var mErrors;
 
 /** ***************************** */
 $.ajaxSetup ({

@@ -46,7 +46,10 @@
 		<!-- Override default login and logout pages -->
 		<security:form-login login-page="/login"
 			default-target-url="/applications" authentication-failure-url="/loginfailure" />
-		<security:logout invalidate-session="true"
+<!-- 		<security:form-login login-page="/login"
+			authentication-failure-handler-ref="ajaxAuthenticationFailureHandler"
+			authentication-success-handler-ref="ajaxAuthenticationSuccessHandler" />
+ -->		<security:logout invalidate-session="true"
 			logout-success-url="/" />
 
 

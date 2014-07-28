@@ -16,6 +16,8 @@ function setup() {
 		log("setup", "Entering");
 		setupLeftNavBar();
 		setupBreadcrumbs();
+		// enable abide form validation
+		$(document).foundation('abide', 'events');
 
 		$("#content_start_date").datepicker({
 			altFormat : 'mm/dd/yy',
@@ -26,9 +28,11 @@ function setup() {
 			altField : '#content_end_date'
 		});
 		// set application and content group name
-		$('#application_name').html('Application:&nbsp;' + mSelectedApplication.name);
-		$('#contentgroup_name').html('Content Group:&nbsp;' + mSelectedContentGroup.name);
-		
+		$('#application_name').html(
+				'Application:&nbsp;' + mSelectedApplication.name);
+		$('#contentgroup_name').html(
+				'Content Group:&nbsp;' + mSelectedContentGroup.name);
+
 		$("#jquery_jplayer_1").jPlayer({
 			swfPath : "/resources/js/jquery",
 			supplied : "webmv, ogv, m4v",
@@ -88,8 +92,13 @@ function setupBreadcrumbs() {
 				.html(
 						lHtml
 								+ "<a id=\"breadcrumb_applications\" href=\"/applications\">Applications</a>"
-								+ "<a id=\"breadcrumb_content_groups\" href=\"/" + mSelectedApplication.id + "/contentgroups\">Content Groups</a>"
-								+ "<a id=\"breadcrumb_content_groups\" href=\"/" + mSelectedApplication.id + "/" + mSelectedContentGroup.id+"/content\">Content</a>");
+								+ "<a id=\"breadcrumb_content_groups\" href=\"/"
+								+ mSelectedApplication.id
+								+ "/contentgroups\">Content Groups</a>"
+								+ "<a id=\"breadcrumb_content_groups\" href=\"/"
+								+ mSelectedApplication.id + "/"
+								+ mSelectedContentGroup.id
+								+ "/content\">Content</a>");
 
 	} catch (err) {
 		handleError("setupBreadcrumbs", err);
@@ -229,7 +238,8 @@ function updateContentEnabled(pContentId, pContentEnabled, pElementName) {
 				},
 				400 : function(text) {
 					try {
-						$('#content_errors').html('<p>'+ getErrorMessages(text)+'</p>');
+						$('#content_errors').html(
+								'<p>' + getErrorMessages(text) + '</p>');
 					} catch (err) {
 						handleError("updateContentEnabled", err);
 					}
@@ -306,7 +316,7 @@ function editContent(id) {
 				200 : function(content) {
 
 					$('#content_id').val(content.id);
-					//set the application id
+					// set the application id
 					$('#application_id').val(content.applicationId);
 					// set the content group id
 					$('#contentgroup_id').val(content.contentGroupId);
@@ -318,10 +328,8 @@ function editContent(id) {
 					$('#content_end_date').val(
 							getDisplayDate(content.endDateIso8601));
 					// // add more
-					// $('#content_userid').val(
-					// content.sponsoredUserId);
-					$('#content_uri').val(ad.uri);
-					$('#content_type').val(ad.type);
+					$('#content_uri').val(content.uri);
+					$('#content_type').val(content.type);
 
 					$("#content_dropbox").hide();
 					// reset
@@ -339,13 +347,15 @@ function editContent(id) {
 
 					$('#content_save_button').html('update');
 
-					// unbind click listener to reset
-					$('#content_save_button').unbind();
-					$('#content_save_button').bind('click', updateContent);
+					$('#contentForm').on('invalid.fndtn.abide', function() {
+						var invalid_fields = $(this).find('[data-invalid]');
+						console.log(invalid_fields);
+					}).on('valid.fndtn.abide', function() {
+						updateContent();
+					});
 
 					$('#content_cancel_button').unbind();
 					$('#content_cancel_button').click(function() {
-						$('#content_save_button').unbind();
 						$('#content_create').hide();
 						$('#content_list').show();
 					});
@@ -511,12 +521,14 @@ function newContent() {
 		$('#content_errors').empty();
 
 		$('#content_save_button').html('create');
-		// unbind click listener to reset
-		$('#content_save_button').unbind();
-		$('#content_save_button').click(createContent);
+		$('#contentForm').on('invalid.fndtn.abide', function() {
+			var invalid_fields = $(this).find('[data-invalid]');
+			console.log(invalid_fields);
+		}).on('valid.fndtn.abide', function() {
+			createContent();
+		});
 		$('#content_cancel_button').unbind();
 		$('#content_cancel_button').click(function() {
-			$('#content_save_button').unbind();
 			$('#content_create').hide();
 			$('#content_list').show();
 		});
@@ -587,7 +599,8 @@ function createContent() {
 				},
 				400 : function(text) {
 					try {
-						$('#content_errors').html('<p>'+ getErrorMessages(text)+'</p>');
+						$('#content_errors').html(
+								'<p>' + getErrorMessages(text) + '</p>');
 						$('#content_errors').show();
 					} catch (err) {
 						handleError("createContent", err);
@@ -658,7 +671,8 @@ function updateContent() {
 				},
 				400 : function(text) {
 					try {
-						$('#content_errors').html('<p>'+ getErrorMessages(text)+'</p>');
+						$('#content_errors').html(
+								'<p>' + getErrorMessages(text) + '</p>');
 						$('#content_errors').show();
 					} catch (err) {
 						handleError("updateContent", err);

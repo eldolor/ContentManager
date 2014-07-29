@@ -45,10 +45,10 @@ public class ContentServerController {
 	 * @param response
 	 * @return
 	 */
-	@RequestMapping(value = "/contentserver/content", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/contentserver/contentlist", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	public @ResponseBody
 	List<com.cm.contentserver.transfer.Content> getContent(
-			@RequestBody ContentRequest pContentRequest,
+			@RequestBody com.cm.contentserver.transfer.ContentRequest pContentRequest,
 			HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -60,7 +60,7 @@ public class ContentServerController {
 			}
 
 			List<com.cm.contentserver.transfer.Content> contentList = convertToTransferFormat(contentServerService
-					.getContent(pContentRequest));
+					.getContent(convertToDomainFormat(pContentRequest)));
 			if (contentList != null) {
 				if (LOGGER.isLoggable(Level.INFO))
 					LOGGER.info(contentList.size() + " Content found");
@@ -76,7 +76,7 @@ public class ContentServerController {
 		}
 	}
 
-	@RequestMapping(value = "/contentserver/content/{trackingId}", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/contentserver/contentlist/{trackingId}", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody
 	List<com.cm.contentserver.transfer.Content> getContentTest(
 			@PathVariable String trackingId, HttpServletResponse response) {
@@ -130,6 +130,25 @@ public class ContentServerController {
 		lContent.setUri(pContent.getUri());
 		return lContent;
 
+	}
+
+	private ContentRequest convertToDomainFormat(
+			com.cm.contentserver.transfer.ContentRequest pContentRequest) {
+		ContentRequest lContentRequest = new ContentRequest();
+		lContentRequest.setAccuracy(pContentRequest.getAccuracy());
+		lContentRequest.setAltitude(pContentRequest.getAltitude());
+		lContentRequest.setApplicationId(pContentRequest.getApplicationId());
+		lContentRequest.setBearing(pContentRequest.getBearing());
+		lContentRequest.setDeviceId(pContentRequest.getDeviceId());
+		lContentRequest.setLatitude(pContentRequest.getLatitude());
+		lContentRequest.setLongitude(pContentRequest.getLongitude());
+		lContentRequest.setProvider(pContentRequest.getProvider());
+		lContentRequest.setSpeed(pContentRequest.getSpeed());
+		lContentRequest.setTimeMs(pContentRequest.getTimeMs());
+		lContentRequest.setTimeZoneOffsetMs(pContentRequest
+				.getTimeZoneOffsetMs());
+
+		return lContentRequest;
 	}
 
 }

@@ -122,6 +122,7 @@ public class ContentServerController {
 			Content pContent) {
 		com.cm.contentserver.transfer.Content lContent = new com.cm.contentserver.transfer.Content();
 		lContent.setApplicationId(pContent.getApplicationId());
+		lContent.setContentGroupId(pContent.getContentGroupId());
 		lContent.setId(pContent.getId());
 		lContent.setName(pContent.getName());
 		lContent.setTimeCreatedMs(pContent.getTimeCreatedMs());

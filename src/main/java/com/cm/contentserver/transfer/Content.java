@@ -2,6 +2,7 @@ package com.cm.contentserver.transfer;
 
 public class Content {
 	private Long id;
+	private Long contentGroupId;
 	private Long applicationId;
 	private String name;
 	private String type;
@@ -13,6 +14,12 @@ public class Content {
 	}
 	public void setId(Long id) {
 		this.id = id;
+	}
+	public Long getContentGroupId() {
+		return contentGroupId;
+	}
+	public void setContentGroupId(Long contentGroupId) {
+		this.contentGroupId = contentGroupId;
 	}
 	public Long getApplicationId() {
 		return applicationId;

@@ -152,6 +152,8 @@ function handleDisplayContentGroups_Callback(pContentGroups) {
 					+ lContentGroup.id
 					+ ")\">edit</a></li> <li><a class=\"small\" href=\"javascript:void(0)\" onclick=\"deleteContentGroup("
 					+ lContentGroup.id + ")\">delete</a></li></ul>";
+			lInnerHtml += "<span id=\"content_group_id\" class=\"secondary radius label\">Content Group Id: "
+					+ lContentGroup.id + "</span>";
 			lInnerHtml += "</div></div><hr>";
 		}
 

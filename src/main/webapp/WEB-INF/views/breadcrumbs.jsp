@@ -10,7 +10,7 @@
 
 	<div class="row">
 		<div class="large-12 columns">
-			<ul class="breadcrumbs" id="breadcrumbs">
+			<ul class="breadcrumbs radius" id="breadcrumbs">
 				<li><a href="/">Home</a></li>
 			</ul>
 		</div>

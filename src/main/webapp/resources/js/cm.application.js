@@ -105,12 +105,12 @@ function handleDisplayApplications_Callback(pApplications) {
 					+ lApplication.id + ")\"><strong>";
 			lInnerHtml += lApplication.name;
 			lInnerHtml += "</strong></a></span></p>";
-			lInnerHtml += "<p><span id=\"application_trackingid\" class=\"secondary radius label\">Application Id: "
-					+ lApplication.trackingId + "</span></p>";
 			lInnerHtml += "<ul class=\"inline-list\"> <li><a class=\"small\" href=\"javascript:void(0)\" onclick=\"editApplication("
 					+ lApplication.id
 					+ ")\">edit</a></li> <li><a class=\"small\" href=\"javascript:void(0)\" onclick=\"deleteApplication("
 					+ lApplication.id + ")\">delete</a></li></ul>";
+			lInnerHtml += "<span id=\"application_trackingid\" class=\"secondary radius label\">Application Id: "
+					+ lApplication.trackingId + "</span>";
 			lInnerHtml += "</div></div><hr>";
 		}
 

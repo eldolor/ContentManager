@@ -41,7 +41,8 @@
 	<br>
 	<div class="row">
 
-		<div class="large-9 push-3 columns" id="content_area">
+		<jsp:include page="left_nav_bar.jsp" flush="true"></jsp:include>
+		<div class="large-6 columns" id="content_area">
 			<div class="row">
 				<span id="application_name" class="secondary radius label"></span>
 			</div>
@@ -140,7 +141,11 @@
 		</div>
 
 
-		<jsp:include page="left_nav_bar.jsp" flush="true"></jsp:include>
+		<!-- Instructions on how to use the page -->
+		<aside class="large-3 columns hide-for-small" id="right_aside">
+			<p>Place instructions on how to use the page here.</p>
+		</aside>
+
 
 	</div>
 

@@ -11,44 +11,45 @@
 
 <div class="row">
 	<div class="large-12 columns">
+		<div class="contain-to-grid">
+			<nav class="top-bar radius" data-topbar>
+				<ul class="title-area">
 
-		<nav class="top-bar" data-topbar>
-			<ul class="title-area">
-
-				<li class="name">
-					<h1>
-						<a href="#">Content Manager</a>
-					</h1>
-				</li>
-				<li class="toggle-topbar menu-icon"><a href="#"><span>menu</span></a>
-				</li>
-			</ul>
-			<section class="top-bar-section">
-				<ul class="left">
-					<li><a id="header_link_1" href="#" style="display: none">Link
-							1</a></li>
-					<li><a id="header_link_2" href="#" style="display: none">Link
-							2</a></li>
-					<sec:authorize ifAnyGranted="ROLE_SUPER_ADMIN">
-						<li><a id="accounts" href="./am">Accounts</a></li>
-					</sec:authorize>
-					<sec:authorize ifAnyGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN">
-						<li><a id="users" href="./um">Users</a></li>
-					</sec:authorize>
-					<sec:authorize
-						ifAnyGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">
-						<li><a id="myAccount" href="javascript:void(0);"
-							onclick="editLoggedInUser()">My Account</a></li>
-					</sec:authorize>
+					<li class="name">
+						<h1>
+							<a href="#">Content Manager</a>
+						</h1>
+					</li>
+					<li class="toggle-topbar menu-icon"><a href="#"></a>
+					</li>
 				</ul>
-				<ul class="right">
-					<sec:authorize
-						ifAnyGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">
-						<li><a href="<c:url value="/j_spring_security_logout"/>">Sign
-								out </a></li>
-					</sec:authorize>
-				</ul>
-			</section>
-		</nav>
+				<section class="top-bar-section">
+					<ul class="left">
+						<li><a id="header_link_1" href="#" style="display: none">Link
+								1</a></li>
+						<li><a id="header_link_2" href="#" style="display: none">Link
+								2</a></li>
+						<sec:authorize ifAnyGranted="ROLE_SUPER_ADMIN">
+							<li><a id="accounts" href="./am">Accounts</a></li>
+						</sec:authorize>
+						<sec:authorize ifAnyGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN">
+							<li><a id="users" href="./um">Users</a></li>
+						</sec:authorize>
+						<sec:authorize
+							ifAnyGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">
+							<li><a id="myAccount" href="javascript:void(0);"
+								onclick="editLoggedInUser()">My Account</a></li>
+						</sec:authorize>
+					</ul>
+					<ul class="right">
+						<sec:authorize
+							ifAnyGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">
+							<li><a href="<c:url value="/j_spring_security_logout"/>">Sign
+									out </a></li>
+						</sec:authorize>
+					</ul>
+				</section>
+			</nav>
+		</div>
 	</div>
 </div>

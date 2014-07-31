@@ -38,12 +38,13 @@
 	<br>
 	<div class="row">
 
-		<div class="large-9 push-3 columns" id="content_area">
+		<jsp:include page="left_nav_bar.jsp" flush="true"></jsp:include>
+
+		<div class="large-6 columns" id="content_area">
 			<div id="applications_list"></div>
 			<!-- Begin Content Group -->
 			<div id="application_create" style="display: none">
-				<form id="applicationForm" name="applicationForm"
-					data-abide="ajax">
+				<form id="applicationForm" name="applicationForm" data-abide="ajax">
 					<fieldset>
 						<legend>Application Setup</legend>
 						<input type="hidden" id="application_id" name="application_id" />
@@ -53,8 +54,8 @@
 							<div class="large-12 columns">
 								<div class="name-field">
 									<label>Name <small>required</small><input type="text"
-										id="application_name" name="application_name" required="required"
-										 placeholder="My First Application" />
+										id="application_name" name="application_name"
+										required="required" placeholder="My First Application" />
 									</label> <small class="error">Name is required</small>
 								</div>
 							</div>
@@ -103,8 +104,10 @@
 			<!-- End Content Group -->
 		</div>
 
-		<jsp:include page="left_nav_bar.jsp" flush="true"></jsp:include>
-
+		<!-- Instructions on how to use the page -->
+		<aside class="large-3 columns hide-for-small" id="right_aside">
+			<p>Place instructions on how to use the page here.</p>
+		</aside>
 
 	</div>
 

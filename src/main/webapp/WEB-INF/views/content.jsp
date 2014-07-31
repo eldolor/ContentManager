@@ -42,7 +42,8 @@ setSelectedContentGroup(${contentGroupId});
 
 	<div class="row">
 
-		<div class="large-9 push-3 columns" id="content_area">
+		<jsp:include page="left_nav_bar.jsp" flush="true"></jsp:include>
+		<div class="large-6 columns" id="content_area">
 			<div class="row">
 				<span id="application_name" class="secondary radius label"></span> <span
 					id="contentgroup_name" class="secondary radius label"></span>
@@ -65,7 +66,7 @@ setSelectedContentGroup(${contentGroupId});
 								<div class="name-field">
 									<label>Name <small>required</small><input type="text"
 										id="content_name" name="content_name" required="required"
-										 placeholder="Geronimo" />
+										placeholder="Geronimo" />
 									</label> <small class="error">Name is required</small>
 								</div>
 							</div>
@@ -100,8 +101,8 @@ setSelectedContentGroup(${contentGroupId});
 										<div id="content_start_datepicker">
 											<input type="text" id="content_start_date"
 												name="content_start_date" required="required"
-												pattern="month_day_year" /> <br />
-												<small class="error">Please enter a valid start date MM/DD/YYYY</small>
+												pattern="month_day_year" /> <br /> <small class="error">Please
+												enter a valid start date MM/DD/YYYY</small>
 										</div>
 									</label>
 								</div>
@@ -117,7 +118,8 @@ setSelectedContentGroup(${contentGroupId});
 										<div id="content_end_datepicker">
 											<input type="text" id="content_end_date"
 												name="content_end_date" pattern="month_day_year" /> <br />
-												<small class="error">Please enter a valid end date MM/DD/YYYY</small>
+											<small class="error">Please enter a valid end date
+												MM/DD/YYYY</small>
 										</div> </label>
 								</div>
 							</div>
@@ -168,8 +170,11 @@ setSelectedContentGroup(${contentGroupId});
 			</div>
 			<!-- End Content  -->
 		</div>
+		<!-- Instructions on how to use the page -->
+		<aside class="large-3 columns hide-for-small" id="right_aside">
+			<p>Place instructions on how to use the page here.</p>
+		</aside>
 
-		<jsp:include page="left_nav_bar.jsp" flush="true"></jsp:include>
 
 	</div>
 

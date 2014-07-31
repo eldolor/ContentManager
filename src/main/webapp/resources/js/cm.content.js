@@ -198,6 +198,8 @@ function handleDisplayContent_Callback(pContent) {
 					+ lContent.id
 					+ ")\">edit</a></li> <li><a class=\"small\" href=\"javascript:void(0)\" onclick=\"deleteContent("
 					+ lContent.id + ")\">delete</a></li></ul>";
+			lInnerHtml += "<span id=\"content_id\" class=\"secondary radius label\">Content Id: "
+					+ lContent.id + "</span>";
 			lInnerHtml += "</div></div><hr>";
 		}
 

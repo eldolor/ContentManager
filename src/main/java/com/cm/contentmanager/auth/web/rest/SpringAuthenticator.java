@@ -49,7 +49,10 @@ public class SpringAuthenticator implements UserDetailsService {
 		if (LOGGER.isLoggable(Level.INFO))
 			LOGGER.info("Entering loadUserByUsername");
 		try {
-			User lUser = userService.getUserByUserName(username);
+			if (username == null)
+				return null;
+			// standardize to lower case
+			User lUser = userService.getUserByUserName(username.toLowerCase());
 			if (lUser == null) {
 				LOGGER.log(Level.WARNING, "Unknown User Name: " + username);
 				throw new UsernameNotFoundException("Unknown user: " + username);

@@ -80,7 +80,8 @@ public class UserManagementController {
 				// create the basic user object, additional work will be
 				// performed in the DAO (transactionally)
 				com.cm.usermanagement.user.User lUser = new com.cm.usermanagement.user.User();
-				lUser.setUsername(pUser.getUserName());
+				//standardize to lower case
+				lUser.setUsername(pUser.getUserName().toLowerCase());
 				// userName is the email address
 				lUser.setEmail(pUser.getUserName());
 				lUser.setPassword(new BCryptPasswordEncoder().encode(pUser

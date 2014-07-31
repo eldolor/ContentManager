@@ -347,10 +347,13 @@ function editContent(id) {
 
 					$('#content_save_button').html('update');
 
-					$('#contentForm').on('invalid.fndtn.abide', function() {
+					// not using valid.fndtn.abide & invalid.fndtn.abide as it
+					// causes the form to be submitted twice. Instead use the
+					// deprecated valid & invalid
+					$('#contentForm').on('invalid', function() {
 						var invalid_fields = $(this).find('[data-invalid]');
 						console.log(invalid_fields);
-					}).on('valid.fndtn.abide', function() {
+					}).on('valid', function() {
 						updateContent();
 					});
 
@@ -521,10 +524,13 @@ function newContent() {
 		$('#content_errors').empty();
 
 		$('#content_save_button').html('create');
-		$('#contentForm').on('invalid.fndtn.abide', function() {
+		// not using valid.fndtn.abide & invalid.fndtn.abide as it
+		// causes the form to be submitted twice. Instead use the
+		// deprecated valid & invalid
+		$('#contentForm').on('invalid', function() {
 			var invalid_fields = $(this).find('[data-invalid]');
 			console.log(invalid_fields);
-		}).on('valid.fndtn.abide', function() {
+		}).on('valid', function() {
 			createContent();
 		});
 		$('#content_cancel_button').unbind();

@@ -20,7 +20,8 @@
 <jsp:include page="resources.jsp" flush="true"></jsp:include>
 
 <!-- Begin: Custom -->
-<script type="text/javascript" src="/resources/js/cm.index.js"></script>
+<!-- use of cm.index.js has been deprecated -->
+
 <!-- End: Custom -->
 
 
@@ -91,8 +92,8 @@
 									vitae, sollicitudin eget urna. Donec dignissim nibh fermentum
 									odio ornare sagittis.</h5>
 								<div class="show-for-small" style="text-align: center">
-									<a class="small radius button">Sign In!</a><br> <a
-										class="small radius button">Sign Up!</a>
+									<a class="small radius button" href="/login">Sign In!</a><br>
+									<a class="small radius button" href="/signup">Sign Up!</a>
 								</div>
 							</div>
 							<div class="large-6 small-6 columns">
@@ -108,11 +109,11 @@
 				<div class="large-4 columns hide-for-small">
 					<h4>Get In Touch!</h4>
 					<hr>
-					<a id="user_sign_in">
+					<a id="user_sign_in" href="/login">
 						<div class="panel radius callout" style="text-align: center">
 							<strong>Sign In!</strong>
 						</div>
-					</a> <a id="user_sign_up">
+					</a> <a id="user_sign_up" href="/signup">
 						<div class="panel radius callout" style="text-align: center">
 							<strong>Sign Up!</strong>
 						</div>

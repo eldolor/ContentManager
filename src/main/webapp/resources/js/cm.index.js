@@ -1,7 +1,9 @@
 jQuery(function($) {
 	log("function($)", "Entering");
 	try {
+		$('#user_sign_in').unbind();
 		$('#user_sign_in').bind('click', loginRedirect);
+		$('#user_sign_up').unbind();
 		$('#user_sign_up').bind('click', signupRedirect);
 	} catch (err) {
 		handleError("function($)", err);

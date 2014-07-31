@@ -17,7 +17,7 @@ function setup() {
 		setupLeftNavBar();
 		setupBreadcrumbs();
 		// enable abide form validation
-		$(document).foundation('abide','events'); 
+		$(document).foundation('abide', 'events');
 
 		getApplications();
 	} catch (err) {
@@ -260,10 +260,14 @@ function editApplication(id) {
 					}
 					$('#application_save_button').html('update');
 
-					$('#applicationForm').on('invalid.fndtn.abide', function() {
+					// not using valid.fndtn.abide & invalid.fndtn.abide as it
+					// causes the form to be submitted twice. Instead use the
+					// deprecated valid & invalid
+					$('#applicationForm').on('invalid', function() {
 						var invalid_fields = $(this).find('[data-invalid]');
-						console.log(invalid_fields);
-					}).on('valid.fndtn.abide', function() {
+						log(invalid_fields);
+					}).on('valid', function() {
+						log('editApplication: valid!');
 						updateApplication();
 					});
 
@@ -295,11 +299,15 @@ function newApplication() {
 		$('#application_errors').hide();
 
 		$('#application_save_button').html('create');
+		// not using valid.fndtn.abide & invalid.fndtn.abide as it
+		// causes the form to be submitted twice. Instead use the
+		// deprecated valid & invalid
 		// unbind click listener to reset
-		$('#applicationForm').on('invalid.fndtn.abide', function() {
+		$('#applicationForm').on('invalid', function() {
 			var invalid_fields = $(this).find('[data-invalid]');
-			console.log(invalid_fields);
-		}).on('valid.fndtn.abide', function() {
+			log(invalid_fields);
+		}).on('valid', function() {
+			log('newApplication: valid!');
 			createApplication();
 		});
 		$('#application_cancel_button').unbind();
@@ -317,7 +325,6 @@ function newApplication() {
 		$('#application_enabled').attr('checked', 'checked');
 
 		$('#application_errors').empty();
-		
 
 	} catch (err) {
 		handleError("newApplication", err);
@@ -352,7 +359,9 @@ function createApplication() {
 
 		};
 		var applicationObjString = JSON.stringify(applicationObj, null, 2);
-		// alert(applicationObjString);
+		// alert("If you see this alert twice then the form is being submitted
+		// twice. There are multiple listeners on this form."
+		// + applicationObjString);
 		// create via sync call
 		var jqxhr = $.ajax({
 			url : "/secured/application",

@@ -17,7 +17,7 @@ function setup() {
 		setupLeftNavBar();
 		setupBreadcrumbs();
 		// enable abide form validation
-		$(document).foundation('abide','events'); 
+		$(document).foundation('abide', 'events');
 
 		$("#contentgroup_start_date").datepicker({
 			altFormat : 'mm/dd/yy',
@@ -28,7 +28,8 @@ function setup() {
 			altField : '#contentgroup_end_date'
 		});
 		// set application and content group name
-		$('#application_name').html('Application:&nbsp;' + mSelectedApplication.name);
+		$('#application_name').html(
+				'Application:&nbsp;' + mSelectedApplication.name);
 
 		// $('#cm_action').bind('click', alert('clicked'));
 		getContentGroups(mSelectedApplication.id);
@@ -209,7 +210,8 @@ function updateContentGroupEnabled(pContentGroupId, pContentGroupEnabled,
 				},
 				400 : function(text) {
 					try {
-						$('#contentgroup_errors').html('<p>'+ getErrorMessages(text)+'</p>');
+						$('#contentgroup_errors').html(
+								'<p>' + getErrorMessages(text) + '</p>');
 					} catch (err) {
 						handleError("updateContentGroupEnabled", err);
 					}
@@ -313,10 +315,18 @@ function editContentGroup(id) {
 							}
 							$('#contentgroup_save_button').html('update');
 
-							$('#contentGroupForm').on('invalid.fndtn.abide', function() {
-								var invalid_fields = $(this).find('[data-invalid]');
-								console.log(invalid_fields);
-							}).on('valid.fndtn.abide', function() {
+							// not using valid.fndtn.abide & invalid.fndtn.abide
+							// as it
+							// causes the form to be submitted twice. Instead
+							// use the
+							// deprecated valid & invalid
+							$('#contentGroupForm').on(
+									'invalid',
+									function() {
+										var invalid_fields = $(this).find(
+												'[data-invalid]');
+										console.log(invalid_fields);
+									}).on('valid', function() {
 								updateContentGroup();
 							});
 							// unbind click listener to reset
@@ -348,10 +358,13 @@ function newContentGroup() {
 		$('#contentgroup_errors').hide();
 
 		$('#contentgroup_save_button').html('create');
-		$('#contentGroupForm').on('invalid.fndtn.abide', function() {
+		// not using valid.fndtn.abide & invalid.fndtn.abide as it
+		// causes the form to be submitted twice. Instead use the
+		// deprecated valid & invalid
+		$('#contentGroupForm').on('invalid', function() {
 			var invalid_fields = $(this).find('[data-invalid]');
 			console.log(invalid_fields);
-		}).on('valid.fndtn.abide', function() {
+		}).on('valid', function() {
 			createContentGroup();
 		});
 		$('#contentgroup_cancel_button').unbind();
@@ -427,7 +440,8 @@ function createContentGroup() {
 				},
 				400 : function(text) {
 					try {
-						$('#contentgroup_errors').html('<p>'+ getErrorMessages(text)+'</p>');
+						$('#contentgroup_errors').html(
+								'<p>' + getErrorMessages(text) + '</p>');
 						$('#contentgroup_errors').show();
 					} catch (err) {
 						handleError("submitContentGroup", err);
@@ -490,7 +504,8 @@ function updateContentGroup() {
 				},
 				400 : function(text) {
 					try {
-						$('#contentgroup_errors').html('<p>'+ getErrorMessages(text)+'</p>');
+						$('#contentgroup_errors').html(
+								'<p>' + getErrorMessages(text) + '</p>');
 						$('#contentgroup_errors').show();
 					} catch (err) {
 						handleError("updateContentGroup", err);

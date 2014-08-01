@@ -53,6 +53,7 @@
 
 	<security-constraint>
 		<web-resource-collection>
+		    <web-resource-name>tasks</web-resource-name>
 			<url-pattern>/tasks/*</url-pattern>
 			<url-pattern>/admin/*</url-pattern>
 		</web-resource-collection>
@@ -62,6 +63,7 @@
 	</security-constraint>
 	<security-constraint>
 		<web-resource-collection>
+		    <web-resource-name>security</web-resource-name>
 			<url-pattern>/applications</url-pattern>
 			<url-pattern>/**/content</url-pattern>
 			<url-pattern>/**/contentgroups</url-pattern>

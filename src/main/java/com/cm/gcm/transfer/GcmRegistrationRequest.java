@@ -1,46 +1,19 @@
-package com.cm.gcm;
+package com.cm.gcm.transfer;
 
-import javax.jdo.annotations.IdGeneratorStrategy;
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.PrimaryKey;
-
-@PersistenceCapable
 public class GcmRegistrationRequest {
 
-	@PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private Long id;
-	@Persistent
 	private String gcmId;
-	@Persistent
 	private String applicationId;
-	@Persistent
 	private String deviceId;
-	@Persistent
 	private String latitude;
-	@Persistent
 	private String longitude;
-	@Persistent
 	private String provider;
-	@Persistent
 	private String speed;
-	@Persistent
 	private String accuracy;
-	@Persistent
 	private String bearing;
-	@Persistent
 	private String altitude;
-	@Persistent
-	private boolean deleted;
-	@Persistent
 	private Long timeCreatedMs;
-	@Persistent
 	private Long timeCreatedTimeZoneOffsetMs;
-	@Persistent
-	private Long timeUpdatedMs;
-	@Persistent
-	private Long timeUpdatedTimeZoneOffsetMs;
 
 	public String getApplicationId() {
 		return applicationId;
@@ -66,22 +39,6 @@ public class GcmRegistrationRequest {
 		this.gcmId = gcmId;
 	}
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Boolean isDeleted() {
-		return deleted;
-	}
-
-	public void setDeleted(Boolean deleted) {
-		this.deleted = deleted;
-	}
-
 	public Long getTimeCreatedMs() {
 		return timeCreatedMs;
 	}
@@ -96,22 +53,6 @@ public class GcmRegistrationRequest {
 
 	public void setTimeCreatedTimeZoneOffsetMs(Long timeCreatedTimeZoneOffsetMs) {
 		this.timeCreatedTimeZoneOffsetMs = timeCreatedTimeZoneOffsetMs;
-	}
-
-	public Long getTimeUpdatedMs() {
-		return timeUpdatedMs;
-	}
-
-	public void setTimeUpdatedMs(Long timeUpdatedMs) {
-		this.timeUpdatedMs = timeUpdatedMs;
-	}
-
-	public Long getTimeUpdatedTimeZoneOffsetMs() {
-		return timeUpdatedTimeZoneOffsetMs;
-	}
-
-	public void setTimeUpdatedTimeZoneOffsetMs(Long timeUpdatedTimeZoneOffsetMs) {
-		this.timeUpdatedTimeZoneOffsetMs = timeUpdatedTimeZoneOffsetMs;
 	}
 
 	public String getLatitude() {

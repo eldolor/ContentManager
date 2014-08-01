@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cm.usermanagement.user.User;
-import com.cm.util.Util;
+import com.cm.util.Utils;
 
 @Service
 public class ContentService {
@@ -79,11 +79,11 @@ public class ContentService {
 				LOGGER.info("start date: " + content.getStartDateIso8601());
 
 			// convert from ISO 8601 format to Milliseconds
-			if (!Util.isEmpty(content.getStartDateIso8601()))
+			if (!Utils.isEmpty(content.getStartDateIso8601()))
 				content.setStartDateMs(javax.xml.bind.DatatypeConverter
 						.parseDateTime(content.getStartDateIso8601())
 						.getTime().getTime());
-			if (!Util.isEmpty(content.getEndDateIso8601()))
+			if (!Utils.isEmpty(content.getEndDateIso8601()))
 				content.setEndDateMs(javax.xml.bind.DatatypeConverter
 						.parseDateTime(content.getEndDateIso8601())
 						.getTime().getTime());

@@ -31,9 +31,9 @@ public class ContentRequest implements Serializable {
 	@Persistent
 	private String altitude;
 	@Persistent
-	private Long timeMs;
+	private Long timeCreatedMs;
 	@Persistent
-	private Long timeZoneOffsetMs;
+	private Long timeCreatedTimeZoneOffsetMs;
 
 	public String getApplicationId() {
 		return applicationId;
@@ -115,20 +115,20 @@ public class ContentRequest implements Serializable {
 		this.altitude = altitude;
 	}
 
-	public Long getTimeMs() {
-		return timeMs;
+	public Long getTimeCreatedMs() {
+		return timeCreatedMs;
 	}
 
-	public void setTimeMs(Long timeMs) {
-		this.timeMs = timeMs;
+	public void setTimeCreatedMs(Long timeCreatedMs) {
+		this.timeCreatedMs = timeCreatedMs;
 	}
 
-	public Long getTimeZoneOffsetMs() {
-		return timeZoneOffsetMs;
+	public Long getTimeCreatedTimeZoneOffsetMs() {
+		return timeCreatedTimeZoneOffsetMs;
 	}
 
-	public void setTimeZoneOffsetMs(Long timeZoneOffsetMs) {
-		this.timeZoneOffsetMs = timeZoneOffsetMs;
+	public void setTimeCreatedTimeZoneOffsetMs(Long timeCreatedTimeZoneOffsetMs) {
+		this.timeCreatedTimeZoneOffsetMs = timeCreatedTimeZoneOffsetMs;
 	}
 
 }

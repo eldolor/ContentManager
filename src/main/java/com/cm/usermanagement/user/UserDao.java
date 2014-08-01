@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 import com.cm.accountmanagement.account.Account;
 import com.cm.util.PMF;
-import com.cm.util.Util;
+import com.cm.util.Utils;
 
 @Component
 class UserDao {
@@ -178,7 +178,7 @@ class UserDao {
 			_user.setEnabled(user.isEnabled());
 			_user.setFirstName(user.getFirstName());
 			_user.setLastName(user.getLastName());
-			if (!Util.isEmpty(user.getPassword())) {
+			if (!Utils.isEmpty(user.getPassword())) {
 				_user.setPassword(user.getPassword());
 			}
 			_user.setRole(user.getRole());

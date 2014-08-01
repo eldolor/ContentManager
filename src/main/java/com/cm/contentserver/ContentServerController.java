@@ -15,7 +15,6 @@
 
 package com.cm.contentserver;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,7 +29,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.cm.contentmanager.content.Content;
+import com.cm.util.Utils;
 
 @Controller
 public class ContentServerController {
@@ -59,8 +58,9 @@ public class ContentServerController {
 				return null;
 			}
 
-			List<com.cm.contentserver.transfer.Content> contentList = convertToTransferFormat(contentServerService
-					.getContent(convertToDomainFormat(pContentRequest)));
+			List<com.cm.contentserver.transfer.Content> contentList = Utils
+					.convertToTransferFormat(contentServerService
+							.getContent(convertToDomainFormat(pContentRequest)));
 			if (contentList != null) {
 				if (LOGGER.isLoggable(Level.INFO))
 					LOGGER.info(contentList.size() + " Content found");
@@ -90,8 +90,9 @@ public class ContentServerController {
 			}
 			ContentRequest lContentRequest = new ContentRequest();
 			lContentRequest.setApplicationId(trackingId);
-			List<com.cm.contentserver.transfer.Content> contentList = convertToTransferFormat(contentServerService
-					.getContent(lContentRequest));
+			List<com.cm.contentserver.transfer.Content> contentList = Utils
+					.convertToTransferFormat(contentServerService
+							.getContent(lContentRequest));
 			if (contentList != null) {
 				if (LOGGER.isLoggable(Level.INFO))
 					LOGGER.info(contentList.size() + " Content found");
@@ -109,30 +110,6 @@ public class ContentServerController {
 		}
 	}
 
-	private List<com.cm.contentserver.transfer.Content> convertToTransferFormat(
-			List<Content> pContentList) {
-		List<com.cm.contentserver.transfer.Content> lContentListTransferFormat = new ArrayList<com.cm.contentserver.transfer.Content>();
-		for (Content lContent : pContentList) {
-			lContentListTransferFormat.add(convertToTransferFormat(lContent));
-		}
-		return lContentListTransferFormat;
-	}
-
-	private com.cm.contentserver.transfer.Content convertToTransferFormat(
-			Content pContent) {
-		com.cm.contentserver.transfer.Content lContent = new com.cm.contentserver.transfer.Content();
-		lContent.setApplicationId(pContent.getApplicationId());
-		lContent.setContentGroupId(pContent.getContentGroupId());
-		lContent.setId(pContent.getId());
-		lContent.setName(pContent.getName());
-		lContent.setTimeCreatedMs(pContent.getTimeCreatedMs());
-		lContent.setTimeUpdatedMs(pContent.getTimeUpdatedMs());
-		lContent.setType(pContent.getType());
-		lContent.setUri(pContent.getUri());
-		return lContent;
-
-	}
-
 	private ContentRequest convertToDomainFormat(
 			com.cm.contentserver.transfer.ContentRequest pContentRequest) {
 		ContentRequest lContentRequest = new ContentRequest();
@@ -145,9 +122,9 @@ public class ContentServerController {
 		lContentRequest.setLongitude(pContentRequest.getLongitude());
 		lContentRequest.setProvider(pContentRequest.getProvider());
 		lContentRequest.setSpeed(pContentRequest.getSpeed());
-		lContentRequest.setTimeMs(pContentRequest.getTimeMs());
-		lContentRequest.setTimeZoneOffsetMs(pContentRequest
-				.getTimeZoneOffsetMs());
+		lContentRequest.setTimeCreatedMs(pContentRequest.getTimeCreatedMs());
+		lContentRequest.setTimeCreatedTimeZoneOffsetMs(pContentRequest
+				.getTimeCreatedTimeZoneOffsetMs());
 
 		return lContentRequest;
 	}

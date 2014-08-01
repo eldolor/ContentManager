@@ -21,7 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.cm.usermanagement.user.User;
 import com.cm.usermanagement.user.UserService;
-import com.cm.util.Util;
+import com.cm.util.Utils;
 import com.cm.util.ValidationError;
 
 @Controller
@@ -358,14 +358,14 @@ public class UserManagementController {
 		// errors.add(error);
 		// LOGGER.log(Level.WARNING, "Email cannot be blank");
 		// }
-		if (Util.isEmpty(userAccount.getUserName())) {
+		if (Utils.isEmpty(userAccount.getUserName())) {
 			ValidationError error = new ValidationError();
 			error.setCode("username");
 			error.setDescription("Username cannot be blank");
 			errors.add(error);
 			LOGGER.log(Level.WARNING, "Username cannot be blank");
 		}
-		if (Util.isEmpty(userAccount.getPassword())) {
+		if (Utils.isEmpty(userAccount.getPassword())) {
 			ValidationError error = new ValidationError();
 			error.setCode("password");
 			error.setDescription("Password cannot be blank");
@@ -421,14 +421,14 @@ public class UserManagementController {
 		// errors.add(error);
 		// LOGGER.log(Level.WARNING, "Email cannot be blank");
 		// }
-		if (Util.isEmpty(userAccount.getUserName())) {
+		if (Utils.isEmpty(userAccount.getUserName())) {
 			ValidationError error = new ValidationError();
 			error.setCode("userName");
 			error.setDescription("Username cannot be blank");
 			errors.add(error);
 			LOGGER.log(Level.WARNING, "Username cannot be blank");
 		}
-		if (Util.isEmpty(userAccount.getPassword())) {
+		if (Utils.isEmpty(userAccount.getPassword())) {
 			ValidationError error = new ValidationError();
 			error.setCode("password");
 			error.setDescription("Password cannot be blank");
@@ -455,28 +455,28 @@ public class UserManagementController {
 			LOGGER.info("Entering validate");
 		List<ValidationError> errors = new ArrayList<ValidationError>();
 		// Verify user info submission
-		if (Util.isEmpty(userAccount.getFirstName())) {
+		if (Utils.isEmpty(userAccount.getFirstName())) {
 			ValidationError error = new ValidationError();
 			error.setCode("firstName");
 			error.setDescription("First Name cannot be blank");
 			errors.add(error);
 			LOGGER.log(Level.WARNING, "First Name cannot be blank");
 		}
-		if (Util.isEmpty(userAccount.getLastName())) {
+		if (Utils.isEmpty(userAccount.getLastName())) {
 			ValidationError error = new ValidationError();
 			error.setCode("lastName");
 			error.setDescription("Last Name cannot be blank");
 			errors.add(error);
 			LOGGER.log(Level.WARNING, "Last Name cannot be blank");
 		}
-		if (Util.isEmpty(userAccount.getEmail())) {
+		if (Utils.isEmpty(userAccount.getEmail())) {
 			ValidationError error = new ValidationError();
 			error.setCode("email");
 			error.setDescription("Email cannot be blank");
 			errors.add(error);
 			LOGGER.log(Level.WARNING, "Email cannot be blank");
 		}
-		if ((!Util.isEmpty(userAccount.getPassword()))
+		if ((!Utils.isEmpty(userAccount.getPassword()))
 				&& (!userAccount.getPassword().equals(
 						userAccount.getPassword2()))) {
 			ValidationError error = new ValidationError();

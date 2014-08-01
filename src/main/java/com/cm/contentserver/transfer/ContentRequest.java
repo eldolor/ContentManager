@@ -12,8 +12,8 @@ public class ContentRequest implements Serializable {
 	private String accuracy;
 	private String bearing;
 	private String altitude;
-	private Long timeMs;
-	private Long timeZoneOffsetMs;
+	private Long timeCreatedMs;
+	private Long timeCreatedTimeZoneOffsetMs;
 
 	public String getApplicationId() {
 		return applicationId;
@@ -87,20 +87,20 @@ public class ContentRequest implements Serializable {
 		this.altitude = altitude;
 	}
 
-	public Long getTimeMs() {
-		return timeMs;
+	public Long getTimeCreatedMs() {
+		return timeCreatedMs;
 	}
 
-	public void setTimeMs(Long timeMs) {
-		this.timeMs = timeMs;
+	public void setTimeCreatedMs(Long timeCreatedMs) {
+		this.timeCreatedMs = timeCreatedMs;
 	}
 
-	public Long getTimeZoneOffsetMs() {
-		return timeZoneOffsetMs;
+	public Long getTimeCreatedTimeZoneOffsetMs() {
+		return timeCreatedTimeZoneOffsetMs;
 	}
 
-	public void setTimeZoneOffsetMs(Long timeZoneOffsetMs) {
-		this.timeZoneOffsetMs = timeZoneOffsetMs;
+	public void setTimeCreatedTimeZoneOffsetMs(Long timeCreatedTimeZoneOffsetMs) {
+		this.timeCreatedTimeZoneOffsetMs = timeCreatedTimeZoneOffsetMs;
 	}
 
 }

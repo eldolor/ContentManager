@@ -13,6 +13,7 @@
 	<security:http pattern="/dropbox**" security="none" />
 	<security:http pattern="/contentserver**" security="none" />
 	<security:http pattern="/eventtracker**" security="none" />
+	<security:http pattern="/gcm**" security="none" />
 
 
 	<security:http auto-config="true" disable-url-rewriting="true">
@@ -46,10 +47,9 @@
 		<!-- Override default login and logout pages -->
 		<security:form-login login-page="/login"
 			default-target-url="/applications" authentication-failure-url="/loginfailure" />
-<!-- 		<security:form-login login-page="/login"
-			authentication-failure-handler-ref="ajaxAuthenticationFailureHandler"
-			authentication-success-handler-ref="ajaxAuthenticationSuccessHandler" />
- -->		<security:logout invalidate-session="true"
+		<!-- <security:form-login login-page="/login" authentication-failure-handler-ref="ajaxAuthenticationFailureHandler" 
+			authentication-success-handler-ref="ajaxAuthenticationSuccessHandler" /> -->
+		<security:logout invalidate-session="true"
 			logout-success-url="/" />
 
 

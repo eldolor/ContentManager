@@ -32,6 +32,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.cm.contentmanager.application.ApplicationService;
+import com.cm.contentmanager.content.ContentHelper;
+import com.cm.gcm.GcmHelper;
 import com.cm.usermanagement.user.User;
 import com.cm.usermanagement.user.UserService;
 import com.cm.util.ValidationError;
@@ -42,6 +45,12 @@ public class ContentGroupController {
 	private ContentGroupService contentGroupService;
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private GcmHelper gcmHelper;
+	@Autowired
+	private ContentHelper contentHelper;
+	@Autowired
+	private ApplicationService applicationService;
 
 	private static final Logger LOGGER = Logger
 			.getLogger(ContentGroupController.class.getName());
@@ -142,9 +151,19 @@ public class ContentGroupController {
 				LOGGER.info("Entering deleteContentGroup");
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Content Group ID: " + id);
-			response.setStatus(HttpServletResponse.SC_OK);
+			// get the application id of the content group being deleted
+			Long lApplicationId = contentGroupService.getContentGroup(id)
+					.getApplicationId();
+
 			contentGroupService.deleteContentGroup(id, timeUpdatedMs,
 					timeUpdatedTimeZoneOffsetMs);
+			response.setStatus(HttpServletResponse.SC_OK);
+			String lTrackingId = applicationService.getApplication(
+					lApplicationId).getTrackingId();
+			// send the new content list to the affected devices
+			gcmHelper.sendContentListMessages(contentHelper
+					.getGenericContentRequest(lTrackingId));
+
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting deleteContentGroup");
@@ -172,6 +191,7 @@ public class ContentGroupController {
 				contentGroupService.saveContentGroup(
 						userService.getLoggedInUser(), contentGroup);
 				response.setStatus(HttpServletResponse.SC_CREATED);
+				// don't send gcm message on create
 				return null;
 			}
 		} finally {
@@ -198,6 +218,12 @@ public class ContentGroupController {
 			} else {
 				contentGroupService.updateContentGroup(contentGroup);
 				response.setStatus(HttpServletResponse.SC_OK);
+				String lTrackingId = applicationService.getApplication(
+						contentGroup.getApplicationId()).getTrackingId();
+				// send the new content list to the affected devices
+				gcmHelper.sendContentListMessages(contentHelper
+						.getGenericContentRequest(lTrackingId));
+
 				return null;
 			}
 		} finally {

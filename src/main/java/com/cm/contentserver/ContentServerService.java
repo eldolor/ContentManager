@@ -34,7 +34,7 @@ public class ContentServerService {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getContent");
 			Long lApplicationId = this.resolveApplicationId(pContentRequest
-					.getApplicationId());
+					.getTrackingId());
 
 			List<ContentGroup> lContentGroups = filterContentGroupByEffectiveDate(contentGroupService
 					.getContentGroupsByApplicationId(lApplicationId));

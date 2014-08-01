@@ -10,12 +10,37 @@ import javax.jdo.Query;
 
 import org.springframework.stereotype.Component;
 
+import com.cm.contentmanager.application.Application;
 import com.cm.util.PMF;
 
 @Component
 class GcmDao {
 	private static final Logger LOGGER = Logger.getLogger(GcmDao.class
 			.getName());
+
+	List<GcmRegistrationRequest> getGcmRegistrationRequests(String trackingId) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering getGcmRegistrationRequests");
+
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(GcmRegistrationRequest.class);
+				q.setFilter("trackingId == trackingIdParam");
+				q.declareParameters("String trackingIdParam");
+				return (List<GcmRegistrationRequest>) q.execute(trackingId);
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting getGcmRegistrationRequests");
+		}
+	}
 
 	void save(GcmRegistrationRequest gcmRegistrationRequest) {
 		try {

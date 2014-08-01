@@ -13,7 +13,7 @@ public class ContentRequest implements Serializable {
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Long id;
 	@Persistent
-	private String applicationId;
+	private String trackingId;
 	@Persistent
 	private String deviceId;
 	@Persistent
@@ -35,12 +35,14 @@ public class ContentRequest implements Serializable {
 	@Persistent
 	private Long timeCreatedTimeZoneOffsetMs;
 
-	public String getApplicationId() {
-		return applicationId;
+
+
+	public String getTrackingId() {
+		return trackingId;
 	}
 
-	public void setApplicationId(String applicationId) {
-		this.applicationId = applicationId;
+	public void setTrackingId(String trackingId) {
+		this.trackingId = trackingId;
 	}
 
 	public String getDeviceId() {

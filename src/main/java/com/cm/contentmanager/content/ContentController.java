@@ -32,6 +32,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.cm.contentmanager.application.ApplicationService;
+import com.cm.gcm.GcmHelper;
 import com.cm.usermanagement.user.UserService;
 import com.cm.util.ValidationError;
 
@@ -41,6 +43,12 @@ public class ContentController {
 	private ContentService contentService;
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private GcmHelper gcmHelper;
+	@Autowired
+	private ContentHelper contentHelper;
+	@Autowired
+	private ApplicationService applicationService;
 
 	private static final Logger LOGGER = Logger
 			.getLogger(ContentController.class.getName());
@@ -50,13 +58,13 @@ public class ContentController {
 	 * @return
 	 */
 	@RequestMapping(value = "/{applicationId}/{contentGroupId}/content", method = RequestMethod.GET)
-	public ModelAndView displayContent(@PathVariable Long applicationId, @PathVariable Long contentGroupId,
-			ModelMap model) {
+	public ModelAndView displayContent(@PathVariable Long applicationId,
+			@PathVariable Long contentGroupId, ModelMap model) {
 		if (LOGGER.isLoggable(Level.INFO))
 			LOGGER.info("Entering displayContent");
 		try {
 			// pass it along to the view
-			//model.addAttribute("contentGroupId", contentGroupId);
+			// model.addAttribute("contentGroupId", contentGroupId);
 			return new ModelAndView("content", model);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -72,8 +80,8 @@ public class ContentController {
 	 */
 	@RequestMapping(value = "/secured/{applicationId}/{contentGroupId}/content", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody
-	List<Content> getAllContent(@PathVariable Long applicationId, @PathVariable Long contentGroupId,
-			HttpServletResponse response) {
+	List<Content> getAllContent(@PathVariable Long applicationId,
+			@PathVariable Long contentGroupId, HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getAllContent");
@@ -83,8 +91,8 @@ public class ContentController {
 					LOGGER.info("No Content Group Id Found!");
 				return null;
 			}
-			List<Content> content = contentService
-					.getAllContent(applicationId, contentGroupId);
+			List<Content> content = contentService.getAllContent(applicationId,
+					contentGroupId);
 			if (content != null) {
 				if (LOGGER.isLoggable(Level.INFO))
 					LOGGER.info(content.size() + " Content found");
@@ -99,7 +107,6 @@ public class ContentController {
 				LOGGER.info("Exiting getAllContent");
 		}
 	}
-
 
 	/**
 	 * 
@@ -133,10 +140,11 @@ public class ContentController {
 				LOGGER.info("Exiting getContent");
 		}
 	}
+
 	@RequestMapping(value = "/secured/content", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	public @ResponseBody
-	List<ValidationError> doCreateContent(
-			@RequestBody Content content, HttpServletResponse response) {
+	List<ValidationError> doCreateContent(@RequestBody Content content,
+			HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering doCreateContentGroup");
@@ -147,9 +155,14 @@ public class ContentController {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return errors;
 			} else {
-				contentService.saveContent(
-						userService.getLoggedInUser(), content);
+				contentService.saveContent(userService.getLoggedInUser(),
+						content);
 				response.setStatus(HttpServletResponse.SC_CREATED);
+				String lTrackingId = applicationService.getApplication(content.getApplicationId())
+						.getTrackingId();
+				// send the new content list to the affected devices
+				gcmHelper.sendContentListMessages(contentHelper
+						.getGenericContentRequest(lTrackingId));
 				return null;
 			}
 		} finally {
@@ -160,8 +173,8 @@ public class ContentController {
 
 	@RequestMapping(value = "/secured/content", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
 	public @ResponseBody
-	List<ValidationError> doUpdateContent(
-			@RequestBody Content content, HttpServletResponse response) {
+	List<ValidationError> doUpdateContent(@RequestBody Content content,
+			HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering doUpdateContentGroup");
@@ -172,6 +185,11 @@ public class ContentController {
 			} else {
 				contentService.updateContent(content);
 				response.setStatus(HttpServletResponse.SC_OK);
+				String lTrackingId = applicationService.getApplication(content.getApplicationId())
+						.getTrackingId();
+				// send the new content list to the affected devices
+				gcmHelper.sendContentListMessages(contentHelper
+						.getGenericContentRequest(lTrackingId));
 				return null;
 			}
 		} finally {
@@ -180,8 +198,6 @@ public class ContentController {
 		}
 	}
 
-	
-	
 	@RequestMapping(value = "/secured/content/{id}/{timeUpdatedMs}/{timeUpdatedTimeZoneOffsetMs}", method = RequestMethod.DELETE, produces = "application/json")
 	public void deleteContent(@PathVariable Long id,
 			@PathVariable Long timeUpdatedMs,
@@ -197,9 +213,18 @@ public class ContentController {
 				if (LOGGER.isLoggable(Level.INFO))
 					LOGGER.info("No Content Id Found!");
 			}
-			response.setStatus(HttpServletResponse.SC_OK);
+			// Get the application id for the content that is about to be
+			// deleted
+			Long lApplicationId = contentService.getContent(id)
+					.getApplicationId();
 			contentService.deleteContent(id, timeUpdatedMs,
 					timeUpdatedTimeZoneOffsetMs);
+			response.setStatus(HttpServletResponse.SC_OK);
+			String lTrackingId = applicationService.getApplication(lApplicationId)
+					.getTrackingId();
+			// send the new content list to the affected devices
+			gcmHelper.sendContentListMessages(contentHelper
+					.getGenericContentRequest(lTrackingId));
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting deleteContent");
@@ -235,6 +260,7 @@ public class ContentController {
 				LOGGER.info("Exiting doUpdateCampaign");
 		}
 	}
+
 	private List<ValidationError> validate(Content content) {
 		List<ValidationError> errors = new ArrayList<ValidationError>();
 		if (content.getName().length() == 0) {
@@ -244,8 +270,9 @@ public class ContentController {
 			errors.add(error);
 			LOGGER.log(Level.WARNING, "Name cannot be blank");
 		}
-		if (((content.getStartDateIso8601() != null) && (content.getStartDateIso8601()
-				.length() == 0)) || (content.getStartDateIso8601() == null)) {
+		if (((content.getStartDateIso8601() != null) && (content
+				.getStartDateIso8601().length() == 0))
+				|| (content.getStartDateIso8601() == null)) {
 			ValidationError error = new ValidationError();
 			error.setCode("start date");
 			error.setDescription("Start Date cannot be blank");
@@ -258,8 +285,7 @@ public class ContentController {
 		return errors;
 	}
 
-
-	/************PARKING LOT*********************/
+	/************ PARKING LOT *********************/
 	@RequestMapping(value = "/secured/content", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody
 	List<Content> getAllContent(HttpServletResponse response) {
@@ -285,8 +311,9 @@ public class ContentController {
 
 	@RequestMapping(value = "/secured/{applicationId}/{contentGroupId}/content/{type}", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody
-	List<Content> getContent(@PathVariable Long applicationId, @PathVariable Long contentGroupId,
-			@PathVariable String type, HttpServletResponse response) {
+	List<Content> getContent(@PathVariable Long applicationId,
+			@PathVariable Long contentGroupId, @PathVariable String type,
+			HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getContent");
@@ -296,7 +323,7 @@ public class ContentController {
 					LOGGER.info("No contentGroupId Found!");
 				return null;
 			}
-			List<Content> content = contentService.getAllContent(applicationId, 
+			List<Content> content = contentService.getAllContent(applicationId,
 					contentGroupId, type);
 			if (content != null) {
 				if (LOGGER.isLoggable(Level.INFO))

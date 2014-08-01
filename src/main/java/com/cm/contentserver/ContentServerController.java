@@ -76,46 +76,13 @@ public class ContentServerController {
 		}
 	}
 
-	@RequestMapping(value = "/contentserver/contentlist/{trackingId}", method = RequestMethod.GET, produces = "application/json")
-	public @ResponseBody
-	List<com.cm.contentserver.transfer.Content> getContentTest(
-			@PathVariable String trackingId, HttpServletResponse response) {
-		try {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering getContent");
-			if (trackingId == null) {
-				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-				LOGGER.warning("No Content Request Found!");
-				return null;
-			}
-			ContentRequest lContentRequest = new ContentRequest();
-			lContentRequest.setApplicationId(trackingId);
-			List<com.cm.contentserver.transfer.Content> contentList = Utils
-					.convertToTransferFormat(contentServerService
-							.getContent(lContentRequest));
-			if (contentList != null) {
-				if (LOGGER.isLoggable(Level.INFO))
-					LOGGER.info(contentList.size() + " Content found");
-			} else {
-				if (LOGGER.isLoggable(Level.INFO))
-					LOGGER.info("No Content Found!");
-			}
-			response.setStatus(HttpServletResponse.SC_OK);
-			// TODO: convert to transfer format and remove any
-			// unnecessary/sensitive fields
-			return contentList;
-		} finally {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting getContent");
-		}
-	}
 
 	private ContentRequest convertToDomainFormat(
 			com.cm.contentserver.transfer.ContentRequest pContentRequest) {
 		ContentRequest lContentRequest = new ContentRequest();
 		lContentRequest.setAccuracy(pContentRequest.getAccuracy());
 		lContentRequest.setAltitude(pContentRequest.getAltitude());
-		lContentRequest.setApplicationId(pContentRequest.getApplicationId());
+		lContentRequest.setTrackingId(pContentRequest.getTrackingId());
 		lContentRequest.setBearing(pContentRequest.getBearing());
 		lContentRequest.setDeviceId(pContentRequest.getDeviceId());
 		lContentRequest.setLatitude(pContentRequest.getLatitude());

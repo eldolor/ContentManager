@@ -14,7 +14,7 @@ public class GcmRegistrationRequest {
 	@Persistent
 	private String gcmId;
 	@Persistent
-	private String applicationId;
+	private String trackingId;
 	@Persistent
 	private String deviceId;
 	@Persistent
@@ -42,12 +42,14 @@ public class GcmRegistrationRequest {
 	@Persistent
 	private Long timeUpdatedTimeZoneOffsetMs;
 
-	public String getApplicationId() {
-		return applicationId;
+
+
+	public String getTrackingId() {
+		return trackingId;
 	}
 
-	public void setApplicationId(String applicationId) {
-		this.applicationId = applicationId;
+	public void setTrackingId(String trackingId) {
+		this.trackingId = trackingId;
 	}
 
 	public String getDeviceId() {

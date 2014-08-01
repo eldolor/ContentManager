@@ -43,7 +43,8 @@ setErrors(${errors});
 	<br>
 
 	<div class="row">
-		<div class="large-9 push-3 columns">
+		<jsp:include page="left_nav_bar.jsp" flush="true"></jsp:include>
+		<div class="large-6 columns">
 
 			<div class="row">
 				<div class="large-6 columns">
@@ -90,7 +91,10 @@ setErrors(${errors});
 
 		</div>
 
-		<jsp:include page="left_nav_bar.jsp" flush="true"></jsp:include>
+		<!-- Instructions on how to use the page -->
+		<aside class="large-3 columns hide-for-small" id="right_aside">
+			<p>Place instructions on how to use the page here.</p>
+		</aside>
 	</div>
 
 

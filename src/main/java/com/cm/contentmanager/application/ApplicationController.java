@@ -32,6 +32,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.cm.contentmanager.content.ContentHelper;
+import com.cm.gcm.GcmHelper;
 import com.cm.usermanagement.user.User;
 import com.cm.usermanagement.user.UserService;
 import com.cm.util.ValidationError;
@@ -42,6 +44,10 @@ public class ApplicationController {
 	private ApplicationService applicationService;
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private GcmHelper gcmHelper;
+	@Autowired
+	private ContentHelper contentHelper;
 
 	private static final Logger LOGGER = Logger
 			.getLogger(ApplicationController.class.getName());
@@ -140,6 +146,11 @@ public class ApplicationController {
 			response.setStatus(HttpServletResponse.SC_OK);
 			applicationService.deleteApplication(id, timeUpdatedMs,
 					timeUpdatedTimeZoneOffsetMs);
+			String lTrackingId = applicationService.getApplication(id)
+					.getTrackingId();
+			// send the new content list to the affected devices
+			gcmHelper.sendContentListMessages(contentHelper
+					.getGenericContentRequest(lTrackingId));
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting deleteApplication");
@@ -217,6 +228,9 @@ public class ApplicationController {
 			} else {
 				applicationService.updateApplication(application);
 				response.setStatus(HttpServletResponse.SC_OK);
+				// send the new content list to the affected devices
+				gcmHelper.sendContentListMessages(contentHelper
+						.getGenericContentRequest(application.getTrackingId()));
 				return null;
 			}
 		} finally {

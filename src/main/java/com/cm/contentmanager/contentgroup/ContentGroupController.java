@@ -34,10 +34,13 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.cm.contentmanager.application.ApplicationService;
 import com.cm.contentmanager.content.ContentHelper;
-import com.cm.gcm.GcmHelper;
 import com.cm.usermanagement.user.User;
 import com.cm.usermanagement.user.UserService;
 import com.cm.util.ValidationError;
+import com.google.appengine.api.taskqueue.Queue;
+import com.google.appengine.api.taskqueue.QueueFactory;
+import com.google.appengine.api.taskqueue.TaskOptions;
+import com.google.appengine.api.taskqueue.TaskOptions.Method;
 
 @Controller
 public class ContentGroupController {
@@ -45,8 +48,6 @@ public class ContentGroupController {
 	private ContentGroupService contentGroupService;
 	@Autowired
 	private UserService userService;
-	@Autowired
-	private GcmHelper gcmHelper;
 	@Autowired
 	private ContentHelper contentHelper;
 	@Autowired
@@ -158,11 +159,17 @@ public class ContentGroupController {
 			contentGroupService.deleteContentGroup(id, timeUpdatedMs,
 					timeUpdatedTimeZoneOffsetMs);
 			response.setStatus(HttpServletResponse.SC_OK);
-			String lTrackingId = applicationService.getApplication(
-					lApplicationId).getTrackingId();
-			// send the new content list to the affected devices
-			gcmHelper.sendContentListMessages(contentHelper
-					.getGenericContentRequest(lTrackingId));
+			{
+				String lTrackingId = applicationService.getApplication(
+						lApplicationId).getTrackingId();
+				Queue queue = QueueFactory.getQueue("gcmqueue");
+				TaskOptions taskOptions = TaskOptions.Builder
+						.withUrl(
+								"/tasks/gcm/sendcontentlistmessages/"
+										+ lTrackingId)
+						.param("trackingId", lTrackingId).method(Method.POST);
+				queue.add(taskOptions);
+			}
 
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -218,11 +225,18 @@ public class ContentGroupController {
 			} else {
 				contentGroupService.updateContentGroup(contentGroup);
 				response.setStatus(HttpServletResponse.SC_OK);
-				String lTrackingId = applicationService.getApplication(
-						contentGroup.getApplicationId()).getTrackingId();
-				// send the new content list to the affected devices
-				gcmHelper.sendContentListMessages(contentHelper
-						.getGenericContentRequest(lTrackingId));
+				{
+					String lTrackingId = applicationService.getApplication(
+							contentGroup.getApplicationId()).getTrackingId();
+					Queue queue = QueueFactory.getQueue("gcmqueue");
+					TaskOptions taskOptions = TaskOptions.Builder
+							.withUrl(
+									"/tasks/gcm/sendcontentlistmessages/"
+											+ lTrackingId)
+							.param("trackingId", lTrackingId)
+							.method(Method.POST);
+					queue.add(taskOptions);
+				}
 
 				return null;
 			}

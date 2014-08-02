@@ -35,17 +35,27 @@ public class ContentServerService {
 				LOGGER.info("Entering getContent");
 			Long lApplicationId = this.resolveApplicationId(pContentRequest
 					.getTrackingId());
-
-			List<ContentGroup> lContentGroups = filterContentGroupByEffectiveDate(contentGroupService
-					.getContentGroupsByApplicationId(lApplicationId));
-
 			List<Content> lContents = new ArrayList<Content>();
 
-			for (ContentGroup lContentGroup : lContentGroups) {
-				lContents.addAll(validateContent(contentService.getAllContent(
-						lApplicationId, lContentGroup.getId())));
-			}
+			Application lApplication = applicationService
+					.getApplication(lApplicationId);
 
+			if (lApplication != null && (!lApplication.isDeleted())
+					&& (lApplication.isEnabled())) {
+				List<ContentGroup> lContentGroups = filterContentGroupByEffectiveDate(contentGroupService
+						.getContentGroupsByApplicationId(lApplicationId));
+
+				for (ContentGroup lContentGroup : lContentGroups) {
+					lContents.addAll(validateContent(contentService
+							.getAllContent(lApplicationId,
+									lContentGroup.getId())));
+				}
+
+			} else {
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.log(Level.WARNING,
+							"Application does not exist, or is deleted, or is not enabled");
+			}
 			contentServerDao.saveContentRequest(pContentRequest);
 			return lContents;
 		} finally {
@@ -56,7 +66,8 @@ public class ContentServerService {
 	}
 
 	private Long resolveApplicationId(String trackingId) {
-		Application lApplication = applicationService.getApplicationByTrackingId(trackingId);
+		Application lApplication = applicationService
+				.getApplicationByTrackingId(trackingId);
 		// TODO: hard-wired for now
 		return lApplication.getId();
 	}

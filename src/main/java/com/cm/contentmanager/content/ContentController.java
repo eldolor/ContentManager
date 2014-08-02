@@ -33,9 +33,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.cm.contentmanager.application.ApplicationService;
-import com.cm.gcm.GcmHelper;
 import com.cm.usermanagement.user.UserService;
 import com.cm.util.ValidationError;
+import com.google.appengine.api.taskqueue.Queue;
+import com.google.appengine.api.taskqueue.QueueFactory;
+import com.google.appengine.api.taskqueue.TaskOptions;
+import com.google.appengine.api.taskqueue.TaskOptions.Method;
 
 @Controller
 public class ContentController {
@@ -43,8 +46,6 @@ public class ContentController {
 	private ContentService contentService;
 	@Autowired
 	private UserService userService;
-	@Autowired
-	private GcmHelper gcmHelper;
 	@Autowired
 	private ContentHelper contentHelper;
 	@Autowired
@@ -158,11 +159,19 @@ public class ContentController {
 				contentService.saveContent(userService.getLoggedInUser(),
 						content);
 				response.setStatus(HttpServletResponse.SC_CREATED);
-				String lTrackingId = applicationService.getApplication(content.getApplicationId())
-						.getTrackingId();
-				// send the new content list to the affected devices
-				gcmHelper.sendContentListMessages(contentHelper
-						.getGenericContentRequest(lTrackingId));
+				{
+					String lTrackingId = applicationService.getApplication(
+							content.getApplicationId()).getTrackingId();
+					Queue queue = QueueFactory.getQueue("gcmqueue");
+					TaskOptions taskOptions = TaskOptions.Builder
+							.withUrl(
+									"/tasks/gcm/sendcontentlistmessages/"
+											+ lTrackingId)
+							.param("trackingId", lTrackingId)
+							.method(Method.POST);
+					queue.add(taskOptions);
+				}
+
 				return null;
 			}
 		} finally {
@@ -185,11 +194,18 @@ public class ContentController {
 			} else {
 				contentService.updateContent(content);
 				response.setStatus(HttpServletResponse.SC_OK);
-				String lTrackingId = applicationService.getApplication(content.getApplicationId())
-						.getTrackingId();
-				// send the new content list to the affected devices
-				gcmHelper.sendContentListMessages(contentHelper
-						.getGenericContentRequest(lTrackingId));
+				{
+					String lTrackingId = applicationService.getApplication(
+							content.getApplicationId()).getTrackingId();
+					Queue queue = QueueFactory.getQueue("gcmqueue");
+					TaskOptions taskOptions = TaskOptions.Builder
+							.withUrl(
+									"/tasks/gcm/sendcontentlistmessages/"
+											+ lTrackingId)
+							.param("trackingId", lTrackingId)
+							.method(Method.POST);
+					queue.add(taskOptions);
+				}
 				return null;
 			}
 		} finally {
@@ -220,11 +236,17 @@ public class ContentController {
 			contentService.deleteContent(id, timeUpdatedMs,
 					timeUpdatedTimeZoneOffsetMs);
 			response.setStatus(HttpServletResponse.SC_OK);
-			String lTrackingId = applicationService.getApplication(lApplicationId)
-					.getTrackingId();
-			// send the new content list to the affected devices
-			gcmHelper.sendContentListMessages(contentHelper
-					.getGenericContentRequest(lTrackingId));
+			{
+				String lTrackingId = applicationService.getApplication(
+						lApplicationId).getTrackingId();
+				Queue queue = QueueFactory.getQueue("gcmqueue");
+				TaskOptions taskOptions = TaskOptions.Builder
+						.withUrl(
+								"/tasks/gcm/sendcontentlistmessages/"
+										+ lTrackingId)
+						.param("trackingId", lTrackingId).method(Method.POST);
+				queue.add(taskOptions);
+			}
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting deleteContent");

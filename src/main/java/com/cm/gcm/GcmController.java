@@ -14,8 +14,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.cm.contentmanager.application.ApplicationService;
+import com.cm.contentmanager.content.ContentHelper;
 import com.cm.contentserver.ContentRequest;
 import com.cm.gcm.transfer.GcmRegistrationRequest;
+import com.cm.usermanagement.user.UserService;
 import com.cm.util.ValidationError;
 
 @Controller
@@ -28,6 +31,12 @@ public class GcmController {
 	private GcmService gcmService;
 	@Autowired
 	private GcmHelper gcmHelper;
+	@Autowired
+	private ApplicationService applicationService;
+	@Autowired
+	private UserService userService;
+	@Autowired
+	private ContentHelper contentHelper;
 
 	@RequestMapping(value = "/gcm/register", method = RequestMethod.POST)
 	public List<ValidationError> register(
@@ -76,6 +85,50 @@ public class GcmController {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting register");
 
+		}
+	}
+
+	@RequestMapping(value = "/tasks/gcm/sendcontentlistmessages/{trackingId}", method = RequestMethod.POST)
+	public void sendContentListMessages(@PathVariable String trackingId,
+			HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering sendContentListMessages");
+
+			// send the new content list to the affected devices
+			gcmHelper.sendContentListMessages(contentHelper
+					.getGenericContentRequest(trackingId));
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting sendContentListMessages");
+
+		}
+	}
+
+	/**
+	 * User facing action. Used by devices to unregister
+	 * 
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/gcm/unregister/{gcmId}/{timeUpdatedMs}/{timeUpdatedTimeZoneOffsetMs}", method = RequestMethod.DELETE)
+	public void unregister(@PathVariable String gcmId,
+			@PathVariable Long timeUpdatedMs,
+			@PathVariable Long timeUpdatedTimeZoneOffsetMs,
+			HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering unregister");
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Unregistering " + gcmId);
+			gcmService.unRegister(gcmId, timeUpdatedMs,
+					timeUpdatedTimeZoneOffsetMs);
+
+			response.setStatus(HttpServletResponse.SC_OK);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting register");
 		}
 	}
 
@@ -152,32 +205,6 @@ public class GcmController {
 
 		}
 
-	}
-
-	/**
-	 * User facing action. Used by devices to unregister
-	 * 
-	 * @param model
-	 * @return
-	 */
-	@RequestMapping(value = "/gcm/unregister/{gcmId}/{timeUpdatedMs}/{timeUpdatedTimeZoneOffsetMs}", method = RequestMethod.DELETE)
-	public void unregister(@PathVariable String gcmId,
-			@PathVariable Long timeUpdatedMs,
-			@PathVariable Long timeUpdatedTimeZoneOffsetMs,
-			HttpServletResponse response) {
-		try {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering unregister");
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Unregistering " + gcmId);
-			gcmService.unRegister(gcmId, timeUpdatedMs,
-					timeUpdatedTimeZoneOffsetMs);
-
-			response.setStatus(HttpServletResponse.SC_OK);
-		} finally {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting register");
-		}
 	}
 
 }

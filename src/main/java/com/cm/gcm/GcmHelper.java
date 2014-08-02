@@ -56,43 +56,30 @@ public class GcmHelper {
 				LOGGER.info("Entering");
 			String lJsonArrayString = contentHelper.getContent(pContentRequest);
 			if (lJsonArrayString != null) {
+				HashMap<String, String> lValues = new HashMap<String, String>();
 
 				if (lJsonArrayString.getBytes().length < GCM_MESSAGE_SIZE_LIMIT_BYTES) {
 					if (LOGGER.isLoggable(Level.INFO))
 						// send the gcm message to the device
-						try {
-							LOGGER.info("Begin sending "
-									+ Configuration.MESSAGE_TYPE_CONTENT_LIST
-											.getValue() + " message to device");
-							HashMap<String, String> values = new HashMap<String, String>();
-							values.put(Configuration.MESSAGE_TYPE.getValue(),
-									Configuration.MESSAGE_TYPE_CONTENT_LIST
-											.getValue());
-							values.put(Configuration.MESSAGE_TYPE_CONTENT_LIST
-									.getValue(), lJsonArrayString);
-							this.sendMessage(pGcmId, values);
-						} finally {
-							LOGGER.info("End sending "
-									+ Configuration.MESSAGE_TYPE_CONTENT_LIST
-											.getValue() + " message to device");
-						}
+						lValues.put(Configuration.MESSAGE_TYPE.getValue(),
+								Configuration.MESSAGE_TYPE_CONTENT_LIST
+										.getValue());
+					lValues.put(
+							Configuration.MESSAGE_TYPE_CONTENT_LIST.getValue(),
+							lJsonArrayString);
+					LOGGER.info("Sending "
+							+ Configuration.MESSAGE_TYPE_CONTENT_LIST
+									.getValue() + " message to device");
 				} else {
 					// Payload size is greater than the GCM limit; send an
 					// SEND_TO_SYNC message to the device
-					HashMap<String, String> values = new HashMap<String, String>();
-					values.put(Configuration.MESSAGE_TYPE.getValue(),
+					lValues.put(Configuration.MESSAGE_TYPE.getValue(),
 							Configuration.MESSAGE_TYPE_SEND_TO_SYNC.getValue());
-					try {
-						LOGGER.info("Begin sending "
-								+ Configuration.MESSAGE_TYPE_SEND_TO_SYNC
-										.getValue() + " message to device");
-						this.sendMessage(pGcmId, values);
-					} finally {
-						LOGGER.info("End sending "
-								+ Configuration.MESSAGE_TYPE_SEND_TO_SYNC
-										.getValue() + " message to device");
-					}
+					LOGGER.info("Sending "
+							+ Configuration.MESSAGE_TYPE_SEND_TO_SYNC
+									.getValue() + " message to device");
 				}
+				this.sendMessage(pGcmId, lValues);
 
 			} else {
 				if (LOGGER.isLoggable(Level.INFO))
@@ -120,13 +107,45 @@ public class GcmHelper {
 			// canonical registration id
 
 			List<GcmRegistrationRequest> lGcmRegistrationRequests = gcmService
-					.getGcmRegistrationRequests(pContentRequest
-							.getTrackingId());
-			List<String> lGcmRegIds = new ArrayList<String>();
-			for (GcmRegistrationRequest lGcmRegistrationRequest : lGcmRegistrationRequests) {
-				lGcmRegIds.add(lGcmRegistrationRequest.getGcmId());
+					.getGcmRegistrationRequests(pContentRequest.getTrackingId());
+			if (lGcmRegistrationRequests != null
+					&& lGcmRegistrationRequests.size() > 0) {
+				List<String> lGcmRegIds = new ArrayList<String>();
+				for (GcmRegistrationRequest lGcmRegistrationRequest : lGcmRegistrationRequests) {
+					lGcmRegIds.add(lGcmRegistrationRequest.getGcmId());
+				}
+				String lJsonArrayString = contentHelper
+						.getContent(pContentRequest);
+				if (lJsonArrayString != null) {
+					HashMap<String, String> lValues = new HashMap<String, String>();
+
+					if (lJsonArrayString.getBytes().length < GCM_MESSAGE_SIZE_LIMIT_BYTES) {
+						// send the gcm message to the device
+						lValues.put(Configuration.MESSAGE_TYPE.getValue(),
+								Configuration.MESSAGE_TYPE_CONTENT_LIST
+										.getValue());
+						lValues.put(Configuration.MESSAGE_TYPE_CONTENT_LIST
+								.getValue(), lJsonArrayString);
+						LOGGER.info("Sending "
+								+ Configuration.MESSAGE_TYPE_CONTENT_LIST
+										.getValue() + " message to device");
+					} else {
+						// Payload size is greater than the GCM limit; send an
+						// SEND_TO_SYNC message to the device
+						lValues.put(Configuration.MESSAGE_TYPE.getValue(),
+								Configuration.MESSAGE_TYPE_SEND_TO_SYNC
+										.getValue());
+						LOGGER.info("Sending "
+								+ Configuration.MESSAGE_TYPE_SEND_TO_SYNC
+										.getValue() + " message to device");
+					}
+
+					this.sendMulticastMessage(lGcmRegIds, lValues);
+				} else {
+					LOGGER.log(Level.SEVERE,
+							"No GCM registration requests found");
+				}
 			}
-			this.sendMulticastMessage(lGcmRegIds);
 
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -134,18 +153,28 @@ public class GcmHelper {
 		}
 	}
 
-	private void sendMulticastMessage(List<String> pGcmRegistrationIds) {
+	private void sendMulticastMessage(List<String> pGcmRegistrationIds,
+			Map<String, String> pValues) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
-			Message message = new Message.Builder().build();
+			Builder lBuilder = new Message.Builder();
+			for (Iterator<String> iterator = pValues.keySet().iterator(); iterator
+					.hasNext();) {
+				String lKey = iterator.next();
+				lBuilder.addData(lKey, pValues.get(lKey));
+			}
+			Message lMessage = lBuilder.build();
 			MulticastResult multicastResult;
 			try {
-				multicastResult = mSender.send(message, pGcmRegistrationIds,
+				if (mSender == null) {
+					mSender = new Sender(GOOGLE_API_KEY);
+				}
+				multicastResult = mSender.send(lMessage, pGcmRegistrationIds,
 						Integer.valueOf(Configuration.GCM_MAX_ATTEMPTS
 								.getValue()));
 			} catch (IOException e) {
-				LOGGER.log(Level.SEVERE, "Exception posting " + message, e);
+				LOGGER.log(Level.SEVERE, "Exception posting " + lMessage, e);
 				return;
 			}
 			boolean allDone = true;
@@ -204,7 +233,7 @@ public class GcmHelper {
 	 * @throws DeviceNotRegisteredException
 	 * @throws DeviceHasMoreThanOneRegistration
 	 */
-	public boolean sendMessage(String pGcmId, Map<String, String> pValues)
+	private boolean sendMessage(String pGcmId, Map<String, String> pValues)
 			throws DeviceNotRegisteredException,
 			DeviceHasMoreThanOneRegistration {
 		try {
@@ -227,7 +256,7 @@ public class GcmHelper {
 	 * @throws DeviceNotRegisteredException
 	 * @throws DeviceHasMoreThanOneRegistration
 	 */
-	public boolean sendMessage(String pGcmId, String pMessageType,
+	private boolean sendMessage(String pGcmId, String pMessageType,
 			String pMessage) throws DeviceNotRegisteredException,
 			DeviceHasMoreThanOneRegistration {
 		try {

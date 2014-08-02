@@ -20,8 +20,21 @@ public class GcmService {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering save");
-
-			gcmDao.save(gcmRegistrationRequest);
+			GcmRegistrationRequest lGcmRegistrationRequest = gcmDao
+					.getGcmRegistrationRequest(gcmRegistrationRequest
+							.getGcmId());
+			// does not exist
+			if (lGcmRegistrationRequest == null) {
+				gcmDao.save(gcmRegistrationRequest);
+			} else {
+				// update using the same timestamps
+				lGcmRegistrationRequest.setTimeUpdatedMs(gcmRegistrationRequest
+						.getTimeUpdatedMs());
+				lGcmRegistrationRequest
+						.setTimeUpdatedTimeZoneOffsetMs(gcmRegistrationRequest
+								.getTimeUpdatedTimeZoneOffsetMs());
+				gcmDao.updateApplication(lGcmRegistrationRequest);
+			}
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting save");
@@ -34,7 +47,13 @@ public class GcmService {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getGcmRegistrationRequests");
 
-			return gcmDao.getGcmRegistrationRequests(trackingId);
+			List<GcmRegistrationRequest> lGcmRegistrationRequests = gcmDao
+					.getGcmRegistrationRequests(trackingId);
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Returning "
+						+ ((lGcmRegistrationRequests != null) ? lGcmRegistrationRequests
+								.size() : 0) + " GCM registration requests");
+			return lGcmRegistrationRequests;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting getGcmRegistrationRequests");

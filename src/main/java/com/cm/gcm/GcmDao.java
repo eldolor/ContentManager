@@ -150,4 +150,32 @@ class GcmDao {
 		}
 	}
 
+	void updateApplication(GcmRegistrationRequest gcmRegistrationRequest) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering updateApplication");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				GcmRegistrationRequest lGcmRegistrationRequest = pm
+						.getObjectById(GcmRegistrationRequest.class,
+								gcmRegistrationRequest.getId());
+				// just update the timestamps
+				lGcmRegistrationRequest.setTimeUpdatedMs(gcmRegistrationRequest
+						.getTimeUpdatedMs());
+				lGcmRegistrationRequest
+						.setTimeUpdatedTimeZoneOffsetMs(gcmRegistrationRequest
+								.getTimeUpdatedTimeZoneOffsetMs());
+
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting updateApplication");
+		}
+	}
 }

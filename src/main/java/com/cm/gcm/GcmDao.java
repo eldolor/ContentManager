@@ -11,6 +11,7 @@ import javax.jdo.Query;
 import org.springframework.stereotype.Component;
 
 import com.cm.contentmanager.application.Application;
+import com.cm.contentmanager.content.Content;
 import com.cm.util.PMF;
 
 @Component
@@ -71,9 +72,17 @@ class GcmDao {
 
 			try {
 				pm = PMF.get().getPersistenceManager();
-				GcmRegistrationRequest _request = pm.getObjectById(
-						GcmRegistrationRequest.class, gcmId);
-				return _request;
+				Query q = pm.newQuery(GcmRegistrationRequest.class);
+				q.setFilter("gcmId == gcmIdParam");
+				q.declareParameters("String gcmIdParam");
+				Object[] _array = new Object[1];
+				_array[0] = gcmId;
+				List<GcmRegistrationRequest> lList = (List<GcmRegistrationRequest>) q
+						.executeWithArray(_array);
+				if (lList != null && lList.size() > 0)
+					return lList.get(0);
+				else
+					return null;
 			} catch (JDOObjectNotFoundException e) {
 				LOGGER.log(Level.WARNING, e.getMessage());
 				return null;

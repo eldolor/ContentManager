@@ -14,6 +14,7 @@
 	<security:http pattern="/contentserver**" security="none" />
 	<security:http pattern="/eventtracker**" security="none" />
 	<security:http pattern="/gcm**" security="none" />
+	<security:http pattern="/contentstats**" security="none" />
 
 
 	<security:http auto-config="true" disable-url-rewriting="true">

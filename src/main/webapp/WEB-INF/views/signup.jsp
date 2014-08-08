@@ -44,51 +44,49 @@
 		<div class="large-6 columns">
 
 			<div class="row">
-				<div class="large-6 columns">
-					<form name="signupForm" id="signupForm" data-abide="ajax">
-						<fieldset>
-							<legend>Sign Up</legend>
-							<div class="row">
-								<div class="large-12 columns">
-									<div class="email-field">
-										<label for="userName">Email <small>required</small> <input
-											type="email" id="userName" name="userName"
-											placeholder="bruce.almighty@gmail.com" required="required" /></label>
-										<small class="error">A valid email address is
-											required.</small>
-									</div>
+				<form name="signupForm" id="signupForm" data-abide="ajax">
+					<fieldset>
+						<legend>Sign Up</legend>
+						<div class="row">
+							<div class="large-12 columns">
+								<div class="email-field">
+									<label for="userName">Email <small>required</small> <input
+										type="email" id="userName" name="userName"
+										placeholder="bruce.almighty@gmail.com" required="required" /></label>
+									<small class="error">A valid email address is required.</small>
 								</div>
 							</div>
-							<div class="row">
-								<div class="large-12 columns">
-									<div class="password-field">
-										<label for="password">Password <small>required</small><input
-											type="password" id="password" name="password"
-											placeholder="LittleW0men." required="required" required
-											pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" />
-										</label><small class="error">Your password must match the
-											requirements: Must include upper-case, lower-case,
-											number/special character, and be minimum of 8 characters</small>
-										<!-- / generic password: upper-case, lower-case, number/special character, and min 8 characters -->
-									</div>
+						</div>
+						<div class="row">
+							<div class="large-12 columns">
+								<div class="password-field">
+									<label for="password">Password <small>required</small><input
+										type="password" id="password" name="password"
+										placeholder="LittleW0men." required="required" required
+										pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" />
+									</label><small class="error">Your password must match the
+										requirements: Must include upper-case, lower-case,
+										number/special character, and be minimum of 8 characters</small>
+									<!-- / generic password: upper-case, lower-case, number/special character, and min 8 characters -->
 								</div>
 							</div>
-							<div>&nbsp;</div>
-							<div class="row">
-								<div class="large-12 columns">
-									<span id="signup_errors" class="alert radius label"></span>
-								</div>
+						</div>
+						<div>&nbsp;</div>
+						<div class="row">
+							<div class="large-12 columns">
+								<span id="signup_errors" class="alert radius label"></span>
 							</div>
-							<div class="row">
-								<div class="large-12 columns">
-									<button id="user_sign_up_submit_button" class="button">sign
-										up</button>
-									<button id="user_sign_up_cancel_button" class="button">cancel</button>
-								</div>
+						</div>
+						<div class="row">
+							<div class="large-12 columns">
+								<button id="user_sign_up_submit_button" class="button">sign
+									up</button>
+								<button id="user_sign_up_cancel_button" class="button">cancel</button>
 							</div>
-						</fieldset>
-					</form>
-				</div>
+						</div>
+					</fieldset>
+				</form>
+
 			</div>
 
 			<!-- hidden login form for post signup auto-login -->

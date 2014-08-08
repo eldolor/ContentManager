@@ -22,7 +22,7 @@
 
 <!-- JPlayer -->
 <div id="jp_container_1"
-	class="reveal-modal small jp-video jp-video-360p" data-reveal>
+	class="reveal-modal full jp-video jp-video-360p" data-reveal>
 	<h3 id="view_video_label"></h3>
 	<div class="jp-type-single">
 		<div id="jquery_jplayer_1" class="jp-jplayer"></div>
@@ -85,7 +85,7 @@
 <!-- JPlayer -->
 
 <!-- View Image -->
-<div class="reveal-modal small" id="view_image_container" data-reveal>
+<div class="reveal-modal medium" id="view_image_container" data-reveal>
 	<div class="row">
 		<h3 id="view_image_label"></h3>
 		<img id="image_widget" class="img-rounded" />

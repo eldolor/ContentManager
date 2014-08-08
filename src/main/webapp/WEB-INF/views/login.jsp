@@ -47,46 +47,45 @@ setErrors(${errors});
 		<div class="large-6 columns">
 
 			<div class="row">
-				<div class="large-6 columns">
-					<form id="loginForm" action="j_spring_security_check"
-						name="loginForm" method="post" data-abide>
-						<fieldset>
-							<legend>Sign In</legend>
-							<div class="row">
-								<div class="large-12 columns">
-									<label for="j_username">Email <small>required</small> <input
-										type="email" id="j_username" name="j_username"
-										placeholder="bruce.almighty@gmail.com" required="required" /></label>
-									<small class="error">A valid email address is required.</small>
-								</div>
+				<form id="loginForm" action="j_spring_security_check"
+					name="loginForm" method="post" data-abide>
+					<fieldset>
+						<legend>Sign In</legend>
+						<div class="row">
+							<div class="large-12 columns">
+								<label for="j_username">Email <small>required</small> <input
+									type="email" id="j_username" name="j_username"
+									placeholder="bruce.almighty@gmail.com" required="required" /></label>
+								<small class="error">A valid email address is required.</small>
 							</div>
-							<div class="row">
-								<div class="large-12 columns">
-									<label for="j_password">Password <small>required</small><input
-										type="password" id="j_password" name="j_password"
-										placeholder="LittleW0men." required="required" /></label>
-								</div>
+						</div>
+						<div class="row">
+							<div class="large-12 columns">
+								<label for="j_password">Password <small>required</small><input
+									type="password" id="j_password" name="j_password"
+									placeholder="LittleW0men." required="required" /></label>
 							</div>
-							<input type="hidden" value="on" id="_spring_security_remember_me"
-								name="_spring_security_remember_me" style="display: none" />
-							<div>&nbsp;</div>
-							<div class="row">
-								<div class="large-12 columns">
-									<span id="login_errors" class="alert radius label"></span><br>
-								</div>
+						</div>
+						<input type="hidden" value="on" id="_spring_security_remember_me"
+							name="_spring_security_remember_me" style="display: none" />
+						<div>&nbsp;</div>
+						<div class="row">
+							<div class="large-12 columns">
+								<span id="login_errors" class="alert radius label"></span><br>
 							</div>
-							<div class="row">
-								<div class="large-12 columns">
-									<button id="user_sign_in_submit_button" class="button">sign
-										in</button>
-									<button id="user_sign_in_cancel_button" class="button">cancel</button>
-								</div>
+						</div>
+						<div class="row">
+							<div class="large-12 columns">
+								<button id="user_sign_in_submit_button" class="button">sign
+									in</button>
+								<button id="user_sign_in_cancel_button" class="button">cancel</button>
 							</div>
-						</fieldset>
-					</form>
+						</div>
+					</fieldset>
+				</form>
 
-				</div>
 			</div>
+
 
 
 		</div>

@@ -1,4 +1,4 @@
-package com.com.contentmanager.contentstat;
+package com.cm.contentmanager.contentstat;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

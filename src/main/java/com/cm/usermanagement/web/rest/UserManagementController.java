@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +54,8 @@ public class UserManagementController {
 	 * @return
 	 */
 	@RequestMapping(value = "/signup", method = RequestMethod.GET)
-	public ModelAndView displaySignup(ModelMap model) {
+	public ModelAndView displaySignup(ModelMap model, HttpServletRequest request,
+			HttpServletResponse response) {
 		if (LOGGER.isLoggable(Level.INFO))
 			LOGGER.info("Entering displaySignup");
 		try {

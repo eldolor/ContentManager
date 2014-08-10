@@ -11,7 +11,8 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@page
 	import="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"%>
-
+<%@page import="com.google.appengine.api.users.UserService"%>
+<%@page import="com.google.appengine.api.users.UserServiceFactory"%>
 
 
 <head>
@@ -29,6 +30,7 @@
 <!-- End Custom -->
 <script type="text/javascript">
 setErrors(${errors});
+
 </script>
 
 

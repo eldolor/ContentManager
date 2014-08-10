@@ -1,4 +1,4 @@
-package com.com.contentmanager.contentstat;
+package com.cm.contentmanager.contentstat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,7 @@ public class ContentStatController {
 	@RequestMapping(value = "/contentstats", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	public @ResponseBody
 	Result doCreateContentStat(
-			@RequestBody List<com.com.contentmanager.contentstat.transfer.ContentStat> contentStats,
+			@RequestBody List<com.cm.contentmanager.contentstat.transfer.ContentStat> contentStats,
 			HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -66,12 +66,12 @@ public class ContentStatController {
 	}
 
 	private List<ContentStat> convertToDomainObject(
-			List<com.com.contentmanager.contentstat.transfer.ContentStat> pContentStats) {
+			List<com.cm.contentmanager.contentstat.transfer.ContentStat> pContentStats) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering convertToDomailObject");
 			List<ContentStat> lContentStats = new ArrayList<ContentStat>();
-			for (com.com.contentmanager.contentstat.transfer.ContentStat lContentStat : pContentStats) {
+			for (com.cm.contentmanager.contentstat.transfer.ContentStat lContentStat : pContentStats) {
 				lContentStats.add(convertToDomainObject(lContentStat));
 			}
 			return lContentStats;
@@ -83,7 +83,7 @@ public class ContentStatController {
 	}
 
 	private ContentStat convertToDomainObject(
-			com.com.contentmanager.contentstat.transfer.ContentStat pContentStat) {
+			com.cm.contentmanager.contentstat.transfer.ContentStat pContentStat) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering convertToDomailObject");

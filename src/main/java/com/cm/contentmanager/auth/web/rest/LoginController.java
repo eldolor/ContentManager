@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.cm.usermanagement.user.UserService;
 import com.cm.util.ValidationError;
+import com.google.appengine.api.users.UserServiceFactory;
 
 @Controller
 public class LoginController {
@@ -50,10 +52,19 @@ public class LoginController {
 	 * @return
 	 */
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
-	public ModelAndView doLogin(ModelMap model) {
+	public ModelAndView doLogin(ModelMap model, HttpServletRequest request,
+			HttpServletResponse response) {
 		if (LOGGER.isLoggable(Level.INFO))
 			LOGGER.info("Entering doLogin");
 		try {
+//			<div class="row">
+//			<div class="large-12 columns">
+//				<a href="${googleLoginUrl}">Login using your Google Account</a>
+//			</div>
+//		</div>
+			model.addAttribute("googleLoginUrl", UserServiceFactory
+					.getUserService().createLoginURL(request.getRequestURI()));
+
 			return new ModelAndView("login", model);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))

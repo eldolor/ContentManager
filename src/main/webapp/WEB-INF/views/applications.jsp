@@ -91,6 +91,7 @@
 								<span id="application_errors" class="alert radius label"></span><br>
 							</div>
 						</div>
+						<div>&nbsp;</div>
 						<div class="row">
 							<div class="large-12 columns">
 								<button id="application_save_button" class="button radius">create</button>

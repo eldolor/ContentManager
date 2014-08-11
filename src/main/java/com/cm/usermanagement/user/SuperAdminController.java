@@ -1,4 +1,4 @@
-package com.cm.usermanagement.web.rest;
+package com.cm.usermanagement.user;
 
 import org.springframework.stereotype.Controller;
 

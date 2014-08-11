@@ -76,11 +76,15 @@ setErrors(${errors});
 								<span id="login_errors" class="alert radius label"></span><br>
 							</div>
 						</div>
+						<div>&nbsp;</div>
 						<div class="row">
 							<div class="large-12 columns">
 								<button id="user_sign_in_submit_button" class="button">sign
 									in</button>
 								<button id="user_sign_in_cancel_button" class="button">cancel</button>
+								<div class="right">
+									<button id="user_forgot_password_button" class="button radius">forgot my password</button>
+								</div>
 							</div>
 						</div>
 					</fieldset>

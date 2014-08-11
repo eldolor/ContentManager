@@ -128,6 +128,7 @@
 								<span id="contentgroup_errors" class="alert radius label"></span>
 							</div>
 						</div>
+						<div>&nbsp;</div>
 						<div class="row">
 							<div class="large-12 columns">
 								<button id="contentgroup_save_button" class="button radius">create</button>

@@ -12,11 +12,11 @@ import org.springframework.stereotype.Component;
 import com.cm.util.PMF;
 
 @Component
- class ContentDao {
+class ContentDao {
 	private static final Logger LOGGER = Logger.getLogger(ContentDao.class
 			.getName());
 
-	 void saveContent(Content content) {
+	void saveContent(Content content) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering saveContent");
@@ -36,7 +36,7 @@ import com.cm.util.PMF;
 		}
 	}
 
-	 Content getContent(Long id) {
+	Content getContent(Long id) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getContent");
@@ -58,7 +58,8 @@ import com.cm.util.PMF;
 		}
 	}
 
-	 List<Content> getAllContent(Long applicationId, Long contentGroupId) {
+	List<Content> getAllContent(Long applicationId, Long contentGroupId,
+			boolean deleted, boolean enabled) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getAllContent");
@@ -73,8 +74,8 @@ import com.cm.util.PMF;
 				Object[] _array = new Object[4];
 				_array[0] = applicationId;
 				_array[1] = contentGroupId;
-				_array[2] = Boolean.valueOf(false);
-				_array[3] = Boolean.valueOf(true);
+				_array[2] = Boolean.valueOf(deleted);
+				_array[3] = Boolean.valueOf(enabled);
 				return (List<Content>) q.executeWithArray(_array);
 			} finally {
 				if (pm != null) {
@@ -87,7 +88,37 @@ import com.cm.util.PMF;
 		}
 	}
 
-	 List<Content> getAllContent(Long applicationId, Long contentGroupId, String type) {
+	List<Content> getAllContent(Long applicationId, Long contentGroupId,
+			boolean deleted) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering getAllContent");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(Content.class);
+				q.setFilter("applicationId == applicationIdParam && contentGroupId == contentGroupIdParam && deleted == deletedParam");
+				q.declareParameters("Long applicationIdParam, Long contentGroupIdParam, Boolean deletedParam");
+				q.setOrdering("timeUpdatedMs desc");
+				Object[] _array = new Object[3];
+				_array[0] = applicationId;
+				_array[1] = contentGroupId;
+				_array[2] = Boolean.valueOf(deleted);
+				return (List<Content>) q.executeWithArray(_array);
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting getAllContent");
+		}
+	}
+
+	List<Content> getAllContent(Long applicationId, Long contentGroupId,
+			String type, boolean deleted, boolean enabled) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getAllContent");
@@ -106,8 +137,8 @@ import com.cm.util.PMF;
 				_array[0] = applicationId;
 				_array[1] = contentGroupId;
 				_array[2] = type;
-				_array[3] = Boolean.valueOf(false);
-				_array[4] = Boolean.valueOf(true);
+				_array[3] = Boolean.valueOf(deleted);
+				_array[4] = Boolean.valueOf(enabled);
 				return (List<Content>) q.executeWithArray(_array);
 
 			} finally {
@@ -121,7 +152,7 @@ import com.cm.util.PMF;
 		}
 	}
 
-	 List<Content> getAllContent() {
+	List<Content> getAllContent(boolean deleted, boolean enabled) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getAllContent");
@@ -134,8 +165,8 @@ import com.cm.util.PMF;
 				q.declareParameters("Boolean deletedParam, Boolean enabledParam");
 				q.setOrdering("enabled desc");
 				Object[] _array = new Object[2];
-				_array[0] = new Boolean(false);
-				_array[1] = new Boolean(true);
+				_array[0] = Boolean.valueOf(deleted);
+				_array[1] = Boolean.valueOf(enabled);
 				return (List<Content>) q.executeWithArray(_array);
 
 			} finally {
@@ -149,7 +180,7 @@ import com.cm.util.PMF;
 		}
 	}
 
-	 void deleteContent(Long id, Long timeUpdatedMs,
+	void deleteContent(Long id, Long timeUpdatedMs,
 			Long timeUpdatedTimeZoneOffsetMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -179,7 +210,7 @@ import com.cm.util.PMF;
 		}
 	}
 
-	 void restoreContent(Long id, Long timeUpdatedMs,
+	void restoreContent(Long id, Long timeUpdatedMs,
 			Long timeUpdatedTimeZoneOffsetMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -209,8 +240,8 @@ import com.cm.util.PMF;
 		}
 	}
 
-	 void deleteAllContent(Long applicationId, Long contentGroupId, Long timeUpdatedMs,
-			Long timeUpdatedTimeZoneOffsetMs) {
+	void deleteAllContent(Long applicationId, Long contentGroupId,
+			Long timeUpdatedMs, Long timeUpdatedTimeZoneOffsetMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering deleteAllContent");
@@ -243,7 +274,7 @@ import com.cm.util.PMF;
 		}
 	}
 
-	 void updateContent(Content content) {
+	void updateContent(Content content) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering updateContent");
@@ -253,8 +284,8 @@ import com.cm.util.PMF;
 				pm = PMF.get().getPersistenceManager();
 				Content _content = pm.getObjectById(Content.class,
 						content.getId());
-				//do not set applicationId or contentGroupId on update
-				
+				// do not set applicationId or contentGroupId on update
+
 				_content.setStartDateIso8601(content.getStartDateIso8601());
 				_content.setEndDateIso8601(content.getEndDateIso8601());
 				_content.setStartDateMs(content.getStartDateMs());

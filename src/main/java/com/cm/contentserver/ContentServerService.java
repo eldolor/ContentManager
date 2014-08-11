@@ -48,7 +48,7 @@ public class ContentServerService {
 				for (ContentGroup lContentGroup : lContentGroups) {
 					lContents.addAll(validateContent(contentService
 							.getAllContent(lApplicationId,
-									lContentGroup.getId())));
+									lContentGroup.getId(), false, true)));
 				}
 
 			} else {

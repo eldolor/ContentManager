@@ -8,6 +8,37 @@
 	import="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"%><html>
 
 
+<!-- Begin Forgot Password -->
+<div class="reveal-modal small" id="forgot_password_modal" data-reveal>
+	<div class="row">
+	<!-- Unsecured Call -->
+		<form id="forgotPasswordForm" action="/forgotpassword" name="forgotPasswordForm"
+			method="post" data-abide>
+			<fieldset>
+				<legend>Forgot Password</legend>
+				<div class="row">
+					<div class="large-12 columns">
+						<label for="j_username">Email <small>required</small> <input
+							type="email" id="j_username" name="j_username"
+							placeholder="bruce.almighty@gmail.com" required="required" /></label> <small
+							class="error">A valid email address is required.</small>
+					</div>
+				</div>
+				<div>&nbsp;</div>
+				<div class="row">
+					<div class="large-12 columns">
+						<button id="user_forgot_password_submit_button" class="button">submit</button>
+					</div>
+				</div>
+			</fieldset>
+		</form>
+
+	</div>
+	<a class="close-reveal-modal">&#215;</a>
+</div>
+<!-- End Confirm -->
+
+
 <!-- Begin Confirm -->
 <div class="reveal-modal small" id="confirm_modal" data-reveal>
 	<h3 id="confirmModalLabel">Confirm</h3>

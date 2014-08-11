@@ -21,6 +21,10 @@ function setup() {
 			$('#login_errors').html(getErrorMessage("login_failure", mErrors));
 			$('#login_errors').show();
 		}
+		$('#user_forgot_password_button').unbind();
+		$('#user_forgot_password_button').bind('click', function() {
+			$('#forgot_password_modal').foundation('reveal', 'open');
+		});
 		// now using foundation abide
 		// $('#user_sign_in_submit_button').unbind();
 		// $('#user_sign_in_submit_button').bind('click', function() {

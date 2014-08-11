@@ -1,4 +1,4 @@
-package com.cm.usermanagement.web.rest;
+package com.cm.usermanagement.user;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,8 +20,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.cm.usermanagement.user.User;
-import com.cm.usermanagement.user.UserService;
 import com.cm.util.Utils;
 import com.cm.util.ValidationError;
 
@@ -37,25 +35,9 @@ public class UserManagementController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value = "/um", method = RequestMethod.GET)
-	public ModelAndView doLogin(ModelMap model) {
-		if (LOGGER.isLoggable(Level.INFO))
-			LOGGER.info("Entering doLogin");
-		try {
-			return new ModelAndView("user_management", model);
-		} finally {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting doLogin");
-		}
-	}
-
-	/**
-	 * @param model
-	 * @return
-	 */
 	@RequestMapping(value = "/signup", method = RequestMethod.GET)
-	public ModelAndView displaySignup(ModelMap model, HttpServletRequest request,
-			HttpServletResponse response) {
+	public ModelAndView displaySignup(ModelMap model,
+			HttpServletRequest request, HttpServletResponse response) {
 		if (LOGGER.isLoggable(Level.INFO))
 			LOGGER.info("Entering displaySignup");
 		try {
@@ -82,7 +64,7 @@ public class UserManagementController {
 				// create the basic user object, additional work will be
 				// performed in the DAO (transactionally)
 				com.cm.usermanagement.user.User lUser = new com.cm.usermanagement.user.User();
-				//standardize to lower case
+				// standardize to lower case
 				lUser.setUsername(pUser.getUserName().toLowerCase());
 				// userName is the email address
 				lUser.setEmail(pUser.getUserName());
@@ -110,27 +92,176 @@ public class UserManagementController {
 	}
 
 	/**
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/um/accountsettings", method = RequestMethod.GET)
+	public ModelAndView displayAccountSettings(ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering displayAccountSettings");
+		try {
+			return new ModelAndView("account_settings", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting displayAccountSettings");
+		}
+	}
+
+	@RequestMapping(value = "/um/password", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
+	public @ResponseBody
+	List<ValidationError> doUpdatePassword(
+			@RequestBody com.cm.usermanagement.user.transfer.User pUser,
+			HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering doUpdatePassword");
+			// get the logged in user
+			com.cm.usermanagement.user.User lLoggedInUser = userService
+					.getLoggedInUser();
+
+			List<ValidationError> errors = validateOnPasswordChange(pUser,
+					lLoggedInUser);
+			if (!errors.isEmpty()) {
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				return errors;
+			} else {
+
+				lLoggedInUser.setPassword(new BCryptPasswordEncoder()
+						.encode(pUser.getPassword()));
+				lLoggedInUser.setTimeUpdatedMs(pUser.getTimeUpdatedMs());
+				lLoggedInUser.setTimeUpdatedTimeZoneOffsetMs(pUser
+						.getTimeUpdatedTimeZoneOffsetMs());
+				userService.updateUser(lLoggedInUser);
+				response.setStatus(HttpServletResponse.SC_CREATED);
+				return null;
+
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting doUpdatePassword");
+		}
+
+	}
+
+	/**
 	 * @param response
 	 * @return
 	 */
-	@RequestMapping(value = "/secured/loggedinuser", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/um/loggedinuser", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody
 	com.cm.usermanagement.user.transfer.User getLoggedInUser(
 			HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getUser");
-			com.cm.usermanagement.user.User user = userService
+			com.cm.usermanagement.user.User lUser = userService
 					.getLoggedInUser();
-			if (user == null) {
+			if (lUser == null) {
 				if (LOGGER.isLoggable(Level.INFO))
 					LOGGER.info("No User Found!");
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				return null;
 			}
+			// send only the minimally required information
+			com.cm.usermanagement.user.transfer.User lUserTfr = new com.cm.usermanagement.user.transfer.User();
+			lUserTfr.setId(lUser.getId());
+
 			response.setStatus(HttpServletResponse.SC_OK);
-			return convert(user);
+			return lUserTfr;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting getUsers");
+		}
+	}
+
+	private List<com.cm.usermanagement.user.transfer.User> convert(
+			List<com.cm.usermanagement.user.User> users) {
+		List<com.cm.usermanagement.user.transfer.User> userAccounts = new ArrayList<com.cm.usermanagement.user.transfer.User>();
+		for (com.cm.usermanagement.user.User user : users) {
+			com.cm.usermanagement.user.transfer.User userAccount = new com.cm.usermanagement.user.transfer.User();
+			userAccount.setId(user.getId());
+			userAccount.setEmail(user.getEmail());
+			userAccount.setEnabled(user.isEnabled());
+			if (user.getRole() != null) {
+				if (user.getRole().equals(
+						com.cm.usermanagement.user.User.ROLE_ADMIN))
+					userAccount.setRole("admin");
+				if (user.getRole().equals(
+						com.cm.usermanagement.user.User.ROLE_USER))
+					userAccount.setRole("user");
+			}
+			userAccount.setAccountId(user.getAccountId());
+			userAccount.setFirstName(user.getFirstName());
+			userAccount.setLastName(user.getLastName());
+			userAccount.setUserName(user.getUsername());
+			userAccounts.add(userAccount);
+		}
+		return userAccounts;
+	}
+
+	private com.cm.usermanagement.user.transfer.User convert(
+			com.cm.usermanagement.user.User user) {
+		com.cm.usermanagement.user.transfer.User userAccount = new com.cm.usermanagement.user.transfer.User();
+		userAccount.setId(user.getId());
+		userAccount.setEmail(user.getEmail());
+		userAccount.setEnabled(user.isEnabled());
+		if (user.getRole() != null) {
+			if (user.getRole().equals(
+					com.cm.usermanagement.user.User.ROLE_ADMIN))
+				userAccount.setRole("admin");
+			if (user.getRole()
+					.equals(com.cm.usermanagement.user.User.ROLE_USER))
+				userAccount.setRole("user");
+		}
+		userAccount.setAccountId(user.getAccountId());
+		userAccount.setFirstName(user.getFirstName());
+		userAccount.setLastName(user.getLastName());
+		userAccount.setUserName(user.getUsername());
+		return userAccount;
+	}
+
+	private List<ValidationError> validateOnPasswordChange(
+			com.cm.usermanagement.user.transfer.User pUser,
+			com.cm.usermanagement.user.User pLoggedInUser) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering validate");
+		List<ValidationError> errors = new ArrayList<ValidationError>();
+
+		if (pLoggedInUser.getId() != pUser.getId()) {
+			ValidationError error = new ValidationError();
+			error.setCode("id");
+			error.setDescription("Your session has expired or invalid request");
+			errors.add(error);
+			LOGGER.log(Level.WARNING,
+					"Your session has expired or invalid request");
+		}
+		if ((!Utils.isEmpty(pUser.getPassword()))
+				&& (!pUser.getPassword().equals(pUser.getPassword2()))) {
+			ValidationError error = new ValidationError();
+			error.setCode("password");
+			error.setDescription("Passwords do not match");
+			errors.add(error);
+			LOGGER.log(Level.WARNING, "Passwords do not match");
+		}
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Exiting validate");
+		return errors;
+	}
+
+	/*****************************************************************************/
+	/**
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/um", method = RequestMethod.GET)
+	public ModelAndView doLogin(ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering doLogin");
+		try {
+			return new ModelAndView("user_management", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting doLogin");
 		}
 	}
 
@@ -490,52 +621,6 @@ public class UserManagementController {
 		if (LOGGER.isLoggable(Level.INFO))
 			LOGGER.info("Exiting validate");
 		return errors;
-	}
-
-	private List<com.cm.usermanagement.user.transfer.User> convert(
-			List<com.cm.usermanagement.user.User> users) {
-		List<com.cm.usermanagement.user.transfer.User> userAccounts = new ArrayList<com.cm.usermanagement.user.transfer.User>();
-		for (com.cm.usermanagement.user.User user : users) {
-			com.cm.usermanagement.user.transfer.User userAccount = new com.cm.usermanagement.user.transfer.User();
-			userAccount.setId(user.getId());
-			userAccount.setEmail(user.getEmail());
-			userAccount.setEnabled(user.isEnabled());
-			if (user.getRole() != null) {
-				if (user.getRole().equals(
-						com.cm.usermanagement.user.User.ROLE_ADMIN))
-					userAccount.setRole("admin");
-				if (user.getRole().equals(
-						com.cm.usermanagement.user.User.ROLE_USER))
-					userAccount.setRole("user");
-			}
-			userAccount.setAccountId(user.getAccountId());
-			userAccount.setFirstName(user.getFirstName());
-			userAccount.setLastName(user.getLastName());
-			userAccount.setUserName(user.getUsername());
-			userAccounts.add(userAccount);
-		}
-		return userAccounts;
-	}
-
-	private com.cm.usermanagement.user.transfer.User convert(
-			com.cm.usermanagement.user.User user) {
-		com.cm.usermanagement.user.transfer.User userAccount = new com.cm.usermanagement.user.transfer.User();
-		userAccount.setId(user.getId());
-		userAccount.setEmail(user.getEmail());
-		userAccount.setEnabled(user.isEnabled());
-		if (user.getRole() != null) {
-			if (user.getRole().equals(
-					com.cm.usermanagement.user.User.ROLE_ADMIN))
-				userAccount.setRole("admin");
-			if (user.getRole()
-					.equals(com.cm.usermanagement.user.User.ROLE_USER))
-				userAccount.setRole("user");
-		}
-		userAccount.setAccountId(user.getAccountId());
-		userAccount.setFirstName(user.getFirstName());
-		userAccount.setLastName(user.getLastName());
-		userAccount.setUserName(user.getUsername());
-		return userAccount;
 	}
 
 }

@@ -34,13 +34,13 @@
 						<sec:authorize ifAnyGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN">
 							<li><a id="users" href="./um">Users</a></li>
 						</sec:authorize>
-						<sec:authorize
-							ifAnyGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">
-							<li><a id="myAccount" href="javascript:void(0);"
-								onclick="editLoggedInUser()">My Account</a></li>
-						</sec:authorize>
 					</ul>
 					<ul class="right">
+						<sec:authorize
+							ifAnyGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">
+							<li><a id="myAccount" href="/account">Account
+									Settings</a></li>
+						</sec:authorize>
 						<sec:authorize
 							ifAnyGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">
 							<li><a href="<c:url value="/j_spring_security_logout"/>">Sign

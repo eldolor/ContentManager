@@ -333,6 +333,8 @@ function editContent(id) {
 					$('#content_uri').val(content.uri);
 					$('#content_type').val(content.type);
 
+					var dropBoxUrl = getDropboxUrl();
+					setupContentDropBox(dropBoxUrl);
 					$("#content_dropbox").hide();
 					// reset
 					$('#upload_content').unbind();

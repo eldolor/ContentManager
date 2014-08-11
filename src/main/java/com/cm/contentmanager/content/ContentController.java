@@ -93,7 +93,7 @@ public class ContentController {
 				return null;
 			}
 			List<Content> content = contentService.getAllContent(applicationId,
-					contentGroupId);
+					contentGroupId, false);
 			if (content != null) {
 				if (LOGGER.isLoggable(Level.INFO))
 					LOGGER.info(content.size() + " Content found");
@@ -307,59 +307,5 @@ public class ContentController {
 		return errors;
 	}
 
-	/************ PARKING LOT *********************/
-	@RequestMapping(value = "/secured/content", method = RequestMethod.GET, produces = "application/json")
-	public @ResponseBody
-	List<Content> getAllContent(HttpServletResponse response) {
-		try {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering getAllContent");
-
-			List<Content> content = contentService.getAllContent();
-			if (content != null) {
-				if (LOGGER.isLoggable(Level.INFO))
-					LOGGER.info(content.size() + " Content found");
-			} else {
-				if (LOGGER.isLoggable(Level.INFO))
-					LOGGER.info("No Content Found!");
-			}
-			response.setStatus(HttpServletResponse.SC_OK);
-			return content;
-		} finally {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting getAllContent");
-		}
-	}
-
-	@RequestMapping(value = "/secured/{applicationId}/{contentGroupId}/content/{type}", method = RequestMethod.GET, produces = "application/json")
-	public @ResponseBody
-	List<Content> getContent(@PathVariable Long applicationId,
-			@PathVariable Long contentGroupId, @PathVariable String type,
-			HttpServletResponse response) {
-		try {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering getContent");
-			if (contentGroupId == null || contentGroupId.equals("")) {
-				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-				if (LOGGER.isLoggable(Level.INFO))
-					LOGGER.info("No contentGroupId Found!");
-				return null;
-			}
-			List<Content> content = contentService.getAllContent(applicationId,
-					contentGroupId, type);
-			if (content != null) {
-				if (LOGGER.isLoggable(Level.INFO))
-					LOGGER.info(content.size() + " Content found");
-			} else {
-				if (LOGGER.isLoggable(Level.INFO))
-					LOGGER.info("No Content Found!");
-			}
-			response.setStatus(HttpServletResponse.SC_OK);
-			return content;
-		} finally {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting getContent");
-		}
-	}
 
 }

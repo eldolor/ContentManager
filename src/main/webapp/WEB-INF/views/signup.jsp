@@ -77,6 +77,7 @@
 								<span id="signup_errors" class="alert radius label"></span>
 							</div>
 						</div>
+						<div>&nbsp;</div>
 						<div class="row">
 							<div class="large-12 columns">
 								<button id="user_sign_up_submit_button" class="button">sign

@@ -321,6 +321,8 @@ function displayConfirm(message, callback) {
 
 }
 
+
+
 var imageCount = 9; // max images displayed in the image gallery
 function shiftGallery(index, entry_id, frames, max) {
 

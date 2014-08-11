@@ -180,14 +180,6 @@
 							<filtering>true</filtering>
 							<targetPath>WEB-INF</targetPath>
 						</resource>
-						<resource>
-							<!-- ANSHU: to include jdoconfig.xml under web-inf/classes -->
-							<directory>src/main/java</directory>
-							<includes>
-								<include>META-INF</include>
-							</includes>
-							<targetPath>src/main/webapp/WEB-INF/classes</targetPath>
-						</resource>
 					</webResources>
 				</configuration>
 			</plugin>

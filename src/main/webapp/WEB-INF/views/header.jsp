@@ -20,8 +20,7 @@
 							<a href="#">Content Manager</a>
 						</h1>
 					</li>
-					<li class="toggle-topbar menu-icon"><a href="#"></a>
-					</li>
+					<li class="toggle-topbar menu-icon"><a href="#"></a></li>
 				</ul>
 				<section class="top-bar-section">
 					<ul class="left">
@@ -46,6 +45,10 @@
 							ifAnyGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">
 							<li><a href="<c:url value="/j_spring_security_logout"/>">Sign
 									out </a></li>
+						</sec:authorize>
+						<sec:authorize
+							ifNotGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">
+							<li><a href="<c:url value="/login"/>">Sign In </a></li>
 						</sec:authorize>
 					</ul>
 				</section>

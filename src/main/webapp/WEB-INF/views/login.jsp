@@ -53,6 +53,16 @@ setErrors(${errors});
 					name="loginForm" method="post" data-abide>
 					<fieldset>
 						<legend>Sign In</legend>
+						<div>&nbsp;</div>
+						<div class="row">
+							<div class="large-12 columns">
+								<span id="forgot_password_request_submitted_message"
+									class="success radius label" style="display: none">We
+									have sent an email containing a temporary link that will allow
+									you to reset your password for the next 24 hours.</span>
+							</div>
+						</div>
+						<div>&nbsp;</div>
 						<div class="row">
 							<div class="large-12 columns">
 								<label for="j_username">Email <small>required</small> <input
@@ -81,9 +91,11 @@ setErrors(${errors});
 							<div class="large-12 columns">
 								<button id="user_sign_in_submit_button" class="button">sign
 									in</button>
-								<button id="user_sign_in_cancel_button" class="button">cancel</button>
+
+								<a href="javascript:void(0);" id="user_sign_in_cancel_button">cancel</a>
 								<div class="right">
-									<button id="user_forgot_password_button" class="button radius">forgot my password</button>
+									<a href="javascript:void(0);" id="user_forgot_password">forgot
+										my password</a>
 								</div>
 							</div>
 						</div>

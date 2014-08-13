@@ -23,8 +23,7 @@
 <jsp:include page="resources.jsp" flush="true"></jsp:include>
 
 <!-- Begin Custom -->
-<script type="text/javascript"
-	src="/resources/js/cm.account.settings.js"></script>
+<script type="text/javascript" src="/resources/js/cm.change.password.js"></script>
 <!-- End Custom -->
 <script type="text/javascript">
 	
@@ -37,28 +36,15 @@
 	<jsp:include page="common.jsp"></jsp:include>
 	<jsp:include page="header.jsp"></jsp:include>
 	<br>
-	<jsp:include page="breadcrumbs.jsp"></jsp:include>
-	<br>
 
 	<div class="row">
 
-		<jsp:include page="left_nav_bar.jsp" flush="true"></jsp:include>
-
-		<div class="large-9 columns" id="change_password">
+		<div class="large-12 columns">
 			<form id="changePasswordForm" name="changePasswordForm"
 				data-abide="ajax">
 				<fieldset>
 					<legend>Change Password</legend>
-
-					<div>&nbsp;</div>
-					<div class="row">
-						<div class="large-12 columns">
-							<span id="forgot_password_request_submitted_message"
-								class="success radius label" style="display: none">We
-								have sent an email containing a temporary link that will allow
-								you to reset your password for the next 24 hours.</span>
-						</div>
-					</div>
+					<input type="hidden" id="user_forgot_password_request_guid" name="user_forgot_password_request_guid" value="${guid}" />
 
 					<div>&nbsp;</div>
 					<div class="row">
@@ -72,17 +58,7 @@
 					<div class="row">
 						<div class="large-12 columns">
 							<div class="password-field">
-								<label>Old Password <small>required</small><input
-									type="password" id="user_old_password" name="user_old_password"
-									required="required" />
-								</label> <small class="error">Old password is required</small>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="large-12 columns">
-							<div class="password-field">
-								<label>New Password <small>required</small><input
+								<label>Password <small>required</small><input
 									type="password" id="user_new_password" name="user_new_password"
 									required="required" required
 									pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" />
@@ -93,7 +69,7 @@
 					<div class="row">
 						<div class="large-12 columns">
 							<div class="password-confirmation-field">
-								<label>Confirm New Password <small>required</small><input
+								<label>Confirm Password <small>required</small><input
 									type="password" id="user_confirm_new_password"
 									name="user_confirm_new_password"
 									data-equalto="user_new_password" required="required" required
@@ -106,7 +82,7 @@
 					<div>&nbsp;</div>
 					<div class="row">
 						<div class="large-12 columns">
-							<span id="change_password_errors" class="alert radius label"></span>
+							<span id="user_errors" class="alert radius label"></span>
 						</div>
 					</div>
 
@@ -115,10 +91,6 @@
 						<div class="large-12 columns">
 							<button id="user_password_change_button" class="button radius">change
 								password</button>
-							<div class="right">
-								<a href="javascript:void(0);" id="user_forgot_password">forgot
-									my password</a>
-							</div>
 						</div>
 					</div>
 				</fieldset>
@@ -126,6 +98,7 @@
 		</div>
 		<!-- End Content  -->
 	</div>
+
 
 
 	<br>

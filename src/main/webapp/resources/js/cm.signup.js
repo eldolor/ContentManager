@@ -17,18 +17,21 @@ function setup() {
 		setupBreadcrumbs();
 		$('#signup_errors').hide();
 		// enable abide form validation
-		$(document).foundation('abide','events'); 
-		$('#signupForm').on('invalid.fndtn.abide', function() {
+		$(document).foundation('abide', 'events');
+		// not using valid.fndtn.abide & invalid.fndtn.abide as it
+		// causes the form to be submitted twice. Instead use the
+		// deprecated valid & invalid
+		$('#signupForm').on('invalid', function() {
 			var invalid_fields = $(this).find('[data-invalid]');
 			console.log(invalid_fields);
-		}).on('valid.fndtn.abide', function() {
+		}).on('valid', function() {
 			signup();
 		});
 
-//		$('#user_sign_up_submit_button').unbind();
-//		$('#user_sign_up_submit_button').bind('click', function() {
-//			signup();
-//		});
+		// $('#user_sign_up_submit_button').unbind();
+		// $('#user_sign_up_submit_button').bind('click', function() {
+		// signup();
+		// });
 		$('#user_sign_up_cancel_button').unbind();
 		$('#user_sign_up_cancel_button').bind('click', function() {
 			$('#user_sign_up_submit_button').unbind();
@@ -48,7 +51,7 @@ function setupLeftNavBar() {
 		$('#left_nav_bar')
 				.empty()
 				.html(
-						'<a id=\"left_nav_bar_link_1\" href=\"javascript:void(0);\" >Sign Up</a></li>');
+						'<li><a id=\"left_nav_bar_link_1\" href=\"javascript:void(0);\" >Sign Up</a></li>');
 
 	} catch (err) {
 		handleError("setupLeftNavBar", err);
@@ -73,12 +76,13 @@ function setupBreadcrumbs() {
 function signup() {
 	log("signup", "Entering");
 	try {
-//		// validate the email
-//		if (!validateEmail($('#userName').val())) {
-//			$('#signup_errors').html("<p>Please enter a valid email address</p>");
-//			$('#signup_errors').show();
-//			return;
-//		}
+		// // validate the email
+		// if (!validateEmail($('#userName').val())) {
+		// $('#signup_errors').html("<p>Please enter a valid email
+		// address</p>");
+		// $('#signup_errors').show();
+		// return;
+		// }
 		var lDate = new Date();
 		var lTimeCreated = lDate.getTime();
 
@@ -91,7 +95,7 @@ function signup() {
 			timeUpdatedTimeZoneOffsetMs : (lDate.getTimezoneOffset() * 60 * 1000)
 		};
 		var objString = JSON.stringify(signupObj, null, 2);
-		
+
 		// create via sync call
 		var jqxhr = $.ajax({
 			url : "/signup",

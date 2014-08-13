@@ -69,7 +69,7 @@ function setupLeftNavBar() {
 		$('#left_nav_bar')
 				.empty()
 				.html(
-						'<a id=\"left_nav_bar_link_1\" href=\"javascript:void(0);\" >Create Content</a></li>');
+						'<li><a id=\"left_nav_bar_link_1\" href=\"javascript:void(0);\" >Create Content</a></li>');
 		$('#left_nav_bar_link_1').unbind();
 		$('#left_nav_bar_link_1').click(function() {
 			$('#contents_list').hide();
@@ -240,8 +240,7 @@ function updateContentEnabled(pContentId, pContentEnabled, pElementName) {
 				},
 				400 : function(text) {
 					try {
-						$('#content_errors').html(
-								'<p>' + getErrorMessages(text) + '</p>');
+						$('#content_errors').html(getErrorMessages(text));
 					} catch (err) {
 						handleError("updateContentEnabled", err);
 					}
@@ -310,67 +309,82 @@ function editContent(id) {
 		$('#content_create').show();
 		// load entry info via ajax
 		var url = "/secured/content/" + id;
-		var jqxhr = $.ajax({
-			url : url,
-			type : "GET",
-			contentType : "application/json",
-			statusCode : {
-				200 : function(content) {
+		var jqxhr = $
+				.ajax({
+					url : url,
+					type : "GET",
+					contentType : "application/json",
+					statusCode : {
+						200 : function(content) {
 
-					$('#content_id').val(content.id);
-					// set the application id
-					$('#application_id').val(content.applicationId);
-					// set the content group id
-					$('#contentgroup_id').val(content.contentGroupId);
+							$('#content_id').val(content.id);
+							// set the application id
+							$('#application_id').val(content.applicationId);
+							// set the content group id
+							$('#contentgroup_id').val(content.contentGroupId);
 
-					$('#content_name').val(content.name);
-					$('#content_description').val(content.description);
-					$('#content_start_date').val(
-							getDisplayDate(content.startDateIso8601));
-					$('#content_end_date').val(
-							getDisplayDate(content.endDateIso8601));
-					// // add more
-					$('#content_uri').val(content.uri);
-					$('#content_type').val(content.type);
+							$('#content_name').val(content.name);
+							$('#content_description').val(content.description);
+							$('#content_start_date').val(
+									getDisplayDate(content.startDateIso8601));
+							$('#content_end_date').val(
+									getDisplayDate(content.endDateIso8601));
+							// // add more
+							$('#content_uri').val(content.uri);
+							$('#content_type').val(content.type);
 
-					var dropBoxUrl = getDropboxUrl();
-					setupContentDropBox(dropBoxUrl);
-					$("#content_dropbox").hide();
-					// reset
-					$('#upload_content').unbind();
-					$('#upload_content').bind('click', function() {
-						$("#content_dropbox").slideToggle();
-					});
+							var dropBoxUrl = getDropboxUrl();
+							setupContentDropBox(dropBoxUrl);
+							$("#content_dropbox").hide();
+							// reset
+							$('#upload_content').unbind();
+							$('#upload_content').bind('click', function() {
+								$("#content_dropbox").slideToggle();
+							});
 
-					log("editContent", "Content enabled: " + content.enabled);
-					if (content.enabled == true) {
-						$('#content_enabled').attr('checked', 'checked');
-					} else {
-						$('#content_enabled').removeAttr('checked');
+							log("editContent", "Content enabled: "
+									+ content.enabled);
+							if (content.enabled == true) {
+								$('#content_enabled')
+										.attr('checked', 'checked');
+							} else {
+								$('#content_enabled').removeAttr('checked');
+							}
+
+							$('#content_save_button').html('update');
+
+							// not using valid.fndtn.abide & invalid.fndtn.abide
+							// as it
+							// causes the form to be submitted twice. Instead
+							// use the
+							// deprecated valid & invalid
+							$('#contentForm').on(
+									'invalid',
+									function() {
+										var invalid_fields = $(this).find(
+												'[data-invalid]');
+										console.log(invalid_fields);
+									}).on('valid', function() {
+								updateContent();
+							});
+
+							$('#content_cancel_button').unbind();
+							$('#content_cancel_button').click(function() {
+								$('#content_create').hide();
+								$('#content_list').show();
+							});
+
+							$('#content_errors').empty();
+						},
+						error : function(xhr, textStatus, errorThrown) {
+							console.log(errorThrown);
+							$('#content_errors')
+									.html(
+											'Unable to process the request. Please try again later');
+							$('#content_errors').show();
+						}
 					}
-
-					$('#content_save_button').html('update');
-
-					// not using valid.fndtn.abide & invalid.fndtn.abide as it
-					// causes the form to be submitted twice. Instead use the
-					// deprecated valid & invalid
-					$('#contentForm').on('invalid', function() {
-						var invalid_fields = $(this).find('[data-invalid]');
-						console.log(invalid_fields);
-					}).on('valid', function() {
-						updateContent();
-					});
-
-					$('#content_cancel_button').unbind();
-					$('#content_cancel_button').click(function() {
-						$('#content_create').hide();
-						$('#content_list').show();
-					});
-
-					$('#content_errors').empty();
-				}
-			}
-		});
+				});
 		jqxhr.always(function() {
 			// close wait div
 			closeWait();
@@ -592,32 +606,41 @@ function createContent() {
 		var contentObjString = JSON.stringify(contentObj, null, 2);
 		// alert(contentObjString);
 		// create via sync call
-		var jqxhr = $.ajax({
-			url : "/secured/content",
-			type : "POST",
-			data : contentObjString,
-			processData : false,
-			dataType : "json",
-			contentType : "application/json",
-			async : false,
-			statusCode : {
-				201 : function() {
-					$('#content_create').hide();
-					getContent(mSelectedApplication.id,
-							mSelectedContentGroup.id);
-					$('#content_list').show();
-				},
-				400 : function(text) {
-					try {
-						$('#content_errors').html(
-								'<p>' + getErrorMessages(text) + '</p>');
+		var jqxhr = $
+				.ajax({
+					url : "/secured/content",
+					type : "POST",
+					data : contentObjString,
+					processData : false,
+					dataType : "json",
+					contentType : "application/json",
+					async : false,
+					statusCode : {
+						201 : function() {
+							$('#content_create').hide();
+							location.reload();
+							// getContent(mSelectedApplication.id,
+							// mSelectedContentGroup.id);
+							// $('#content_list').show();
+						},
+						400 : function(text) {
+							try {
+								$('#content_errors').html(
+										getErrorMessages(text));
+								$('#content_errors').show();
+							} catch (err) {
+								handleError("createContent", err);
+							}
+						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						console.log(errorThrown);
+						$('#content_errors')
+								.html(
+										'Unable to process the request. Please try again later');
 						$('#content_errors').show();
-					} catch (err) {
-						handleError("createContent", err);
 					}
-				}
-			}
-		});
+				});
 		jqxhr.always(function() {
 			// close wait div
 			closeWait();
@@ -664,32 +687,41 @@ function updateContent() {
 			timeUpdatedTimeZoneOffsetMs : (lDate.getTimezoneOffset() * 60 * 1000)
 		};
 		var contentObjString = JSON.stringify(contentObj, null, 2);
-		var jqxhr = $.ajax({
-			url : "/secured/content",
-			type : "PUT",
-			data : contentObjString,
-			processData : false,
-			dataType : "json",
-			contentType : "application/json",
-			async : false,
-			statusCode : {
-				200 : function() {
-					$('#content_create').hide();
-					getContent(mSelectedApplication.id,
-							mSelectedContentGroup.id);
-					$('#content_list').show();
-				},
-				400 : function(text) {
-					try {
-						$('#content_errors').html(
-								'<p>' + getErrorMessages(text) + '</p>');
+		var jqxhr = $
+				.ajax({
+					url : "/secured/content",
+					type : "PUT",
+					data : contentObjString,
+					processData : false,
+					dataType : "json",
+					contentType : "application/json",
+					async : false,
+					statusCode : {
+						200 : function() {
+							$('#content_create').hide();
+							location.reload();
+							// getContent(mSelectedApplication.id,
+							// mSelectedContentGroup.id);
+							// $('#content_list').show();
+						},
+						400 : function(text) {
+							try {
+								$('#content_errors').html(
+										getErrorMessages(text));
+								$('#content_errors').show();
+							} catch (err) {
+								handleError("updateContent", err);
+							}
+						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						console.log(errorThrown);
+						$('#content_errors')
+								.html(
+										'Unable to process the request. Please try again later');
 						$('#content_errors').show();
-					} catch (err) {
-						handleError("updateContent", err);
 					}
-				}
-			}
-		});
+				});
 		jqxhr.always(function() {
 			// close wait div
 			closeWait();

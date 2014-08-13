@@ -35,6 +35,9 @@
 		<security:intercept-url pattern="/applications"
 			access="ROLE_SUPER_ADMIN, 
 			ROLE_ADMIN, ROLE_USER" />
+		<security:intercept-url pattern="/account"
+			access="ROLE_SUPER_ADMIN, 
+			ROLE_ADMIN, ROLE_USER" />
 		<security:intercept-url pattern="/**/content"
 			access="ROLE_SUPER_ADMIN, 
 			ROLE_ADMIN, ROLE_USER" />

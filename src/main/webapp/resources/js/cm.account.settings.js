@@ -20,6 +20,34 @@ function setup() {
 		$(document).foundation('abide', 'events');
 		getLoggedInUser();
 
+		// not using valid.fndtn.abide & invalid.fndtn.abide as it
+		// causes the form to be submitted twice. Instead use the
+		// deprecated valid & invalid
+		$('#changePasswordForm').on('invalid', function() {
+			var invalid_fields = $(this).find('[data-invalid]');
+			log(invalid_fields);
+		}).on('valid', function() {
+			log('changePasswordForm: valid!');
+			changePassword();
+		});
+		$('#change_password_errors').hide();
+
+		// forgot password
+		$('#user_forgot_password_errors').hide();
+		$('#user_forgot_password').unbind();
+		$('#user_forgot_password').bind('click', function() {
+			$('#forgot_password_modal').foundation('reveal', 'open');
+		});
+		// not using valid.fndtn.abide & invalid.fndtn.abide as it
+		// causes the form to be submitted twice. Instead use the
+		// deprecated valid & invalid
+		$('#forgotPasswordForm').on('invalid', function() {
+			var invalid_fields = $(this).find('[data-invalid]');
+			console.log(invalid_fields);
+		}).on('valid', function() {
+			submitForgotPasswordRequest();
+		});
+
 	} catch (err) {
 		handleError("setup", err);
 	} finally {
@@ -33,14 +61,13 @@ function setupLeftNavBar() {
 		$('#left_nav_bar')
 				.empty()
 				.html(
-						'<a id=\"left_nav_bar_link_1\" href=\"javascript:void(0);\" >Change Password</a>'
-								+ '<a id=\"left_nav_bar_link_1\" href=\"javascript:void(0);\" >Billing</a>'
-								+ '</li>');
+						'<li><a id=\"left_nav_bar_link_1\" href=\"javascript:void(0);\" >Change Password</a></li>'
+								+ '<li><a id=\"left_nav_bar_link_1\" href=\"javascript:void(0);\" >Billing</a></li>');
 		$('#left_nav_bar_link_1').unbind();
 		$('#left_nav_bar_link_1').click(function() {
 			// $('#user_billing').hide();
-			$('#user_update').show();
-			newContent();
+			// default
+			$('#change_password').show();
 		});
 
 	} catch (err) {
@@ -70,7 +97,7 @@ function getLoggedInUser() {
 	try {
 
 		var jqxhr = $.ajax({
-			url : "/um/loggedinuser",
+			url : "/secured/loggedinuser",
 			type : "GET",
 			contentType : "application/json",
 			async : false,
@@ -94,42 +121,52 @@ function getLoggedInUser() {
 	}
 }
 
-function updatePassword() {
-	log("updatePassword", "Entering");
+function changePassword() {
+	log("changePassword", "Entering");
 
-	var lDate = new Date();
 	try {
 		var userObj = {
 			// get it from global variable
-			id : mLoggedInUser.id,
-			password : $('#user_confirm_new_password').val(),
-			timeUpdatedMs : lDate.getTime(),
-			timeUpdatedTimeZoneOffsetMs : (lDate.getTimezoneOffset() * 60 * 1000)
+			userId : mLoggedInUser.id,
+			oldPassword : $('#user_old_password').val(),
+			password : $('#user_new_password').val(),
+			password2 : $('#user_confirm_new_password').val()
 		};
 		var userObjString = JSON.stringify(userObj, null, 2);
-		var jqxhr = $.ajax({
-			url : "/um/password",
-			type : "PUT",
-			data : userObjString,
-			processData : false,
-			dataType : "json",
-			contentType : "application/json",
-			async : false,
-			statusCode : {
-				200 : function() {
-					$('#user_message').show();
-				},
-				400 : function(text) {
-					try {
-						$('#user_errors').html(
-								'<p>' + getErrorMessages(text) + '</p>');
-						$('#user_errors').show();
-					} catch (err) {
-						handleError("updatePassword", err);
+		var jqxhr = $
+				.ajax({
+					url : "/secured/changepassword",
+					type : "PUT",
+					data : userObjString,
+					processData : false,
+					dataType : "json",
+					contentType : "application/json",
+					async : false,
+					statusCode : {
+						200 : function() {
+							$('#user_message').show();
+							$('#change_password_errors').hide();
+						},
+						400 : function(text) {
+							try {
+								$('#user_message').error();
+								$('#change_password_errors').html(
+										getErrorMessages(text));
+							} catch (err) {
+								handleError("updateContentEnabled", err);
+							}
+						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						console.log(errorThrown);
+						$('#user_message').hide();
+						$('#change_password_errors')
+								.html(
+										'Unable to process the request. Please try again later');
+						$('#change_password_errors').show();
 					}
-				}
-			}
-		});
+
+				});
 		jqxhr.always(function() {
 			// close wait div
 			closeWait();
@@ -137,10 +174,52 @@ function updatePassword() {
 
 		return false;
 	} catch (err) {
-		handleError("updatePassword", err);
+		handleError("changePassword", err);
 	} finally {
-		log("updatePassword", "Exiting");
+		log("changePassword", "Exiting");
 	}
 }
+function submitForgotPasswordRequest() {
+	log("submitForgotPasswordRequest", "Entering");
+	try {
 
+		var obj = {
+			email : $('#user_forgot_password_email').val()
+		};
+		var objString = JSON.stringify(obj, null, 2);
+		// alert(contentgroupObjString);
+		// create via sync call
+		var jqxhr = $
+				.ajax({
+					url : "/forgotpassword",
+					type : "POST",
+					data : objString,
+					processData : false,
+					dataType : "json",
+					contentType : "application/json",
+					async : false,
+					statusCode : {
+						202 : function() {
+							$('#forgot_password_modal').foundation('reveal',
+									'close');
+							$('#forgot_password_request_submitted_message')
+									.show();
+						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						console.log(errorThrown);
+						$('#forgot_password_errors')
+								.html(
+										'Unable to process the request. Please try again later');
+						$('#forgot_password_errors').show();
+					}
+				});
+
+		return false;
+	} catch (err) {
+		handleError("submitForgotPasswordRequest", err);
+	} finally {
+		log("submitForgotPasswordRequest", "Exiting");
+	}
+}
 /** *End***************************************** */

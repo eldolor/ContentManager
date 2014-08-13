@@ -13,6 +13,26 @@ import org.springframework.stereotype.Service;
 public class UserService {
 	@Autowired
 	private UserDao userDao;
+	@Autowired
+	private ForgotPasswordDao forgotPasswordDao;
+	@Autowired
+	private PasswordChangeRequestDao passwordChangeRequestDao;
+
+	public void save(PasswordChangeRequest request) {
+		passwordChangeRequestDao.save(request);
+	}
+
+	public void save(ForgotPasswordRequest request) {
+		forgotPasswordDao.save(request);
+	}
+
+	public void update(ForgotPasswordRequest pRequest) {
+		forgotPasswordDao.update(pRequest);
+	}
+
+	public ForgotPasswordRequest get(String guid) {
+		return forgotPasswordDao.get(guid);
+	}
 
 	public List<User> getUsers() {
 
@@ -51,13 +71,13 @@ public class UserService {
 			user.setRole(User.ROLE_SUPER_ADMIN);
 		userDao.saveUser(user);
 	}
-	
-	public void signUpUser(User user){
+
+	public void signUpUser(User user) {
 		// hard wired
 		if (user.getUsername().equals(User.DEFAULT_SUPER_ADMIN_USER_NAME))
 			user.setRole(User.ROLE_SUPER_ADMIN);
 		userDao.signUpUser(user);
-		
+
 	}
 
 	public void updateUser(User user) {

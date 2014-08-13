@@ -1,10 +1,14 @@
 package com.cm.usermanagement.user;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimeZone;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -20,13 +24,22 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.cm.config.Configuration;
+import com.cm.usermanagement.user.transfer.ForgotPasswordRequest;
+import com.cm.usermanagement.user.transfer.PasswordChangeRequest;
 import com.cm.util.Utils;
 import com.cm.util.ValidationError;
+import com.google.appengine.api.taskqueue.Queue;
+import com.google.appengine.api.taskqueue.QueueFactory;
+import com.google.appengine.api.taskqueue.TaskOptions;
+import com.google.appengine.api.taskqueue.TaskOptions.Method;
 
 @Controller
 public class UserManagementController {
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private ForgotPasswordEmailBuilder forgotPasswordEmailBuilder;
 
 	private static final Logger LOGGER = Logger
 			.getLogger(UserManagementController.class.getName());
@@ -92,10 +105,12 @@ public class UserManagementController {
 	}
 
 	/**
+	 * Secured uri
+	 * 
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value = "/um/accountsettings", method = RequestMethod.GET)
+	@RequestMapping(value = "/account", method = RequestMethod.GET)
 	public ModelAndView displayAccountSettings(ModelMap model) {
 		if (LOGGER.isLoggable(Level.INFO))
 			LOGGER.info("Entering displayAccountSettings");
@@ -107,47 +122,278 @@ public class UserManagementController {
 		}
 	}
 
-	@RequestMapping(value = "/um/password", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
-	public @ResponseBody
-	List<ValidationError> doUpdatePassword(
-			@RequestBody com.cm.usermanagement.user.transfer.User pUser,
+	/******** FORGOT PASSWORD ****************/
+	/**
+	 * unsecured uri
+	 * 
+	 * @param pForgotPasswordRequest
+	 * @param response
+	 */
+	@RequestMapping(value = "/forgotpassword", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	public void processForgotPasswordRequest(
+			@RequestBody ForgotPasswordRequest pForgotPasswordRequest,
 			HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering doUpdatePassword");
-			// get the logged in user
-			com.cm.usermanagement.user.User lLoggedInUser = userService
-					.getLoggedInUser();
+				LOGGER.info("Entering processForgotPasswordRequest");
+			// check the email address for existence
+			com.cm.usermanagement.user.User lUser = userService
+					.getUserByUserName(pForgotPasswordRequest.getEmail());
+			if (lUser != null
+					&& lUser.getUsername().equals(
+							pForgotPasswordRequest.getEmail())) {
+				// convert to domain object
+				com.cm.usermanagement.user.ForgotPasswordRequest lForgotPasswordRequest = new com.cm.usermanagement.user.ForgotPasswordRequest();
+				// generate the guid
+				String lGuid = UUID.randomUUID().toString();
+				lForgotPasswordRequest.setGuid(lGuid);
 
-			List<ValidationError> errors = validateOnPasswordChange(pUser,
-					lLoggedInUser);
+				lForgotPasswordRequest.setEmail(lUser.getEmail());
+				lForgotPasswordRequest.setAccountId(lUser.getAccountId());
+				lForgotPasswordRequest.setUsername(lUser.getUsername());
+
+				// standardize to utc
+				lForgotPasswordRequest.setTimeCreatedMs(System
+						.currentTimeMillis());
+				lForgotPasswordRequest
+						.setTimeCreatedTimeZoneOffsetMs((long) TimeZone
+								.getDefault().getRawOffset());
+				// save the request
+				userService.save(lForgotPasswordRequest);
+
+				// send out the email
+				{
+					Queue queue = QueueFactory.getQueue("emailqueue");
+					TaskOptions taskOptions = TaskOptions.Builder
+							.withUrl(
+									"/tasks/email/sendforgotpasswordemail/"
+											+ lGuid).param("guid", lGuid)
+							.method(Method.POST);
+					queue.add(taskOptions);
+				}
+			} else {
+				LOGGER.log(Level.WARNING, "The user does not exist");
+			}
+			// always
+			response.setStatus(HttpServletResponse.SC_ACCEPTED);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting processForgotPasswordRequest");
+		}
+
+	}
+
+	@RequestMapping(value = "/tasks/email/sendforgotpasswordemail/{guid}", method = RequestMethod.POST)
+	public void sendForgotPasswordEmail(@PathVariable String guid,
+			HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering sendForgotPasswordEmail");
+			// validate the guid
+			com.cm.usermanagement.user.ForgotPasswordRequest lRequest = userService
+					.get(guid);
+
+			String lEmailMessage = forgotPasswordEmailBuilder.build(guid);
+
+			StringBuilder htmlBody = new StringBuilder();
+			htmlBody.append(lEmailMessage);
+			try {
+				Utils.sendEmail(
+						Configuration.FORGOT_PASSWORD_FROM_EMAIL_ADDRESS
+								.getValue(),
+						Configuration.FORGOT_PASSWORD_FROM_NAME.getValue(),
+						lRequest.getEmail(), "", Configuration.SITE_NAME
+								.getValue(), htmlBody.toString(), null);
+			} catch (UnsupportedEncodingException e) {
+				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			} catch (MessagingException e) {
+				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			}
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting sendForgotPasswordEmail");
+
+		}
+	}
+
+	/**
+	 * unsecured uri
+	 * 
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/forgotpassword/{guid}", method = RequestMethod.GET)
+	public ModelAndView displayChangePassword(ModelMap model,
+			@PathVariable String guid, HttpServletRequest request,
+			HttpServletResponse response) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering displaySignup");
+		try {
+			// validate the guid
+			com.cm.usermanagement.user.ForgotPasswordRequest lRequest = userService
+					.get(guid);
+			if (lRequest != null) {
+				// check the validity of the request period
+				long lTimeNow = System.currentTimeMillis();
+				// calculate 24hrs from request creation
+				if (lRequest.getTimeCreatedMs() < lTimeNow
+						+ (24 * 60 * 60 * 1000)) {
+
+					// pass the guid to the jsp
+					model.addAttribute("guid", guid);
+
+					return new ModelAndView("change_password", model);
+				}
+			}
+
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			return null;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting displaySignup");
+		}
+	}
+
+	/**
+	 * unsecured uri
+	 * 
+	 * @param pForgotPasswordRequest
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/forgotpassword", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
+	public @ResponseBody
+	List<ValidationError> processForgotPassword(
+			@RequestBody ForgotPasswordRequest pForgotPasswordRequest,
+			HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering processForgotPassword");
+			List<ValidationError> errors = new ArrayList<ValidationError>();
+
+			// validate the guid
+			com.cm.usermanagement.user.ForgotPasswordRequest lRequest = userService
+					.get(pForgotPasswordRequest.getGuid());
+			if (lRequest != null) {
+				// check the validity of the request period
+				long lTimeNow = System.currentTimeMillis();
+				// calculate 24hrs from request creation
+				if (lRequest.getTimeCreatedMs() > lTimeNow
+						+ (24 * 60 * 60 * 1000)) {
+					ValidationError error = new ValidationError();
+					error.setCode("password");
+					error.setDescription("Change password request has expired");
+					errors.add(error);
+					LOGGER.log(Level.WARNING,
+							"Change password request has expired");
+				}
+			}
+			if ((!Utils.isEmpty(pForgotPasswordRequest.getPassword()))
+					&& (!pForgotPasswordRequest.getPassword().equals(
+							pForgotPasswordRequest.getPassword2()))) {
+				ValidationError error = new ValidationError();
+				error.setCode("password");
+				error.setDescription("Passwords do not match");
+				errors.add(error);
+				LOGGER.log(Level.WARNING, "Passwords do not match");
+			}
+
 			if (!errors.isEmpty()) {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return errors;
 			} else {
+				// get email from the forgot password request
+				com.cm.usermanagement.user.User lUser = userService
+						.getUserByUserName(lRequest.getEmail());
 
-				lLoggedInUser.setPassword(new BCryptPasswordEncoder()
-						.encode(pUser.getPassword()));
-				lLoggedInUser.setTimeUpdatedMs(pUser.getTimeUpdatedMs());
-				lLoggedInUser.setTimeUpdatedTimeZoneOffsetMs(pUser
-						.getTimeUpdatedTimeZoneOffsetMs());
-				userService.updateUser(lLoggedInUser);
-				response.setStatus(HttpServletResponse.SC_CREATED);
+				lUser.setPassword(new BCryptPasswordEncoder()
+						.encode(pForgotPasswordRequest.getPassword()));
+				// standardize to utc
+				lUser.setTimeUpdatedMs(System.currentTimeMillis());
+				lUser.setTimeUpdatedTimeZoneOffsetMs((long) TimeZone
+						.getDefault().getRawOffset());
+				userService.updateUser(lUser);
+
+				// update the request
+				long lCurrentTimeMs = System.currentTimeMillis();
+				lRequest.setTimeUpdatedMs(lCurrentTimeMs);
+				lRequest.setTimeUpdatedTimeZoneOffsetMs((long) TimeZone
+						.getDefault().getRawOffset());
+				userService.update(lRequest);
+
+				response.setStatus(HttpServletResponse.SC_OK);
 				return null;
 
 			}
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting doUpdatePassword");
+				LOGGER.info("Exiting processForgotPassword");
 		}
 
 	}
+
+	/******** FORGOT PASSWORD ****************/
+	/******** CHANGE PASSWORD ****************/
+
+	@RequestMapping(value = "/secured/changepassword", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
+	public @ResponseBody
+	List<ValidationError> doChangePassword(
+			@RequestBody PasswordChangeRequest passwordChangeRequest,
+			HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering doChangePassword");
+			// get the logged in user
+			com.cm.usermanagement.user.User lLoggedInUser = userService
+					.getLoggedInUser();
+
+			List<ValidationError> errors = validateOnPasswordChange(
+					passwordChangeRequest, lLoggedInUser);
+			if (!errors.isEmpty()) {
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				return errors;
+			} else {
+				// convert to domain object
+				com.cm.usermanagement.user.PasswordChangeRequest lRequest = new com.cm.usermanagement.user.PasswordChangeRequest();
+				lRequest.setAccountId(lLoggedInUser.getAccountId());
+				lRequest.setUsername(lLoggedInUser.getUsername());
+
+				long lCurrentTimeMs = System.currentTimeMillis();
+				lRequest.setTimeCreatedMs(lCurrentTimeMs);
+				lRequest.setTimeCreatedTimeZoneOffsetMs((long) TimeZone
+						.getDefault().getRawOffset());
+				lRequest.setTimeUpdatedMs(lCurrentTimeMs);
+				lRequest.setTimeUpdatedTimeZoneOffsetMs((long) TimeZone
+						.getDefault().getRawOffset());
+
+				// save the request
+				userService.save(lRequest);
+
+				lLoggedInUser.setPassword(new BCryptPasswordEncoder()
+						.encode(passwordChangeRequest.getPassword()));
+				lLoggedInUser.setTimeUpdatedMs(System.currentTimeMillis());
+				lLoggedInUser.setTimeUpdatedTimeZoneOffsetMs((long) TimeZone
+						.getDefault().getRawOffset());
+				userService.updateUser(lLoggedInUser);
+				response.setStatus(HttpServletResponse.SC_OK);
+				return null;
+
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting doChangePassword");
+		}
+
+	}
+
+	/******** CHANGE PASSWORD ****************/
 
 	/**
 	 * @param response
 	 * @return
 	 */
-	@RequestMapping(value = "/um/loggedinuser", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/secured/loggedinuser", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody
 	com.cm.usermanagement.user.transfer.User getLoggedInUser(
 			HttpServletResponse response) {
@@ -221,13 +467,16 @@ public class UserManagementController {
 	}
 
 	private List<ValidationError> validateOnPasswordChange(
-			com.cm.usermanagement.user.transfer.User pUser,
+			PasswordChangeRequest pPasswordChangeRequest,
 			com.cm.usermanagement.user.User pLoggedInUser) {
 		if (LOGGER.isLoggable(Level.INFO))
 			LOGGER.info("Entering validate");
 		List<ValidationError> errors = new ArrayList<ValidationError>();
+		boolean doExistingPasswordsMatch = new BCryptPasswordEncoder().matches(
+				pPasswordChangeRequest.getOldPassword(),
+				pLoggedInUser.getPassword());
 
-		if (pLoggedInUser.getId() != pUser.getId()) {
+		if (pLoggedInUser.getId() != pPasswordChangeRequest.getUserId()) {
 			ValidationError error = new ValidationError();
 			error.setCode("id");
 			error.setDescription("Your session has expired or invalid request");
@@ -235,8 +484,16 @@ public class UserManagementController {
 			LOGGER.log(Level.WARNING,
 					"Your session has expired or invalid request");
 		}
-		if ((!Utils.isEmpty(pUser.getPassword()))
-				&& (!pUser.getPassword().equals(pUser.getPassword2()))) {
+		if (!doExistingPasswordsMatch) {
+			ValidationError error = new ValidationError();
+			error.setCode("old_password");
+			error.setDescription("Your old password is invalid");
+			errors.add(error);
+			LOGGER.log(Level.WARNING, "Your old password is invalid");
+		}
+		if ((!Utils.isEmpty(pPasswordChangeRequest.getPassword()))
+				&& (!pPasswordChangeRequest.getPassword().equals(
+						pPasswordChangeRequest.getPassword2()))) {
 			ValidationError error = new ValidationError();
 			error.setCode("password");
 			error.setDescription("Passwords do not match");
@@ -291,7 +548,7 @@ public class UserManagementController {
 						.getTimeUpdatedTimeZoneOffsetMs());
 
 				userService.updateUser(lUser);
-				response.setStatus(HttpServletResponse.SC_CREATED);
+				response.setStatus(HttpServletResponse.SC_OK);
 				return null;
 			}
 		} finally {

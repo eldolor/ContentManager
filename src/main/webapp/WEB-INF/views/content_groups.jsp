@@ -132,7 +132,7 @@
 						<div class="row">
 							<div class="large-12 columns">
 								<button id="contentgroup_save_button" class="button radius">create</button>
-								<button id="contentgroup_cancel_button" class="button radius">cancel</button>
+								<a href="javascript:void(0);" id="contentgroup_cancel_button">cancel</a>
 							</div>
 						</div>
 					</fieldset>

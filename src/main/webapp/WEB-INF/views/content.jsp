@@ -163,7 +163,7 @@ setSelectedContentGroup(${contentGroupId});
 						<div class="row">
 							<div class="large-12 columns">
 								<button id="content_save_button" class="button radius">create</button>
-								<button id="content_cancel_button" class="button radius">cancel</button>
+								<a href="javascript:void(0);" id="content_cancel_button">cancel</a>
 							</div>
 						</div>
 					</fieldset>

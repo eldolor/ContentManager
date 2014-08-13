@@ -82,7 +82,7 @@
 							<div class="large-12 columns">
 								<button id="user_sign_up_submit_button" class="button">sign
 									up</button>
-								<button id="user_sign_up_cancel_button" class="button">cancel</button>
+								<a href="javascript:void(0);" id="user_sign_up_cancel_button">cancel</a>
 							</div>
 						</div>
 					</fieldset>
@@ -123,7 +123,7 @@
 						<div class="large-12 columns">
 							<button id="user_sign_in_submit_button" class="button">sign
 								in</button>
-							<button id="user_sign_in_cancel_button" class="button">cancel</button>
+							<a href="javascript:void(0);" id="user_sign_in_cancel_button">cancel</a>
 						</div>
 					</div>
 				</div>

@@ -1,9 +1,21 @@
 package com.cm.util;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 import com.cm.contentmanager.content.Content;
 import com.google.appengine.api.blobstore.BlobInfo;
@@ -11,7 +23,8 @@ import com.google.appengine.api.blobstore.BlobInfoFactory;
 import com.google.appengine.api.blobstore.BlobKey;
 
 public class Utils {
-	private static final Logger LOGGER = Logger.getLogger(Utils.class.getName());
+	private static final Logger LOGGER = Logger
+			.getLogger(Utils.class.getName());
 
 	public static boolean isEmpty(String string) {
 		return ((string != null) && (!string.equals(""))) ? false : true;
@@ -57,4 +70,53 @@ public class Utils {
 		if (LOGGER.isLoggable(Level.INFO))
 			LOGGER.info(log);
 	}
+
+	/**
+	 * 
+	 * @param fromEmailAddress
+	 * @param fromName
+	 * @param toEmailAddress
+	 * @param toName
+	 * @param subject
+	 * @param htmlBody
+	 * @param textBody
+	 * @throws MessagingException
+	 * @throws UnsupportedEncodingException
+	 */
+	public static void sendEmail(String fromEmailAddress, String fromName,
+			String toEmailAddress, String toName, String subject,
+			String htmlBody, String textBody) throws MessagingException,
+			UnsupportedEncodingException {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering sendEmail");
+		Multipart mp = new MimeMultipart();
+		MimeBodyPart htmlPart = new MimeBodyPart();
+		if (htmlBody != null) {
+			htmlPart.setContent(htmlBody, "text/html");
+			mp.addBodyPart(htmlPart);
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("sendEmail: Html body part: " + htmlBody);
+		}
+
+		MimeBodyPart textPart = new MimeBodyPart();
+		if (textBody != null) {
+			textPart.setContent(textBody, "text/plain");
+			mp.addBodyPart(textPart);
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("sendEmail: Text body part: " + textBody);
+		}
+
+		Properties props = new Properties();
+		Session session = Session.getDefaultInstance(props, null);
+		Message msg = new MimeMessage(session);
+		msg.setFrom(new InternetAddress(fromEmailAddress, fromName));
+		msg.addRecipient(Message.RecipientType.TO, new InternetAddress(
+				toEmailAddress, toName));
+		msg.setSubject(subject);
+		msg.setContent(mp);
+		Transport.send(msg);
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Exiting sendEmail");
+	}
+
 }

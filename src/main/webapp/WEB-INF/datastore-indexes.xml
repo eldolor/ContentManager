@@ -9,4 +9,12 @@
 		<property name="enabled" direction="asc" />
 		<property name="timeUpdatedMs" direction="desc" />
 	</datastore-index>
+
+	<datastore-index kind="Content" ancestor="false"
+		source="manual">
+		<property name="applicationId" direction="asc" />
+		<property name="contentGroupId" direction="asc" />
+		<property name="deleted" direction="asc" />
+		<property name="timeUpdatedMs" direction="desc" />
+	</datastore-index>
 </datastore-indexes>

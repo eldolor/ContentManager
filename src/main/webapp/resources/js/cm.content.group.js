@@ -46,7 +46,7 @@ function setupLeftNavBar() {
 		$('#left_nav_bar')
 				.empty()
 				.html(
-						'<a id=\"left_nav_bar_link_1\" href=\"javascript:void(0);\" >Create Content Group</a></li>');
+						'<li><a id=\"left_nav_bar_link_1\" href=\"javascript:void(0);\" >Create Content Group</a></li>');
 		$('#left_nav_bar_link_1').unbind();
 		$('#left_nav_bar_link_1').click(function() {
 			// $('#content_group_create_modal').foundation('reveal', 'open');
@@ -212,8 +212,7 @@ function updateContentGroupEnabled(pContentGroupId, pContentGroupEnabled,
 				},
 				400 : function(text) {
 					try {
-						$('#contentgroup_errors').html(
-								'<p>' + getErrorMessages(text) + '</p>');
+						$('#contentgroup_errors').html(getErrorMessages(text));
 					} catch (err) {
 						handleError("updateContentGroupEnabled", err);
 					}
@@ -341,6 +340,13 @@ function editContentGroup(id) {
 
 							$('#contentgroup_errors').empty();
 						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						console.log(errorThrown);
+						$('#contentgroup_errors')
+								.html(
+										'Unable to process the request. Please try again later');
+						$('#contentgroup_errors').show();
 					}
 				});
 		jqxhr.always(function() {
@@ -426,31 +432,39 @@ function createContentGroup() {
 		var contentgroupObjString = JSON.stringify(contentgroupObj, null, 2);
 		// alert(contentgroupObjString);
 		// create via sync call
-		var jqxhr = $.ajax({
-			url : "/secured/contentgroup",
-			type : "POST",
-			data : contentgroupObjString,
-			processData : false,
-			dataType : "json",
-			contentType : "application/json",
-			async : false,
-			statusCode : {
-				201 : function() {
-					$('#content_group_create').hide();
-					getContentGroups(mSelectedApplication.id);
-					$('#content_groups_list').show();
-				},
-				400 : function(text) {
-					try {
-						$('#contentgroup_errors').html(
-								'<p>' + getErrorMessages(text) + '</p>');
-						$('#contentgroup_errors').show();
-					} catch (err) {
-						handleError("submitContentGroup", err);
+		var jqxhr = $
+				.ajax({
+					url : "/secured/contentgroup",
+					type : "POST",
+					data : contentgroupObjString,
+					processData : false,
+					dataType : "json",
+					contentType : "application/json",
+					async : false,
+					statusCode : {
+						201 : function() {
+							$('#content_group_create').hide();
+							getContentGroups(mSelectedApplication.id);
+							$('#content_groups_list').show();
+						},
+						400 : function(text) {
+							try {
+								$('#contentgroup_errors').html(
+										getErrorMessages(text));
+								$('#contentgroup_errors').show();
+							} catch (err) {
+								handleError("submitContentGroup", err);
+							}
+						},
+						error : function(xhr, textStatus, errorThrown) {
+							console.log(errorThrown);
+							$('#contentgroup_errors')
+									.html(
+											'Unable to process the request. Please try again later');
+							$('#contentgroup_errors').show();
+						}
 					}
-				}
-			}
-		});
+				});
 		jqxhr.always(function() {
 			// close wait div
 			closeWait();
@@ -490,31 +504,39 @@ function updateContentGroup() {
 			timeUpdatedTimeZoneOffsetMs : (_date.getTimezoneOffset() * 60 * 1000)
 		};
 		var contentgroupObjString = JSON.stringify(contentgroupObj, null, 2);
-		var jqxhr = $.ajax({
-			url : "/secured/contentgroup",
-			type : "PUT",
-			data : contentgroupObjString,
-			processData : false,
-			dataType : "json",
-			contentType : "application/json",
-			async : false,
-			statusCode : {
-				200 : function() {
-					$('#content_group_create').hide();
-					getContentGroups(mSelectedApplication.id);
-					$('#content_groups_list').show();
-				},
-				400 : function(text) {
-					try {
-						$('#contentgroup_errors').html(
-								'<p>' + getErrorMessages(text) + '</p>');
-						$('#contentgroup_errors').show();
-					} catch (err) {
-						handleError("updateContentGroup", err);
+		var jqxhr = $
+				.ajax({
+					url : "/secured/contentgroup",
+					type : "PUT",
+					data : contentgroupObjString,
+					processData : false,
+					dataType : "json",
+					contentType : "application/json",
+					async : false,
+					statusCode : {
+						200 : function() {
+							$('#content_group_create').hide();
+							getContentGroups(mSelectedApplication.id);
+							$('#content_groups_list').show();
+						},
+						400 : function(text) {
+							try {
+								$('#contentgroup_errors').html(
+										getErrorMessages(text));
+								$('#contentgroup_errors').show();
+							} catch (err) {
+								handleError("updateContentGroup", err);
+							}
+						},
+						error : function(xhr, textStatus, errorThrown) {
+							console.log(errorThrown);
+							$('#contentgroup_errors')
+									.html(
+											'Unable to process the request. Please try again later');
+							$('#contentgroup_errors').show();
+						}
 					}
-				}
-			}
-		});
+				});
 		jqxhr.always(function() {
 			// close wait div
 			closeWait();

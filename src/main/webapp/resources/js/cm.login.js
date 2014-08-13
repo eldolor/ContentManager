@@ -21,30 +21,37 @@ function setup() {
 			$('#login_errors').html(getErrorMessage("login_failure", mErrors));
 			$('#login_errors').show();
 		}
-		$('#user_forgot_password_button').unbind();
-		$('#user_forgot_password_button').bind('click', function() {
-			$('#forgot_password_modal').foundation('reveal', 'open');
-		});
-		// now using foundation abide
-		// $('#user_sign_in_submit_button').unbind();
-		// $('#user_sign_in_submit_button').bind('click', function() {
-		// document.loginForm.submit();
-		// // TODO: make an ajax call
-		// // login();
-		// });
 		$('#user_sign_in_cancel_button').unbind();
 		$('#user_sign_in_cancel_button').bind('click', function() {
 			$('#user_sign_in_submit_button').unbind();
 			window.location.href = '/';
 		});
 		// enable abide form validation
-		$(document).foundation('abide','events'); 
-		$('#loginForm').on('invalid.fndtn.abide', function() {
+		$(document).foundation('abide', 'events');
+		// not using valid.fndtn.abide & invalid.fndtn.abide as it
+		// causes the form to be submitted twice. Instead use the
+		// deprecated valid & invalid
+		$('#loginForm').on('invalid', function() {
 			var invalid_fields = $(this).find('[data-invalid]');
 			console.log(invalid_fields);
-		}).on('valid.fndtn.abide', function() {
+		}).on('valid', function() {
 			document.loginForm.submit();
 			// login();
+		});
+		// forgot password
+		$('#user_forgot_password_errors').hide();
+		$('#user_forgot_password').unbind();
+		$('#user_forgot_password').bind('click', function() {
+			$('#forgot_password_modal').foundation('reveal', 'open');
+		});
+		// not using valid.fndtn.abide & invalid.fndtn.abide as it
+		// causes the form to be submitted twice. Instead use the
+		// deprecated valid & invalid
+		$('#forgotPasswordForm').on('invalid', function() {
+			var invalid_fields = $(this).find('[data-invalid]');
+			console.log(invalid_fields);
+		}).on('valid', function() {
+			submitForgotPasswordRequest();
 		});
 	} catch (err) {
 		handleError("setup", err);
@@ -60,7 +67,7 @@ function setupLeftNavBar() {
 		$('#left_nav_bar')
 				.empty()
 				.html(
-						'<a id=\"left_nav_bar_link_1\" href=\"javascript:void(0);\" >Sign In</a></li>');
+						'<li><a id=\"left_nav_bar_link_1\" href=\"javascript:void(0);\" >Sign In</a></li>');
 
 	} catch (err) {
 		handleError("setupLeftNavBar", err);
@@ -109,8 +116,7 @@ function login() {
 				},
 				400 : function(text) {
 					try {
-						// $('#login_errors').html(
-						// '<p>' + getErrorMessages(text) + '</p>');
+						$('#login_errors').html(getErrorMessages(text));
 						$('#login_errors').show();
 					} catch (err) {
 						handleError("login", err);
@@ -127,5 +133,49 @@ function login() {
 		handleError("login", err);
 	} finally {
 		log("login", "Exiting");
+	}
+}
+
+function submitForgotPasswordRequest() {
+	log("submitForgotPasswordRequest", "Entering");
+	try {
+
+		var obj = {
+			email : $('#user_forgot_password_email').val()
+		};
+		var objString = JSON.stringify(obj, null, 2);
+		// alert(contentgroupObjString);
+		// create via sync call
+		var jqxhr = $
+				.ajax({
+					url : "/forgotpassword",
+					type : "POST",
+					data : objString,
+					processData : false,
+					dataType : "json",
+					contentType : "application/json",
+					async : false,
+					statusCode : {
+						202 : function() {
+							$('#forgot_password_modal').foundation('reveal',
+									'close');
+							$('#forgot_password_request_submitted_message')
+									.show();
+						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						console.log(errorThrown);
+						$('#forgot_password_errors')
+								.html(
+										'Unable to process the request. Please try again later');
+						$('#forgot_password_errors').show();
+					}
+				});
+
+		return false;
+	} catch (err) {
+		handleError("submitForgotPasswordRequest", err);
+	} finally {
+		log("submitForgotPasswordRequest", "Exiting");
 	}
 }

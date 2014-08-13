@@ -82,12 +82,13 @@ function setupContentDropBox(url) {
 		reader.onload = function(e) {
 
 			if (file.type.match(/^video\//)) {
-				image.attr('src', '/resources/images/video_icon.jpg');
-			} else if (!file.type.match(/^image\//)) {
+				image.attr('src', '/resources/images/video_icon.png');
+			} else {
 				// e.target.result holds the DataURL which
 				// can be used as a source of the image:
 
-				image.attr('src', e.target.result);
+				// image.attr('src', e.target.result);
+				image.attr('src', '/resources/images/image_icon.png');
 			}
 
 		};

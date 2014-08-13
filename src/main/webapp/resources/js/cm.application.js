@@ -33,7 +33,7 @@ function setupLeftNavBar() {
 		$('#left_nav_bar')
 				.empty()
 				.html(
-						'<a id=\"left_nav_bar_link_1\" href=\"javascript:void(0);\" >Create Application</a></li>');
+						'<li><a id=\"left_nav_bar_link_1\" href=\"javascript:void(0);\" >Create Application</a></li>');
 		$('#left_nav_bar_link_1').unbind();
 		$('#left_nav_bar_link_1').click(function() {
 			// $('#application_create_modal').foundation('reveal', 'open');
@@ -153,29 +153,37 @@ function updateApplicationEnabled(pApplicationId, pApplicationEnabled,
 			timeUpdatedTimeZoneOffsetMs : (lDate.getTimezoneOffset() * 60 * 1000)
 		};
 		var lApplicationObjString = JSON.stringify(lApplicationObj, null, 2);
-		var jqxhr = $.ajax({
-			url : "/secured/application/enabled",
-			type : "PUT",
-			data : lApplicationObjString,
-			processData : false,
-			dataType : "json",
-			contentType : "application/json",
-			async : false,
-			statusCode : {
-				201 : function() {
-					// getApplications();
-					window.location.href = '/applications';
-				},
-				400 : function(text) {
-					try {
-						$('#application_errors').html(
-								'<p>' + getErrorMessages(text) + '</p>');
-					} catch (err) {
-						handleError("updateApplicationEnabled", err);
+		var jqxhr = $
+				.ajax({
+					url : "/secured/application/enabled",
+					type : "PUT",
+					data : lApplicationObjString,
+					processData : false,
+					dataType : "json",
+					contentType : "application/json",
+					async : false,
+					statusCode : {
+						201 : function() {
+							// getApplications();
+							window.location.href = '/applications';
+						},
+						400 : function(text) {
+							try {
+								$('#application_errors').html(
+										getErrorMessages(text));
+							} catch (err) {
+								handleError("updateApplicationEnabled", err);
+							}
+						},
+						error : function(xhr, textStatus, errorThrown) {
+							console.log(errorThrown);
+							$('#application_errors')
+									.html(
+											'Unable to process the request. Please try again later');
+							$('#application_errors').show();
+						}
 					}
-				}
-			}
-		});
+				});
 		jqxhr.always(function() {
 			// close wait div
 			closeWait();
@@ -195,23 +203,33 @@ function displayApplicationStats(id, name) {
 		openWait();
 		// load entry info via ajax
 		var url = "/secured/applicationadstats/" + id;
-		var jqxhr = $.ajax({
-			url : url,
-			type : "GET",
-			contentType : "application/json",
-			statusCode : {
-				200 : function(adStats) {
-					$("#applicationAccordianGroup" + id).popover(
-							{
-								selector : '#applicationAccordianGroup' + id,
-								content : 'Clicks: ' + adStats.clicks
-										+ ', Impressions: '
-										+ adStats.impressions
-							});
-					$("#applicationAccordianGroup" + id).popover('toggle');
-				}
-			}
-		});
+		var jqxhr = $
+				.ajax({
+					url : url,
+					type : "GET",
+					contentType : "application/json",
+					statusCode : {
+						200 : function(adStats) {
+							$("#applicationAccordianGroup" + id).popover(
+									{
+										selector : '#applicationAccordianGroup'
+												+ id,
+										content : 'Clicks: ' + adStats.clicks
+												+ ', Impressions: '
+												+ adStats.impressions
+									});
+							$("#applicationAccordianGroup" + id).popover(
+									'toggle');
+						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						console.log(errorThrown);
+						$('#application_errors')
+								.html(
+										'Unable to process the request. Please try again later');
+						$('#application_errors').show();
+					}
+				});
 		jqxhr.always(function() {
 			// close wait div
 			closeWait();
@@ -363,31 +381,39 @@ function createApplication() {
 		// twice. There are multiple listeners on this form."
 		// + applicationObjString);
 		// create via sync call
-		var jqxhr = $.ajax({
-			url : "/secured/application",
-			type : "POST",
-			data : applicationObjString,
-			processData : false,
-			dataType : "json",
-			contentType : "application/json",
-			async : false,
-			statusCode : {
-				201 : function() {
-					$('#application_create').hide();
-					getApplications();
-					$('#applications_list').show();
-				},
-				400 : function(text) {
-					try {
-						$('#application_errors').html(
-								'<p>' + getErrorMessages(text) + '</p>');
-						$('#application_errors').show();
-					} catch (err) {
-						handleError("submitApplication", err);
+		var jqxhr = $
+				.ajax({
+					url : "/secured/application",
+					type : "POST",
+					data : applicationObjString,
+					processData : false,
+					dataType : "json",
+					contentType : "application/json",
+					async : false,
+					statusCode : {
+						201 : function() {
+							$('#application_create').hide();
+							getApplications();
+							$('#applications_list').show();
+						},
+						400 : function(text) {
+							try {
+								$('#application_errors').html(
+										getErrorMessages(text));
+								$('#application_errors').show();
+							} catch (err) {
+								handleError("submitApplication", err);
+							}
+						},
+						error : function(xhr, textStatus, errorThrown) {
+							console.log(errorThrown);
+							$('#application_errors')
+									.html(
+											'Unable to process the request. Please try again later');
+							$('#application_errors').show();
+						}
 					}
-				}
-			}
-		});
+				});
 		jqxhr.always(function() {
 			// close wait div
 			closeWait();
@@ -423,31 +449,39 @@ function updateApplication() {
 			timeUpdatedTimeZoneOffsetMs : (_date.getTimezoneOffset() * 60 * 1000)
 		};
 		var applicationObjString = JSON.stringify(applicationObj, null, 2);
-		var jqxhr = $.ajax({
-			url : "/secured/application",
-			type : "PUT",
-			data : applicationObjString,
-			processData : false,
-			dataType : "json",
-			contentType : "application/json",
-			async : false,
-			statusCode : {
-				200 : function() {
-					$('#application_create').hide();
-					getApplications();
-					$('#applications_list').show();
-				},
-				400 : function(text) {
-					try {
-						$('#application_errors').html(
-								'<p>' + getErrorMessages(text) + '</p>');
-						$('#application_errors').show();
-					} catch (err) {
-						handleError("updateApplication", err);
+		var jqxhr = $
+				.ajax({
+					url : "/secured/application",
+					type : "PUT",
+					data : applicationObjString,
+					processData : false,
+					dataType : "json",
+					contentType : "application/json",
+					async : false,
+					statusCode : {
+						200 : function() {
+							$('#application_create').hide();
+							getApplications();
+							$('#applications_list').show();
+						},
+						400 : function(text) {
+							try {
+								$('#application_errors').html(
+										getErrorMessages(text));
+								$('#application_errors').show();
+							} catch (err) {
+								handleError("updateApplication", err);
+							}
+						},
+						error : function(xhr, textStatus, errorThrown) {
+							console.log(errorThrown);
+							$('#application_errors')
+									.html(
+											'Unable to process the request. Please try again later');
+							$('#application_errors').show();
+						}
 					}
-				}
-			}
-		});
+				});
 		jqxhr.always(function() {
 			// close wait div
 			closeWait();
@@ -468,22 +502,31 @@ function deleteApplication(id) {
 		var _timeUpdatedMs = _date.getTime();
 		var _timeUpdatedTimeZoneOffsetMs = (_date.getTimezoneOffset() * 60 * 1000);
 
-		displayConfirm("Are you sure you want to delete this Application?",
+		displayConfirm(
+				"Are you sure you want to delete this Application?",
 				function() {
 					wait("confirm_wait");
 					var url = "/secured/application/" + id + "/"
 							+ _timeUpdatedMs + "/"
 							+ _timeUpdatedTimeZoneOffsetMs;
-					var jqxhr = $.ajax({
-						url : url,
-						type : "DELETE",
-						contentType : "application/json",
-						statusCode : {
-							200 : function() {
-								getApplications();
-							}
-						}
-					});
+					var jqxhr = $
+							.ajax({
+								url : url,
+								type : "DELETE",
+								contentType : "application/json",
+								statusCode : {
+									200 : function() {
+										getApplications();
+									}
+								},
+								error : function(xhr, textStatus, errorThrown) {
+									console.log(errorThrown);
+									$('#application_errors')
+											.html(
+													'Unable to process the request. Please try again later');
+									$('#application_errors').show();
+								}
+							});
 					jqxhr.always(function(msg) {
 						clearWait("confirm_wait");
 					});

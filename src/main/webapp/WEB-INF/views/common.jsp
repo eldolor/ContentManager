@@ -11,17 +11,24 @@
 <!-- Begin Forgot Password -->
 <div class="reveal-modal small" id="forgot_password_modal" data-reveal>
 	<div class="row">
-	<!-- Unsecured Call -->
-		<form id="forgotPasswordForm" action="/forgotpassword" name="forgotPasswordForm"
-			method="post" data-abide>
+		<!-- Unsecured Call -->
+		<form id="forgotPasswordForm" name="forgotPasswordForm" method="post"
+			data-abide="ajax">
 			<fieldset>
 				<legend>Forgot Password</legend>
 				<div class="row">
 					<div class="large-12 columns">
-						<label for="j_username">Email <small>required</small> <input
-							type="email" id="j_username" name="j_username"
+						<label for="email">Email <small>required</small> <input
+							type="email" id="user_forgot_password_email"
+							name="user_forgot_password_email"
 							placeholder="bruce.almighty@gmail.com" required="required" /></label> <small
 							class="error">A valid email address is required.</small>
+					</div>
+				</div>
+				<div>&nbsp;</div>
+				<div class="row">
+					<div class="large-12 columns">
+						<span id="user_forgot_password_errors" class="alert radius label"></span><br>
 					</div>
 				</div>
 				<div>&nbsp;</div>
@@ -53,7 +60,7 @@
 
 <!-- JPlayer -->
 <div id="jp_container_1"
-	class="reveal-modal full jp-video jp-video-360p" data-reveal>
+	class="reveal-modal medium jp-video jp-video-360p" data-reveal>
 	<h3 id="view_video_label"></h3>
 	<div class="jp-type-single">
 		<div id="jquery_jplayer_1" class="jp-jplayer"></div>

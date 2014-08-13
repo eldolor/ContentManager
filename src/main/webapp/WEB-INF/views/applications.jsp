@@ -95,7 +95,7 @@
 						<div class="row">
 							<div class="large-12 columns">
 								<button id="application_save_button" class="button radius">create</button>
-								<button id="application_cancel_button" class="button radius">cancel</button>
+								<a href="javascript:void(0);" id="application_cancel_button">cancel</a>
 							</div>
 						</div>
 					</fieldset>

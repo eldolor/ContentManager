@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class StripeCustomer implements Serializable {
 
-	private String stripeToken;
+	private String stripeId;
 	private String canonicalPlanName;
 
 	public String getCanonicalPlanName() {
@@ -15,12 +15,12 @@ public class StripeCustomer implements Serializable {
 		this.canonicalPlanName = canonicalPlanName;
 	}
 
-	public String getStripeToken() {
-		return stripeToken;
+	public String getStripeId() {
+		return stripeId;
 	}
 
-	public void setStripeToken(String stripeToken) {
-		this.stripeToken = stripeToken;
+	public void setStripeId(String stripeId) {
+		this.stripeId = stripeId;
 	}
 
 }

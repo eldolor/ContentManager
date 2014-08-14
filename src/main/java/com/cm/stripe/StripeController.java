@@ -30,6 +30,8 @@ public class StripeController {
 			.getLogger(StripeController.class.getName());
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private StripeCustomerDao stripeCustomerDao;
 
 	@RequestMapping(value = "/stripe/token", method = RequestMethod.POST)
 	public ModelAndView processToken(
@@ -46,25 +48,45 @@ public class StripeController {
 			try {
 				Stripe.apiKey = "sk_test_4aEiOFaIp1sl35p1Gqjco3Is";
 
-				//TODO: check to see if the customer already exists, then update the plan
+				// TODO: check to see if the customer already exists, then
+				// update the plan
 				// or create a new customer
-				Map<String, Object> customerParams = new HashMap<String, Object>();
-				customerParams.put("description",
-						"Customer for test@example.com");
-				customerParams.put("card", stripeToken); // obtained with
-															// Stripe.js
-				customerParams.put("email", lUser.getEmail());
-				Map<String, String> lCustomerMetadata = new HashMap<String, String>();
-				lCustomerMetadata.put("id", String.valueOf(lUser.getId()));
-				lCustomerMetadata.put("accountId",
-						String.valueOf(lUser.getAccountId()));
-				lCustomerMetadata.put("username", lUser.getUsername());
+				StripeCustomer lStripeCustomer = stripeCustomerDao.get(lUser
+						.getAccountId());
+				//customer does not exist
+				if (lStripeCustomer == null) {
 
-				customerParams.put("metadata", lCustomerMetadata);
-				customerParams.put("plan", canonicalPlanName);
+					Map<String, Object> lCustomerParams = new HashMap<String, Object>();
+					lCustomerParams.put("description",
+							"Customer for test@example.com");
+					lCustomerParams.put("card", stripeToken); // obtained with
+																// Stripe.js
+					lCustomerParams.put("email", lUser.getEmail());
+					Map<String, String> lCustomerMetadata = new HashMap<String, String>();
+					lCustomerMetadata.put("id", String.valueOf(lUser.getId()));
+					lCustomerMetadata.put("accountId",
+							String.valueOf(lUser.getAccountId()));
+					lCustomerMetadata.put("username", lUser.getUsername());
 
-				//TODO: convert to domain object and save; add userId, accountId, & userName
-				Customer lCustomer = Customer.create(customerParams);
+					lCustomerParams.put("metadata", lCustomerMetadata);
+					lCustomerParams.put("plan", canonicalPlanName);
+
+					// TODO: convert to domain object and save; add userId,
+					// accountId, & userName
+					Customer lCustomer = Customer.create(lCustomerParams);
+				} else {
+					//found an existing customer; so update
+					Map<String, Object> lCustomerParams = new HashMap<String, Object>();
+					lCustomerParams.put("card", stripeToken); // obtained with
+					// Stripe.js
+					lCustomerParams.put("plan", canonicalPlanName);
+
+					// TODO: convert to domain object and save; add userId,
+					// accountId, & userName
+					Customer lCustomer = Customer.retrieve(lStripeCustomer.getStripeId());
+					lCustomer.update(lCustomerParams);
+				
+				}
 
 			} catch (AuthenticationException e) {
 				LOGGER.log(Level.SEVERE, e.getMessage(), e);
@@ -83,5 +105,4 @@ public class StripeController {
 				LOGGER.info("Exiting processToken");
 		}
 	}
-
 }

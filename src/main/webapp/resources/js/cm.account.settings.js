@@ -47,6 +47,9 @@ function setup() {
 		}).on('valid', function() {
 			submitForgotPasswordRequest();
 		});
+		// default behaviour
+		$('#user_billing').show();
+		$('#change_password').hide();
 
 	} catch (err) {
 		handleError("setup", err);
@@ -61,12 +64,16 @@ function setupLeftNavBar() {
 		$('#left_nav_bar')
 				.empty()
 				.html(
-						'<li><a id=\"left_nav_bar_link_1\" href=\"javascript:void(0);\" >Change Password</a></li>'
-								+ '<li><a id=\"left_nav_bar_link_1\" href=\"javascript:void(0);\" >Billing</a></li>');
+						'<li><a id=\"left_nav_bar_link_1\" href=\"javascript:void(0);\" >Billing</a></li>'
+								+ '<li><a id=\"left_nav_bar_link_2\" href=\"javascript:void(0);\" >Change Password</a></li>');
 		$('#left_nav_bar_link_1').unbind();
 		$('#left_nav_bar_link_1').click(function() {
-			// $('#user_billing').hide();
-			// default
+			$('#user_billing').show();
+			$('#change_password').hide();
+		});
+		$('#left_nav_bar_link_2').unbind();
+		$('#left_nav_bar_link_2').click(function() {
+			$('#user_billing').hide();
 			$('#change_password').show();
 		});
 

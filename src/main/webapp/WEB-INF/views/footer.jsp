@@ -17,10 +17,9 @@
 			</div>
 			<div class="large-7 columns">
 				<ul class="inline-list right">
-					<li><a href="#">Link 1</a></li>
-					<li><a href="#">Link 2</a></li>
-					<li><a href="#">Link 3</a></li>
-					<li><a href="#">Link 4</a></li>
+					<li><a href="/site/terms">Terms</a></li>
+					<li><a href="/site/privacy">Privacy</a></li>
+					<li><a href="/site/contact">Contact</a></li>
 				</ul>
 			</div>
 		</div>

@@ -234,4 +234,22 @@ public class User implements Serializable, UserDetails {
 	public boolean isEnabled() {
 		return (enabled != null) ? enabled : false;
 	}
+
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", firstName=" + firstName + ", lastName="
+				+ lastName + ", email=" + email + ", role=" + role
+				+ ", accountId=" + accountId + ", username=" + username
+				+ ", password=" + password + ", enabled=" + enabled
+				+ ", timeCreatedMs=" + timeCreatedMs
+				+ ", timeCreatedTimeZoneOffsetMs="
+				+ timeCreatedTimeZoneOffsetMs + ", timeUpdatedMs="
+				+ timeUpdatedMs + ", timeUpdatedTimeZoneOffsetMs="
+				+ timeUpdatedTimeZoneOffsetMs + ", adminGrantedAuthority="
+				+ adminGrantedAuthority + ", userGrantedAuthority="
+				+ userGrantedAuthority + ", superGrantedAuthority="
+				+ superGrantedAuthority + ", authorities=" + authorities + "]";
+	}
+	
+	
 }

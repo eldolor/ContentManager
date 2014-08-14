@@ -1,30 +1,25 @@
-package com.cm.accountmanagement.account;
+package com.cm.admin.plan;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-import com.cm.admin.plan.CanonicalPlanName;
-
 @PersistenceCapable
-public class Account {
+public class Plan {
 
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Long id;
 
-	/** Required attribute for API access **/
 	@Persistent
-	private String apiKey;
-	// default to free
-	@Persistent
-	private String canonicalPlanName = CanonicalPlanName.FREE.getValue();
-
-	@Persistent
-	private String name;
+	private String canonicalPlanName;
 	@Persistent
 	private String description;
+	@Persistent
+	private Long amountInCents;
+	@Persistent
+	private String currency;
 	@Persistent
 	private Boolean enabled = true;
 
@@ -37,7 +32,7 @@ public class Account {
 	@Persistent
 	private Long timeUpdatedTimeZoneOffsetMs;
 
-	public Account() {
+	public Plan() {
 		super();
 	}
 
@@ -81,13 +76,6 @@ public class Account {
 		this.timeUpdatedTimeZoneOffsetMs = timeUpdatedTimeZoneOffsetMs;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
 
 	public String getDescription() {
 		return description;
@@ -105,20 +93,28 @@ public class Account {
 		this.enabled = enabled;
 	}
 
-	public String getApiKey() {
-		return apiKey;
-	}
-
-	public void setApiKey(String apiKey) {
-		this.apiKey = apiKey;
-	}
-
 	public String getCanonicalPlanName() {
 		return canonicalPlanName;
 	}
 
 	public void setCanonicalPlanName(String canonicalPlanName) {
 		this.canonicalPlanName = canonicalPlanName;
+	}
+
+	public Long getAmountInCents() {
+		return amountInCents;
+	}
+
+	public void setAmountInCents(Long amountInCents) {
+		this.amountInCents = amountInCents;
+	}
+
+	public String getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(String currency) {
+		this.currency = currency;
 	}
 
 }

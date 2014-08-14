@@ -125,6 +125,106 @@
 			</form>
 		</div>
 		<!-- End Content  -->
+
+		<div class="large-9 columns" id="user_billing" style="display: none">
+
+			<fieldset>
+				<legend>Available Plans</legend>
+				<table>
+					<tbody>
+						<tr>
+							<td><ul class="pricing-table">
+									<li class="title">Large</li>
+									<li class="price">$50/month</li>
+									<li class="bullet-item">4GB per application</li>
+									<li class="bullet-item">20 applications</li>
+									<li class="cta-button"><form action="/stripe/token"
+											method="POST">
+											<input type="hidden" id="canonicalPlanName"
+												name="canonicalPlanName" value="large" />
+											<script src="https://checkout.stripe.com/checkout.js"
+												class="stripe-button"
+												data-key="pk_test_4aEi34FWLvjmVHc14fQoUQPZ"
+												data-amount="5000" data-name="Content Manager"
+												data-description="4GB Plan @ $50/month"
+												data-image="/resources/images/done.png">
+												
+											</script>
+										</form></li>
+								</ul></td>
+							<td><ul class="pricing-table">
+									<li class="title">Medium</li>
+									<li class="price">$25/month</li>
+									<li class="bullet-item">2GB per application</li>
+									<li class="bullet-item">15 applications</li>
+									<li class="cta-button"><form action="/stripe/token"
+											method="POST"><input type="hidden" id="canonicalPlanName"
+												name="canonicalPlanName" value="medium" />
+											<script src="https://checkout.stripe.com/checkout.js"
+												class="stripe-button"
+												data-key="pk_test_4aEi34FWLvjmVHc14fQoUQPZ"
+												data-amount="2500" data-name="Content Manager"
+												data-description="2GB Plan @ $25/month"
+												data-image="/resources/images/done.png">
+												
+											</script>
+										</form></li>
+								</ul></td>
+							<td><ul class="pricing-table">
+									<li class="title">Small</li>
+									<li class="price">$15/month</li>
+									<li class="bullet-item">1GB per application</li>
+									<li class="bullet-item">10 applications</li>
+									<li class="cta-button"><form action="/stripe/token"
+											method="POST"><input type="hidden" id="canonicalPlanName"
+												name="canonicalPlanName" value="small" />
+											<script src="https://checkout.stripe.com/checkout.js"
+												class="stripe-button"
+												data-key="pk_test_4aEi34FWLvjmVHc14fQoUQPZ"
+												data-amount="1500" data-name="Content Manager"
+												data-description="1GB Plan @ $15/month"
+												data-image="/resources/images/done.png">
+												
+											</script>
+										</form></li>
+								</ul></td>
+						</tr>
+						<tr>
+							<td><ul class="pricing-table">
+									<li class="title">Micro</li>
+									<li class="price">$7/month</li>
+									<li class="bullet-item">500MB per application</li>
+									<li class="bullet-item">5 applications</li>
+									<li class="cta-button"><form action="/stripe/token"
+											method="POST"><input type="hidden" id="canonicalPlanName"
+												name="canonicalPlanName" value="micro" />
+											<script src="https://checkout.stripe.com/checkout.js"
+												class="stripe-button"
+												data-key="pk_test_4aEi34FWLvjmVHc14fQoUQPZ"
+												data-amount="700" data-name="Content Manager"
+												data-description="500MB Plan @ $7/month"
+												data-image="/resources/images/done.png">
+												
+											</script>
+										</form></li>
+								</ul></td>
+							<td><ul class="pricing-table">
+									<li class="title">Free</li>
+									<li class="price">$0/month</li>
+									<li class="bullet-item">100MB per application</li>
+									<li class="bullet-item">1 application</li>
+									<li class="cta-button"><img alt="free"
+										src="/resources/images/done.png"></li>
+								</ul></td>
+							<td>&nbsp;</td>
+						</tr>
+					</tbody>
+				</table>
+
+
+			</fieldset>
+
+		</div>
 	</div>
 
 

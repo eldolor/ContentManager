@@ -1,14 +1,11 @@
 package com.cm.usermanagement.user;
 
-import java.io.UnsupportedEncodingException;
-import java.util.HashSet;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.cm.config.Configuration;
-import com.google.appengine.labs.repackaged.org.json.JSONException;
 
 @Component
 public class ForgotPasswordEmailBuilder {

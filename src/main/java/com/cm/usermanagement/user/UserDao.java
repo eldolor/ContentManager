@@ -7,7 +7,6 @@ import javax.jdo.Query;
 import javax.jdo.Transaction;
 import javax.persistence.NoResultException;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.cm.accountmanagement.account.Account;

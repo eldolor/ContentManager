@@ -47,11 +47,11 @@ public class StripeCustomerDao {
 
 			try {
 				pm = PMF.get().getPersistenceManager();
-				Query q = pm.newQuery(Application.class);
-				q.setFilter("accountId == accountIdParam && deleted == deletedParam");
-				q.declareParameters("Long accountIdParam, Boolean deletedParam");
+				Query q = pm.newQuery(StripeCustomer.class);
+				q.setFilter("accountId == accountIdParam");
+				q.declareParameters("Long accountIdParam");
 				List<StripeCustomer> lList = (List<StripeCustomer>) q.execute(
-						accountId, new Boolean(false));
+						accountId);
 				if (lList != null && (!lList.isEmpty()))
 					return lList.get(0);
 				else
@@ -70,4 +70,35 @@ public class StripeCustomerDao {
 				LOGGER.info("Exiting get");
 		}
 	}
+
+	void update(StripeCustomer pCustomer) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering update");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				StripeCustomer lStripeCustomer = pm.getObjectById(
+						StripeCustomer.class, pCustomer.getId());
+				// only update the plan and subscription id
+				lStripeCustomer.setCanonicalPlanName(pCustomer
+						.getCanonicalPlanName());
+				lStripeCustomer
+						.setSubscriptionId(pCustomer.getSubscriptionId());
+				lStripeCustomer.setTimeUpdatedMs(pCustomer.getTimeUpdatedMs());
+				lStripeCustomer.setTimeUpdatedTimeZoneOffsetMs(pCustomer
+						.getTimeUpdatedTimeZoneOffsetMs());
+
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting updateApplication");
+		}
+	}
+
 }

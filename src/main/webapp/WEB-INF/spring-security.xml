@@ -15,7 +15,6 @@
 	<security:http pattern="/eventtracker**" security="none" />
 	<security:http pattern="/gcm**" security="none" />
 	<security:http pattern="/contentstats**" security="none" />
-	<security:http pattern="/stripe**" security="none" />
 
 
 	<security:http auto-config="true" disable-url-rewriting="true">
@@ -43,6 +42,9 @@
 			access="ROLE_SUPER_ADMIN, 
 			ROLE_ADMIN, ROLE_USER" />
 		<security:intercept-url pattern="/**/contentgroups"
+			access="ROLE_SUPER_ADMIN, 
+			ROLE_ADMIN, ROLE_USER" />
+		<security:intercept-url pattern="/stripe/**"
 			access="ROLE_SUPER_ADMIN, 
 			ROLE_ADMIN, ROLE_USER" />
 		<security:intercept-url pattern="/**"

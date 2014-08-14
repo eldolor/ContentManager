@@ -47,6 +47,14 @@ function setup() {
 		}).on('valid', function() {
 			submitForgotPasswordRequest();
 		});
+//		$('#canonicalPlanNameLargeForm').submit(function( event ) {
+//			var $form = $(this);			
+//			  event.preventDefault();
+//					  subscribe($form.find('stripeToken'), $form
+//							.find('canonicalPlanName'));
+//			// Prevent the form from submitting with the default action
+//			  return false;
+//			});
 		// default behaviour
 		$('#user_billing').show();
 		$('#change_password').hide();
@@ -227,6 +235,54 @@ function submitForgotPasswordRequest() {
 		handleError("submitForgotPasswordRequest", err);
 	} finally {
 		log("submitForgotPasswordRequest", "Exiting");
+	}
+}
+
+function subscribe(pStripeToken, pCanonicalPlanName) {
+	log("subscribe", "Entering");
+	try {
+
+		var obj = {
+			canonicalPlanName : pCanonicalPlanName,
+			stripeToken : pStripeToken
+		};
+		var objString = JSON.stringify(obj, null, 2);
+		// alert(contentgroupObjString);
+		// create via sync call
+		var jqxhr = $
+				.ajax({
+					url : "/stripe/subscribe",
+					type : "POST",
+					data : objString,
+					processData : false,
+					dataType : "json",
+					contentType : "application/json",
+					async : false,
+					statusCode : {
+						200 : function() {
+							// redirect to /account
+							window.location.href = '/account';
+						},
+						400 : function() {
+							$('#subscription_errors').html(
+									getErrorMessages(text));
+							$('#subscription_errors').show();
+						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						console.log(errorThrown);
+						$('#forgot_password_errors')
+								.html(
+										'Unable to process the request. Please try again later');
+						$('#forgot_password_errors').show();
+					}
+				});
+
+		return false;
+	} catch (err) {
+		handleError("subscribe", err);
+	} finally {
+		log("subscribe", "Exiting");
 	}
 }
 /** *End***************************************** */

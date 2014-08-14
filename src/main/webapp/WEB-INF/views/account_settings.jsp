@@ -45,8 +45,7 @@
 		<jsp:include page="left_nav_bar.jsp" flush="true"></jsp:include>
 
 		<div class="large-9 columns" id="change_password">
-			<form id="changePasswordForm" name="changePasswordForm"
-				data-abide="ajax">
+			<form id="changePasswordForm" name="changePasswordForm">
 				<fieldset>
 					<legend>Change Password</legend>
 
@@ -127,7 +126,12 @@
 		<!-- End Content  -->
 
 		<div class="large-9 columns" id="user_billing" style="display: none">
-
+			<c:choose>
+				<c:when test="${isError == true}">
+					<span id="subscription_errors" class="alert radius label">${errors}</span>
+					<div>&nbsp;</div>
+				</c:when>
+			</c:choose>
 			<fieldset>
 				<legend>Available Plans</legend>
 				<table>
@@ -138,55 +142,136 @@
 									<li class="price">$50/month</li>
 									<li class="bullet-item">4GB per application</li>
 									<li class="bullet-item">20 applications</li>
-									<li class="cta-button"><form action="/stripe/token"
-											method="POST">
-											<input type="hidden" id="canonicalPlanName"
-												name="canonicalPlanName" value="large" />
-											<script src="https://checkout.stripe.com/checkout.js"
-												class="stripe-button"
-												data-key="pk_test_4aEi34FWLvjmVHc14fQoUQPZ"
-												data-amount="5000" data-name="Content Manager"
-												data-description="4GB Plan @ $50/month"
-												data-image="/resources/images/done.png">
-												
-											</script>
-										</form></li>
+									<li class="cta-button"><c:choose>
+											<c:when test="${isSubscribed == false}">
+												<form id="contentForm" name="contentForm"
+													action="/stripe/subscribe" method="POST">
+													<input type="hidden" id="canonicalPlanName"
+														name="canonicalPlanName" value="${canonicalPlanNameLarge}" />
+													<script src="https://checkout.stripe.com/checkout.js"
+														class="stripe-button"
+														data-key="pk_test_4aEi34FWLvjmVHc14fQoUQPZ"
+														data-amount="5000" data-name="Content Manager"
+														data-description="4GB Plan @ $50/month"
+														data-image="/resources/images/done.png">
+														
+													</script>
+												</form>
+											</c:when>
+											<c:otherwise>
+												<c:choose>
+													<c:when
+														test="${subscribedCanonicalPlanName == canonicalPlanNameLarge}">
+														<img alt="free" src="/resources/images/done.png" />
+													</c:when>
+													<c:otherwise>
+														<!-- display the button-->
+														<form action="/stripe/subscribe/update" method="POST">
+															<input type="hidden" id="canonicalPlanName"
+																name="canonicalPlanName"
+																value="${canonicalPlanNameLarge}" />
+															<button id="subscribe" class="button radius">upgrade</button>
+														</form>
+													</c:otherwise>
+
+												</c:choose>
+											</c:otherwise>
+										</c:choose></li>
 								</ul></td>
 							<td><ul class="pricing-table">
 									<li class="title">Medium</li>
 									<li class="price">$25/month</li>
 									<li class="bullet-item">2GB per application</li>
 									<li class="bullet-item">15 applications</li>
-									<li class="cta-button"><form action="/stripe/token"
-											method="POST"><input type="hidden" id="canonicalPlanName"
-												name="canonicalPlanName" value="medium" />
-											<script src="https://checkout.stripe.com/checkout.js"
-												class="stripe-button"
-												data-key="pk_test_4aEi34FWLvjmVHc14fQoUQPZ"
-												data-amount="2500" data-name="Content Manager"
-												data-description="2GB Plan @ $25/month"
-												data-image="/resources/images/done.png">
-												
-											</script>
-										</form></li>
+									<li class="cta-button"><c:choose>
+											<c:when test="${isSubscribed == false}">
+												<form id="contentForm" name="contentForm"
+													action="/stripe/subscribe" method="POST">
+													<input type="hidden" id="canonicalPlanName"
+														name="canonicalPlanName"
+														value="${canonicalPlanNameMedium}" />
+													<script src="https://checkout.stripe.com/checkout.js"
+														class="stripe-button"
+														data-key="pk_test_4aEi34FWLvjmVHc14fQoUQPZ"
+														data-amount="2500" data-name="Content Manager"
+														data-description="2GB Plan @ $25/month"
+														data-image="/resources/images/done.png">
+														
+													</script>
+												</form>
+											</c:when>
+											<c:otherwise>
+												<c:choose>
+													<c:when
+														test="${subscribedCanonicalPlanName == canonicalPlanNameMedium}">
+														<img alt="free" src="/resources/images/done.png" />
+													</c:when>
+													<c:otherwise>
+														<!-- display the button-->
+														<form action="/stripe/subscribe/update" method="POST">
+															<input type="hidden" id="canonicalPlanName"
+																name="canonicalPlanName"
+																value="${canonicalPlanNameMedium}" />
+															<button id="subscribe" class="button radius">
+																<c:choose>
+																	<c:when
+																		test="${subscribedCanonicalPlanName == canonicalPlanNameFree || subscribedCanonicalPlanName == canonicalPlanNameMicro  || subscribedCanonicalPlanName == canonicalPlanNameSmall}">upgrade</c:when>
+																	<c:otherwise>downgrade</c:otherwise>
+																</c:choose>
+															</button>
+														</form>
+													</c:otherwise>
+
+												</c:choose>
+											</c:otherwise>
+										</c:choose></li>
 								</ul></td>
 							<td><ul class="pricing-table">
 									<li class="title">Small</li>
 									<li class="price">$15/month</li>
 									<li class="bullet-item">1GB per application</li>
 									<li class="bullet-item">10 applications</li>
-									<li class="cta-button"><form action="/stripe/token"
-											method="POST"><input type="hidden" id="canonicalPlanName"
-												name="canonicalPlanName" value="small" />
-											<script src="https://checkout.stripe.com/checkout.js"
-												class="stripe-button"
-												data-key="pk_test_4aEi34FWLvjmVHc14fQoUQPZ"
-												data-amount="1500" data-name="Content Manager"
-												data-description="1GB Plan @ $15/month"
-												data-image="/resources/images/done.png">
-												
-											</script>
-										</form></li>
+									<li class="cta-button"><c:choose>
+											<c:when test="${isSubscribed == false}">
+												<form id="contentForm" name="contentForm"
+													action="/stripe/subscribe" method="POST">
+													<input type="hidden" id="canonicalPlanName"
+														name="canonicalPlanName" value="${canonicalPlanNameSmall}" />
+													<script src="https://checkout.stripe.com/checkout.js"
+														class="stripe-button"
+														data-key="pk_test_4aEi34FWLvjmVHc14fQoUQPZ"
+														data-amount="1500" data-name="Content Manager"
+														data-description="1GB Plan @ $15/month"
+														data-image="/resources/images/done.png">
+														
+													</script>
+												</form>
+											</c:when>
+											<c:otherwise>
+												<c:choose>
+													<c:when
+														test="${subscribedCanonicalPlanName == canonicalPlanNameSmall}">
+														<img alt="free" src="/resources/images/done.png" />
+													</c:when>
+													<c:otherwise>
+														<!-- display the button-->
+														<form action="/stripe/subscribe/update" method="POST">
+															<input type="hidden" id="canonicalPlanName"
+																name="canonicalPlanName"
+																value="${canonicalPlanNameSmall}" />
+															<button id="subscribe" class="button radius">
+																<c:choose>
+																	<c:when
+																		test="${subscribedCanonicalPlanName == canonicalPlanNameFree || subscribedCanonicalPlanName == canonicalPlanNameMicro}">upgrade</c:when>
+																	<c:otherwise>downgrade</c:otherwise>
+																</c:choose>
+															</button>
+														</form>
+													</c:otherwise>
+
+												</c:choose>
+											</c:otherwise>
+										</c:choose></li>
 								</ul></td>
 						</tr>
 						<tr>
@@ -195,26 +280,67 @@
 									<li class="price">$7/month</li>
 									<li class="bullet-item">500MB per application</li>
 									<li class="bullet-item">5 applications</li>
-									<li class="cta-button"><form action="/stripe/token"
-											method="POST"><input type="hidden" id="canonicalPlanName"
-												name="canonicalPlanName" value="micro" />
-											<script src="https://checkout.stripe.com/checkout.js"
-												class="stripe-button"
-												data-key="pk_test_4aEi34FWLvjmVHc14fQoUQPZ"
-												data-amount="700" data-name="Content Manager"
-												data-description="500MB Plan @ $7/month"
-												data-image="/resources/images/done.png">
-												
-											</script>
-										</form></li>
+									<li class="cta-button"><c:choose>
+											<c:when test="${isSubscribed == false}">
+												<form id="contentForm" name="contentForm"
+													action="/stripe/subscribe" method="POST">
+													<input type="hidden" id="canonicalPlanName"
+														name="canonicalPlanName" value="${canonicalPlanNameMicro}" />
+													<script src="https://checkout.stripe.com/checkout.js"
+														class="stripe-button"
+														data-key="pk_test_4aEi34FWLvjmVHc14fQoUQPZ"
+														data-amount="700" data-name="Content Manager"
+														data-description="500MB Plan @ $7/month"
+														data-image="/resources/images/done.png">
+														
+													</script>
+												</form>
+											</c:when>
+											<c:otherwise>
+												<c:choose>
+													<c:when
+														test="${subscribedCanonicalPlanName == canonicalPlanNameMicro}">
+														<img alt="free" src="/resources/images/done.png" />
+													</c:when>
+													<c:otherwise>
+														<!-- display the button-->
+														<form action="/stripe/subscribe/update" method="POST">
+															<input type="hidden" id="canonicalPlanName"
+																name="canonicalPlanName"
+																value="${canonicalPlanNameMicro}" />
+															<button id="subscribe" class="button radius">
+																<c:choose>
+																	<c:when
+																		test="${subscribedCanonicalPlanName == canonicalPlanNameFree}">upgrade</c:when>
+																	<c:otherwise>downgrade</c:otherwise>
+																</c:choose>
+															</button>
+														</form>
+													</c:otherwise>
+
+												</c:choose>
+											</c:otherwise>
+										</c:choose></li>
 								</ul></td>
 							<td><ul class="pricing-table">
 									<li class="title">Free</li>
 									<li class="price">$0/month</li>
 									<li class="bullet-item">100MB per application</li>
 									<li class="bullet-item">1 application</li>
-									<li class="cta-button"><img alt="free"
-										src="/resources/images/done.png"></li>
+									<li class="cta-button"><c:choose>
+											<c:when
+												test="${isSubscribed == false || subscribedCanonicalPlanName == canonicalPlanNameFree}">
+												<img alt="free" src="/resources/images/done.png" />
+											</c:when>
+											<c:otherwise>
+												<!-- display the button-->
+												<form action="/stripe/subscribe/update" method="POST">
+													<input type="hidden" id="canonicalPlanName"
+														name="canonicalPlanName" value="${canonicalPlanNameFree}" />
+													<button id="subscribe" class="button radius">downgrade</button>
+												</form>
+											</c:otherwise>
+										</c:choose></li>
 								</ul></td>
 							<td>&nbsp;</td>
 						</tr>

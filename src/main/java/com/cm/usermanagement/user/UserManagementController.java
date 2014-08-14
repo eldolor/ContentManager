@@ -24,7 +24,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.cm.accountmanagement.account.Account;
+import com.cm.accountmanagement.account.AccountService;
+import com.cm.admin.plan.CanonicalPlanName;
 import com.cm.config.Configuration;
+import com.cm.stripe.StripeCustomer;
+import com.cm.stripe.StripeCustomerService;
 import com.cm.usermanagement.user.transfer.ForgotPasswordRequest;
 import com.cm.usermanagement.user.transfer.PasswordChangeRequest;
 import com.cm.util.Utils;
@@ -40,6 +45,8 @@ public class UserManagementController {
 	private UserService userService;
 	@Autowired
 	private ForgotPasswordEmailBuilder forgotPasswordEmailBuilder;
+	@Autowired
+	private StripeCustomerService stripeCustomerService;
 
 	private static final Logger LOGGER = Logger
 			.getLogger(UserManagementController.class.getName());
@@ -115,6 +122,30 @@ public class UserManagementController {
 		if (LOGGER.isLoggable(Level.INFO))
 			LOGGER.info("Entering displayAccountSettings");
 		try {
+			model.addAttribute("canonicalPlanNameFree",
+					CanonicalPlanName.FREE.getValue());
+			model.addAttribute("canonicalPlanNameMicro",
+					CanonicalPlanName.MICRO.getValue());
+			model.addAttribute("canonicalPlanNameSmall",
+					CanonicalPlanName.SMALL.getValue());
+			model.addAttribute("canonicalPlanNameMedium",
+					CanonicalPlanName.MEDIUM.getValue());
+			model.addAttribute("canonicalPlanNameLarge",
+					CanonicalPlanName.LARGE.getValue());
+			User lUser = userService.getLoggedInUser();
+			StripeCustomer lStripeCustomer = stripeCustomerService.get(lUser
+					.getAccountId());
+			if (lStripeCustomer == null) {
+				model.addAttribute("isSubscribed", false);
+				// default to free
+				model.addAttribute("subscribedCanonicalPlanName",
+						CanonicalPlanName.FREE.getValue());
+			} else {
+				model.addAttribute("isSubscribed", true);
+				model.addAttribute("subscribedCanonicalPlanName",
+						lStripeCustomer.getCanonicalPlanName());
+			}
+			model.addAttribute("isError", false);
 			return new ModelAndView("account_settings", model);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))

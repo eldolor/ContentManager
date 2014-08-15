@@ -2,6 +2,7 @@ package com.cm.util;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -117,6 +118,51 @@ public class Utils {
 		Transport.send(msg);
 		if (LOGGER.isLoggable(Level.INFO))
 			LOGGER.info("Exiting sendEmail");
+	}
+
+	/**
+	 * 
+	 * @param pYear
+	 * @param pMonth
+	 * @return
+	 */
+	public static boolean isCCExpiring(int pYear, int pMonth) {
+		Calendar lCalendar = Calendar.getInstance();
+		int lCurrentYear = lCalendar.get(Calendar.YEAR);
+		// The first month is a Zero
+		int lCurrentMonth = lCalendar.get(Calendar.MONTH);
+		// increment to match what's on StripeCustomer
+		++lCurrentMonth;
+		// TODO: handle CC that is expiring in January of next year
+		// match the year and month or month -1
+		if ((pYear == lCurrentYear)
+				&& (pMonth == (lCurrentMonth - 1) || (pMonth == (lCurrentMonth))))
+			return true;
+
+		return false;
+
+	}
+
+	/**
+	 * 
+	 * @param pYear
+	 * @param pMonth
+	 * @return
+	 */
+	public static boolean isCCExpired(int pYear, int pMonth) {
+		Calendar lCalendar = Calendar.getInstance();
+		// The first month is a Zero
+		int lCurrentMonth = lCalendar.get(Calendar.MONTH);
+		// increment to match what's on StripeCustomer
+		++lCurrentMonth;
+
+		int lCurrentYear = lCalendar.get(Calendar.YEAR);
+		// TODO: handle CC that is expiring in January of next year
+		if (((pYear < lCurrentYear) || (pYear == lCurrentYear))
+				&& (pMonth < lCurrentMonth))
+			return true;
+		return false;
+
 	}
 
 }

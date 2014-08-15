@@ -156,7 +156,7 @@ setSelectedContentGroup(${contentGroupId});
 						<div>&nbsp;</div>
 						<div class="row">
 							<div class="large-12 columns">
-								<span id="content_errors" class="alert radius label"></span>
+								<span id="content_errors" class="alert radius label" style="display: none"></span>
 							</div>
 						</div>
 						<div>&nbsp;</div>

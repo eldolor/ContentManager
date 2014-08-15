@@ -27,6 +27,16 @@ public class StripeCustomer {
 	private String subscriptionId;
 
 	@Persistent
+	private String cardBrand;
+	// This field was defined as a String within Stripe API
+	@Persistent
+	private String cardLast4;
+	@Persistent
+	private Integer cardExpirationMonth;
+	@Persistent
+	private Integer cardExpirationYear;
+
+	@Persistent
 	private String canonicalPlanName;
 	@Persistent
 	private Long timeCreatedMs;
@@ -123,6 +133,38 @@ public class StripeCustomer {
 
 	public void setSubscriptionId(String subscriptionId) {
 		this.subscriptionId = subscriptionId;
+	}
+
+	public String getCardBrand() {
+		return cardBrand;
+	}
+
+	public void setCardBrand(String cardBrand) {
+		this.cardBrand = cardBrand;
+	}
+
+	public String getCardLast4() {
+		return cardLast4;
+	}
+
+	public void setCardLast4(String cardLast4) {
+		this.cardLast4 = cardLast4;
+	}
+
+	public Integer getCardExpirationMonth() {
+		return cardExpirationMonth;
+	}
+
+	public void setCardExpirationMonth(Integer cardExpirationMonth) {
+		this.cardExpirationMonth = cardExpirationMonth;
+	}
+
+	public Integer getCardExpirationYear() {
+		return cardExpirationYear;
+	}
+
+	public void setCardExpirationYear(Integer cardExpirationYear) {
+		this.cardExpirationYear = cardExpirationYear;
 	}
 
 }

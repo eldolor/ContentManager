@@ -150,7 +150,7 @@
 			</div>
 
 			<div id="breadcrumbs"></div>
-			<span id="main_errors" class="label label-important"></span>
+			<span id="main_errors" class="label label-important" style="display: none"></span>
 
 			<div id="test" />
 			<!-- Begin entries -->

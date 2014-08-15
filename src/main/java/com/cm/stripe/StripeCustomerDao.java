@@ -50,8 +50,8 @@ public class StripeCustomerDao {
 				Query q = pm.newQuery(StripeCustomer.class);
 				q.setFilter("accountId == accountIdParam");
 				q.declareParameters("Long accountIdParam");
-				List<StripeCustomer> lList = (List<StripeCustomer>) q.execute(
-						accountId);
+				List<StripeCustomer> lList = (List<StripeCustomer>) q
+						.execute(accountId);
 				if (lList != null && (!lList.isEmpty()))
 					return lList.get(0);
 				else
@@ -81,11 +81,17 @@ public class StripeCustomerDao {
 				pm = PMF.get().getPersistenceManager();
 				StripeCustomer lStripeCustomer = pm.getObjectById(
 						StripeCustomer.class, pCustomer.getId());
-				// only update the plan and subscription id
+				// only update the following fields
 				lStripeCustomer.setCanonicalPlanName(pCustomer
 						.getCanonicalPlanName());
 				lStripeCustomer
 						.setSubscriptionId(pCustomer.getSubscriptionId());
+				lStripeCustomer.setCardBrand(pCustomer.getCardBrand());
+				lStripeCustomer.setCardLast4(pCustomer.getCardLast4());
+				lStripeCustomer.setCardExpirationMonth(pCustomer
+						.getCardExpirationMonth());
+				lStripeCustomer.setCardExpirationYear(pCustomer
+						.getCardExpirationYear());
 				lStripeCustomer.setTimeUpdatedMs(pCustomer.getTimeUpdatedMs());
 				lStripeCustomer.setTimeUpdatedTimeZoneOffsetMs(pCustomer
 						.getTimeUpdatedTimeZoneOffsetMs());

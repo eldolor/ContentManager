@@ -135,16 +135,27 @@ public class UserManagementController {
 			User lUser = userService.getLoggedInUser();
 			StripeCustomer lStripeCustomer = stripeCustomerService.get(lUser
 					.getAccountId());
+			boolean lIsUpdateCCInfo = false;
+
 			if (lStripeCustomer == null) {
 				model.addAttribute("isSubscribed", false);
 				// default to free
 				model.addAttribute("subscribedCanonicalPlanName",
 						CanonicalPlanName.FREE.getValue());
 			} else {
+				// check to see if the user's CC is expiring or has expired
+				if (Utils.isCCExpired(lStripeCustomer.getCardExpirationYear(),
+						lStripeCustomer.getCardExpirationMonth())
+						|| Utils.isCCExpiring(
+								lStripeCustomer.getCardExpirationYear(),
+								lStripeCustomer.getCardExpirationMonth())) {
+					lIsUpdateCCInfo = true;
+				}
 				model.addAttribute("isSubscribed", true);
 				model.addAttribute("subscribedCanonicalPlanName",
 						lStripeCustomer.getCanonicalPlanName());
 			}
+			model.addAttribute("isUpdateCCInfo", lIsUpdateCCInfo);
 			model.addAttribute("isError", false);
 			return new ModelAndView("account_settings", model);
 		} finally {
@@ -268,18 +279,19 @@ public class UserManagementController {
 				// check the validity of the request period
 				long lTimeNow = System.currentTimeMillis();
 				// calculate 24hrs from request creation
-				if (lRequest.getTimeCreatedMs() < lTimeNow
+				if (lTimeNow < lRequest.getTimeCreatedMs()
 						+ (24 * 60 * 60 * 1000)) {
 
 					// pass the guid to the jsp
 					model.addAttribute("guid", guid);
-
+					model.addAttribute("isRequestExpired", false);
 					return new ModelAndView("change_password", model);
 				}
 			}
 
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			return null;
+			// For better UX, all other requests are defaulted to expired
+			model.addAttribute("isRequestExpired", true);
+			return new ModelAndView("change_password", model);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting displaySignup");

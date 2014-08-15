@@ -74,7 +74,7 @@
 						<div>&nbsp;</div>
 						<div class="row">
 							<div class="large-12 columns">
-								<span id="signup_errors" class="alert radius label"></span>
+								<span id="signup_errors" class="alert radius label" style="display: none"></span>
 							</div>
 						</div>
 						<div>&nbsp;</div>
@@ -116,7 +116,7 @@
 					</form>
 					<div class="row">
 						<div class="large-12 columns">
-							<span id="login_errors" class="alert radius label"></span>
+							<span id="login_errors" class="alert radius label" style="display: none"></span>
 						</div>
 					</div>
 					<div class="row">

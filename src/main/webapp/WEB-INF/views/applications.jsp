@@ -34,6 +34,7 @@
 	<jsp:include page="common.jsp"></jsp:include>
 	<jsp:include page="header.jsp"></jsp:include>
 	<br>
+	<jsp:include page="message.jsp"></jsp:include>
 	<jsp:include page="breadcrumbs.jsp"></jsp:include>
 	<br>
 	<div class="row">
@@ -88,7 +89,7 @@
 						<div>&nbsp;</div>
 						<div class="row">
 							<div class="large-12 columns">
-								<span id="application_errors" class="alert radius label"></span><br>
+								<span id="application_errors" class="alert radius label" style="display: none"></span><br>
 							</div>
 						</div>
 						<div>&nbsp;</div>

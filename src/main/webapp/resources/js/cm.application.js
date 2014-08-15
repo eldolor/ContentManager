@@ -16,9 +16,7 @@ function setup() {
 		log("setup", "Entering");
 		setupLeftNavBar();
 		setupBreadcrumbs();
-		// enable abide form validation
-		$(document).foundation('abide', 'events');
-
+		displayAnyMessage();
 		getApplications();
 	} catch (err) {
 		handleError("setup", err);
@@ -26,7 +24,88 @@ function setup() {
 		log("function($)", "Exiting");
 	}
 }
+function displayAnyMessage() {
+	log("displayAnyMessage", "Entering");
+	try {
+		var jqxhr = $
+				.ajax({
+					url : "/secured/messages",
+					type : "GET",
+					contentType : "application/json",
+					async : false,
+					statusCode : {
+						200 : function(pMessages) {
+							if (pMessages === '') {
+								log("displayAnyMessage", "no incoming messages")
+							} else {
+								// TODO: enhance to handle multiple messages
+								log("displayAnyMessage", "display messages");
+								var lMessagesHtml = '';
+								for (var int = 0; int < pMessages.length; int++) {
+									var lMessage = pMessages[int];
+									if (lMessage.messageClass == 'com.cm.admin.message.class.SUCCESS')
+										lMessagesHtml += "<div data-alert id=\"alert_message\" class=\"alert-box success radius\">";
+									else if (lMessage.messageClass == 'com.cm.admin.message.class.INFO')
+										lMessagesHtml += "<div data-alert id=\"alert_message\" class=\"alert-box info radius\">";
+									else if (lMessage.messageClass == 'com.cm.admin.message.class.WARNING')
+										lMessagesHtml += "<div data-alert id=\"alert_message\" class=\"alert-box warning radius\">";
+									else if (lMessage.messageClass == 'com.cm.admin.message.class.ALERT')
+										lMessagesHtml += "<div data-alert id=\"alert_message\" class=\"alert-box alert radius\">";
 
+									lMessagesHtml += "<div id=\"message_id\" style=\"display: none\">"
+											+ lMessage.id + "</div>";
+									lMessagesHtml += lMessage.message;
+									lMessagesHtml += "<a href=\"#\" class=\"close\">&times;</a>";
+									lMessagesHtml += "</div>";
+
+								}
+								// alert(pMessages);
+								$('#message_box').html(lMessagesHtml);
+								$('#message_box').show();
+							}
+						}
+					}
+				});
+		// notifies us when users close an message box.
+		$(document)
+				.on(
+						'close.fndtn.alert-box',
+						function(event) {
+							console.info('An alert box has been closed!');
+							var _date = new Date();
+							var _timeCreated = _date.getTime();
+							var obj = {
+								id : $('#message_id').html(),
+								timeViewedMs : _timeCreated,
+								timeViewedTimeZoneOffsetMs : (_date
+										.getTimezoneOffset() * 60 * 1000),
+							};
+							var objString = JSON.stringify(obj, null, 2);
+							// alert(objString);
+							var jqxhr = $.ajax({
+								url : "/secured/message/read",
+								type : "POST",
+								data : objString,
+								processData : false,
+								dataType : "json",
+								contentType : "application/json",
+								async : false,
+								statusCode : {
+									200 : function() {
+
+									},
+									400 : function(text) {
+
+									}
+								}
+							});
+						});
+	} catch (err) {
+		handleError("displayAnyMessage", err);
+	} finally {
+		log("displayAnyMessage", "Exiting");
+	}
+}
 function setupLeftNavBar() {
 	log("setupLeftNavBar", "Entering");
 	try {
@@ -67,9 +146,6 @@ function setupBreadcrumbs() {
 function getApplications() {
 	log("getApplications", "Entering");
 	try {
-		// open wait div
-		openWait();
-
 		var jqxhr = $.ajax({
 			url : "/secured/applications",
 			type : "GET",
@@ -80,10 +156,6 @@ function getApplications() {
 					handleDisplayApplications_Callback(applications);
 				}
 			}
-		});
-		jqxhr.always(function() {
-			// close wait div
-			closeWait();
 		});
 
 	} catch (err) {
@@ -140,7 +212,6 @@ function displayContentGroups(pApplicationId) {
 
 function updateApplicationEnabled(pApplicationId, pApplicationEnabled,
 		pElementName) {
-	openWait();
 	log("updateApplicationEnabled", "Entering");
 	var lElementName = "#" + pElementName;
 
@@ -184,10 +255,6 @@ function updateApplicationEnabled(pApplicationId, pApplicationEnabled,
 						}
 					}
 				});
-		jqxhr.always(function() {
-			// close wait div
-			closeWait();
-		});
 
 		return false;
 	} catch (err) {

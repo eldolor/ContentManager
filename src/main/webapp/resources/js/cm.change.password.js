@@ -14,8 +14,6 @@ jQuery(function($) {
 function setup() {
 	try {
 		log("setup", "Entering");
-		// enable abide form validation
-		$(document).foundation('abide', 'events');
 		// not using valid.fndtn.abide & invalid.fndtn.abide as it
 		// causes the form to be submitted twice. Instead use the
 		// deprecated valid & invalid
@@ -27,6 +25,19 @@ function setup() {
 			changePassword();
 		});
 		$('#user_errors').hide();
+
+		if (lIsRequestExpired == true) {
+			$('#user_change_password').hide();
+
+			var lMessage = "<div data-alert id=\"alert_message\" class=\"alert-box alert radius\">";
+			lMessage += "The password change request has expired. Please click <a href=\"/login\">here</a> to submit the request again.";
+			lMessage += "<a href=\"#\" class=\"close\">&times;</a></div>";
+			$('#message_box').html(lMessagesHtml);
+			$('#message_box').show();
+		} else {
+			$('#user_change_password').show();
+
+		}
 
 	} catch (err) {
 		handleError("setup", err);

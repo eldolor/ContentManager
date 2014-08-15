@@ -28,7 +28,7 @@
 				<div>&nbsp;</div>
 				<div class="row">
 					<div class="large-12 columns">
-						<span id="user_forgot_password_errors" class="alert radius label"></span><br>
+						<span id="user_forgot_password_errors" class="alert radius label" style="display: none"></span><br>
 					</div>
 				</div>
 				<div>&nbsp;</div>

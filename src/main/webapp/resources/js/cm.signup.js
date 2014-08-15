@@ -16,8 +16,6 @@ function setup() {
 		setupLeftNavBar();
 		setupBreadcrumbs();
 		$('#signup_errors').hide();
-		// enable abide form validation
-		$(document).foundation('abide', 'events');
 		// not using valid.fndtn.abide & invalid.fndtn.abide as it
 		// causes the form to be submitted twice. Instead use the
 		// deprecated valid & invalid

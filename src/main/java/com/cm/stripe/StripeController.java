@@ -8,8 +8,6 @@ import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -21,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.cm.admin.plan.CanonicalPlanName;
 import com.cm.usermanagement.user.User;
 import com.cm.usermanagement.user.UserService;
+import com.cm.util.Utils;
 import com.cm.util.ValidationError;
 import com.stripe.Stripe;
 import com.stripe.exception.APIConnectionException;
@@ -28,7 +27,9 @@ import com.stripe.exception.APIException;
 import com.stripe.exception.AuthenticationException;
 import com.stripe.exception.CardException;
 import com.stripe.exception.InvalidRequestException;
+import com.stripe.model.Card;
 import com.stripe.model.Customer;
+import com.stripe.model.CustomerCardCollection;
 import com.stripe.model.Subscription;
 
 @Controller
@@ -63,12 +64,20 @@ public class StripeController {
 			try {
 				Stripe.apiKey = "sk_test_4aEiOFaIp1sl35p1Gqjco3Is";
 
-				StripeCustomer lStripeCustomer = stripeCustomerService
+				StripeCustomer lStoredStripeCustomer = stripeCustomerService
 						.get(lUser.getAccountId());
-				// customer does not exist
-				if (lStripeCustomer == null) {
+				// customer does not exist or exists but with CC expiring or
+				// expired
+				if (lStoredStripeCustomer == null
+						|| Utils.isCCExpired(
+								lStoredStripeCustomer.getCardExpirationYear(),
+								lStoredStripeCustomer.getCardExpirationMonth())
+						|| Utils.isCCExpiring(
+								lStoredStripeCustomer.getCardExpirationYear(),
+								lStoredStripeCustomer.getCardExpirationMonth())) {
 
 					Map<String, Object> lCustomerParams = new HashMap<String, Object>();
+					Map<String, Object> lSubscriptionParams = new HashMap<String, Object>();
 					// Stripe tokens can only be used once
 					lCustomerParams.put("card", stripeToken); // obtained
 																// with
@@ -83,37 +92,80 @@ public class StripeController {
 
 					lCustomerParams.put("metadata", lCustomerMetadata);
 
-					Customer lCustomer = Customer.create(lCustomerParams);
-
-					Map<String, Object> lSubscriptionParams = new HashMap<String, Object>();
 					// subscribe to the new plan selected
 					lSubscriptionParams.put("plan", canonicalPlanName);
-					Subscription lSubscription = lCustomer
-							.createSubscription(lSubscriptionParams);
+					Customer lCustomer = null;
+					Subscription lSubscription = null;
+					if (lStoredStripeCustomer == null) {
+						lCustomer = Customer.create(lCustomerParams);
+						lSubscription = lCustomer
+								.createSubscription(lSubscriptionParams);
+					} else {
+						// customer exists but CC is either expiring or has
+						// expired;
+						lCustomer = Customer.retrieve(lStoredStripeCustomer
+								.getStripeId());
+						lCustomer = lCustomer.update(lCustomerParams);
+						lSubscription = lCustomer
+								.updateSubscription(lSubscriptionParams);
+					}
 
 					// create StripeCustomer
-					lStripeCustomer = new StripeCustomer();
+					// TODO: handle scenario where customer and subscription
+					// succeed but saving StripeCustomer to DB fails
+					StripeCustomer lStripeCustomer = null;
+
+					if (lStoredStripeCustomer == null)
+						lStripeCustomer = new StripeCustomer();
+					else
+						lStripeCustomer = lStoredStripeCustomer;
+
 					lStripeCustomer.setAccountId(lUser.getAccountId());
 					lStripeCustomer.setCanonicalPlanName(canonicalPlanName);
-
-					lStripeCustomer.setStripeId(lCustomer.getId());
-					lStripeCustomer.setSubscriptionId(lSubscription.getId());
-
 					lStripeCustomer.setUserId(lUser.getId());
 					lStripeCustomer.setUsername(lUser.getUsername());
-					lStripeCustomer
-							.setTimeCreatedMs(System.currentTimeMillis());
-					lStripeCustomer
-							.setTimeCreatedTimeZoneOffsetMs((long) TimeZone
-									.getDefault().getOffset(
-											System.currentTimeMillis()));
-					stripeCustomerService.save(lStripeCustomer);
+
+					// Stripe specific fields
+					lStripeCustomer.setStripeId(lCustomer.getId());
+					lStripeCustomer.setSubscriptionId(lSubscription.getId());
+					String lDefaultCardId = lCustomer.getDefaultCard();
+					CustomerCardCollection lCardCollection = lCustomer
+							.getCards();
+					Card lDefaultCard = lCardCollection
+							.retrieve(lDefaultCardId);
+
+					lStripeCustomer.setCardBrand(lDefaultCard.getBrand());
+					lStripeCustomer.setCardLast4(lDefaultCard.getLast4());
+					lStripeCustomer.setCardExpirationMonth(lDefaultCard
+							.getExpMonth());
+					lStripeCustomer.setCardExpirationYear(lDefaultCard
+							.getExpYear());
+
+					if (lStoredStripeCustomer == null) {
+						lStripeCustomer.setTimeCreatedMs(System
+								.currentTimeMillis());
+						lStripeCustomer
+								.setTimeCreatedTimeZoneOffsetMs((long) TimeZone
+										.getDefault().getOffset(
+												System.currentTimeMillis()));
+						stripeCustomerService.save(lStripeCustomer);
+					} else {
+						lStripeCustomer.setTimeUpdatedMs(System
+								.currentTimeMillis());
+						lStripeCustomer
+								.setTimeUpdatedTimeZoneOffsetMs((long) TimeZone
+										.getDefault().getOffset(
+												System.currentTimeMillis()));
+						stripeCustomerService.update(lStripeCustomer);
+					}
 				} else {
 					ValidationError error = new ValidationError();
 					error.setCode("customer");
-					error.setDescription("Customer is not yet subscribed");
+					error.setDescription("Customer already exists. Try updating subscription instead of creating a new subscription");
 					errors.add(error);
-					LOGGER.log(Level.WARNING, "Customer is not yet subscribed");
+					LOGGER.log(
+							Level.WARNING,
+							"Customer already exists. Try updating subscription instead of creating a new subscription");
 				}
 			} catch (Exception e) {
 				errors.addAll(processStripeExceptions(e));
@@ -191,6 +243,8 @@ public class StripeController {
 							.updateSubscription(lSubscriptionParams);
 
 					// update StripeCustomer and save locally
+					// TODO: handle scenario where update subscription succeed
+					// but saving StripeCustomer to DB fails
 					lStripeCustomer.setCanonicalPlanName(canonicalPlanName);
 					lStripeCustomer.setSubscriptionId(lSubscription.getId());
 					lStripeCustomer

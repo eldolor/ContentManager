@@ -26,7 +26,7 @@
 <script type="text/javascript" src="/resources/js/cm.change.password.js"></script>
 <!-- End Custom -->
 <script type="text/javascript">
-	
+	var lIsRequestExpired = ${isRequestExpired};
 </script>
 
 </head>
@@ -39,7 +39,7 @@
 
 	<div class="row">
 
-		<div class="large-12 columns">
+		<div class="large-12 columns" style="display: none">
 			<form id="changePasswordForm" name="changePasswordForm"
 				data-abide="ajax">
 				<fieldset>
@@ -82,7 +82,7 @@
 					<div>&nbsp;</div>
 					<div class="row">
 						<div class="large-12 columns">
-							<span id="user_errors" class="alert radius label"></span>
+							<span id="user_errors" class="alert radius label" style="display: none"></span>
 						</div>
 					</div>
 

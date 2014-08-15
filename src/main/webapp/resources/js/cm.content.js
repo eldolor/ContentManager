@@ -16,8 +16,6 @@ function setup() {
 		log("setup", "Entering");
 		setupLeftNavBar();
 		setupBreadcrumbs();
-		// enable abide form validation
-		$(document).foundation('abide', 'events');
 
 		$("#content_start_date").datepicker({
 			altFormat : 'mm/dd/yy',

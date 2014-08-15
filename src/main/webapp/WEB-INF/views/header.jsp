@@ -38,7 +38,7 @@
 					<ul class="right">
 						<sec:authorize
 							ifAnyGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">
-							<li><a id="myAccount" href="/account">Account
+							<li class="active"><a id="myAccount" href="/account">Account
 									Settings</a></li>
 						</sec:authorize>
 						<sec:authorize

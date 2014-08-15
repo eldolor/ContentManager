@@ -26,8 +26,6 @@ function setup() {
 			$('#user_sign_in_submit_button').unbind();
 			window.location.href = '/';
 		});
-		// enable abide form validation
-		$(document).foundation('abide', 'events');
 		// not using valid.fndtn.abide & invalid.fndtn.abide as it
 		// causes the form to be submitted twice. Instead use the
 		// deprecated valid & invalid

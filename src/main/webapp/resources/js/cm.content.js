@@ -14,6 +14,12 @@ jQuery(function($) {
 function setup() {
 	try {
 		log("setup", "Entering");
+		$(document).foundation();
+
+		var doc = document.documentElement;
+		doc.setAttribute('data-useragent', navigator.userAgent);
+		// enable abide form validation
+		$(document).foundation('abide', 'events');
 		setupLeftNavBar();
 		setupBreadcrumbs();
 
@@ -330,6 +336,19 @@ function editContent(id) {
 							// // add more
 							$('#content_uri').val(content.uri);
 							$('#content_type').val(content.type);
+							if (content.type == 'image') {
+								$('#content_type_image').click();
+								// $('#content_type_image').attr('checked',
+								// 'checked');
+								// $('#content_type_video').attr('checked',
+								// 'checked');
+							} else if (content.type == 'video') {
+								$('#content_type_video').click();
+								// $('#content_type_video').attr('checked',
+								// 'checked');
+								// $('#content_type_image').attr('checked',
+								// 'checked');
+							}
 
 							var dropBoxUrl = getDropboxUrl();
 							setupContentDropBox(dropBoxUrl);
@@ -751,8 +770,10 @@ function deleteContent(id) {
 						contentType : "application/json",
 						statusCode : {
 							200 : function() {
-								getContent(mSelectedApplication.id,
-										mSelectedContentGroup.id);
+								$('#content_create').hide();
+								location.reload();
+								// getContent(mSelectedApplication.id,
+								// mSelectedContentGroup.id);
 							}
 						}
 					});

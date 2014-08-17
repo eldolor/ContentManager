@@ -18,6 +18,13 @@ function setup() {
 		setupBreadcrumbs();
 		getLoggedInUser();
 
+		$(document).foundation();
+
+		var doc = document.documentElement;
+		doc.setAttribute('data-useragent', navigator.userAgent);
+		// enable abide form validation
+		$(document).foundation('abide', 'events');
+		$(document).foundation('magellan', 'events');
 		// not using valid.fndtn.abide & invalid.fndtn.abide as it
 		// causes the form to be submitted twice. Instead use the
 		// deprecated valid & invalid

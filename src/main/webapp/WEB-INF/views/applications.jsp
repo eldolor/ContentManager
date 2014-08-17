@@ -79,17 +79,18 @@
 						</div>
 						<div class="row">
 							<div class="large-12 columns">
-								<input id="application_enabled" type="checkbox">
-								<!-- <div class="switch radius">
-								<input id="application_enabled" type="checkbox"
-									checked="checked"> <label for="application_enabled">Enabled</label>
-							</div> -->
+								<!-- <input id="application_enabled" type="checkbox"> -->
+								<div class="switch radius">
+									<input id="application_enabled" type="checkbox"
+										checked="checked"> <label for="application_enabled">Enabled</label>
+								</div>
 							</div>
 						</div>
 						<div>&nbsp;</div>
 						<div class="row">
 							<div class="large-12 columns">
-								<span id="application_errors" class="alert radius label" style="display: none"></span><br>
+								<span id="application_errors" class="alert radius label"
+									style="display: none"></span><br>
 							</div>
 						</div>
 						<div>&nbsp;</div>
@@ -109,6 +110,12 @@
 		<!-- Instructions on how to use the page -->
 		<aside class="large-3 columns hide-for-small" id="right_aside">
 			<p>Place instructions on how to use the page here.</p>
+			<dl>
+				<dt>Application</dt>
+				<dd>Describe what is an application here</dd>
+				<dt>Enabled</dt>
+				<dd>Describe what is enabling or disabling an application here.</dd>
+			</dl>
 		</aside>
 
 	</div>

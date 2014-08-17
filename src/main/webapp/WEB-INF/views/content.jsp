@@ -45,8 +45,8 @@ setSelectedContentGroup(${contentGroupId});
 		<jsp:include page="left_nav_bar.jsp" flush="true"></jsp:include>
 		<div class="large-6 columns" id="content_area">
 			<div class="row">
-				<span id="application_name" class="secondary radius label"></span> <span
-					id="contentgroup_name" class="secondary radius label"></span>
+				<span id="application_name" class="radius label"></span> <span
+					id="contentgroup_name" class="radius label"></span>
 			</div>
 			<div>&nbsp;</div>
 			<div id="content_list"></div>
@@ -81,19 +81,41 @@ setSelectedContentGroup(${contentGroupId});
 								</div>
 							</div>
 						</div>
-						<fieldset>
-							<legend>Content Type</legend>
-							<div class="row">
-								<div class="large-12 columns">
+						<div class="row">
+							<div class="large-12 columns">
+								<fieldset>
+									<legend>Content Type</legend>
 									<!-- Using radio buttons each switch turns off the other two -->
-									<label>Image: <input id="content_type_image"
+									<!-- <label>Image: <input id="content_type_image"
 										type="radio" checked name="content_type_group"></label><label>Video:
 										<input id="content_type_video" type="radio"
 										name="content_type_group">
-									</label>
-								</div>
+									</label> -->
+									<ul class="inline-list">
+										<!-- Using radio buttons each switch turns off the other -->
+										<li><fieldset>
+												<legend>Image</legend>
+												<div class="switch radius">
+													<input id="content_type_image" type="radio" checked
+														name="content_type_group"> <label
+														for="content_type_image">Image</label>
+												</div>
+											</fieldset></li>
+
+										<li>
+											<fieldset>
+												<legend>Video</legend>
+												<div class="switch radius">
+													<input id="content_type_video" type="radio"
+														name="content_type_group"> <label
+														for="content_type_video">Video</label>
+												</div>
+											</fieldset>
+										</li>
+									</ul>
+								</fieldset>
 							</div>
-						</fieldset>
+						</div>
 						<div class="row">
 							<div class="large-12 columns">
 								<div class="input-wrapper">
@@ -130,19 +152,21 @@ setSelectedContentGroup(${contentGroupId});
 								<label>Enabled:</label>
 							</div>
 						</div>
-						<div class="row">
+						<!-- 						<div class="row">
 							<div class="large-12 columns">
 								<input id="content_enabled" type="checkbox">
 							</div>
 						</div>
-						<!-- 					<div class="row">
-						<div class="large-12 columns">
-							<div class="switch radius">
-								<input id="content_enabled" type="checkbox" checked="checked">
-								<label for="content_enabled">Enabled</label>
+ -->
+						<div class="row">
+							<div class="large-12 columns">
+								<div class="switch radius">
+									<input id="content_enabled" type="checkbox" checked="checked">
+									<label for="content_enabled">Enabled</label>
+								</div>
 							</div>
 						</div>
-					</div> -->
+						<div>&nbsp;</div>
 						<div class="row">
 							<div class="large-12 columns">
 								<a id="upload_content" href="javascript:void(0);">Click here
@@ -156,7 +180,8 @@ setSelectedContentGroup(${contentGroupId});
 						<div>&nbsp;</div>
 						<div class="row">
 							<div class="large-12 columns">
-								<span id="content_errors" class="alert radius label" style="display: none"></span>
+								<span id="content_errors" class="alert radius label"
+									style="display: none"></span>
 							</div>
 						</div>
 						<div>&nbsp;</div>
@@ -174,6 +199,21 @@ setSelectedContentGroup(${contentGroupId});
 		<!-- Instructions on how to use the page -->
 		<aside class="large-3 columns hide-for-small" id="right_aside">
 			<p>Place instructions on how to use the page here.</p>
+			<dl>
+				<dt>Content</dt>
+				<dd>Describe what is content here</dd>
+				<dt>Content Type</dt>
+				<dd>Describe content types here</dd>
+				<dt>Start Date</dt>
+				<dd>...</dd>
+				<dt>End Date</dt>
+				<dd>...</dd>
+				<dt>Enabled</dt>
+				<dd>Describe what is enabling or disabling a content group
+					here.</dd>
+				<dt>Uploading Content</dt>
+				<dd>Describe how to upload content here.</dd>
+			</dl>
 		</aside>
 
 

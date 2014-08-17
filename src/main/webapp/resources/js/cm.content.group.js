@@ -14,6 +14,12 @@ jQuery(function($) {
 function setup() {
 	try {
 		log("setup", "Entering");
+		$(document).foundation();
+
+		var doc = document.documentElement;
+		doc.setAttribute('data-useragent', navigator.userAgent);
+		// enable abide form validation
+		$(document).foundation('abide', 'events');
 		setupLeftNavBar();
 		setupBreadcrumbs();
 
@@ -442,8 +448,10 @@ function createContentGroup() {
 					statusCode : {
 						201 : function() {
 							$('#content_group_create').hide();
-							getContentGroups(mSelectedApplication.id);
-							$('#content_groups_list').show();
+							location.reload();
+							// $('#content_group_create').hide();
+							// getContentGroups(mSelectedApplication.id);
+							// $('#content_groups_list').show();
 						},
 						400 : function(text) {
 							try {
@@ -514,8 +522,10 @@ function updateContentGroup() {
 					statusCode : {
 						200 : function() {
 							$('#content_group_create').hide();
-							getContentGroups(mSelectedApplication.id);
-							$('#content_groups_list').show();
+							location.reload();
+							// $('#content_group_create').hide();
+							// getContentGroups(mSelectedApplication.id);
+							// $('#content_groups_list').show();
 						},
 						400 : function(text) {
 							try {
@@ -567,7 +577,9 @@ function deleteContentGroup(id) {
 						contentType : "application/json",
 						statusCode : {
 							200 : function() {
-								getContentGroups(mSelectedApplication.id);
+								$('#content_group_create').hide();
+								location.reload();
+								// getContentGroups(mSelectedApplication.id);
 							}
 						}
 					});

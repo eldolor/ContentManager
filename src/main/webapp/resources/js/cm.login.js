@@ -13,6 +13,12 @@ jQuery(function($) {
 function setup() {
 	log("setup", "Entering");
 	try {
+		$(document).foundation();
+
+		var doc = document.documentElement;
+		doc.setAttribute('data-useragent', navigator.userAgent);
+		// enable abide form validation
+		$(document).foundation('abide', 'events');
 		setupLeftNavBar();
 		setupBreadcrumbs();
 		$('#login_errors').hide();

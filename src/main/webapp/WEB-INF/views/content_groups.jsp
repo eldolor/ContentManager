@@ -44,13 +44,14 @@
 		<jsp:include page="left_nav_bar.jsp" flush="true"></jsp:include>
 		<div class="large-6 columns" id="content_area">
 			<div class="row">
-				<span id="application_name" class="secondary radius label"></span>
+				<span id="application_name" class="radius label"></span>
 			</div>
 			<div>&nbsp;</div>
 			<div id="content_groups_list"></div>
 			<!-- Begin Content Group -->
 			<div id="content_group_create" style="display: none">
-				<form id="contentGroupForm" name="contentGroupForm" data-abide="ajax">
+				<form id="contentGroupForm" name="contentGroupForm"
+					data-abide="ajax">
 					<fieldset>
 						<legend>Content Group Setup</legend>
 						<input type="hidden" id="application_id" name="application_id" />
@@ -62,8 +63,7 @@
 								<div class="name-field">
 									<label>Name <small>required</small><input type="text"
 										id="contentgroup_name" name="contentgroup_name"
-										required="required" 
-										placeholder="My First Content Group" />
+										required="required" placeholder="My First Content Group" />
 									</label> <small class="error">Name is required</small>
 								</div>
 							</div>
@@ -85,8 +85,8 @@
 										<div id="contentgroup_start_datepicker">
 											<input type="text" id="contentgroup_start_date"
 												name="contentgroup_start_date" required="required"
-												pattern="month_day_year" /> <br />
-												<small class="error">Please enter a valid start date MM/DD/YYYY</small>
+												pattern="month_day_year" /> <br /> <small class="error">Please
+												enter a valid start date MM/DD/YYYY</small>
 										</div>
 									</label>
 								</div>
@@ -102,7 +102,8 @@
 										<div id="contentgroup_end_datepicker">
 											<input type="text" id="contentgroup_end_date"
 												name="contentgroup_end_date" pattern="month_day_year" /> <br />
-												<small class="error">Please enter a valid end date MM/DD/YYYY</small>
+											<small class="error">Please enter a valid end date
+												MM/DD/YYYY</small>
 										</div> </label>
 								</div>
 							</div>
@@ -115,17 +116,18 @@
 						</div>
 						<div class="row">
 							<div class="large-12 columns">
-								<input id="contentgroup_enabled" type="checkbox">
-								<!-- <div class="switch radius">
-								<input id="contentgroup_enabled" type="checkbox"
-									checked="checked"> <label for="contentgroup_enabled">Enabled</label>
-							</div> -->
+								<!-- <input id="contentgroup_enabled" type="checkbox"> -->
+								<div class="switch radius">
+									<input id="contentgroup_enabled" type="checkbox"
+										checked="checked"> <label for="contentgroup_enabled">Enabled</label>
+								</div>
 							</div>
 						</div>
 						<div>&nbsp;</div>
 						<div class="row">
 							<div class="large-12 columns">
-								<span id="contentgroup_errors" class="alert radius label" style="display: none"></span>
+								<span id="contentgroup_errors" class="alert radius label"
+									style="display: none"></span>
 							</div>
 						</div>
 						<div>&nbsp;</div>
@@ -145,6 +147,16 @@
 		<!-- Instructions on how to use the page -->
 		<aside class="large-3 columns hide-for-small" id="right_aside">
 			<p>Place instructions on how to use the page here.</p>
+			<dl>
+				<dt>Content Group</dt>
+				<dd>Describe what are content groups here</dd>
+				<dt>Start Date</dt>
+				<dd>...</dd>
+				<dt>End Date</dt>
+				<dd>...</dd>
+				<dt>Enabled</dt>
+				<dd>Describe what is enabling or disabling a content group here.</dd>
+			</dl>
 		</aside>
 
 

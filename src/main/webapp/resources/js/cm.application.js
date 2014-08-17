@@ -14,6 +14,14 @@ jQuery(function($) {
 function setup() {
 	try {
 		log("setup", "Entering");
+		$(document).foundation();
+
+		var doc = document.documentElement;
+		doc.setAttribute('data-useragent', navigator.userAgent);
+		// enable abide form validation
+		$(document).foundation('abide', 'events');
+		$(document).foundation('alert', 'events');
+
 		setupLeftNavBar();
 		setupBreadcrumbs();
 		displayAnyMessage();
@@ -460,8 +468,10 @@ function createApplication() {
 					statusCode : {
 						201 : function() {
 							$('#application_create').hide();
-							getApplications();
-							$('#applications_list').show();
+							location.reload();
+							// $('#application_create').hide();
+							// getApplications();
+							// $('#applications_list').show();
 						},
 						400 : function(text) {
 							try {
@@ -528,8 +538,10 @@ function updateApplication() {
 					statusCode : {
 						200 : function() {
 							$('#application_create').hide();
-							getApplications();
-							$('#applications_list').show();
+							location.reload();
+							// $('#application_create').hide();
+							// getApplications();
+							// $('#applications_list').show();
 						},
 						400 : function(text) {
 							try {
@@ -583,7 +595,9 @@ function deleteApplication(id) {
 								contentType : "application/json",
 								statusCode : {
 									200 : function() {
-										getApplications();
+										$('#application_create').hide();
+										location.reload();
+										// getApplications();
 									}
 								},
 								error : function(xhr, textStatus, errorThrown) {

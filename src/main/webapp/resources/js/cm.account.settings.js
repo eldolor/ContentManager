@@ -14,7 +14,7 @@ jQuery(function($) {
 function setup() {
 	try {
 		log("setup", "Entering");
-		setupLeftNavBar();
+		// setupLeftNavBar();
 		setupBreadcrumbs();
 		getLoggedInUser();
 
@@ -54,7 +54,7 @@ function setup() {
 		});
 
 		// default behaviour
-		$('#user_billing').show();
+		// $('#user_billing').show();
 
 	} catch (err) {
 		handleError("setup", err);

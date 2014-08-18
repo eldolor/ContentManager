@@ -104,7 +104,7 @@
 
 	ga('create', 'UA-53875097-1', 'auto');
 
-	com.cm.contentmanager.PageTitle = {
+	var PageTitle = {
 		APPLICATIONS : "applications",
 		APPLICATION : "application",
 		CONTENT_GROUPS : "content_group",
@@ -112,8 +112,8 @@
 		CONTENTS : "contents",
 		CONTENT : "content",
 		ACCOUNT_SETTINGS : "account_settings"
-	}
-	com.cm.contentmanager.Category = {
+	};
+	var Category = {
 		APPLICATIONS : "applications",
 		APPLICATION : "application",
 		CONTENT_GROUPS : "content_group",
@@ -124,8 +124,8 @@
 		SIGN_IN : "sign_in",
 		SIGN_OUT : "sign_out",
 		SIGN_UP : "sign_up"
-	}
-	com.cm.contentmanager.Action = {
+	};
+	var Action = {
 		CREATE_NEW : "create_new",
 		CREATE : "create",
 		UPDATE : "update",
@@ -136,6 +136,6 @@
 		SIGN_OUT : "sign_out",
 		SIGN_UP : "sign_up",
 		ACCOUNT_SETTINGS : "account_settings"
-	}
+	};
 </script>
 <!-- End Google Analytics -->

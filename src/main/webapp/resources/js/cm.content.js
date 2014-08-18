@@ -173,7 +173,7 @@ function getContent(pApplicationId, pContentGroupId) {
 						'hitType' : 'pageview',
 						'page' : '/secured/' + pApplicationId + '/'
 								+ pContentGroupId + '/content/',
-						'title' : com.cm.contentmanager.PageTitle.CONTENTS
+						'title' : PageTitle.CONTENTS
 					});
 					// End Google Analytics
 				}

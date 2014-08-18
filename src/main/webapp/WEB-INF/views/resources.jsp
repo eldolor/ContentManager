@@ -32,9 +32,6 @@
 <script src="/resources/js/foundation/foundation.magellan.js"></script>
 <!-- Begin Foundation Related -->
 
-<script>
-
-</script>
 <script type="text/javascript" src="/resources/js/json2.js"></script>
 
 <!-- Begin Date Related -->
@@ -90,3 +87,55 @@
 <script type="text/javascript" src="/resources/js/cm.utilities.js"></script>
 <script type="text/javascript" src="/resources/js/cm.globals.js"></script>
 <!-- Custom Scripts -->
+
+<!-- Google Analytics -->
+<script>
+	(function(i, s, o, g, r, a, m) {
+		i['GoogleAnalyticsObject'] = r;
+		i[r] = i[r] || function() {
+			(i[r].q = i[r].q || []).push(arguments)
+		}, i[r].l = 1 * new Date();
+		a = s.createElement(o), m = s.getElementsByTagName(o)[0];
+		a.async = 1;
+		a.src = g;
+		m.parentNode.insertBefore(a, m)
+	})(window, document, 'script', '//www.google-analytics.com/analytics.js',
+			'ga');
+
+	ga('create', 'UA-53875097-1', 'auto');
+
+	com.cm.contentmanager.PageTitle = {
+		APPLICATIONS : "applications",
+		APPLICATION : "application",
+		CONTENT_GROUPS : "content_group",
+		CONTENT_GROUP : "content_group",
+		CONTENTS : "contents",
+		CONTENT : "content",
+		ACCOUNT_SETTINGS : "account_settings"
+	}
+	com.cm.contentmanager.Category = {
+		APPLICATIONS : "applications",
+		APPLICATION : "application",
+		CONTENT_GROUPS : "content_group",
+		CONTENT_GROUP : "content_group",
+		CONTENTS : "contents",
+		CONTENT : "content",
+		ACCOUNT_SETTINGS : "account_settings",
+		SIGN_IN : "sign_in",
+		SIGN_OUT : "sign_out",
+		SIGN_UP : "sign_up"
+	}
+	com.cm.contentmanager.Action = {
+		CREATE_NEW : "create_new",
+		CREATE : "create",
+		UPDATE : "update",
+		CANCEL : "cancel",
+		DELETE : "delete",
+		FORGOT_PASSWORD : "forgot_password",
+		SIGN_IN : "sign_in",
+		SIGN_OUT : "sign_out",
+		SIGN_UP : "sign_up",
+		ACCOUNT_SETTINGS : "account_settings"
+	}
+</script>
+<!-- End Google Analytics -->

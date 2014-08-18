@@ -113,17 +113,28 @@ function getContentGroups(pApplicationId) {
 		// open wait div
 		openWait();
 
-		var jqxhr = $.ajax({
-			url : "/secured/" + pApplicationId + "/contentgroups",
-			type : "GET",
-			contentType : "application/json",
-			async : false,
-			statusCode : {
-				200 : function(contentGroups) {
-					handleDisplayContentGroups_Callback(contentGroups);
-				}
-			}
-		});
+		var jqxhr = $
+				.ajax({
+					url : "/secured/" + pApplicationId + "/contentgroups",
+					type : "GET",
+					contentType : "application/json",
+					async : false,
+					statusCode : {
+						200 : function(contentGroups) {
+							handleDisplayContentGroups_Callback(contentGroups);
+							// Google Analytics
+							ga(
+									'send',
+									{
+										'hitType' : 'pageview',
+										'page' : '/secured/' + pApplicationId
+												+ '/contentgroups',
+										'title' : com.cm.contentmanager.PageTitle.CONTENT_GROUPS
+									});
+							// End Google Analytics
+						}
+					}
+				});
 		jqxhr.always(function() {
 			// close wait div
 			closeWait();

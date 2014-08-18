@@ -122,12 +122,19 @@ function setupLeftNavBar() {
 				.html(
 						'<li><a id=\"left_nav_bar_link_1\" href=\"javascript:void(0);\" >Create Application</a></li>');
 		$('#left_nav_bar_link_1').unbind();
-		$('#left_nav_bar_link_1').click(function() {
-			// $('#application_create_modal').foundation('reveal', 'open');
-			$('#applications_list').hide();
-			$('#application_create').show();
-			newApplication();
-		});
+		$('#left_nav_bar_link_1').click(
+				function() {
+					// $('#application_create_modal').foundation('reveal',
+					// 'open');
+					$('#applications_list').hide();
+					$('#application_create').show();
+					newApplication();
+					// Google Analytics
+					ga('send', 'event',
+							com.cm.contentmanager.Category.APPLICATIONS,
+							com.cm.contentmanager.Action.CREATE_NEW);
+					// End Google Analytics
+				});
 
 	} catch (err) {
 		handleError("setupLeftNavBar", err);
@@ -162,6 +169,13 @@ function getApplications() {
 			statusCode : {
 				200 : function(applications) {
 					handleDisplayApplications_Callback(applications);
+					// Google Analytics
+					ga('send', {
+						'hitType' : 'pageview',
+						'page' : '/secured/applications',
+						'title' : com.cm.contentmanager.PageTitle.APPLICATIONS
+					});
+					// End Google Analytics
 				}
 			}
 		});
@@ -331,50 +345,79 @@ function editApplication(id) {
 		$('#application_create').show();
 		// load entry info via ajax
 		var url = "/secured/application/" + id;
-		var jqxhr = $.ajax({
-			url : url,
-			type : "GET",
-			contentType : "application/json",
-			statusCode : {
-				200 : function(application) {
+		var jqxhr = $
+				.ajax({
+					url : url,
+					type : "GET",
+					contentType : "application/json",
+					statusCode : {
+						200 : function(application) {
 
-					$('#application_id').val(application.id);
-					$('#application_name').val(application.name);
-					$('#application_description').val(application.description);
-					// add more
-					$('#application_userid').val(application.sponsoredUserId);
+							$('#application_id').val(application.id);
+							$('#application_name').val(application.name);
+							$('#application_description').val(
+									application.description);
+							// add more
+							$('#application_userid').val(
+									application.sponsoredUserId);
 
-					log("editApplication", "Application enabled: "
-							+ application.enabled);
-					if (application.enabled == true) {
-						$('#application_enabled').attr('checked', 'checked');
-					} else {
-						$('#application_enabled').removeAttr('checked');
+							log("editApplication", "Application enabled: "
+									+ application.enabled);
+							if (application.enabled == true) {
+								$('#application_enabled').attr('checked',
+										'checked');
+							} else {
+								$('#application_enabled').removeAttr('checked');
+							}
+							$('#application_save_button').html('update');
+
+							// not using valid.fndtn.abide & invalid.fndtn.abide
+							// as it
+							// causes the form to be submitted twice. Instead
+							// use the
+							// deprecated valid & invalid
+							$('#applicationForm')
+									.on(
+											'invalid',
+											function() {
+												var invalid_fields = $(this)
+														.find('[data-invalid]');
+												log(invalid_fields);
+											})
+									.on(
+											'valid',
+											function() {
+												log('editApplication: valid!');
+												updateApplication();
+												// Google Analytics
+												ga(
+														'send',
+														'event',
+														com.cm.contentmanager.Category.APPLICATIONS,
+														com.cm.contentmanager.Action.UPDATE);
+												// End Google Analytics
+											});
+
+							// unbind click listener to reset
+							$('#application_cancel_button').unbind();
+							$('#application_cancel_button')
+									.click(
+											function() {
+												$('#application_create').hide();
+												$('#applications_list').show();
+												// Google Analytics
+												ga(
+														'send',
+														'event',
+														com.cm.contentmanager.Category.APPLICATIONS,
+														com.cm.contentmanager.Action.CANCEL);
+												// End Google Analytics
+											});
+
+							$('#application_errors').empty();
+						}
 					}
-					$('#application_save_button').html('update');
-
-					// not using valid.fndtn.abide & invalid.fndtn.abide as it
-					// causes the form to be submitted twice. Instead use the
-					// deprecated valid & invalid
-					$('#applicationForm').on('invalid', function() {
-						var invalid_fields = $(this).find('[data-invalid]');
-						log(invalid_fields);
-					}).on('valid', function() {
-						log('editApplication: valid!');
-						updateApplication();
-					});
-
-					// unbind click listener to reset
-					$('#application_cancel_button').unbind();
-					$('#application_cancel_button').click(function() {
-						$('#application_create').hide();
-						$('#applications_list').show();
-					});
-
-					$('#application_errors').empty();
-				}
-			}
-		});
+				});
 		jqxhr.always(function() {
 			// close wait div
 			closeWait();
@@ -399,10 +442,17 @@ function newApplication() {
 		$('#applicationForm').on('invalid', function() {
 			var invalid_fields = $(this).find('[data-invalid]');
 			log(invalid_fields);
-		}).on('valid', function() {
-			log('newApplication: valid!');
-			createApplication();
-		});
+		}).on(
+				'valid',
+				function() {
+					log('newApplication: valid!');
+					createApplication();
+					// Google Analytics
+					ga('send', 'event',
+							com.cm.contentmanager.Category.APPLICATIONS,
+							com.cm.contentmanager.Action.CREATE);
+					// End Google Analytics
+				});
 		$('#application_cancel_button').unbind();
 		$('#application_cancel_button').click(function() {
 			$('#application_create').hide();
@@ -584,7 +634,12 @@ function deleteApplication(id) {
 		displayConfirm(
 				"Are you sure you want to delete this Application?",
 				function() {
-					wait("confirm_wait");
+					// Google Analytics
+					ga('send', 'event',
+							com.cm.contentmanager.Category.APPLICATIONS,
+							com.cm.contentmanager.Action.DELETE);
+					// End Google Analytics
+
 					var url = "/secured/application/" + id + "/"
 							+ _timeUpdatedMs + "/"
 							+ _timeUpdatedTimeZoneOffsetMs;
@@ -608,9 +663,6 @@ function deleteApplication(id) {
 									$('#application_errors').show();
 								}
 							});
-					jqxhr.always(function(msg) {
-						clearWait("confirm_wait");
-					});
 				});
 	} catch (err) {
 		handleError("deleteApplication", err);

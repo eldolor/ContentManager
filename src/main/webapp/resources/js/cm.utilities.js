@@ -222,6 +222,9 @@ function handleError(functionName, err) {
 					.html(
 							'Unable to continue processing the request. Please try again later...');
 		}
+		// Google Analytics
+		ga('send', err.message);
+		// End Google Analytics
 	} catch (err) {
 		txt = functionName + "()\n\n";
 		txt += "There was an error on this page.\n\n";
@@ -320,8 +323,6 @@ function displayConfirm(message, callback) {
 	$('#confirm_modal').foundation('reveal', 'open');
 
 }
-
-
 
 var imageCount = 9; // max images displayed in the image gallery
 function shiftGallery(index, entry_id, frames, max) {

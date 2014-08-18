@@ -168,6 +168,14 @@ function getContent(pApplicationId, pContentGroupId) {
 			statusCode : {
 				200 : function(content) {
 					handleDisplayContent_Callback(content);
+					// Google Analytics
+					ga('send', {
+						'hitType' : 'pageview',
+						'page' : '/secured/' + pApplicationId + '/'
+								+ pContentGroupId + '/content/',
+						'title' : com.cm.contentmanager.PageTitle.CONTENTS
+					});
+					// End Google Analytics
 				}
 			}
 		});

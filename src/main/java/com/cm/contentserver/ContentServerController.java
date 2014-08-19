@@ -1,5 +1,3 @@
-
-
 package com.cm.contentserver;
 
 import java.util.List;
@@ -43,19 +41,27 @@ public class ContentServerController {
 				LOGGER.warning("No Content Request Found!");
 				return null;
 			}
-
-			List<com.cm.contentserver.transfer.Content> contentList = Utils
+			ContentRequest lContentRequest = convertToDomainFormat(pContentRequest);
+			List<com.cm.contentserver.transfer.Content> lContentList = Utils
 					.convertToTransferFormat(contentServerService
-							.getContent(convertToDomainFormat(pContentRequest)));
-			if (contentList != null) {
+							.getContent(lContentRequest));
+			if (lContentList != null) {
 				if (LOGGER.isLoggable(Level.INFO))
-					LOGGER.info(contentList.size() + " Content found");
+					LOGGER.info(lContentList.size() + " Content found");
+				// add an additional attribute to indicate wifi only download
+				// status, which is being managed at the content level here,
+				// instead of application level in the application
+				if (contentServerService.isUpdateOverWifiOnly(lContentRequest)) {
+					for (com.cm.contentserver.transfer.Content lContent : lContentList) {
+						lContent.setUpdateOverWifiOnly(true);
+					}
+				}
 			} else {
 				if (LOGGER.isLoggable(Level.INFO))
 					LOGGER.info("No Content Found!");
 			}
 			response.setStatus(HttpServletResponse.SC_OK);
-			return contentList;
+			return lContentList;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting getContent");

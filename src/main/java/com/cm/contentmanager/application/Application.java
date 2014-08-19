@@ -30,6 +30,10 @@ public class Application implements Serializable {
 
 	// default to true
 	@Persistent
+	private Boolean updateOverWifiOnly = true;
+
+	// default to true
+	@Persistent
 	private Boolean enabled = true;
 
 	@Persistent
@@ -58,6 +62,14 @@ public class Application implements Serializable {
 
 	public void setTrackingId(String trackingId) {
 		this.trackingId = trackingId;
+	}
+
+	public Boolean isUpdateOverWifiOnly() {
+		return updateOverWifiOnly;
+	}
+
+	public void setUpdateOverWifiOnly(Boolean updateOverWifiOnly) {
+		this.updateOverWifiOnly = updateOverWifiOnly;
 	}
 
 	public Boolean isEnabled() {

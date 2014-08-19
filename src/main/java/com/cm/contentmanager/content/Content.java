@@ -35,6 +35,8 @@ public class Content {
 	@Persistent
 	private String uri;
 	@Persistent
+	private Long sizeInBytes;
+	@Persistent
 	public Boolean deleted = false;
 	@Persistent
 	public Boolean enabled = true;
@@ -197,6 +199,14 @@ public class Content {
 
 	public void setUri(String uri) {
 		this.uri = uri;
+	}
+
+	public Long getSizeInBytes() {
+		return sizeInBytes;
+	}
+
+	public void setSizeInBytes(Long sizeInBytes) {
+		this.sizeInBytes = sizeInBytes;
 	}
 
 }

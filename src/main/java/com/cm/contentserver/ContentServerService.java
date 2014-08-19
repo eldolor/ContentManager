@@ -65,6 +65,22 @@ public class ContentServerService {
 
 	}
 
+	public boolean isUpdateOverWifiOnly(ContentRequest pContentRequest) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering isUpdateOverWifiOnly");
+			Long lApplicationId = this.resolveApplicationId(pContentRequest
+					.getTrackingId());
+			Application lApplication = applicationService
+					.getApplication(lApplicationId);
+			return lApplication.isUpdateOverWifiOnly();
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting isUpdateOverWifiOnly");
+		}
+
+	}
+
 	private Long resolveApplicationId(String trackingId) {
 		Application lApplication = applicationService
 				.getApplicationByTrackingId(trackingId);

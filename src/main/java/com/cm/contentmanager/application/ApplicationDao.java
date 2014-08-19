@@ -278,6 +278,8 @@ class ApplicationDao {
 
 				lApplication.setDescription(pApplication.getDescription());
 				lApplication.setName(pApplication.getName());
+				lApplication.setUpdateOverWifiOnly(pApplication
+						.isUpdateOverWifiOnly());
 				lApplication.setEnabled(pApplication.isEnabled());
 				lApplication.setDeleted(pApplication.isDeleted());
 				// for existing contents

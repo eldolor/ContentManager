@@ -22,9 +22,9 @@ import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 
 @Controller
 public class DropBoxController {
-	private BlobstoreService blobstoreService = BlobstoreServiceFactory
+	private BlobstoreService mBlobstoreFactory = BlobstoreServiceFactory
 			.getBlobstoreService();
-	private final BlobInfoFactory blobInfoFactory = new BlobInfoFactory();
+	private final BlobInfoFactory mBlobInfoFactory = new BlobInfoFactory();
 
 	private static final Logger LOGGER = Logger
 			.getLogger(DropBoxController.class.getName());
@@ -35,7 +35,7 @@ public class DropBoxController {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getDropboxUrl");
-			String url = blobstoreService.createUploadUrl("/secured/dropbox");
+			String url = mBlobstoreFactory.createUploadUrl("/secured/dropbox");
 
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Returning Url " + url);
@@ -56,7 +56,7 @@ public class DropBoxController {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering doUpload");
-			Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(req);
+			Map<String, List<BlobKey>> blobs = mBlobstoreFactory.getUploads(req);
 			List<BlobKey> keys = blobs.get("file");
 
 			if (keys != null && keys.size() > 0) {
@@ -94,7 +94,7 @@ public class DropBoxController {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering doServe");
 			BlobKey blobKey = new BlobKey(key);
-			final BlobInfo blobInfo = blobInfoFactory.loadBlobInfo(blobKey);
+			final BlobInfo blobInfo = mBlobInfoFactory.loadBlobInfo(blobKey);
 			if (blobInfo != null) {
 				response.setHeader("Content-Disposition",
 						"attachment; filename=" + blobInfo.getFilename());

@@ -357,6 +357,14 @@ function editApplication(id) {
 
 					log("editApplication", "Application enabled: "
 							+ application.enabled);
+					if (application.updateOverWifiOnly == true) {
+						$('#application_update_over_wifi_only').attr('checked',
+								'checked');
+					} else {
+						$('#application_update_over_wifi_only').removeAttr(
+								'checked');
+					}
+
 					if (application.enabled == true) {
 						$('#application_enabled').attr('checked', 'checked');
 					} else {
@@ -441,6 +449,7 @@ function newApplication() {
 		$('#application_description').val('');
 		$('#application_userid').val('');
 
+		$('#application_update_over_wifi_only').attr('checked', 'checked');
 		// set default
 		$('#application_enabled').attr('checked', 'checked');
 
@@ -463,6 +472,12 @@ function createApplication() {
 		} else {
 			_enabled = false;
 		}
+		var _updateOverWifiOnly;
+		if ($('#application_update_over_wifi_only').is(':checked')) {
+			_updateOverWifiOnly = true;
+		} else {
+			_updateOverWifiOnly = false;
+		}
 
 		var _date = new Date();
 		var _timeCreated = _date.getTime();
@@ -471,6 +486,7 @@ function createApplication() {
 			id : $('#application_id').val(),
 			name : $('#application_name').val(),
 			description : $('#application_description').val(),
+			updateOverWifiOnly : _updateOverWifiOnly,
 			enabled : _enabled,
 			timeCreatedMs : _timeCreated,
 			timeCreatedTimeZoneOffsetMs : (_date.getTimezoneOffset() * 60 * 1000),
@@ -541,6 +557,12 @@ function updateApplication() {
 	} else {
 		_enabled = false;
 	}
+	var _updateOverWifiOnly;
+	if ($('#application_update_over_wifi_only').is(':checked')) {
+		_updateOverWifiOnly = true;
+	} else {
+		_updateOverWifiOnly = false;
+	}
 
 	try {
 		var _date = new Date();
@@ -548,6 +570,7 @@ function updateApplication() {
 			id : $('#application_id').val(),
 			name : $('#application_name').val(),
 			description : $('#application_description').val(),
+			updateOverWifiOnly : _updateOverWifiOnly,
 			enabled : _enabled,
 			timeUpdatedMs : _date.getTime(),
 			timeUpdatedTimeZoneOffsetMs : (_date.getTimezoneOffset() * 60 * 1000)

@@ -169,6 +169,10 @@ public class MessageController {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getCCExpiringSoonMessage");
+			if (pStripeCustomer == null) {
+				LOGGER.log(Level.WARNING, "Stripe Customer is null");
+				return null;
+			}
 
 			if (Utils.isCCExpiring(pStripeCustomer.getCardExpirationYear(),
 					pStripeCustomer.getCardExpirationMonth())) {
@@ -206,6 +210,10 @@ public class MessageController {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getCCExpiredMessage");
+			if (pStripeCustomer == null) {
+				LOGGER.log(Level.WARNING, "Stripe Customer is null");
+				return null;
+			}
 			if (Utils.isCCExpired(pStripeCustomer.getCardExpirationYear(),
 					pStripeCustomer.getCardExpirationMonth())) {
 

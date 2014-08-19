@@ -141,6 +141,18 @@ public class ContentGroupService {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering updateContentGroup");
+			// convert from ISO 8601 format to Milliseconds
+			if (!Utils.isEmpty(contentGroup.getStartDateIso8601()))
+				contentGroup.setStartDateMs(javax.xml.bind.DatatypeConverter
+						.parseDateTime(contentGroup.getStartDateIso8601())
+						.getTime().getTime());
+			if (!Utils.isEmpty(contentGroup.getEndDateIso8601()))
+				contentGroup.setEndDateMs(javax.xml.bind.DatatypeConverter
+						.parseDateTime(contentGroup.getEndDateIso8601())
+						.getTime().getTime());
+			else
+				// set high date
+				contentGroup.setEndDateMs(Long.MAX_VALUE);
 			contentGroupDao.updateContentGroup(contentGroup);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))

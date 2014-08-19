@@ -16,20 +16,21 @@ class ContentDao {
 	private static final Logger LOGGER = Logger.getLogger(ContentDao.class
 			.getName());
 
-	void saveContent(Content content) {
+	Content saveContent(Content content) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering saveContent");
 			PersistenceManager pm = null;
 			try {
 				pm = PMF.get().getPersistenceManager();
-				pm.makePersistent(content);
+				return pm.makePersistent(content);
 
 			} finally {
 				if (pm != null) {
 					pm.close();
 				}
 			}
+
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting saveContent");
@@ -307,6 +308,8 @@ class ContentDao {
 				_content.setTimeUpdatedTimeZoneOffsetMs(content
 						.getTimeUpdatedTimeZoneOffsetMs());
 
+				_content.setSizeInBytes(content.getSizeInBytes());
+
 			} finally {
 				if (pm != null) {
 					pm.close();
@@ -315,6 +318,29 @@ class ContentDao {
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting updateContent");
+		}
+	}
+
+	void updateContentSize(Long id, Long size) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering updateContentSize");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Content _content = pm.getObjectById(Content.class, id);
+				// only the size
+				_content.setSizeInBytes(size);
+
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting updateContentSize");
 		}
 	}
 

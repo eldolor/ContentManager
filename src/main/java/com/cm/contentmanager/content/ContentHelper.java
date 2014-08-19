@@ -35,6 +35,14 @@ public class ContentHelper {
 			List<com.cm.contentserver.transfer.Content> lContentList = Utils
 					.convertToTransferFormat(contentServerService
 							.getContent(pContentRequest));
+			// add an additional attribute to indicate wifi only download
+			// status, which is being managed at the content level here,
+			// instead of application level in the application
+			if (contentServerService.isUpdateOverWifiOnly(pContentRequest)) {
+				for (com.cm.contentserver.transfer.Content lContent : lContentList) {
+					lContent.setUpdateOverWifiOnly(true);
+				}
+			}
 			// convert the list to a JSON Array
 			JSONArray lJsonArray = new JSONArray();
 			for (com.cm.contentserver.transfer.Content content : lContentList) {
@@ -52,7 +60,10 @@ public class ContentHelper {
 							.put("timeUpdatedMs", content.getTimeUpdatedMs());
 					lJsonObject.put("type", content.getType());
 					lJsonObject.put("uri", content.getUri());
-
+					lJsonObject.put("updateOverWifiOnly",
+							content.isUpdateOverWifiOnly());
+					lJsonObject.put("sizeInBytes",
+							content.getSizeInBytes());
 					lJsonArray.put(lJsonObject);
 				} catch (JSONException e) {
 					LOGGER.log(Level.WARNING,

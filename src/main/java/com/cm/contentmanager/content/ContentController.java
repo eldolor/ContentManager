@@ -34,7 +34,13 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.cm.contentmanager.application.ApplicationService;
 import com.cm.usermanagement.user.UserService;
+import com.cm.util.Utils;
 import com.cm.util.ValidationError;
+import com.google.appengine.api.blobstore.BlobInfo;
+import com.google.appengine.api.blobstore.BlobInfoFactory;
+import com.google.appengine.api.blobstore.BlobKey;
+import com.google.appengine.api.blobstore.BlobstoreService;
+import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
@@ -53,6 +59,7 @@ public class ContentController {
 
 	private static final Logger LOGGER = Logger
 			.getLogger(ContentController.class.getName());
+	private final BlobInfoFactory mBlobInfoFactory = new BlobInfoFactory();
 
 	/**
 	 * @param model
@@ -156,8 +163,8 @@ public class ContentController {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return errors;
 			} else {
-				contentService.saveContent(userService.getLoggedInUser(),
-						content);
+				Content lContent = contentService.saveContent(
+						userService.getLoggedInUser(), content);
 				response.setStatus(HttpServletResponse.SC_CREATED);
 				{
 					String lTrackingId = applicationService.getApplication(
@@ -171,7 +178,19 @@ public class ContentController {
 							.method(Method.POST);
 					queue.add(taskOptions);
 				}
+				{
+					Queue queue = QueueFactory.getQueue("contentqueue");
+					TaskOptions taskOptions = TaskOptions.Builder
+							.withUrl(
+									"/tasks/content/updatesize/"
+											+ lContent.getId() + "/"
+											+ lContent.getUri())
+							.param("id", String.valueOf(lContent.getId()))
+							.param("uri", String.valueOf(lContent.getUri()))
+							.method(Method.POST);
+					queue.add(taskOptions);
 
+				}
 				return null;
 			}
 		} finally {
@@ -205,6 +224,19 @@ public class ContentController {
 							.param("trackingId", lTrackingId)
 							.method(Method.POST);
 					queue.add(taskOptions);
+				}
+				{
+					Queue queue = QueueFactory.getQueue("contentqueue");
+					TaskOptions taskOptions = TaskOptions.Builder
+							.withUrl(
+									"/tasks/content/updatesize/"
+											+ content.getId() + "/"
+											+ content.getUri())
+							.param("id", String.valueOf(content.getId()))
+							.param("uri", String.valueOf(content.getUri()))
+							.method(Method.POST);
+					queue.add(taskOptions);
+
 				}
 				return null;
 			}
@@ -307,5 +339,27 @@ public class ContentController {
 		return errors;
 	}
 
+	@RequestMapping(value = "/tasks/content/updatesize/{id}/{uri}", method = RequestMethod.POST)
+	public void updateSize(@PathVariable Long id, @PathVariable String uri,
+			HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering updateSize");
+			if (Utils.isEmpty(uri)) {
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("URI is null. Skipping...");
+				return;
+			}
 
+			BlobKey blobKey = new BlobKey(uri);
+			final BlobInfo blobInfo = mBlobInfoFactory.loadBlobInfo(blobKey);
+			if (blobInfo != null) {
+				contentService.updateContentSize(id, blobInfo.getSize());
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting updateSize");
+
+		}
+	}
 }

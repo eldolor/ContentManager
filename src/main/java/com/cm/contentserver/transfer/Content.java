@@ -9,6 +9,8 @@ public class Content implements Serializable {
 	private String name;
 	private String type;
 	private String uri;
+	private boolean updateOverWifiOnly;
+	private Long sizeInBytes;
 	private Long timeCreatedMs;
 	private Long timeUpdatedMs;
 
@@ -74,6 +76,22 @@ public class Content implements Serializable {
 
 	public void setTimeUpdatedMs(Long timeUpdatedMs) {
 		this.timeUpdatedMs = timeUpdatedMs;
+	}
+
+	public boolean isUpdateOverWifiOnly() {
+		return updateOverWifiOnly;
+	}
+
+	public void setUpdateOverWifiOnly(boolean updateOverWifiOnly) {
+		this.updateOverWifiOnly = updateOverWifiOnly;
+	}
+
+	public Long getSizeInBytes() {
+		return sizeInBytes;
+	}
+
+	public void setSizeInBytes(Long sizeInBytes) {
+		this.sizeInBytes = sizeInBytes;
 	}
 
 }

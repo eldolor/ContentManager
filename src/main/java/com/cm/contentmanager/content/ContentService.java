@@ -82,7 +82,7 @@ public class ContentService {
 		}
 	}
 
-	public void saveContent(User user, Content content) {
+	public Content saveContent(User user, Content content) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering saveContent");
@@ -108,7 +108,7 @@ public class ContentService {
 				// set high date
 				content.setEndDateMs(Long.MAX_VALUE);
 
-			contentDao.saveContent(content);
+			return contentDao.saveContent(content);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting saveContent");
@@ -147,6 +147,18 @@ public class ContentService {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering updateContent");
+			// convert from ISO 8601 format to Milliseconds
+			if (!Utils.isEmpty(content.getStartDateIso8601()))
+				content.setStartDateMs(javax.xml.bind.DatatypeConverter
+						.parseDateTime(content.getStartDateIso8601()).getTime()
+						.getTime());
+			if (!Utils.isEmpty(content.getEndDateIso8601()))
+				content.setEndDateMs(javax.xml.bind.DatatypeConverter
+						.parseDateTime(content.getEndDateIso8601()).getTime()
+						.getTime());
+			else
+				// set high date
+				content.setEndDateMs(Long.MAX_VALUE);
 			contentDao.updateContent(content);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -186,6 +198,16 @@ public class ContentService {
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting updateEnabled");
+		}
+	}
+	public void updateContentSize(Long id, Long size) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering updateContentSize");
+			contentDao.updateContentSize(id, size);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting updateContentSize");
 		}
 	}
 

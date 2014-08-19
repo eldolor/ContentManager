@@ -111,7 +111,8 @@
 
 						<div class="row">
 							<div class="large-12 columns">
-								<label>Enabled:</label>
+								<label><span data-tooltip class="has-tip"
+									title="Specify if the content group is enabled. This content group is enabled by default.">Enabled</span></label>
 							</div>
 						</div>
 						<div class="row">

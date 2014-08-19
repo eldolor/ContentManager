@@ -71,10 +71,28 @@
 								</div>
 							</div>
 						</div>
+						<div class="row">
+							<div class="large-12 columns">
+								<label><span data-tooltip class="has-tip"
+									title="Specify if you like the content to be auto-updated to devices over Wi-Fi Only. This is enabled by default.">Update
+										content over Wi-Fi only</span></label>
+							</div>
+						</div>
+						<div class="row">
+							<div class="large-12 columns">
+								<div class="switch radius">
+									<input id="application_update_over_wifi_only" type="checkbox"
+										checked="checked"> <label
+										for="application_update_over_wifi_only">Update content
+										over Wi-Fi only</label>
+								</div>
+							</div>
+						</div>
 
 						<div class="row">
 							<div class="large-12 columns">
-								<label>Enabled:</label>
+								<label><span data-tooltip class="has-tip"
+									title="Specify if the application is enabled. This application is enabled by default.">Enabled</span></label>
 							</div>
 						</div>
 						<div class="row">

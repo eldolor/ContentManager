@@ -63,6 +63,7 @@ public class Utils {
 		lContent.setTimeUpdatedMs(pContent.getTimeUpdatedMs());
 		lContent.setType(pContent.getType());
 		lContent.setUri(pContent.getUri());
+		lContent.setSizeInBytes(pContent.getSizeInBytes());
 		return lContent;
 
 	}

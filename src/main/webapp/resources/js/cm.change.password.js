@@ -54,6 +54,8 @@ function setup() {
 
 function changePassword() {
 	log("changePassword", "Entering");
+	 $('#progress_bar').show();
+	 $('.button').addClass('disabled');
 
 	try {
 		var userObj = {
@@ -71,7 +73,7 @@ function changePassword() {
 					processData : false,
 					dataType : "json",
 					contentType : "application/json",
-					async : false,
+					async : true,
 					statusCode : {
 						200 : function() {
 							$('#user_message').show();
@@ -85,6 +87,11 @@ function changePassword() {
 								.html(
 										'Unable to process the request. Please try again later');
 						$('#user_errors').show();
+					},
+					complete : function(xhr, textStatus) {
+						$('.meter').css("width", "100%");
+						$('.button').removeClass('disabled');
+						console.log(xhr.status);
 					}
 
 				});

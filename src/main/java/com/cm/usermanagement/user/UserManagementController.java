@@ -12,6 +12,9 @@ import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
@@ -24,10 +27,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.cm.accountmanagement.account.Account;
-import com.cm.accountmanagement.account.AccountService;
 import com.cm.admin.plan.CanonicalPlanName;
 import com.cm.config.Configuration;
+import com.cm.contentmanager.application.Application;
+import com.cm.contentmanager.application.ApplicationService;
+import com.cm.contentmanager.content.CanonicalContentType;
+import com.cm.contentmanager.content.Content;
+import com.cm.contentmanager.content.ContentService;
+import com.cm.contentmanager.contentgroup.ContentGroup;
+import com.cm.contentmanager.contentgroup.ContentGroupService;
 import com.cm.stripe.StripeCustomer;
 import com.cm.stripe.StripeCustomerService;
 import com.cm.usermanagement.user.transfer.ForgotPasswordRequest;
@@ -47,6 +55,12 @@ public class UserManagementController {
 	private ForgotPasswordEmailBuilder forgotPasswordEmailBuilder;
 	@Autowired
 	private StripeCustomerService stripeCustomerService;
+	@Autowired
+	private ApplicationService applicationService;
+	@Autowired
+	private ContentGroupService contentGroupService;
+	@Autowired
+	private ContentService contentService;
 
 	private static final Logger LOGGER = Logger
 			.getLogger(UserManagementController.class.getName());
@@ -76,6 +90,9 @@ public class UserManagementController {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering doSignup");
+
+			Utils.sleepFor(7000);
+
 			List<ValidationError> errors = validateOnCreate(pUser);
 			if (!errors.isEmpty()) {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -100,15 +117,185 @@ public class UserManagementController {
 				lUser.setTimeUpdatedTimeZoneOffsetMs(pUser
 						.getTimeUpdatedTimeZoneOffsetMs());
 
-				userService.signUpUser(lUser);
+				// new user created
+				User lDomainUser = userService.signUpUser(lUser);
+				// create the demo application
+				Application lApplication = createDemoApplication(lUser);
+				ContentGroup lContentGroup = createDemoContentGroup(
+						lDomainUser, lApplication);
+				createDemoContent(lDomainUser, lApplication, lContentGroup);
+
 				response.setStatus(HttpServletResponse.SC_CREATED);
 				return null;
 			}
+		} catch (Throwable t) {
+			LOGGER.log(Level.SEVERE, t.getMessage(), t);
+			List<ValidationError> errors = new ArrayList<ValidationError>();
+			ValidationError error = new ValidationError();
+			error.setCode("error");
+			error.setDescription("Unable to sign up. Please try again later");
+			errors.add(error);
+			LOGGER.log(Level.WARNING,
+					"Unable to sign up. Please try again later");
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			return errors;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting doSignup");
 		}
 
+	}
+
+	private Application createDemoApplication(User pUser) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering createDemoApplication");
+			Application lApplication = new Application();
+			lApplication.setAccountId(pUser.getAccountId());
+			lApplication
+					.setDescription("We've created a demo application for illustrative purposes only. The application contains a demo content group, and a few Image and Video type contents. The demo application is enabled by default, and is configured such that the users can only download the contents (images & videos) over a Wi-Fi network, and not over a Cellular Network. This helps conserve the cellular data usage.");
+			lApplication.setEnabled(true);
+			lApplication.setName("Demo Application");
+			long lTime = System.currentTimeMillis();
+			lApplication.setTimeCreatedMs(lTime);
+			lApplication.setTimeCreatedTimeZoneOffsetMs((long) TimeZone
+					.getDefault().getOffset(lTime));
+			lApplication.setUpdateOverWifiOnly(true);
+			lApplication.setUserId(pUser.getId());
+
+			// user is not logged in yet, was just created
+			lApplication = applicationService.saveApplication(pUser,
+					createTrackingId(pUser), lApplication);
+			return lApplication;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting createDemoApplication");
+		}
+
+	}
+
+	private ContentGroup createDemoContentGroup(User pUser,
+			Application pApplication) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering createDemoContentGroup");
+			ContentGroup lContentGroup = new ContentGroup();
+			lContentGroup.setAccountId(pUser.getAccountId());
+			lContentGroup
+					.setDescription("We've created a demo application for illustrative purposes only. The application contains a demo content group, and a few Image and Video type contents. The demo application is enabled by default, and is configured such that the users can only download the contents (images & videos) over a Wi-Fi network, and not over a Cellular Network. This helps conserve the cellular data usage.");
+			lContentGroup.setEnabled(true);
+			lContentGroup.setName("Demo Content Group");
+			long lTime = System.currentTimeMillis();
+			lContentGroup.setTimeCreatedMs(lTime);
+			lContentGroup.setTimeCreatedTimeZoneOffsetMs((long) TimeZone
+					.getDefault().getOffset(lTime));
+			lContentGroup.setUserId(pUser.getId());
+
+			lContentGroup.setApplicationId(pApplication.getId());
+
+			DateTime lDt = new DateTime();
+			DateTimeFormatter lFmt = ISODateTimeFormat.dateTime();
+			String lStartDateIso8601 = lFmt.print(lDt);
+			lContentGroup.setStartDateIso8601(lStartDateIso8601);
+
+			// set high date
+			lContentGroup.setEndDateMs(Long.MAX_VALUE);
+
+			lContentGroup = contentGroupService.saveContentGroup(pUser,
+					lContentGroup);
+			return lContentGroup;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting createDemoContentGroup");
+		}
+
+	}
+
+	private void createDemoContent(User pUser, Application pApplication,
+			ContentGroup pContentGroup) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering createDemoContent");
+			{
+				Content lContent = new Content();
+				lContent.setAccountId(pUser.getAccountId());
+				lContent.setDescription("We've created a demo application for illustrative purposes only. The application contains a demo content group, and a few Image and Video type contents. The demo application is enabled by default, and is configured such that the users can only download the contents (images & videos) over a Wi-Fi network, and not over a Cellular Network. This helps conserve the cellular data usage. Please upload any image of your choice.");
+				lContent.setEnabled(true);
+				lContent.setName("Demo Image - with no attached image");
+				long lTime = System.currentTimeMillis();
+				lContent.setTimeCreatedMs(lTime);
+				lContent.setTimeCreatedTimeZoneOffsetMs((long) TimeZone
+						.getDefault().getOffset(lTime));
+				lContent.setUserId(pUser.getId());
+				lContent.setApplicationId(pApplication.getId());
+				lContent.setContentGroupId(pContentGroup.getId());
+				lContent.setType(CanonicalContentType.IMAGE.getValue());
+
+				DateTime lDt = new DateTime();
+				DateTimeFormatter lFmt = ISODateTimeFormat.dateTime();
+				String lStartDateIso8601 = lFmt.print(lDt);
+				lContent.setStartDateIso8601(lStartDateIso8601);
+
+				// set high date
+				lContent.setEndDateMs(Long.MAX_VALUE);
+
+				lContent = contentService.saveContent(pUser, lContent);
+			}
+
+			{
+				Content lContent = new Content();
+				lContent.setAccountId(pUser.getAccountId());
+				lContent.setDescription("We've created a demo application for illustrative purposes only. The application contains a demo content group, and a few Image and Video type contents. The demo application is enabled by default, and is configured such that the users can only download the contents (images & videos) over a Wi-Fi network, and not over a Cellular Network. This helps conserve the cellular data usage. Please upload any video of your choice.");
+				lContent.setEnabled(true);
+				lContent.setName("Demo Video - with no attached video");
+				long lTime = System.currentTimeMillis();
+				lContent.setTimeCreatedMs(lTime);
+				lContent.setTimeCreatedTimeZoneOffsetMs((long) TimeZone
+						.getDefault().getOffset(lTime));
+				lContent.setUserId(pUser.getId());
+				lContent.setApplicationId(pApplication.getId());
+				lContent.setContentGroupId(pContentGroup.getId());
+				lContent.setType(CanonicalContentType.VIDEO.getValue());
+
+				DateTime lDt = new DateTime();
+				DateTimeFormatter lFmt = ISODateTimeFormat.dateTime();
+				String lStartDateIso8601 = lFmt.print(lDt);
+				lContent.setStartDateIso8601(lStartDateIso8601);
+
+				// set high date
+				lContent.setEndDateMs(Long.MAX_VALUE);
+
+				lContent = contentService.saveContent(pUser, lContent);
+			}
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting createDemoContentGroup");
+		}
+
+	}
+
+	private String createTrackingId(User pUser) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering createTrackingId");
+			Long lAccountId = pUser.getAccountId();
+
+			// include all deleted applications, to ensure that the tracking id
+			// of a deleted application is not reassigned.
+			List<Application> lApplications = applicationService
+					.getApplicationsByAccountId(lAccountId, true);
+
+			String lTrackingId = "AI_" + lAccountId + "_"
+					+ (lApplications.size() + 1); // the collection will have
+													// size 0 at first
+
+			return lTrackingId;
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting createTrackingId");
+		}
 	}
 
 	/**

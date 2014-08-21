@@ -181,6 +181,31 @@ class ContentDao {
 		}
 	}
 
+	List<Content> getAllContent(Long applicationId) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering getAllContent");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(Content.class);
+				q.setFilter("applicationId == applicationIdParam");
+				q.declareParameters("Long applicationIdParam");
+				Object[] _array = new Object[1];
+				_array[0] = applicationId;
+				return (List<Content>) q.executeWithArray(_array);
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting getAllContent");
+		}
+	}
+
 	void deleteContent(Long id, Long timeUpdatedMs,
 			Long timeUpdatedTimeZoneOffsetMs) {
 		try {

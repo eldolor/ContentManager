@@ -27,15 +27,11 @@ function setup() {
 		// deprecated valid & invalid
 		$('#signupForm').on('invalid', function() {
 			var invalid_fields = $(this).find('[data-invalid]');
-			console.log(invalid_fields);
+			log(invalid_fields);
 		}).on('valid', function() {
 			signup();
 		});
 
-		// $('#user_sign_up_submit_button').unbind();
-		// $('#user_sign_up_submit_button').bind('click', function() {
-		// signup();
-		// });
 		$('#user_sign_up_cancel_button').unbind();
 		$('#user_sign_up_cancel_button').bind('click', function() {
 			$('#user_sign_up_submit_button').unbind();
@@ -87,6 +83,9 @@ function signup() {
 		// $('#signup_errors').show();
 		// return;
 		// }
+		$('#progress_bar').show();
+		$('.button').addClass('disabled');
+
 		var lDate = new Date();
 		var lTimeCreated = lDate.getTime();
 
@@ -108,9 +107,10 @@ function signup() {
 			processData : false,
 			dataType : "json",
 			contentType : "application/json",
-			async : false,
+			async : true,
 			statusCode : {
 				201 : function() {
+
 					postSignupAutoLogin($('#userName').val(), $('#password')
 							.val());
 				},
@@ -126,6 +126,8 @@ function signup() {
 				}
 			},
 			complete : function(xhr, textStatus) {
+				$('.meter').css("width", "100%");
+				$('.button').removeClass('disabled');
 				console.log(xhr.status);
 			}
 		});

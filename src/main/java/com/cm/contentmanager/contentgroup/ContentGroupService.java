@@ -77,7 +77,7 @@ public class ContentGroupService {
 		}
 	}
 
-	public void saveContentGroup(User user, ContentGroup contentGroup) {
+	public ContentGroup saveContentGroup(User user, ContentGroup contentGroup) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering saveContentGroup");
@@ -102,7 +102,7 @@ public class ContentGroupService {
 				// set high date
 				contentGroup.setEndDateMs(Long.MAX_VALUE);
 
-			contentGroupDao.saveContentGroup(contentGroup);
+			return contentGroupDao.saveContentGroup(contentGroup);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting saveContentGroup");

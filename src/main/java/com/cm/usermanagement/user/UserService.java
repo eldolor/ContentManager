@@ -72,11 +72,11 @@ public class UserService {
 		userDao.saveUser(user);
 	}
 
-	public void signUpUser(User user) {
+	public User signUpUser(User user) {
 		// hard wired
 		if (user.getUsername().equals(User.DEFAULT_SUPER_ADMIN_USER_NAME))
 			user.setRole(User.ROLE_SUPER_ADMIN);
-		userDao.signUpUser(user);
+		return userDao.signUpUser(user);
 
 	}
 

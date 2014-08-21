@@ -415,7 +415,9 @@ function newContentGroup() {
 function createContentGroup() {
 	log("createContentGroup", "Entering");
 	try {
-		openWait();
+		$('#progress_bar').show();
+		$('.button').addClass('disabled');
+		
 		var _enabled;
 		if ($('#contentgroup_enabled').is(':checked')) {
 			_enabled = true;
@@ -452,7 +454,7 @@ function createContentGroup() {
 					processData : false,
 					dataType : "json",
 					contentType : "application/json",
-					async : false,
+					async : true,
 					statusCode : {
 						201 : function() {
 							$('#content_group_create').hide();
@@ -476,13 +478,14 @@ function createContentGroup() {
 									.html(
 											'Unable to process the request. Please try again later');
 							$('#contentgroup_errors').show();
+						},
+						complete : function(xhr, textStatus) {
+							$('.meter').css("width", "100%");
+							$('.button').removeClass('disabled');
+							console.log(xhr.status);
 						}
 					}
 				});
-		jqxhr.always(function() {
-			// close wait div
-			closeWait();
-		});
 
 		return false;
 	} catch (err) {
@@ -493,8 +496,10 @@ function createContentGroup() {
 }
 
 function updateContentGroup() {
-	openWait();
+
 	log("updateContentGroup", "Entering");
+	$('#progress_bar').show();
+	$('.button').addClass('disabled');
 	var _enabled;
 
 	if ($('#contentgroup_enabled').is(':checked')) {
@@ -526,7 +531,7 @@ function updateContentGroup() {
 					processData : false,
 					dataType : "json",
 					contentType : "application/json",
-					async : false,
+					async : true,
 					statusCode : {
 						200 : function() {
 							$('#content_group_create').hide();
@@ -550,13 +555,14 @@ function updateContentGroup() {
 									.html(
 											'Unable to process the request. Please try again later');
 							$('#contentgroup_errors').show();
+						},
+						complete : function(xhr, textStatus) {
+							$('.meter').css("width", "100%");
+							$('.button').removeClass('disabled');
+							console.log(xhr.status);
 						}
 					}
 				});
-		jqxhr.always(function() {
-			// close wait div
-			closeWait();
-		});
 
 		return false;
 	} catch (err) {

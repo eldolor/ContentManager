@@ -17,14 +17,14 @@ public class ContentGroupDao {
 	private static final Logger LOGGER = Logger.getLogger(ContentGroupDao.class
 			.getName());
 
-	public void saveContentGroup(ContentGroup contentGroup) {
+	public ContentGroup saveContentGroup(ContentGroup contentGroup) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering saveContentGroup");
 			PersistenceManager pm = null;
 			try {
 				pm = PMF.get().getPersistenceManager();
-				pm.makePersistent(contentGroup);
+				return pm.makePersistent(contentGroup);
 
 			} finally {
 				if (pm != null) {

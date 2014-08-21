@@ -182,9 +182,9 @@ public class ApplicationController {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return errors;
 			} else {
-				applicationService.saveApplication(
-						userService.getLoggedInUser(),
-						createTrackingId(application), application);
+				applicationService.saveApplication(userService
+						.getLoggedInUser(), createTrackingId(userService
+						.getLoggedInUser()), application);
 				response.setStatus(HttpServletResponse.SC_CREATED);
 				return null;
 			}
@@ -194,11 +194,11 @@ public class ApplicationController {
 		}
 	}
 
-	private String createTrackingId(Application application) {
+	private String createTrackingId(User pUser) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering createTrackingId");
-			Long lAccountId = userService.getLoggedInUser().getAccountId();
+			Long lAccountId = pUser.getAccountId();
 
 			// include all deleted applications, to ensure that the tracking id
 			// of a deleted application is not reassigned.

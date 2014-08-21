@@ -29,7 +29,6 @@
 <!-- End Custom -->
 
 
-
 </head>
 <body>
 	<jsp:include page="common.jsp"></jsp:include>
@@ -74,7 +73,8 @@
 						<div>&nbsp;</div>
 						<div class="row">
 							<div class="large-12 columns">
-								<span id="signup_errors" class="alert radius label" style="display: none"></span>
+								<span id="signup_errors" class="alert radius label"
+									style="display: none"></span>
 							</div>
 						</div>
 						<div>&nbsp;</div>
@@ -83,6 +83,13 @@
 								<button id="user_sign_up_submit_button" class="button">sign
 									up</button>
 								<a href="javascript:void(0);" id="user_sign_up_cancel_button">cancel</a>
+							</div>
+						</div>
+						<div class="row" id="progress_bar" style="display: none">
+							<div class="large-12 columns">
+								<div class="progress radius">
+									<span class="meter" style="width: 40%"></span>
+								</div>
 							</div>
 						</div>
 					</fieldset>
@@ -116,7 +123,8 @@
 					</form>
 					<div class="row">
 						<div class="large-12 columns">
-							<span id="login_errors" class="alert radius label" style="display: none"></span>
+							<span id="login_errors" class="alert radius label"
+								style="display: none"></span>
 						</div>
 					</div>
 					<div class="row">

@@ -104,7 +104,7 @@ public class ApplicationService {
 		}
 	}
 
-	public void saveApplication(User user, String trackingId,
+	public Application saveApplication(User user, String trackingId,
 			Application application) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -116,7 +116,7 @@ public class ApplicationService {
 			application.setTrackingId(trackingId);
 			application.setAccountId(user.getAccountId());
 
-			applicationDao.saveApplication(application);
+			return applicationDao.saveApplication(application);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting saveApplication");

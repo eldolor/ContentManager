@@ -125,6 +125,13 @@
 								</div>
 							</div>
 						</div>
+						<div class="row" id="progress_bar" style="display: none">
+							<div class="large-12 columns">
+								<div class="progress radius">
+									<span class="meter" style="width: 40%"></span>
+								</div>
+							</div>
+						</div>
 					</fieldset>
 				</form>
 			</div>

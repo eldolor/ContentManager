@@ -17,14 +17,14 @@ class ApplicationDao {
 	private static final Logger LOGGER = Logger.getLogger(ApplicationDao.class
 			.getName());
 
-	void saveApplication(Application application) {
+	Application saveApplication(Application application) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering saveApplication");
 			PersistenceManager pm = null;
 			try {
 				pm = PMF.get().getPersistenceManager();
-				pm.makePersistent(application);
+				return pm.makePersistent(application);
 
 			} finally {
 				if (pm != null) {

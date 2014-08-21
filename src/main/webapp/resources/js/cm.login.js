@@ -39,8 +39,7 @@ function setup() {
 			var invalid_fields = $(this).find('[data-invalid]');
 			console.log(invalid_fields);
 		}).on('valid', function() {
-			document.loginForm.submit();
-			// login();
+			login();
 		});
 		// forgot password
 		$('#user_forgot_password_errors').hide();
@@ -92,9 +91,22 @@ function setupBreadcrumbs() {
 		log("setupBreadcrumbs", "Exiting");
 	}
 }
-
 function login() {
 	log("login", "Entering");
+	try {
+
+		$('#progress_bar').show();
+		$('.button').addClass('disabled');
+		document.loginForm.submit();
+
+	} catch (err) {
+		handleError("login", err);
+	} finally {
+		log("login", "Exiting");
+	}
+}
+function loginAsync() {
+	log("loginAsync", "Entering");
 	try {
 
 		var loginObj = {
@@ -134,9 +146,9 @@ function login() {
 
 		return false;
 	} catch (err) {
-		handleError("login", err);
+		handleError("loginAsync", err);
 	} finally {
-		log("login", "Exiting");
+		log("loginAsync", "Exiting");
 	}
 }
 

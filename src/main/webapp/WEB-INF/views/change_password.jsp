@@ -26,7 +26,10 @@
 <script type="text/javascript" src="/resources/js/cm.change.password.js"></script>
 <!-- End Custom -->
 <script type="text/javascript">
-	var lIsRequestExpired = ${isRequestExpired};
+	var lIsRequestExpired = $
+	{
+		isRequestExpired
+	};
 </script>
 
 </head>
@@ -44,7 +47,8 @@
 				data-abide="ajax">
 				<fieldset>
 					<legend>Change Password</legend>
-					<input type="hidden" id="user_forgot_password_request_guid" name="user_forgot_password_request_guid" value="${guid}" />
+					<input type="hidden" id="user_forgot_password_request_guid"
+						name="user_forgot_password_request_guid" value="${guid}" />
 
 					<div>&nbsp;</div>
 					<div class="row">
@@ -82,7 +86,8 @@
 					<div>&nbsp;</div>
 					<div class="row">
 						<div class="large-12 columns">
-							<span id="user_errors" class="alert radius label" style="display: none"></span>
+							<span id="user_errors" class="alert radius label"
+								style="display: none"></span>
 						</div>
 					</div>
 
@@ -91,6 +96,13 @@
 						<div class="large-12 columns">
 							<button id="user_password_change_button" class="button radius">change
 								password</button>
+						</div>
+					</div>
+					<div class="row" id="progress_bar" style="display: none">
+						<div class="large-12 columns">
+							<div class="progress radius">
+								<span class="meter" style="width: 40%"></span>
+							</div>
 						</div>
 					</div>
 				</fieldset>

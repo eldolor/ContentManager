@@ -30,6 +30,16 @@ public class ContentService {
 				LOGGER.info("Exiting getAllContent");
 		}
 	}
+	public List<Content> getAllContent(Long applicationId) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering getAllContent");
+			return contentDao.getAllContent(applicationId);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting getAllContent");
+		}
+	}
 
 	public List<Content> getAllContent(Long applicationId, Long contentGroupId,
 			boolean deleted) {

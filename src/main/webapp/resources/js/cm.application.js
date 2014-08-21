@@ -465,7 +465,8 @@ function newApplication() {
 function createApplication() {
 	log("createApplication", "Entering");
 	try {
-		openWait();
+		$('#progress_bar').show();
+		$('.button').addClass('disabled');
 		var _enabled;
 		if ($('#application_enabled').is(':checked')) {
 			_enabled = true;
@@ -507,7 +508,7 @@ function createApplication() {
 					processData : false,
 					dataType : "json",
 					contentType : "application/json",
-					async : false,
+					async : true,
 					statusCode : {
 						201 : function() {
 							$('#application_create').hide();
@@ -531,13 +532,15 @@ function createApplication() {
 									.html(
 											'Unable to process the request. Please try again later');
 							$('#application_errors').show();
+						},
+						complete : function(xhr, textStatus) {
+							$('.meter').css("width", "100%");
+							$('.button').removeClass('disabled');
+							console.log(xhr.status);
 						}
 					}
 				});
-		jqxhr.always(function() {
-			// close wait div
-			closeWait();
-		});
+		
 
 		return false;
 	} catch (err) {
@@ -548,8 +551,10 @@ function createApplication() {
 }
 
 function updateApplication() {
-	openWait();
+	
 	log("updateApplication", "Entering");
+	$('#progress_bar').show();
+	$('.button').addClass('disabled');
 	var _enabled;
 
 	if ($('#application_enabled').is(':checked')) {
@@ -584,7 +589,7 @@ function updateApplication() {
 					processData : false,
 					dataType : "json",
 					contentType : "application/json",
-					async : false,
+					async : true,
 					statusCode : {
 						200 : function() {
 							$('#application_create').hide();
@@ -608,13 +613,15 @@ function updateApplication() {
 									.html(
 											'Unable to process the request. Please try again later');
 							$('#application_errors').show();
+						},
+						complete : function(xhr, textStatus) {
+							$('.meter').css("width", "100%");
+							$('.button').removeClass('disabled');
+							console.log(xhr.status);
 						}
 					}
 				});
-		jqxhr.always(function() {
-			// close wait div
-			closeWait();
-		});
+		
 
 		return false;
 	} catch (err) {

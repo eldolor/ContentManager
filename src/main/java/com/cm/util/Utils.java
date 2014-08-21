@@ -27,6 +27,21 @@ public class Utils {
 	private static final Logger LOGGER = Logger
 			.getLogger(Utils.class.getName());
 
+	public static void sleepFor(long ms) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Begin sleeping for " + ms + " ms");
+			Thread.sleep(ms);
+		} catch (InterruptedException e1) {
+			// Activity finished before we complete - exit.
+			Thread.currentThread().interrupt();
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Woke up after " + ms + " ms");
+		}
+
+	}
+
 	public static boolean isEmpty(String string) {
 		return ((string != null) && (!string.equals(""))) ? false : true;
 	}

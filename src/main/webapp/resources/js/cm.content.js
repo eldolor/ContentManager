@@ -595,7 +595,8 @@ function newContent() {
 function createContent() {
 	log("createContent", "Entering");
 	try {
-		openWait();
+		$('#progress_bar').show();
+		$('.button').addClass('disabled');
 		var lEnabled;
 		if ($('#content_enabled').is(':checked')) {
 			lEnabled = true;
@@ -639,7 +640,7 @@ function createContent() {
 					processData : false,
 					dataType : "json",
 					contentType : "application/json",
-					async : false,
+					async : true,
 					statusCode : {
 						201 : function() {
 							$('#content_create').hide();
@@ -664,6 +665,11 @@ function createContent() {
 								.html(
 										'Unable to process the request. Please try again later');
 						$('#content_errors').show();
+					},
+					complete : function(xhr, textStatus) {
+						$('.meter').css("width", "100%");
+						$('.button').removeClass('disabled');
+						console.log(xhr.status);
 					}
 				});
 		jqxhr.always(function() {
@@ -680,8 +686,9 @@ function createContent() {
 }
 
 function updateContent() {
-	openWait();
 	log("updateContent", "Entering");
+	$('#progress_bar').show();
+	$('.button').addClass('disabled');
 	var lEnabled;
 	if ($('#content_enabled').is(':checked')) {
 		lEnabled = true;
@@ -720,7 +727,7 @@ function updateContent() {
 					processData : false,
 					dataType : "json",
 					contentType : "application/json",
-					async : false,
+					async : true,
 					statusCode : {
 						200 : function() {
 							$('#content_create').hide();
@@ -745,6 +752,11 @@ function updateContent() {
 								.html(
 										'Unable to process the request. Please try again later');
 						$('#content_errors').show();
+					},
+					complete : function(xhr, textStatus) {
+						$('.meter').css("width", "100%");
+						$('.button').removeClass('disabled');
+						console.log(xhr.status);
 					}
 				});
 		jqxhr.always(function() {

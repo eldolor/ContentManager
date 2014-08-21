@@ -118,7 +118,7 @@ class UserDao {
 		}
 	}
 
-	void signUpUser(User user) {
+	User signUpUser(User user) {
 		PersistenceManager pm = null;
 		Transaction tx = null;
 		try {
@@ -140,9 +140,11 @@ class UserDao {
 			// set the account id
 			user.setAccountId(lAccount.getId());
 			// save the user
-			pm.makePersistent(user);
+			User lUser = pm.makePersistent(user);
 
 			tx.commit();
+			
+			return lUser;
 
 		} finally {
 			if (tx.isActive()) {

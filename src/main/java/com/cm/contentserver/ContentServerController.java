@@ -49,7 +49,7 @@ public class ContentServerController {
 	private ContentGroupService contentGroupService;
 	@Autowired
 	private ContentService contentService;
-	
+
 	private BlobstoreService mBlobstoreFactory = BlobstoreServiceFactory
 			.getBlobstoreService();
 	private final BlobInfoFactory mBlobInfoFactory = new BlobInfoFactory();
@@ -115,67 +115,6 @@ public class ContentServerController {
 		}
 	}
 
-	/**
-	 * Unsecured URI
-	 * 
-	 * @param trackingId
-	 * @param gcmRegistrationId
-	 * @param lastKnownTimestamp
-	 * @param response
-	 */
-	@RequestMapping(value = "/handshake/{trackingId}/{gcmRegistrationId}/{lastKnownTimestamp}", method = RequestMethod.GET)
-	public void doHandshake(@PathVariable String trackingId,
-			@PathVariable String gcmRegistrationId,
-			@PathVariable Long lastKnownTimestamp, HttpServletResponse response) {
-		try {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering doHandshake");
-
-			long lLastKnownTimestamp = 0L;
-
-			try {
-				if (mCache != null) {
-					lLastKnownTimestamp = (Long) mCache.get(trackingId);
-					if (LOGGER.isLoggable(Level.INFO))
-						LOGGER.info("Memcache lookup: " + lLastKnownTimestamp);
-				}
-			} catch (Throwable t) {
-				LOGGER.log(Level.SEVERE, "Unable to fetch from Memcache", t);
-			}
-
-			// not in cache; create and pin
-			if (lLastKnownTimestamp == 0L) {
-				if (LOGGER.isLoggable(Level.INFO))
-					LOGGER.info("Last known timestamp not found in Memcache. Triggering message to update...");
-				Queue queue = QueueFactory.getQueue("contentqueue");
-				TaskOptions taskOptions = TaskOptions.Builder
-						.withUrl(
-								"/tasks/contentserver/updatelastknowntimestamp/"
-										+ trackingId)
-						.param("trackingId", trackingId).method(Method.POST);
-				queue.add(taskOptions);
-
-			}
-			// send the GCM message to the device; greater than or equal to in
-			// case both values are zero (uninitialized)
-			if (lLastKnownTimestamp >= lastKnownTimestamp) {
-				Queue queue = QueueFactory.getQueue("gcmqueue");
-				TaskOptions taskOptions = TaskOptions.Builder
-						.withUrl(
-								"/tasks/gcm/sendcontentlistmessages/"
-										+ trackingId)
-						.param("trackingId", trackingId).method(Method.POST);
-				queue.add(taskOptions);
-			}
-
-			// always
-			response.setStatus(HttpServletResponse.SC_OK);
-		} finally {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting doHandshake");
-		}
-	}
-
 	@RequestMapping(value = "/contentserver/handshake", method = RequestMethod.POST, consumes = "application/json")
 	public void doHandshakePost(
 			@RequestBody com.cm.contentserver.transfer.Handshake pHandshake,
@@ -184,14 +123,63 @@ public class ContentServerController {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering doHandshake");
 
-			long lLastKnownTimestamp = 0L;
+			Boolean lChangesStaged = null;
 
+			try {
+				if (mCache != null) {
+					lChangesStaged = (Boolean) mCache.get(pHandshake
+							.getTrackingId() + "changes_staged");
+					if (LOGGER.isLoggable(Level.INFO))
+						LOGGER.info("Memcache lookup: " + lChangesStaged);
+
+				}
+			} catch (Throwable t) {
+				LOGGER.log(Level.SEVERE, "Unable to fetch from Memcache", t);
+			}
+
+			// changes have been staged. Do not auto-update the devices
+			if (lChangesStaged != null && lChangesStaged == true) {
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("Memcache lookup: Changes have been staged for "
+							+ pHandshake.getTrackingId()
+							+ ". Not auto-updating the devices");
+				response.setStatus(HttpServletResponse.SC_OK);
+				return;
+			} else {
+				// double check by looking up the database as the value in
+				// memcache might have been purged;
+				Application lApplication = applicationService
+						.getApplicationByTrackingId(pHandshake.getTrackingId(),
+								true/**
+						 * included deleted application, as that
+						 * might have been the change
+						 **/
+						);
+				if (lApplication != null) {
+					if (lApplication.getChangesStaged()) {
+						LOGGER.warning("DATABASE LOOKUP: Changes have been staged for "
+								+ pHandshake.getTrackingId()
+								+ ". Not auto-updating the devices");
+						mCache.put(pHandshake.getTrackingId()
+								+ "changes_staged", true /** then update memcache **/
+						);
+						if (LOGGER.isLoggable(Level.INFO))
+							LOGGER.info("updating memcache");
+						response.setStatus(HttpServletResponse.SC_OK);
+						return;
+					}
+				}
+
+			}
+
+			long lLastKnownTimestamp = 0L;
 			try {
 				if (mCache != null) {
 					lLastKnownTimestamp = (Long) mCache.get(pHandshake
 							.getTrackingId());
 					if (LOGGER.isLoggable(Level.INFO))
 						LOGGER.info("Memcache lookup: " + lLastKnownTimestamp);
+
 				}
 			} catch (Throwable t) {
 				LOGGER.log(Level.SEVERE, "Unable to fetch from Memcache", t);
@@ -232,7 +220,6 @@ public class ContentServerController {
 		}
 	}
 
-
 	/**
 	 * Access to this API is unsecured
 	 * 
@@ -265,7 +252,7 @@ public class ContentServerController {
 		}
 		return null;
 	}
-	
+
 	@RequestMapping(value = "/contentserver/dropbox", method = RequestMethod.POST, consumes = "application/json")
 	public @ResponseBody
 	String doServePost(@RequestParam String key, HttpServletResponse response) {
@@ -291,6 +278,7 @@ public class ContentServerController {
 		}
 		return null;
 	}
+
 	@RequestMapping(value = "/tasks/contentserver/updatelastknowntimestamp/{trackingId}", method = RequestMethod.POST)
 	public void updateLastKnownTimestamp(@PathVariable String trackingId,
 			HttpServletResponse response) {

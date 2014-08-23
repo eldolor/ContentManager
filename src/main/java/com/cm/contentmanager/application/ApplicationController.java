@@ -16,11 +16,16 @@
 package com.cm.contentmanager.application;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletResponse;
+
+import net.sf.jsr107cache.Cache;
+import net.sf.jsr107cache.CacheFactory;
+import net.sf.jsr107cache.CacheManager;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -53,6 +58,19 @@ public class ApplicationController {
 
 	private static final Logger LOGGER = Logger
 			.getLogger(ApplicationController.class.getName());
+
+	private Cache mCache;
+
+	public ApplicationController() {
+		super();
+		try {
+			CacheFactory cacheFactory = CacheManager.getInstance()
+					.getCacheFactory();
+			mCache = cacheFactory.createCache(Collections.emptyMap());
+		} catch (Throwable t) {
+			LOGGER.log(Level.SEVERE, "Memcache not initialized!", t);
+		}
+	}
 
 	/**
 	 * @param model
@@ -255,6 +273,19 @@ public class ApplicationController {
 				LOGGER.info("Entering markChangesStaged");
 
 			applicationService.updateChangesStaged(applicationId, true);
+			String lTrackingId = applicationService.getApplication(applicationId).getTrackingId();
+			
+			// update memcache
+			try {
+				if (mCache != null) {
+					mCache.put(lTrackingId + "changes_staged", true);
+					if (LOGGER.isLoggable(Level.INFO))
+						LOGGER.info("updating memcache");
+				}
+			} catch (Throwable t) {
+				LOGGER.log(Level.SEVERE, "Unable to update Memcache", t);
+			}
+
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting markChangesStaged");
@@ -262,22 +293,32 @@ public class ApplicationController {
 		}
 	}
 
-	@RequestMapping(value = "/secured/pushchanges/{trackingId}", method = RequestMethod.POST)
-	public void pushChanges(@PathVariable String trackingId,
+	@RequestMapping(value = "/secured/pushchanges/{applicationId}", method = RequestMethod.POST)
+	public void pushChanges(@PathVariable Long applicationId,
 			HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering pushChanges");
 			Application lApplication = applicationService
-					.getApplicationByTrackingId(trackingId, false);
+					.getApplication(applicationId);
 			if (lApplication == null) {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-				LOGGER.warning("No application found for tracking id "
-						+ trackingId);
+				LOGGER.warning("No application found for id " + applicationId);
 				return;
 			}
 			applicationService.updateChangesStaged(lApplication.getId(), false);
-			Utils.triggerSendContentListMessage(trackingId);
+			Utils.triggerSendContentListMessage(lApplication.getTrackingId());
+			// remove from memcache
+			try {
+				if (mCache != null) {
+					mCache.remove(lApplication.getTrackingId() + "changes_staged");
+					if (LOGGER.isLoggable(Level.INFO))
+						LOGGER.info("removed from memcache");
+				}
+			} catch (Throwable t) {
+				LOGGER.log(Level.SEVERE, "Unable to remove from Memcache", t);
+			}
+
 			response.setStatus(HttpServletResponse.SC_OK);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))

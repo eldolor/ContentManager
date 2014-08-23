@@ -18,69 +18,37 @@ public class ContentGroupService {
 	private static final Logger LOGGER = Logger
 			.getLogger(ContentGroupService.class.getName());
 
-	public List<ContentGroup> getContentGroupsByApplicationId(Long applicationId) {
+	public List<ContentGroup> get(Long applicationId, boolean includeDeleted) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering getAllContentGroups");
-			List<ContentGroup> contentGroups = contentGroupDao
-					.getContentGroupsByApplicationId(applicationId);
+				LOGGER.info("Entering get");
+			List<ContentGroup> contentGroups = contentGroupDao.get(
+					applicationId, includeDeleted);
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Returning " + contentGroups.size()
 						+ " content groups");
 			return contentGroups;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting getAllContentGroups");
+				LOGGER.info("Exiting get");
 		}
 	}
 
-	public List<ContentGroup> getContentGroupsByUserId(Long userId) {
+	public ContentGroup get(Long id) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering getContentGroupsByUserId");
-			List<ContentGroup> contentGroups = contentGroupDao
-					.getContentGroupsByUserId(userId);
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Returning " + contentGroups.size()
-						+ " content groups");
-			return contentGroups;
+				LOGGER.info("Entering get");
+			return contentGroupDao.get(id);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting getContentGroupsByUserId");
+				LOGGER.info("Exiting get");
 		}
 	}
 
-	public List<ContentGroup> getContentGroupsByAccountId(Long accountId) {
+	public ContentGroup save(User user, ContentGroup contentGroup) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering getContentGroupsByAccountId");
-			List<ContentGroup> contentGroups = contentGroupDao
-					.getContentGroupsByAccountId(accountId);
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Returning " + contentGroups.size()
-						+ " content groups");
-			return contentGroups;
-		} finally {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting getContentGroupsByAccountId");
-		}
-	}
-
-	public ContentGroup getContentGroup(Long id) {
-		try {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering getContentGroup");
-			return contentGroupDao.getContentGroup(id);
-		} finally {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting getContentGroup");
-		}
-	}
-
-	public ContentGroup saveContentGroup(User user, ContentGroup contentGroup) {
-		try {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering saveContentGroup");
+				LOGGER.info("Entering save");
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Setting user and account ids for user "
 						+ user.getUsername());
@@ -102,45 +70,45 @@ public class ContentGroupService {
 				// set high date
 				contentGroup.setEndDateMs(Long.MAX_VALUE);
 
-			return contentGroupDao.saveContentGroup(contentGroup);
+			return contentGroupDao.save(contentGroup);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting saveContentGroup");
+				LOGGER.info("Exiting save");
 		}
 	}
 
-	public void deleteContentGroup(Long id, Long timeUpdatedMs,
+	public void delete(Long id, Long timeUpdatedMs,
 			Long timeUpdatedTimeZoneOffsetMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering deleteContentGroup");
-			contentGroupDao.deleteContentGroup(id, timeUpdatedMs,
+				LOGGER.info("Entering delete");
+			contentGroupDao.delete(id, timeUpdatedMs,
 					timeUpdatedTimeZoneOffsetMs);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting deleteContentGroup");
+				LOGGER.info("Exiting delete");
 		}
 
 	}
 
-	public void restoreContentGroup(Long id, Long timeUpdatedMs,
+	public void restore(Long id, Long timeUpdatedMs,
 			Long timeUpdatedTimeZoneOffsetMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering restoreContentGroup");
-			contentGroupDao.restoreContentGroup(id, timeUpdatedMs,
+			contentGroupDao.restore(id, timeUpdatedMs,
 					timeUpdatedTimeZoneOffsetMs);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting restoreContentGroup");
+				LOGGER.info("Exiting restore");
 		}
 
 	}
 
-	public void updateContentGroup(ContentGroup contentGroup) {
+	public void update(ContentGroup contentGroup) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering updateContentGroup");
+				LOGGER.info("Entering update");
 			// convert from ISO 8601 format to Milliseconds
 			if (!Utils.isEmpty(contentGroup.getStartDateIso8601()))
 				contentGroup.setStartDateMs(javax.xml.bind.DatatypeConverter
@@ -153,10 +121,10 @@ public class ContentGroupService {
 			else
 				// set high date
 				contentGroup.setEndDateMs(Long.MAX_VALUE);
-			contentGroupDao.updateContentGroup(contentGroup);
+			contentGroupDao.update(contentGroup);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting updateContentGroup");
+				LOGGER.info("Exiting update");
 		}
 	}
 

@@ -200,8 +200,14 @@ function handleDisplayApplications_Callback(pApplications) {
 					+ lApplication.id
 					+ ")\">edit</a></li> <li><a class=\"small\" href=\"javascript:void(0)\" onclick=\"deleteApplication("
 					+ lApplication.id + ")\">delete</a></li></ul>";
-			lInnerHtml += "<span id=\"application_trackingid\" class=\"secondary radius label\">Application Id: "
-					+ lApplication.trackingId + "</span>";
+			lInnerHtml += "<p><span id=\"application_trackingid\" class=\"secondary radius label\">Application Id: "
+					+ lApplication.trackingId + "</span></p>";
+			// log(JSON.stringify(lApplication));
+			if (lApplication.changesStaged) {
+				lInnerHtml += "<p><a href=\"javascript:void(0);\" onclick=\"pushChangestoHandsets('"
+						+ lApplication.trackingId
+						+ "')\" class=\"button tiny alert\">Push Changes to Handsets</a></p>";
+			}
 			lInnerHtml += "</div></div><hr>";
 		}
 
@@ -213,7 +219,48 @@ function handleDisplayApplications_Callback(pApplications) {
 		log("handleDisplayApplications_Callback", "Exiting");
 	}
 }
+function pushChangestoHandsets(pTrackingId) {
+	// load entry info via ajax
+	log("pushChangestoHandsets", "Entering");
+	try {
+		var jqxhr = $.ajax({
+			url : "/secured/pushchanges/" + pTrackingId,
+			type : "POST",
+			processData : false,
+			dataType : "json",
+			contentType : "application/json",
+			async : true,
+			statusCode : {
+				200 : function() {
+					location.reload();
+				},
+				400 : function(text) {
+					try {
+						log("No application found for tracking id "
+								+ pTrackingId);
+					} catch (err) {
+						handleError("pushChangestoHandsets", err);
+					}
+				},
+				error : function(xhr, textStatus, errorThrown) {
+					console.log(errorThrown);
+				},
+				complete : function(xhr, textStatus) {
+					console.log(xhr.status);
+				}
+			}
+		});
 
+		return false;
+
+	} catch (err) {
+		handleError("pushChangestoHandsets", err);
+	} finally {
+
+		log("pushChangestoHandsets", "Exiting");
+	}
+
+}
 function displayContentGroups(pApplicationId) {
 	// load entry info via ajax
 	log("displayContentGroups", "Entering");
@@ -540,7 +587,6 @@ function createApplication() {
 						}
 					}
 				});
-		
 
 		return false;
 	} catch (err) {
@@ -551,7 +597,7 @@ function createApplication() {
 }
 
 function updateApplication() {
-	
+
 	log("updateApplication", "Entering");
 	$('#progress_bar').show();
 	$('.button').addClass('disabled');
@@ -621,7 +667,6 @@ function updateApplication() {
 						}
 					}
 				});
-		
 
 		return false;
 	} catch (err) {

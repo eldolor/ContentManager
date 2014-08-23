@@ -10,12 +10,9 @@
 		secured-annotations="enabled" />
 	<security:http pattern="/resources/**" security="none" />
 	<security:http pattern="/login**" security="none" />
-	<security:http pattern="/dropbox**" security="none" />
 	<security:http pattern="/contentserver**" security="none" />
-	<security:http pattern="/eventtracker**" security="none" />
 	<security:http pattern="/gcm**" security="none" />
 	<security:http pattern="/contentstats**" security="none" />
-	<security:http pattern="/handshake**" security="none" />
 	
 
 	<security:http auto-config="true" disable-url-rewriting="true">
@@ -48,8 +45,8 @@
 		<security:intercept-url pattern="/stripe/**"
 			access="ROLE_SUPER_ADMIN, 
 			ROLE_ADMIN, ROLE_USER" />
-		<security:intercept-url pattern="/**"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<!-- <security:intercept-url pattern="/**"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" /> -->
 		<security:anonymous granted-authority="IS_AUTHENTICATED_ANONYMOUSLY" />
 
 		<!-- Override default login and logout pages -->

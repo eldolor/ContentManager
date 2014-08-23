@@ -42,12 +42,13 @@ public class ContentServerService {
 
 			if (lApplication != null && (!lApplication.isDeleted())
 					&& (lApplication.isEnabled())) {
+				// get all deleted as well
 				List<ContentGroup> lContentGroups = filterContentGroupByEffectiveDate(contentGroupService
-						.getContentGroupsByApplicationId(lApplicationId));
+						.get(lApplicationId, false));
 
 				for (ContentGroup lContentGroup : lContentGroups) {
 					lContents.addAll(validateContent(contentService
-							.getAllContent(lApplicationId,
+							.get(lApplicationId,
 									lContentGroup.getId(), false, true)));
 				}
 
@@ -83,7 +84,7 @@ public class ContentServerService {
 
 	private Long resolveApplicationId(String trackingId) {
 		Application lApplication = applicationService
-				.getApplicationByTrackingId(trackingId);
+				.getApplicationByTrackingId(trackingId, false);
 		// TODO: hard-wired for now
 		return lApplication.getId();
 	}

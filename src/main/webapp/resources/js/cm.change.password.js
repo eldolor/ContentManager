@@ -54,8 +54,8 @@ function setup() {
 
 function changePassword() {
 	log("changePassword", "Entering");
-	 $('#progress_bar').show();
-	 $('.button').addClass('disabled');
+	$('#progress_bar').show();
+	$('.button').addClass('disabled');
 
 	try {
 		var userObj = {
@@ -91,6 +91,8 @@ function changePassword() {
 					complete : function(xhr, textStatus) {
 						$('.meter').css("width", "100%");
 						$('.button').removeClass('disabled');
+						$('#changePasswordForm').trigger("reset");
+
 						console.log(xhr.status);
 					}
 

@@ -91,8 +91,6 @@ public class UserManagementController {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering doSignup");
 
-			Utils.sleepFor(7000);
-
 			List<ValidationError> errors = validateOnCreate(pUser);
 			if (!errors.isEmpty()) {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -201,7 +199,7 @@ public class UserManagementController {
 			// set high date
 			lContentGroup.setEndDateMs(Long.MAX_VALUE);
 
-			lContentGroup = contentGroupService.saveContentGroup(pUser,
+			lContentGroup = contentGroupService.save(pUser,
 					lContentGroup);
 			return lContentGroup;
 		} finally {
@@ -239,7 +237,7 @@ public class UserManagementController {
 				// set high date
 				lContent.setEndDateMs(Long.MAX_VALUE);
 
-				lContent = contentService.saveContent(pUser, lContent);
+				lContent = contentService.save(pUser, lContent);
 			}
 
 			{
@@ -265,7 +263,7 @@ public class UserManagementController {
 				// set high date
 				lContent.setEndDateMs(Long.MAX_VALUE);
 
-				lContent = contentService.saveContent(pUser, lContent);
+				lContent = contentService.save(pUser, lContent);
 			}
 
 		} finally {

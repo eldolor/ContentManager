@@ -25,7 +25,7 @@
 <script>
 function initpage()
 {
-	var _url = "/dropbox/" + "${adurl}";
+	var _url = "/contentserver/dropbox/" + "${adurl}";
 	var _adtype = "${adtype}";
 	
 	document.title = "${adtitle}";

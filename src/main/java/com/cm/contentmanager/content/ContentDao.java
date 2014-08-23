@@ -9,6 +9,7 @@ import javax.jdo.Query;
 
 import org.springframework.stereotype.Component;
 
+import com.cm.contentmanager.contentgroup.ContentGroup;
 import com.cm.util.PMF;
 
 @Component
@@ -16,10 +17,10 @@ class ContentDao {
 	private static final Logger LOGGER = Logger.getLogger(ContentDao.class
 			.getName());
 
-	Content saveContent(Content content) {
+	Content save(Content content) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering saveContent");
+				LOGGER.info("Entering save");
 			PersistenceManager pm = null;
 			try {
 				pm = PMF.get().getPersistenceManager();
@@ -33,14 +34,14 @@ class ContentDao {
 
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting saveContent");
+				LOGGER.info("Exiting save");
 		}
 	}
 
-	Content getContent(Long id) {
+	Content get(Long id) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering getContent");
+				LOGGER.info("Entering get");
 			PersistenceManager pm = null;
 
 			try {
@@ -55,15 +56,15 @@ class ContentDao {
 			}
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting getContent");
+				LOGGER.info("Exiting get");
 		}
 	}
 
-	List<Content> getAllContent(Long applicationId, Long contentGroupId,
+	List<Content> get(Long applicationId, Long contentGroupId,
 			boolean deleted, boolean enabled) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering getAllContent");
+				LOGGER.info("Entering get");
 			PersistenceManager pm = null;
 
 			try {
@@ -85,15 +86,15 @@ class ContentDao {
 			}
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting getAllContent");
+				LOGGER.info("Exiting get");
 		}
 	}
 
-	List<Content> getAllContent(Long applicationId, Long contentGroupId,
+	List<Content> get(Long applicationId, Long contentGroupId,
 			boolean deleted) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering getAllContent");
+				LOGGER.info("Entering get");
 			PersistenceManager pm = null;
 
 			try {
@@ -114,15 +115,15 @@ class ContentDao {
 			}
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting getAllContent");
+				LOGGER.info("Exiting get");
 		}
 	}
 
-	List<Content> getAllContent(Long applicationId, Long contentGroupId,
+	List<Content> get(Long applicationId, Long contentGroupId,
 			String type, boolean deleted, boolean enabled) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering getAllContent");
+				LOGGER.info("Entering get");
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("contentGroupId: " + contentGroupId + " Type: "
 						+ type);
@@ -149,14 +150,14 @@ class ContentDao {
 			}
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting getAllContent");
+				LOGGER.info("Exiting get");
 		}
 	}
 
-	List<Content> getAllContent(boolean deleted, boolean enabled) {
+	List<Content> get(boolean deleted, boolean enabled) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering getAllContent");
+				LOGGER.info("Entering get");
 			PersistenceManager pm = null;
 
 			try {
@@ -177,24 +178,33 @@ class ContentDao {
 			}
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting getAllContent");
+				LOGGER.info("Exiting get");
 		}
 	}
 
-	List<Content> getAllContent(Long applicationId) {
+	List<Content> get(Long applicationId, boolean includeDeleted) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering getAllContent");
+				LOGGER.info("Entering get");
 			PersistenceManager pm = null;
 
 			try {
 				pm = PMF.get().getPersistenceManager();
 				Query q = pm.newQuery(Content.class);
-				q.setFilter("applicationId == applicationIdParam");
-				q.declareParameters("Long applicationIdParam");
-				Object[] _array = new Object[1];
-				_array[0] = applicationId;
-				return (List<Content>) q.executeWithArray(_array);
+				if (includeDeleted) {
+					q.setFilter("applicationId == applicationIdParam");
+					q.declareParameters("Long applicationIdParam");
+					q.setOrdering("timeUpdatedMs desc");
+					return (List<Content>) q.execute(applicationId);
+
+				} else {
+					q.setFilter("applicationId == applicationIdParam && deleted == deletedParam");
+					q.declareParameters("Long applicationIdParam, Boolean deletedParam");
+					q.setOrdering("timeUpdatedMs desc");
+					return (List<Content>) q.execute(applicationId,
+							Boolean.valueOf(false));
+				}
+
 			} finally {
 				if (pm != null) {
 					pm.close();
@@ -202,15 +212,15 @@ class ContentDao {
 			}
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting getAllContent");
+				LOGGER.info("Exiting get");
 		}
 	}
 
-	void deleteContent(Long id, Long timeUpdatedMs,
+	void delete(Long id, Long timeUpdatedMs,
 			Long timeUpdatedTimeZoneOffsetMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering deleteContent");
+				LOGGER.info("Entering delete");
 			PersistenceManager pm = null;
 
 			try {
@@ -232,15 +242,15 @@ class ContentDao {
 			}
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting deleteContent");
+				LOGGER.info("Exiting delete");
 		}
 	}
 
-	void restoreContent(Long id, Long timeUpdatedMs,
+	void restore(Long id, Long timeUpdatedMs,
 			Long timeUpdatedTimeZoneOffsetMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering restoreContent");
+				LOGGER.info("Entering restore");
 			PersistenceManager pm = null;
 
 			try {
@@ -262,15 +272,15 @@ class ContentDao {
 			}
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting restoreContent");
+				LOGGER.info("Exiting restore");
 		}
 	}
 
-	void deleteAllContent(Long applicationId, Long contentGroupId,
+	void delete(Long applicationId, Long contentGroupId,
 			Long timeUpdatedMs, Long timeUpdatedTimeZoneOffsetMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering deleteAllContent");
+				LOGGER.info("Entering delete");
 			PersistenceManager pm = null;
 
 			try {
@@ -296,14 +306,14 @@ class ContentDao {
 			}
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting deleteAllContent");
+				LOGGER.info("Exiting delete");
 		}
 	}
 
-	void updateContent(Content content) {
+	void update(Content content) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering updateContent");
+				LOGGER.info("Entering update");
 			PersistenceManager pm = null;
 
 			try {
@@ -342,7 +352,7 @@ class ContentDao {
 			}
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting updateContent");
+				LOGGER.info("Exiting update");
 		}
 	}
 

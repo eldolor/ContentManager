@@ -40,6 +40,9 @@ public class Application implements Serializable {
 	private Boolean deleted = false;
 
 	@Persistent
+	private Boolean changesStaged = false;
+
+	@Persistent
 	private Long timeCreatedMs;
 	@Persistent
 	private Long timeCreatedTimeZoneOffsetMs;
@@ -150,6 +153,14 @@ public class Application implements Serializable {
 
 	public void setAccountId(Long accountId) {
 		this.accountId = accountId;
+	}
+
+	public Boolean getChangesStaged() {
+		return changesStaged;
+	}
+
+	public void setChangesStaged(Boolean changesStaged) {
+		this.changesStaged = changesStaged;
 	}
 
 }

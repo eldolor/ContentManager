@@ -135,8 +135,8 @@ function getLoggedInUser() {
 
 function changePassword() {
 	log("changePassword", "Entering");
-	 $('#progress_bar').show();
-	 $('.button').addClass('disabled');
+	$('#progress_bar').show();
+	$('.button').addClass('disabled');
 	try {
 		var userObj = {
 			// get it from global variable
@@ -181,6 +181,8 @@ function changePassword() {
 					complete : function(xhr, textStatus) {
 						$('.meter').css("width", "100%");
 						$('.button').removeClass('disabled');
+						$('#changePasswordForm').trigger("reset");
+
 						console.log(xhr.status);
 					}
 

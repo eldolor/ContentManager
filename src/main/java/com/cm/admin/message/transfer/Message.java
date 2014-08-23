@@ -54,5 +54,13 @@ public class Message implements Serializable {
 		this.messageClass = messageClass;
 	}
 
+	@Override
+	public String toString() {
+		return "Message [id=" + id + ", message=" + message + ", messageClass="
+				+ messageClass + ", timeViewedMs=" + timeViewedMs
+				+ ", timeViewedTimeZoneOffsetMs=" + timeViewedTimeZoneOffsetMs
+				+ "]";
+	}
+
 
 }

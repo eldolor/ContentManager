@@ -108,7 +108,11 @@ public class MessageController {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering markMessageAsRead");
-			messageDao.update(convert(message));
+			if (!Utils.isEmpty(message.getId()))
+				messageDao.update(convert(message));
+			else
+				LOGGER.log(Level.SEVERE, "Message received with ID=NULL:"
+						+ message.toString());
 
 			response.setStatus(HttpServletResponse.SC_OK);
 

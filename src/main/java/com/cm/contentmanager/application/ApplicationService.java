@@ -21,8 +21,7 @@ public class ApplicationService {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getAllApplications");
-			List<Application> applications = applicationDao
-					.getAllApplications();
+			List<Application> applications = applicationDao.get();
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Returning " + applications.size()
 						+ " applications");
@@ -46,6 +45,23 @@ public class ApplicationService {
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting getApplicationsByUserId");
+		}
+	}
+
+	public List<Application> getApplicationsByUserId(Long accountId,
+			boolean includeDeleted) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering getApplicationsByAccountId");
+			List<Application> applications = applicationDao
+					.getApplicationsByUserId(accountId, includeDeleted);
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Returning " + applications.size()
+						+ " applications");
+			return applications;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting getApplicationsByAccountId");
 		}
 	}
 
@@ -86,18 +102,19 @@ public class ApplicationService {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getApplication");
-			return applicationDao.getApplication(id);
+			return applicationDao.get(id);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting getApplication");
 		}
 	}
 
-	public Application getApplicationByTrackingId(String trackingId) {
+	public Application getApplicationByTrackingId(String trackingId,
+			boolean includeDeleted) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getApplicationByTrackingId");
-			return applicationDao.getApplicationByTrackingId(trackingId);
+			return applicationDao.get(trackingId, includeDeleted);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting getApplicationByTrackingId");
@@ -116,7 +133,7 @@ public class ApplicationService {
 			application.setTrackingId(trackingId);
 			application.setAccountId(user.getAccountId());
 
-			return applicationDao.saveApplication(application);
+			return applicationDao.save(application);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting saveApplication");
@@ -128,7 +145,7 @@ public class ApplicationService {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering deleteApplication");
-			applicationDao.deleteApplication(id, timeUpdatedMs,
+			applicationDao.delete(id, timeUpdatedMs,
 					timeUpdatedTimeZoneOffsetMs);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -142,7 +159,7 @@ public class ApplicationService {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering restoreApplication");
-			applicationDao.restoreApplication(id, timeUpdatedMs,
+			applicationDao.restore(id, timeUpdatedMs,
 					timeUpdatedTimeZoneOffsetMs);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -155,10 +172,20 @@ public class ApplicationService {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering updateApplication");
-			applicationDao.updateApplication(application);
+			applicationDao.update(application);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting updateApplication");
+		}
+	}
+	public void updateChangesStaged(Long pApplicationId, boolean pChangesStaged) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering updateChangesStaged");
+			applicationDao.updateChangesStaged(pApplicationId, pChangesStaged);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting updateChangesStaged");
 		}
 	}
 

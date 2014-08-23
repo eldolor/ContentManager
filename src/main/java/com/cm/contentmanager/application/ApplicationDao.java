@@ -17,10 +17,10 @@ class ApplicationDao {
 	private static final Logger LOGGER = Logger.getLogger(ApplicationDao.class
 			.getName());
 
-	Application saveApplication(Application application) {
+	Application save(Application application) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering saveApplication");
+				LOGGER.info("Entering save");
 			PersistenceManager pm = null;
 			try {
 				pm = PMF.get().getPersistenceManager();
@@ -34,14 +34,14 @@ class ApplicationDao {
 
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting saveApplication");
+				LOGGER.info("Exiting save");
 		}
 	}
 
-	Application getApplication(Long id) {
+	Application get(Long id) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering getApplication");
+				LOGGER.info("Entering get");
 			PersistenceManager pm = null;
 
 			try {
@@ -59,27 +59,39 @@ class ApplicationDao {
 			}
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting getApplication");
+				LOGGER.info("Exiting get");
 		}
 	}
 
-	Application getApplicationByTrackingId(String trackingId) {
+	Application get(String trackingId, boolean includeDeleted) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering getApplicationByTrackingId");
+				LOGGER.info("Entering get");
 			PersistenceManager pm = null;
 
 			try {
 				pm = PMF.get().getPersistenceManager();
 				Query q = pm.newQuery(Application.class);
-				q.setFilter("trackingId == trackingIdParam && deleted == deletedParam");
-				q.declareParameters("String trackingIdParam, Boolean deletedParam");
-				List<Application> lApplications = (List<Application>) q
-						.execute(trackingId, new Boolean(false));
-				if (lApplications != null && (!lApplications.isEmpty()))
-					return lApplications.get(0);
-				else
-					return null;
+				if (includeDeleted) {
+					q.setFilter("trackingId == trackingIdParam");
+					q.declareParameters("String trackingIdParam");
+					List<Application> lApplications = (List<Application>) q
+							.execute(trackingId);
+					if (lApplications != null && (!lApplications.isEmpty()))
+						return lApplications.get(0);
+					else
+						return null;
+
+				} else {
+					q.setFilter("trackingId == trackingIdParam && deleted == deletedParam");
+					q.declareParameters("String trackingIdParam, Boolean deletedParam");
+					List<Application> lApplications = (List<Application>) q
+							.execute(trackingId, new Boolean(false));
+					if (lApplications != null && (!lApplications.isEmpty()))
+						return lApplications.get(0);
+					else
+						return null;
+				}
 
 			} catch (JDOObjectNotFoundException e) {
 				LOGGER.log(Level.WARNING, e.getMessage());
@@ -91,14 +103,14 @@ class ApplicationDao {
 			}
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting getApplicationByTrackingId");
+				LOGGER.info("Exiting get");
 		}
 	}
 
-	List<Application> getAllApplications() {
+	List<Application> get() {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering getAllApplications");
+				LOGGER.info("Entering get");
 			PersistenceManager pm = null;
 
 			try {
@@ -106,6 +118,7 @@ class ApplicationDao {
 				Query q = pm.newQuery(Application.class);
 				q.setFilter("deleted == deletedParam");
 				q.declareParameters("Boolean deletedParam");
+				q.setOrdering("timeUpdatedMs desc");
 				return (List<Application>) q.execute(new Boolean(false));
 			} finally {
 				if (pm != null) {
@@ -114,7 +127,7 @@ class ApplicationDao {
 			}
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting getAllApplications");
+				LOGGER.info("Exiting get");
 		}
 	}
 
@@ -129,8 +142,43 @@ class ApplicationDao {
 				Query q = pm.newQuery(Application.class);
 				q.setFilter("userId == userIdParam && deleted == deletedParam");
 				q.declareParameters("Long userIdParam, Boolean deletedParam");
+				q.setOrdering("timeUpdatedMs desc");
 				return (List<Application>) q
 						.execute(userId, new Boolean(false));
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting getApplicationsByUserId");
+		}
+	}
+
+	List<Application> getApplicationsByUserId(Long userId,
+			boolean includeDeleted) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering getApplicationsByUserId");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(Application.class);
+				if (includeDeleted) {
+					q.setFilter("userId == userIdParam");
+					q.declareParameters("Long userIdParam");
+					q.setOrdering("timeUpdatedMs desc");
+					return (List<Application>) q.execute(userId);
+
+				} else {
+					q.setFilter("userId == userIdParam && deleted == deletedParam");
+					q.declareParameters("Long userIdParam, Boolean deletedParam");
+					q.setOrdering("timeUpdatedMs desc");
+					return (List<Application>) q.execute(userId,
+							Boolean.valueOf(false));
+				}
 			} finally {
 				if (pm != null) {
 					pm.close();
@@ -153,6 +201,7 @@ class ApplicationDao {
 				Query q = pm.newQuery(Application.class);
 				q.setFilter("accountId == accountIdParam && deleted == deletedParam");
 				q.declareParameters("Long accountIdParam, Boolean deletedParam");
+				q.setOrdering("timeUpdatedMs desc");
 				return (List<Application>) q.execute(accountId, new Boolean(
 						false));
 			} finally {
@@ -179,11 +228,13 @@ class ApplicationDao {
 				if (includeDeleted) {
 					q.setFilter("accountId == accountIdParam");
 					q.declareParameters("Long accountIdParam");
+					q.setOrdering("timeUpdatedMs desc");
 					return (List<Application>) q.execute(accountId);
 
 				} else {
 					q.setFilter("accountId == accountIdParam && deleted == deletedParam");
 					q.declareParameters("Long accountIdParam, Boolean deletedParam");
+					q.setOrdering("timeUpdatedMs desc");
 					return (List<Application>) q.execute(accountId,
 							Boolean.valueOf(false));
 				}
@@ -198,11 +249,10 @@ class ApplicationDao {
 		}
 	}
 
-	void deleteApplication(Long id, Long timeUpdatedMs,
-			Long timeUpdatedTimeZoneOffsetMs) {
+	void delete(Long id, Long timeUpdatedMs, Long timeUpdatedTimeZoneOffsetMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering deleteApplication");
+				LOGGER.info("Entering delete");
 			PersistenceManager pm = null;
 
 			try {
@@ -227,15 +277,14 @@ class ApplicationDao {
 
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting deleteApplication");
+				LOGGER.info("Exiting delete");
 		}
 	}
 
-	void restoreApplication(Long id, Long timeUpdatedMs,
-			Long timeUpdatedTimeZoneOffsetMs) {
+	void restore(Long id, Long timeUpdatedMs, Long timeUpdatedTimeZoneOffsetMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering restoreApplication");
+				LOGGER.info("Entering restore");
 			PersistenceManager pm = null;
 
 			try {
@@ -260,14 +309,14 @@ class ApplicationDao {
 
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting restoreApplication");
+				LOGGER.info("Exiting restore");
 		}
 	}
 
-	void updateApplication(Application pApplication) {
+	void update(Application pApplication) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering updateApplication");
+				LOGGER.info("Entering update");
 			PersistenceManager pm = null;
 
 			try {
@@ -290,6 +339,7 @@ class ApplicationDao {
 					lApplication.setTimeCreatedTimeZoneOffsetMs(pApplication
 							.getTimeUpdatedTimeZoneOffsetMs());
 				}
+				lApplication.setChangesStaged(pApplication.getChangesStaged());
 				lApplication.setTimeUpdatedMs(pApplication.getTimeUpdatedMs());
 				lApplication.setTimeUpdatedTimeZoneOffsetMs(pApplication
 						.getTimeUpdatedTimeZoneOffsetMs());
@@ -301,7 +351,31 @@ class ApplicationDao {
 			}
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting updateApplication");
+				LOGGER.info("Exiting update");
+		}
+	}
+
+	void updateChangesStaged(Long pApplicationId, boolean pChangesStaged) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering updateChangesStaged");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Application lApplication = pm.getObjectById(Application.class,
+						pApplicationId);
+				// do not update trackingId
+				lApplication.setChangesStaged(pChangesStaged);
+
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting updateChangesStaged");
 		}
 	}
 }

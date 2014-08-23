@@ -33,9 +33,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.cm.contentmanager.application.ApplicationService;
+import com.cm.contentmanager.content.Content;
 import com.cm.contentmanager.content.ContentHelper;
 import com.cm.usermanagement.user.User;
 import com.cm.usermanagement.user.UserService;
+import com.cm.util.Utils;
 import com.cm.util.ValidationError;
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
@@ -88,18 +90,9 @@ public class ContentGroupController {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getContentGroups");
-			User user = userService.getLoggedInUser();
 			List<ContentGroup> contentGroups = null;
 
-			if (user.getRole().equals(User.ROLE_SUPER_ADMIN))
-				contentGroups = contentGroupService
-						.getContentGroupsByApplicationId(applicationId);
-			else if (user.getRole().equals(User.ROLE_ADMIN))
-				contentGroups = contentGroupService
-						.getContentGroupsByAccountId(user.getAccountId());
-			else if (user.getRole().equals(User.ROLE_USER))
-				contentGroups = contentGroupService
-						.getContentGroupsByUserId(user.getId());
+			contentGroups = contentGroupService.get(applicationId, false);
 
 			if (contentGroups != null) {
 				if (LOGGER.isLoggable(Level.INFO))
@@ -130,7 +123,7 @@ public class ContentGroupController {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getContentGroup");
 			response.setStatus(HttpServletResponse.SC_OK);
-			return contentGroupService.getContentGroup(id);
+			return contentGroupService.get(id);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting getContentGroup");
@@ -153,23 +146,16 @@ public class ContentGroupController {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Content Group ID: " + id);
 			// get the application id of the content group being deleted
-			Long lApplicationId = contentGroupService.getContentGroup(id)
+			Long lApplicationId = contentGroupService.get(id)
 					.getApplicationId();
 
-			contentGroupService.deleteContentGroup(id, timeUpdatedMs,
+			contentGroupService.delete(id, timeUpdatedMs,
 					timeUpdatedTimeZoneOffsetMs);
 			response.setStatus(HttpServletResponse.SC_OK);
-			{
-				String lTrackingId = applicationService.getApplication(
-						lApplicationId).getTrackingId();
-				Queue queue = QueueFactory.getQueue("gcmqueue");
-				TaskOptions taskOptions = TaskOptions.Builder
-						.withUrl(
-								"/tasks/gcm/sendcontentlistmessages/"
-										+ lTrackingId)
-						.param("trackingId", lTrackingId).method(Method.POST);
-				queue.add(taskOptions);
-			}
+			String lTrackingId = applicationService.getApplication(
+					lApplicationId).getTrackingId();
+			Utils.triggerChangesStagedMessage(id);
+			Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId);
 
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -195,10 +181,12 @@ public class ContentGroupController {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return errors;
 			} else {
-				contentGroupService.saveContentGroup(
-						userService.getLoggedInUser(), contentGroup);
+				contentGroupService.save(userService.getLoggedInUser(),
+						contentGroup);
 				response.setStatus(HttpServletResponse.SC_CREATED);
-				// don't send gcm message on create
+				String lTrackingId = applicationService.getApplication(
+						contentGroup.getApplicationId()).getTrackingId();
+				Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId);
 				return null;
 			}
 		} finally {
@@ -223,20 +211,13 @@ public class ContentGroupController {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return errors;
 			} else {
-				contentGroupService.updateContentGroup(contentGroup);
+				contentGroupService.update(contentGroup);
 				response.setStatus(HttpServletResponse.SC_OK);
-				{
-					String lTrackingId = applicationService.getApplication(
-							contentGroup.getApplicationId()).getTrackingId();
-					Queue queue = QueueFactory.getQueue("gcmqueue");
-					TaskOptions taskOptions = TaskOptions.Builder
-							.withUrl(
-									"/tasks/gcm/sendcontentlistmessages/"
-											+ lTrackingId)
-							.param("trackingId", lTrackingId)
-							.method(Method.POST);
-					queue.add(taskOptions);
-				}
+				String lTrackingId = applicationService.getApplication(
+						contentGroup.getApplicationId()).getTrackingId();
+				Utils.triggerChangesStagedMessage(contentGroup
+						.getApplicationId());
+				Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId);
 
 				return null;
 			}

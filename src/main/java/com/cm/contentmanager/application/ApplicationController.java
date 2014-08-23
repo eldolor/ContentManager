@@ -35,6 +35,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.cm.contentmanager.content.ContentHelper;
 import com.cm.usermanagement.user.User;
 import com.cm.usermanagement.user.UserService;
+import com.cm.util.Utils;
 import com.cm.util.ValidationError;
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
@@ -147,17 +148,11 @@ public class ApplicationController {
 			response.setStatus(HttpServletResponse.SC_OK);
 			applicationService.deleteApplication(id, timeUpdatedMs,
 					timeUpdatedTimeZoneOffsetMs);
-			{
-				String lTrackingId = applicationService.getApplication(id)
-						.getTrackingId();
-				Queue queue = QueueFactory.getQueue("gcmqueue");
-				TaskOptions taskOptions = TaskOptions.Builder
-						.withUrl(
-								"/tasks/gcm/sendcontentlistmessages/"
-										+ lTrackingId)
-						.param("trackingId", lTrackingId).method(Method.POST);
-				queue.add(taskOptions);
-			}
+			String lTrackingId = applicationService.getApplication(id)
+					.getTrackingId();
+			Utils.triggerChangesStagedMessage(id);
+			Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId);
+
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting deleteApplication");
@@ -182,9 +177,12 @@ public class ApplicationController {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return errors;
 			} else {
-				applicationService.saveApplication(userService
-						.getLoggedInUser(), createTrackingId(userService
-						.getLoggedInUser()), application);
+				String lTrackingId = createTrackingId(userService
+						.getLoggedInUser());
+				applicationService
+						.saveApplication(userService.getLoggedInUser(),
+								lTrackingId, application);
+				Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId);
 				response.setStatus(HttpServletResponse.SC_CREATED);
 				return null;
 			}
@@ -234,25 +232,57 @@ public class ApplicationController {
 				return errors;
 			} else {
 				applicationService.updateApplication(application);
+				String lTrackingId = applicationService.getApplication(
+						application.getId()).getTrackingId();
+				Utils.triggerChangesStagedMessage(application.getId());
+				Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId);
+
 				response.setStatus(HttpServletResponse.SC_OK);
-				{
-					String lTrackingId = applicationService.getApplication(
-							application.getId()).getTrackingId();
-					Queue queue = QueueFactory.getQueue("gcmqueue");
-					TaskOptions taskOptions = TaskOptions.Builder
-							.withUrl(
-									"/tasks/gcm/sendcontentlistmessages/"
-											+ lTrackingId)
-							.param("trackingId", lTrackingId)
-							.method(Method.POST);
-					queue.add(taskOptions);
-				}
 
 				return null;
 			}
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting doUpdateApplication");
+		}
+	}
+
+	@RequestMapping(value = "/tasks/application/changesstaged/{applicationId}", method = RequestMethod.POST)
+	public void markChangesStaged(@PathVariable Long applicationId,
+			HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering markChangesStaged");
+
+			applicationService.updateChangesStaged(applicationId, true);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting markChangesStaged");
+
+		}
+	}
+
+	@RequestMapping(value = "/secured/pushchanges/{trackingId}", method = RequestMethod.POST)
+	public void pushChanges(@PathVariable String trackingId,
+			HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering pushChanges");
+			Application lApplication = applicationService
+					.getApplicationByTrackingId(trackingId, false);
+			if (lApplication == null) {
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				LOGGER.warning("No application found for tracking id "
+						+ trackingId);
+				return;
+			}
+			applicationService.updateChangesStaged(lApplication.getId(), false);
+			Utils.triggerSendContentListMessage(trackingId);
+			response.setStatus(HttpServletResponse.SC_OK);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting pushChanges");
+
 		}
 	}
 

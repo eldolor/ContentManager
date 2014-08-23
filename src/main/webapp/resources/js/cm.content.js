@@ -458,7 +458,8 @@ function viewContent(pContentId) {
 						200 : function(content) {
 
 							if (content.type == 'image') {
-								var _url = "/dropbox/" + content.uri;
+								var _url = "/contentserver/dropbox/"
+										+ content.uri;
 								log("viewImage", _url);
 								$("#image_widget").attr("src", _url);
 								// close wait div
@@ -480,7 +481,8 @@ function viewContent(pContentId) {
 								$('#view_image_container').foundation('reveal',
 										'open');
 							} else if (content.type == 'video') {
-								var _url = "/dropbox/" + content.uri;
+								var _url = "/contentserver/dropbox/"
+										+ content.uri;
 								log("viewVideo", _url);
 								// reset
 								$("#jquery_jplayer_1").jPlayer("clearMedia");

@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cm.contentmanager.contentgroup.ContentGroup;
 import com.cm.usermanagement.user.User;
 import com.cm.util.Utils;
 
@@ -18,84 +19,90 @@ public class ContentService {
 	private static final Logger LOGGER = Logger.getLogger(ContentService.class
 			.getName());
 
-	public List<Content> getAllContent(Long applicationId, Long contentGroupId,
+	public List<Content> get(Long applicationId, Long contentGroupId,
 			boolean deleted, boolean enabled) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering getAllContent");
-			return contentDao.getAllContent(applicationId, contentGroupId,
+				LOGGER.info("Entering get");
+			return contentDao.get(applicationId, contentGroupId,
 					deleted, enabled);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting getAllContent");
-		}
-	}
-	public List<Content> getAllContent(Long applicationId) {
-		try {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering getAllContent");
-			return contentDao.getAllContent(applicationId);
-		} finally {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting getAllContent");
+				LOGGER.info("Exiting get");
 		}
 	}
 
-	public List<Content> getAllContent(Long applicationId, Long contentGroupId,
+
+	public List<Content> get(Long applicationId, Long contentGroupId,
 			boolean deleted) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering getAllContent");
-			return contentDao.getAllContent(applicationId, contentGroupId,
+				LOGGER.info("Entering get");
+			return contentDao.get(applicationId, contentGroupId,
 					deleted);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting getAllContent");
+				LOGGER.info("Exiting get");
 		}
 	}
 
-	public List<Content> getAllContent(Long applicationId, Long contentGroupId,
+	public List<Content> get(Long applicationId, Long contentGroupId,
 			String type, boolean deleted, boolean enabled) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering getAllContent");
+				LOGGER.info("Entering get");
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("contentGroupId: " + contentGroupId + " Type: "
 						+ type);
-			return contentDao.getAllContent(applicationId, contentGroupId,
+			return contentDao.get(applicationId, contentGroupId,
 					type, deleted, enabled);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting getAllContent");
+				LOGGER.info("Exiting get");
 		}
 	}
 
-	public List<Content> getAllContent(boolean deleted, boolean enabled) {
+	public List<Content> get(Long applicationId, boolean includeDeleted) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering getAllContent");
-			return contentDao.getAllContent(deleted, enabled);
+				LOGGER.info("Entering get");
+			List<Content> contents = contentDao
+					.get(applicationId, includeDeleted);
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Returning " + contents.size() + " contents");
+			return contents;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting getAllContent");
+				LOGGER.info("Exiting get");
 		}
 	}
 
-	public Content getContent(Long id) {
+	public List<Content> get(boolean deleted, boolean enabled) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering getContent");
-			return contentDao.getContent(id);
+				LOGGER.info("Entering get");
+			return contentDao.get(deleted, enabled);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting getContent");
+				LOGGER.info("Exiting get");
 		}
 	}
 
-	public Content saveContent(User user, Content content) {
+	public Content get(Long id) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering saveContent");
+				LOGGER.info("Entering get");
+			return contentDao.get(id);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting get");
+		}
+	}
+
+	public Content save(User user, Content content) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering save");
 
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Setting user and account ids for user "
@@ -118,45 +125,45 @@ public class ContentService {
 				// set high date
 				content.setEndDateMs(Long.MAX_VALUE);
 
-			return contentDao.saveContent(content);
+			return contentDao.save(content);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting saveContent");
+				LOGGER.info("Exiting save");
 		}
 	}
 
-	public void deleteContent(Long id, Long timeUpdatedMs,
+	public void delete(Long id, Long timeUpdatedMs,
 			Long timeUpdatedTimeZoneOffsetMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering deleteContent");
-			contentDao.deleteContent(id, timeUpdatedMs,
+				LOGGER.info("Entering delete");
+			contentDao.delete(id, timeUpdatedMs,
 					timeUpdatedTimeZoneOffsetMs);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting deleteContent");
+				LOGGER.info("Exiting deletedeleteContent");
 		}
 
 	}
 
-	public void restoreContent(Long id, Long timeUpdatedMs,
+	public void restore(Long id, Long timeUpdatedMs,
 			Long timeUpdatedTimeZoneOffsetMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering restoreContent");
-			contentDao.restoreContent(id, timeUpdatedMs,
+			contentDao.restore(id, timeUpdatedMs,
 					timeUpdatedTimeZoneOffsetMs);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting restoreContent");
+				LOGGER.info("Exiting restore");
 		}
 
 	}
 
-	public void updateContent(Content content) {
+	public void update(Content content) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering updateContent");
+				LOGGER.info("Entering update");
 			// convert from ISO 8601 format to Milliseconds
 			if (!Utils.isEmpty(content.getStartDateIso8601()))
 				content.setStartDateMs(javax.xml.bind.DatatypeConverter
@@ -169,23 +176,23 @@ public class ContentService {
 			else
 				// set high date
 				content.setEndDateMs(Long.MAX_VALUE);
-			contentDao.updateContent(content);
+			contentDao.update(content);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting updateContent");
+				LOGGER.info("Exiting update");
 		}
 	}
 
-	public void deleteAllContent(Long applicationId, Long contentGroupId,
+	public void delete(Long applicationId, Long contentGroupId,
 			Long timeUpdatedMs, Long timeUpdatedTimeZoneOffsetMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering deleteAllContents");
-			contentDao.deleteAllContent(applicationId, contentGroupId,
+			contentDao.delete(applicationId, contentGroupId,
 					timeUpdatedMs, timeUpdatedTimeZoneOffsetMs);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting deleteAllContents");
+				LOGGER.info("Exiting delete");
 		}
 
 	}
@@ -194,14 +201,14 @@ public class ContentService {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering updateEnabled");
-			Content lContent = this.getContent(content.getId());
+			Content lContent = this.get(content.getId());
 			if (lContent != null) {
 				lContent.setEnabled(content.isEnabled());
 				lContent.setTimeUpdatedTimeZoneOffsetMs(content
 						.getTimeUpdatedMs());
 				lContent.setTimeUpdatedTimeZoneOffsetMs(content
 						.getTimeUpdatedTimeZoneOffsetMs());
-				contentDao.updateContent(lContent);
+				contentDao.update(lContent);
 			} else {
 				LOGGER.log(Level.WARNING, "Content not found");
 			}
@@ -210,6 +217,7 @@ public class ContentService {
 				LOGGER.info("Exiting updateEnabled");
 		}
 	}
+
 	public void updateContentSize(Long id, Long size) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))

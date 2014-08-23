@@ -68,9 +68,7 @@
 			<url-pattern>/**/content</url-pattern>
 			<url-pattern>/**/contentgroups</url-pattern>
 			<url-pattern>/resources/*</url-pattern>
-			<url-pattern>/dropbox**</url-pattern>
 			<url-pattern>/contentserver**</url-pattern>
-			<url-pattern>/eventtracker**</url-pattern>
 			<url-pattern>/secured/*</url-pattern>
 			<url-pattern>/admin/*</url-pattern>
 			<url-pattern>/login**</url-pattern>

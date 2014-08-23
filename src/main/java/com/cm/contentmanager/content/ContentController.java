@@ -99,7 +99,7 @@ public class ContentController {
 					LOGGER.info("No Content Group Id Found!");
 				return null;
 			}
-			List<Content> content = contentService.getAllContent(applicationId,
+			List<Content> content = contentService.get(applicationId,
 					contentGroupId, false);
 			if (content != null) {
 				if (LOGGER.isLoggable(Level.INFO))
@@ -136,7 +136,7 @@ public class ContentController {
 					LOGGER.info("No Content Id Found!");
 				return null;
 			}
-			Content content = contentService.getContent(id);
+			Content content = contentService.get(id);
 			if (content == null) {
 				if (LOGGER.isLoggable(Level.INFO))
 					LOGGER.info("No Content Found!");
@@ -163,34 +163,17 @@ public class ContentController {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return errors;
 			} else {
-				Content lContent = contentService.saveContent(
+				Content lContent = contentService.save(
 						userService.getLoggedInUser(), content);
 				response.setStatus(HttpServletResponse.SC_CREATED);
-				{
-					String lTrackingId = applicationService.getApplication(
-							content.getApplicationId()).getTrackingId();
-					Queue queue = QueueFactory.getQueue("gcmqueue");
-					TaskOptions taskOptions = TaskOptions.Builder
-							.withUrl(
-									"/tasks/gcm/sendcontentlistmessages/"
-											+ lTrackingId)
-							.param("trackingId", lTrackingId)
-							.method(Method.POST);
-					queue.add(taskOptions);
-				}
-				{
-					Queue queue = QueueFactory.getQueue("contentqueue");
-					TaskOptions taskOptions = TaskOptions.Builder
-							.withUrl(
-									"/tasks/content/updatesize/"
-											+ lContent.getId() + "/"
-											+ lContent.getUri())
-							.param("id", String.valueOf(lContent.getId()))
-							.param("uri", String.valueOf(lContent.getUri()))
-							.method(Method.POST);
-					queue.add(taskOptions);
-
-				}
+				String lTrackingId = applicationService.getApplication(
+						content.getApplicationId()).getTrackingId();
+				Utils.triggerChangesStagedMessage(content.getApplicationId());
+				Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId);
+				if (Utils.isEmpty(lContent.getId())
+						&& Utils.isEmpty(lContent.getUri()))
+					Utils.triggerUpdateContentSizeInBytesMessage(
+							lContent.getId(), lContent.getUri());
 				return null;
 			}
 		} finally {
@@ -211,33 +194,17 @@ public class ContentController {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return errors;
 			} else {
-				contentService.updateContent(content);
+				contentService.update(content);
 				response.setStatus(HttpServletResponse.SC_OK);
-				{
-					String lTrackingId = applicationService.getApplication(
-							content.getApplicationId()).getTrackingId();
-					Queue queue = QueueFactory.getQueue("gcmqueue");
-					TaskOptions taskOptions = TaskOptions.Builder
-							.withUrl(
-									"/tasks/gcm/sendcontentlistmessages/"
-											+ lTrackingId)
-							.param("trackingId", lTrackingId)
-							.method(Method.POST);
-					queue.add(taskOptions);
-				}
-				{
-					Queue queue = QueueFactory.getQueue("contentqueue");
-					TaskOptions taskOptions = TaskOptions.Builder
-							.withUrl(
-									"/tasks/content/updatesize/"
-											+ content.getId() + "/"
-											+ content.getUri())
-							.param("id", String.valueOf(content.getId()))
-							.param("uri", String.valueOf(content.getUri()))
-							.method(Method.POST);
-					queue.add(taskOptions);
 
-				}
+				String lTrackingId = applicationService.getApplication(
+						content.getApplicationId()).getTrackingId();
+				Utils.triggerChangesStagedMessage(content.getApplicationId());
+				Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId);
+				if (Utils.isEmpty(content.getId())
+						&& Utils.isEmpty(content.getUri()))
+					Utils.triggerUpdateContentSizeInBytesMessage(
+							content.getId(), content.getUri());
 				return null;
 			}
 		} finally {
@@ -263,22 +230,15 @@ public class ContentController {
 			}
 			// Get the application id for the content that is about to be
 			// deleted
-			Long lApplicationId = contentService.getContent(id)
-					.getApplicationId();
-			contentService.deleteContent(id, timeUpdatedMs,
+			Long lApplicationId = contentService.get(id).getApplicationId();
+			contentService.delete(id, timeUpdatedMs,
 					timeUpdatedTimeZoneOffsetMs);
 			response.setStatus(HttpServletResponse.SC_OK);
-			{
-				String lTrackingId = applicationService.getApplication(
-						lApplicationId).getTrackingId();
-				Queue queue = QueueFactory.getQueue("gcmqueue");
-				TaskOptions taskOptions = TaskOptions.Builder
-						.withUrl(
-								"/tasks/gcm/sendcontentlistmessages/"
-										+ lTrackingId)
-						.param("trackingId", lTrackingId).method(Method.POST);
-				queue.add(taskOptions);
-			}
+			String lTrackingId = applicationService.getApplication(
+					lApplicationId).getTrackingId();
+			Utils.triggerChangesStagedMessage(id);
+			Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId);
+
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting deleteContent");

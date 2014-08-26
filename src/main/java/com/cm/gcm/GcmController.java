@@ -1,5 +1,6 @@
 package com.cm.gcm;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -59,16 +60,21 @@ public class GcmController {
 
 			response.setStatus(HttpServletResponse.SC_OK);
 			return null;
-		} catch (DeviceHasMoreThanOneRegistration e) {
-			// The exception contains the canonical registration id
-			String lCanonicalRegistrationId = e.getMessage();
+		} catch (DeviceHasMultipleRegistrations e) {
 			// log it for now
 			LOGGER.log(Level.WARNING,
 					"Device has more than one registration. Canonical registration id is "
-							+ lCanonicalRegistrationId);
-			// status OK
-			response.setStatus(HttpServletResponse.SC_OK);
-			return null;
+							+ e.getCanonicalRegistrationId());
+			response.setStatus(HttpServletResponse.SC_CONFLICT);
+			List<ValidationError> errors = new ArrayList<ValidationError>();
+			ValidationError error = new ValidationError();
+			// The exception contains the GCM error code
+			error.setCode(GcmService.DEVICE_HAS_MULTIPLE_REGISTRATIONS_ERROR_CODE);
+			error.setDescription(e.getCanonicalRegistrationId());
+			errors.add(error);
+			LOGGER.log(Level.WARNING,
+					"Device has multiple registrations with GCM Servers");
+			return errors;
 		} catch (DeviceNotRegisteredException e) {
 			LOGGER.log(Level.WARNING, "Device not registered with GCM Servers");
 			// ask the device to retry the GCM registration process
@@ -76,11 +82,40 @@ public class GcmController {
 			List<ValidationError> errors = new ArrayList<ValidationError>();
 			ValidationError error = new ValidationError();
 			// The exception contains the GCM error code
-			error.setCode(e.getMessage());
+			error.setCode(GcmService.DEVICE_NOT_REGISTERED_ERROR_CODE);
 			error.setDescription("Device not registered with GCM Servers");
 			errors.add(error);
-			LOGGER.log(Level.WARNING, "Name cannot be blank");
+			LOGGER.log(Level.WARNING, "Device not registered with GCM Servers");
 			return errors;
+		} catch (IOException e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, "Unable to connect with GCM servers.", e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting register");
+
+		}
+	}
+
+	@RequestMapping(value = "/gcm/register/canonical", method = RequestMethod.POST)
+	public void registerCanonical(
+			@RequestBody GcmRegistrationRequest gcmRegistrationRequest,
+			HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering register");
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering registerCanonical GCM:"
+						+ gcmRegistrationRequest.getGcmId());
+			com.cm.gcm.GcmRegistrationRequest lGcmReqistrationRequestDomainObject = convertToDomainObject(gcmRegistrationRequest);
+
+			gcmService.register(lGcmReqistrationRequestDomainObject);
+			// deprecate the use of the old gcm id
+			gcmService.deprecate(gcmRegistrationRequest.getDeprecatedGcmId());
+			response.setStatus(HttpServletResponse.SC_OK);
+
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting register");
@@ -99,9 +134,40 @@ public class GcmController {
 			gcmHelper.sendContentListMessages(contentHelper
 					.getGenericContentRequest(trackingId));
 
+		} catch (IOException e) {
+			LOGGER.log(Level.SEVERE, "Unable to connect with GCM servers.", e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting sendContentListMessages");
+
+		}
+	}
+
+	@RequestMapping(value = "/tasks/gcm/sendcontentlistmessage/{trackingId}/{gcmId}", method = RequestMethod.POST)
+	public void sendContentListMessage(@PathVariable String trackingId,
+			@PathVariable String gcmId, HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering sendContentListMessage");
+
+			// send the new content list to a single device
+			gcmHelper.sendContentListMessage(gcmId,
+					contentHelper.getGenericContentRequest(gcmId));
+
+		} catch (DeviceHasMultipleRegistrations e) {
+			// Just log it,
+			LOGGER.log(Level.WARNING,
+					"Device has more than one registration. Canonical registration id is "
+							+ e.getCanonicalRegistrationId());
+		} catch (DeviceNotRegisteredException e) {
+			LOGGER.log(Level.WARNING, "Device not registered with GCM Servers");
+		} catch (IOException e) {
+			LOGGER.log(Level.SEVERE, "Unable to connect with GCM servers.", e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting sendContentListMessage");
 
 		}
 	}
@@ -122,8 +188,7 @@ public class GcmController {
 				LOGGER.info("Entering unregister");
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Unregistering " + gcmId);
-			gcmService.unRegister(gcmId, timeUpdatedMs,
-					timeUpdatedTimeZoneOffsetMs);
+			gcmService.unRegister(gcmId);
 
 			response.setStatus(HttpServletResponse.SC_OK);
 		} finally {

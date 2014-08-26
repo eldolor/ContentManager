@@ -33,6 +33,18 @@ public class GcmRegistrationRequest {
 	private String altitude;
 	@Persistent
 	private boolean deleted;
+
+	@Persistent
+	private boolean deprecated;
+	
+	@Persistent
+	private Boolean gcmDeviceNotRegistered = false;
+	@Persistent
+	private Boolean gcmDeviceHasMultipleRegistrations = false;
+	/** provided by GCM when trying to send message **/
+	@Persistent
+	private String canonicalGcmId;
+
 	@Persistent
 	private Long timeCreatedMs;
 	@Persistent
@@ -41,8 +53,6 @@ public class GcmRegistrationRequest {
 	private Long timeUpdatedMs;
 	@Persistent
 	private Long timeUpdatedTimeZoneOffsetMs;
-
-
 
 	public String getTrackingId() {
 		return trackingId;
@@ -170,6 +180,44 @@ public class GcmRegistrationRequest {
 
 	public void setAltitude(String altitude) {
 		this.altitude = altitude;
+	}
+
+	public Boolean getGcmDeviceNotRegistered() {
+		return gcmDeviceNotRegistered;
+	}
+
+	public void setGcmDeviceNotRegistered(Boolean gcmDeviceNotRegistered) {
+		this.gcmDeviceNotRegistered = gcmDeviceNotRegistered;
+	}
+
+	public Boolean getGcmDeviceHasMultipleRegistrations() {
+		return gcmDeviceHasMultipleRegistrations;
+	}
+
+	public void setGcmDeviceHasMultipleRegistrations(
+			Boolean gcmDeviceHasMultipleRegistrations) {
+		this.gcmDeviceHasMultipleRegistrations = gcmDeviceHasMultipleRegistrations;
+	}
+
+
+	public boolean isDeprecated() {
+		return deprecated;
+	}
+
+	public void setDeprecated(boolean deprecated) {
+		this.deprecated = deprecated;
+	}
+
+	public String getCanonicalGcmId() {
+		return canonicalGcmId;
+	}
+
+	public void setCanonicalGcmId(String canonicalGcmId) {
+		this.canonicalGcmId = canonicalGcmId;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
 	}
 
 }

@@ -1,21 +1,46 @@
-package com.cm.gcm.transfer;
+package com.cm.contentserver;
 
-public class GcmRegistrationRequest {
+import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
 
-	private String gcmId;
-	private String deprecatedGcmId;
+@PersistenceCapable
+public class Handshake {
+	@PrimaryKey
+	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+	private Long id;
+	@Persistent
 	private String trackingId;
+	@Persistent
+	private String gcmRegistrationId;
+	@Persistent
+	private Long lastKnownTimestamp;
+	@Persistent
 	private String deviceId;
+	@Persistent
 	private String latitude;
+	@Persistent
 	private String longitude;
+	@Persistent
 	private String provider;
+	@Persistent
 	private String speed;
+	@Persistent
 	private String accuracy;
+	@Persistent
 	private String bearing;
+	@Persistent
 	private String altitude;
-	private Long timeCreatedMs;
-	private Long timeCreatedTimeZoneOffsetMs;
 
+	@Persistent
+	private Long timeCreatedMs;
+	@Persistent
+	private Long timeCreatedTimeZoneOffsetMs;
+	@Persistent
+	private Long timeUpdatedMs;
+	@Persistent
+	private Long timeUpdatedTimeZoneOffsetMs;
 
 	public String getTrackingId() {
 		return trackingId;
@@ -25,20 +50,20 @@ public class GcmRegistrationRequest {
 		this.trackingId = trackingId;
 	}
 
-	public String getDeviceId() {
-		return deviceId;
+	public String getGcmRegistrationId() {
+		return gcmRegistrationId;
 	}
 
-	public void setDeviceId(String deviceId) {
-		this.deviceId = deviceId;
+	public void setGcmRegistrationId(String gcmRegistrationId) {
+		this.gcmRegistrationId = gcmRegistrationId;
 	}
 
-	public String getGcmId() {
-		return gcmId;
+	public Long getLastKnownTimestamp() {
+		return lastKnownTimestamp;
 	}
 
-	public void setGcmId(String gcmId) {
-		this.gcmId = gcmId;
+	public void setLastKnownTimestamp(Long lastKnownTimestamp) {
+		this.lastKnownTimestamp = lastKnownTimestamp;
 	}
 
 	public Long getTimeCreatedMs() {
@@ -55,6 +80,14 @@ public class GcmRegistrationRequest {
 
 	public void setTimeCreatedTimeZoneOffsetMs(Long timeCreatedTimeZoneOffsetMs) {
 		this.timeCreatedTimeZoneOffsetMs = timeCreatedTimeZoneOffsetMs;
+	}
+
+	public String getDeviceId() {
+		return deviceId;
+	}
+
+	public void setDeviceId(String deviceId) {
+		this.deviceId = deviceId;
 	}
 
 	public String getLatitude() {
@@ -113,12 +146,21 @@ public class GcmRegistrationRequest {
 		this.altitude = altitude;
 	}
 
-	public String getDeprecatedGcmId() {
-		return deprecatedGcmId;
+	public Long getTimeUpdatedMs() {
+		return timeUpdatedMs;
 	}
 
-	public void setDeprecatedGcmId(String deprecatedGcmId) {
-		this.deprecatedGcmId = deprecatedGcmId;
+	public void setTimeUpdatedMs(Long timeUpdatedMs) {
+		this.timeUpdatedMs = timeUpdatedMs;
 	}
+
+	public Long getTimeUpdatedTimeZoneOffsetMs() {
+		return timeUpdatedTimeZoneOffsetMs;
+	}
+
+	public void setTimeUpdatedTimeZoneOffsetMs(Long timeUpdatedTimeZoneOffsetMs) {
+		this.timeUpdatedTimeZoneOffsetMs = timeUpdatedTimeZoneOffsetMs;
+	}
+
 
 }

@@ -75,7 +75,7 @@ public class Utils {
 		}
 	}
 
-	public static void triggerSendContentListMessage(String pTrackingId) {
+	public static void triggerSendContentListMessages(String pTrackingId) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering triggerSendContentListMessage");
@@ -86,6 +86,26 @@ public class Utils {
 					.withUrl(
 							"/tasks/gcm/sendcontentlistmessages/" + pTrackingId)
 					.param("trackingId", pTrackingId).method(Method.POST);
+			queue.add(taskOptions);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting triggerSendContentListMessage");
+		}
+	}
+
+	public static void triggerSendContentListMessage(String pTrackingId,
+			String pGcmId) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering triggerSendContentListMessage");
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Triggering message to send content list message to a single handset");
+			Queue queue = QueueFactory.getQueue("gcmqueue");
+			TaskOptions taskOptions = TaskOptions.Builder
+					.withUrl(
+							"/tasks/gcm/sendcontentlistmessage/" + pTrackingId
+									+ pGcmId).param("gcmId", pGcmId)
+					.method(Method.POST);
 			queue.add(taskOptions);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))

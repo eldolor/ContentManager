@@ -1,10 +1,10 @@
 package com.cm.gcm;
 
 import java.util.List;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
@@ -27,9 +27,10 @@ class GcmDao {
 			try {
 				pm = PMF.get().getPersistenceManager();
 				Query q = pm.newQuery(GcmRegistrationRequest.class);
-				q.setFilter("trackingId == trackingIdParam");
-				q.declareParameters("String trackingIdParam");
-				return (List<GcmRegistrationRequest>) q.execute(trackingId);
+				q.setFilter("trackingId == trackingIdParam && deleted = deletedParam && deprecated == deprecatedParam");
+				q.declareParameters("String trackingIdParam, Boolean deletedParam, Boolean deprecatedParam");
+				return (List<GcmRegistrationRequest>) q.execute(trackingId,
+						Boolean.valueOf(false), Boolean.valueOf(false));
 			} finally {
 				if (pm != null) {
 					pm.close();
@@ -81,9 +82,6 @@ class GcmDao {
 					return lList.get(0);
 				else
 					return null;
-			} catch (JDOObjectNotFoundException e) {
-				LOGGER.log(Level.WARNING, e.getMessage());
-				return null;
 			} finally {
 				if (pm != null) {
 					pm.close();
@@ -95,52 +93,31 @@ class GcmDao {
 		}
 	}
 
-	List<GcmRegistrationRequest> getGcmRegistrationRequestByApplicationId(
-			String applicationId) {
+	void updateDeviceNotRegisteredWithGcm(String gcmId) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering getGcmRegistrationRequestByApplicationId");
+				LOGGER.info("Entering updateDeviceNotRegisteredWithGcm");
 			PersistenceManager pm = null;
 
 			try {
 				pm = PMF.get().getPersistenceManager();
 				Query q = pm.newQuery(GcmRegistrationRequest.class);
-				q.setFilter("applicationId == applicationIdParam && deleted == deletedParam");
-				q.declareParameters("String trackingIdParam, Boolean deletedParam");
-				return (List<GcmRegistrationRequest>) q.execute(applicationId,
-						new Boolean(false));
+				q.setFilter("gcmId == gcmIdParam");
+				q.declareParameters("String gcmIdParam");
+				Object[] _array = new Object[1];
+				_array[0] = gcmId;
+				List<GcmRegistrationRequest> lList = (List<GcmRegistrationRequest>) q
+						.executeWithArray(_array);
+				if (lList != null && lList.size() > 0) {
+					GcmRegistrationRequest lGcmRegistrationRequest = lList
+							.get(0);
+					lGcmRegistrationRequest.setGcmDeviceNotRegistered(true);
 
-			} catch (JDOObjectNotFoundException e) {
-				LOGGER.log(Level.WARNING, e.getMessage());
-				return null;
-			} finally {
-				if (pm != null) {
-					pm.close();
-				}
-			}
-		} finally {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting getGcmRegistrationRequestByApplicationId");
-		}
-	}
-
-	void deleteGcmRegistrationRequest(String gcmId, Long timeUpdatedMs,
-			Long timeUpdatedTimeZoneOffsetMs) {
-		try {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering deleteGcmRegistrationRequest");
-			PersistenceManager pm = null;
-
-			try {
-				pm = PMF.get().getPersistenceManager();
-				GcmRegistrationRequest lRequest = pm.getObjectById(
-						GcmRegistrationRequest.class, gcmId);
-				if (lRequest != null) {
-					lRequest.setDeleted(true);
-					lRequest.setTimeUpdatedMs(timeUpdatedMs);
-					lRequest.setTimeUpdatedTimeZoneOffsetMs(timeUpdatedTimeZoneOffsetMs);
-					if (LOGGER.isLoggable(Level.INFO))
-						LOGGER.info(gcmId + " application marked for deletion");
+					lGcmRegistrationRequest.setTimeUpdatedMs(System
+							.currentTimeMillis());
+					lGcmRegistrationRequest
+							.setTimeUpdatedTimeZoneOffsetMs((long) TimeZone
+									.getDefault().getRawOffset());
 				} else {
 					LOGGER.log(Level.WARNING, gcmId
 							+ "  GcmRegistrationRequest NOT FOUND!");
@@ -157,7 +134,90 @@ class GcmDao {
 		}
 	}
 
-	void updateApplication(GcmRegistrationRequest gcmRegistrationRequest) {
+	void deprecate(String gcmId) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering deprecate");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(GcmRegistrationRequest.class);
+				q.setFilter("gcmId == gcmIdParam");
+				q.declareParameters("String gcmIdParam");
+				Object[] _array = new Object[1];
+				_array[0] = gcmId;
+				List<GcmRegistrationRequest> lList = (List<GcmRegistrationRequest>) q
+						.executeWithArray(_array);
+				if (lList != null && lList.size() > 0) {
+					GcmRegistrationRequest lGcmRegistrationRequest = lList
+							.get(0);
+					lGcmRegistrationRequest.setDeprecated(true);
+
+					lGcmRegistrationRequest.setTimeUpdatedMs(System
+							.currentTimeMillis());
+					lGcmRegistrationRequest
+							.setTimeUpdatedTimeZoneOffsetMs((long) TimeZone
+									.getDefault().getRawOffset());
+				} else {
+					LOGGER.log(Level.WARNING, gcmId
+							+ "  GcmRegistrationRequest NOT FOUND!");
+				}
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting deprecate");
+		}
+	}
+
+	void unRegister(String gcmId) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering unRegister");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(GcmRegistrationRequest.class);
+				q.setFilter("gcmId == gcmIdParam");
+				q.declareParameters("String gcmIdParam");
+				Object[] _array = new Object[1];
+				_array[0] = gcmId;
+				List<GcmRegistrationRequest> lList = (List<GcmRegistrationRequest>) q
+						.executeWithArray(_array);
+				if (lList != null && lList.size() > 0) {
+					GcmRegistrationRequest lGcmRegistrationRequest = lList
+							.get(0);
+
+					lGcmRegistrationRequest.setDeleted(true);
+
+					lGcmRegistrationRequest.setTimeUpdatedMs(System
+							.currentTimeMillis());
+					lGcmRegistrationRequest
+							.setTimeUpdatedTimeZoneOffsetMs((long) TimeZone
+									.getDefault().getRawOffset());
+				} else {
+					LOGGER.log(Level.WARNING, gcmId
+							+ "  GcmRegistrationRequest NOT FOUND!");
+				}
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting unRegister");
+		}
+	}
+
+	void updateTimestamp(GcmRegistrationRequest gcmRegistrationRequest) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering updateApplication");
@@ -184,5 +244,50 @@ class GcmDao {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting updateApplication");
 		}
+	}
+
+	void updateWithCanonicalRegId(String gcmRegistrationId,
+			String canonicalGcmRegistrationId) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering updateWithCanonicalRegId");
+			PersistenceManager pm = null;
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(GcmRegistrationRequest.class);
+				q.setFilter("gcmId == gcmIdParam");
+				q.declareParameters("String gcmIdParam");
+				Object[] _array = new Object[1];
+				_array[0] = gcmRegistrationId;
+				List<GcmRegistrationRequest> lList = (List<GcmRegistrationRequest>) q
+						.executeWithArray(_array);
+				if (lList != null && lList.size() > 0) {
+					GcmRegistrationRequest lGcmRegistrationRequest = lList
+							.get(0);
+					// update
+					lGcmRegistrationRequest
+							.setGcmDeviceHasMultipleRegistrations(true);
+					lGcmRegistrationRequest
+							.setCanonicalGcmId(canonicalGcmRegistrationId);
+
+					lGcmRegistrationRequest.setTimeUpdatedMs(System
+							.currentTimeMillis());
+					lGcmRegistrationRequest
+							.setTimeUpdatedTimeZoneOffsetMs((long) TimeZone
+									.getDefault().getRawOffset());
+
+				} else {
+					LOGGER.log(Level.SEVERE, "Not found " + gcmRegistrationId);
+				}
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting updateWithCanonicalRegId");
+		}
+
 	}
 }

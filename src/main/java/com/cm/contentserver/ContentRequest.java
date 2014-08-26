@@ -32,6 +32,10 @@ public class ContentRequest {
 	private Long timeCreatedMs;
 	@Persistent
 	private Long timeCreatedTimeZoneOffsetMs;
+	@Persistent
+	private Long timeUpdatedMs;
+	@Persistent
+	private Long timeUpdatedTimeZoneOffsetMs;
 
 	public String getTrackingId() {
 		return trackingId;
@@ -127,6 +131,22 @@ public class ContentRequest {
 
 	public void setTimeCreatedTimeZoneOffsetMs(Long timeCreatedTimeZoneOffsetMs) {
 		this.timeCreatedTimeZoneOffsetMs = timeCreatedTimeZoneOffsetMs;
+	}
+
+	public Long getTimeUpdatedMs() {
+		return timeUpdatedMs;
+	}
+
+	public void setTimeUpdatedMs(Long timeUpdatedMs) {
+		this.timeUpdatedMs = timeUpdatedMs;
+	}
+
+	public Long getTimeUpdatedTimeZoneOffsetMs() {
+		return timeUpdatedTimeZoneOffsetMs;
+	}
+
+	public void setTimeUpdatedTimeZoneOffsetMs(Long timeUpdatedTimeZoneOffsetMs) {
+		this.timeUpdatedTimeZoneOffsetMs = timeUpdatedTimeZoneOffsetMs;
 	}
 
 }

@@ -307,7 +307,7 @@ public class ApplicationController {
 				return;
 			}
 			applicationService.updateChangesStaged(lApplication.getId(), false);
-			Utils.triggerSendContentListMessage(lApplication.getTrackingId());
+			Utils.triggerSendContentListMessages(lApplication.getTrackingId());
 			// remove from memcache
 			try {
 				if (mCache != null) {

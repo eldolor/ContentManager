@@ -1,12 +1,11 @@
 package com.cm.contentserver;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sf.jsr107cache.Cache;
@@ -28,11 +27,15 @@ import com.cm.contentmanager.content.Content;
 import com.cm.contentmanager.content.ContentService;
 import com.cm.contentmanager.contentgroup.ContentGroup;
 import com.cm.contentmanager.contentgroup.ContentGroupService;
+import com.cm.gcm.DeviceHasMultipleRegistrations;
+import com.cm.gcm.DeviceNotRegisteredException;
+import com.cm.gcm.GcmRegistrationRequest;
+import com.cm.gcm.GcmService;
 import com.cm.util.Utils;
+import com.cm.util.ValidationError;
 import com.google.appengine.api.blobstore.BlobInfo;
 import com.google.appengine.api.blobstore.BlobInfoFactory;
 import com.google.appengine.api.blobstore.BlobKey;
-import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
@@ -49,9 +52,9 @@ public class ContentServerController {
 	private ContentGroupService contentGroupService;
 	@Autowired
 	private ContentService contentService;
+	@Autowired
+	private GcmService gcmService;
 
-	private BlobstoreService mBlobstoreFactory = BlobstoreServiceFactory
-			.getBlobstoreService();
 	private final BlobInfoFactory mBlobInfoFactory = new BlobInfoFactory();
 
 	private Cache mCache;
@@ -116,104 +119,136 @@ public class ContentServerController {
 	}
 
 	@RequestMapping(value = "/contentserver/handshake", method = RequestMethod.POST, consumes = "application/json")
-	public void doHandshakePost(
+	public List<ValidationError> doHandshakePost(
 			@RequestBody com.cm.contentserver.transfer.Handshake pHandshake,
 			HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering doHandshake");
+			// convert to domain format, and save/update
+			Handshake lHandshake = convertToDomainFormat(pHandshake);
+			{
 
-			Boolean lChangesStaged = null;
-
-			try {
-				if (mCache != null) {
-					lChangesStaged = (Boolean) mCache.get(pHandshake
-							.getTrackingId() + "changes_staged");
-					if (LOGGER.isLoggable(Level.INFO))
-						LOGGER.info("Memcache lookup: " + lChangesStaged);
-
+				// device sends its stored gcm id
+				GcmRegistrationRequest lGcmRegistrationRequest = gcmService
+						.getGcmRegistrationRequest(pHandshake
+								.getGcmRegistrationId());
+				// validate GCM registration id
+				List<ValidationError> lErrors = gcmService
+						.evaluateGcmRegistrationStatus(lGcmRegistrationRequest);
+				if (lErrors != null && (!lErrors.isEmpty())) {
+					response.setStatus(HttpServletResponse.SC_CONFLICT);
+					return lErrors;
 				}
-			} catch (Throwable t) {
-				LOGGER.log(Level.SEVERE, "Unable to fetch from Memcache", t);
+
+				contentServerService.upsert(lHandshake);
 			}
 
-			// changes have been staged. Do not auto-update the devices
-			if (lChangesStaged != null && lChangesStaged == true) {
-				if (LOGGER.isLoggable(Level.INFO))
-					LOGGER.info("Memcache lookup: Changes have been staged for "
-							+ pHandshake.getTrackingId()
-							+ ". Not auto-updating the devices");
-				response.setStatus(HttpServletResponse.SC_OK);
-				return;
-			} else {
-				// double check by looking up the database as the value in
-				// memcache might have been purged;
-				Application lApplication = applicationService
-						.getApplicationByTrackingId(pHandshake.getTrackingId(),
-								true/**
-						 * included deleted application, as that
-						 * might have been the change
-						 **/
-						);
-				if (lApplication != null) {
-					if (lApplication.getChangesStaged()) {
-						LOGGER.warning("DATABASE LOOKUP: Changes have been staged for "
-								+ pHandshake.getTrackingId()
-								+ ". Not auto-updating the devices");
-						mCache.put(pHandshake.getTrackingId()
-								+ "changes_staged", true /** then update memcache **/
-						);
+			{
+				Boolean lChangesStaged = null;
+
+				try {
+					if (mCache != null) {
+						lChangesStaged = (Boolean) mCache.get(lHandshake
+								.getTrackingId() + "changes_staged");
 						if (LOGGER.isLoggable(Level.INFO))
-							LOGGER.info("updating memcache");
-						response.setStatus(HttpServletResponse.SC_OK);
-						return;
+							LOGGER.info("Memcache lookup: " + lChangesStaged);
+
 					}
+				} catch (Throwable t) {
+					LOGGER.log(Level.SEVERE, "Unable to fetch from Memcache", t);
 				}
 
-			}
-
-			long lLastKnownTimestamp = 0L;
-			try {
-				if (mCache != null) {
-					lLastKnownTimestamp = (Long) mCache.get(pHandshake
-							.getTrackingId());
+				// changes have been staged. Do not auto-update the devices
+				if (lChangesStaged != null && lChangesStaged == true) {
 					if (LOGGER.isLoggable(Level.INFO))
-						LOGGER.info("Memcache lookup: " + lLastKnownTimestamp);
+						LOGGER.info("Memcache lookup: Changes have been staged for "
+								+ lHandshake.getTrackingId()
+								+ ". Not auto-updating the devices");
+					response.setStatus(HttpServletResponse.SC_OK);
+					return null;
+				} else {
+					// double check by looking up the database as the value in
+					// memcache might have been purged;
+					Application lApplication = applicationService
+							.getApplicationByTrackingId(
+									lHandshake.getTrackingId(), true/**
+							 * included
+							 * deleted application, as that might have been the
+							 * change
+							 **/
+							);
+					if (lApplication != null) {
+						if (lApplication.getChangesStaged()) {
+							LOGGER.warning("DATABASE LOOKUP: Changes have been staged for "
+									+ lHandshake.getTrackingId()
+									+ ". Not auto-updating the devices");
+							try {
+								if (mCache != null) {
+									mCache.put(lHandshake.getTrackingId()
+											+ "changes_staged", true /**
+									 * then
+									 * update memcache
+									 **/
+									);
+									if (LOGGER.isLoggable(Level.INFO))
+										LOGGER.info("updating memcache");
+
+								}
+							} catch (Throwable t) {
+								LOGGER.log(Level.SEVERE,
+										"Unable to save in  Memcache", t);
+							}
+							// default
+							response.setStatus(HttpServletResponse.SC_OK);
+							return null;
+
+						}
+					}
 
 				}
-			} catch (Throwable t) {
-				LOGGER.log(Level.SEVERE, "Unable to fetch from Memcache", t);
 			}
+			{
 
-			// not in cache; create and pin
-			if (lLastKnownTimestamp == 0L) {
-				if (LOGGER.isLoggable(Level.INFO))
-					LOGGER.info("Last known timestamp not found in Memcache. Triggering message to update...");
-				Queue queue = QueueFactory.getQueue("contentqueue");
-				TaskOptions taskOptions = TaskOptions.Builder
-						.withUrl(
-								"/tasks/contentserver/updatelastknowntimestamp/"
-										+ pHandshake.getTrackingId())
-						.param("trackingId", pHandshake.getTrackingId())
-						.method(Method.POST);
-				queue.add(taskOptions);
+				long lLastKnownTimestamp = 0L;
+				try {
+					if (mCache != null) {
+						lLastKnownTimestamp = (Long) mCache.get(lHandshake
+								.getTrackingId());
+						if (LOGGER.isLoggable(Level.INFO))
+							LOGGER.info("Memcache lookup: "
+									+ lLastKnownTimestamp);
 
+					}
+				} catch (Throwable t) {
+					LOGGER.log(Level.SEVERE, "Unable to fetch from Memcache", t);
+				}
+
+				// not in cache; create and pin
+				if (lLastKnownTimestamp == 0L) {
+					if (LOGGER.isLoggable(Level.INFO))
+						LOGGER.info("Last known timestamp not found in Memcache. Triggering message to update...");
+					Queue queue = QueueFactory.getQueue("contentqueue");
+					TaskOptions taskOptions = TaskOptions.Builder
+							.withUrl(
+									"/tasks/contentserver/updatelastknowntimestamp/"
+											+ lHandshake.getTrackingId())
+							.param("trackingId", lHandshake.getTrackingId())
+							.method(Method.POST);
+					queue.add(taskOptions);
+
+				}
+				// send the GCM message to the device; greater than or equal to
+				// in
+				// case both values are zero (uninitialized)
+				if (lLastKnownTimestamp >= lHandshake.getLastKnownTimestamp()) {
+					Utils.triggerSendContentListMessages(lHandshake
+							.getTrackingId());
+				}
 			}
-			// send the GCM message to the device; greater than or equal to in
-			// case both values are zero (uninitialized)
-			if (lLastKnownTimestamp >= pHandshake.getLastKnownTimestamp()) {
-				Queue queue = QueueFactory.getQueue("gcmqueue");
-				TaskOptions taskOptions = TaskOptions.Builder
-						.withUrl(
-								"/tasks/gcm/sendcontentlistmessages/"
-										+ pHandshake.getTrackingId())
-						.param("trackingId", pHandshake.getTrackingId())
-						.method(Method.POST);
-				queue.add(taskOptions);
-			}
-
 			// always
 			response.setStatus(HttpServletResponse.SC_OK);
+			return null;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting doHandshake");
@@ -346,6 +381,28 @@ public class ContentServerController {
 				.getTimeCreatedTimeZoneOffsetMs());
 
 		return lContentRequest;
+	}
+
+	private Handshake convertToDomainFormat(
+			com.cm.contentserver.transfer.Handshake pHandshake) {
+		Handshake lHandshake = new Handshake();
+		lHandshake.setTrackingId(pHandshake.getTrackingId());
+		lHandshake.setGcmRegistrationId(pHandshake.getGcmRegistrationId());
+		lHandshake.setLastKnownTimestamp(pHandshake.getLastKnownTimestamp());
+		lHandshake.setAccuracy(pHandshake.getAccuracy());
+		lHandshake.setAltitude(pHandshake.getAltitude());
+		lHandshake.setTrackingId(pHandshake.getTrackingId());
+		lHandshake.setBearing(pHandshake.getBearing());
+		lHandshake.setDeviceId(pHandshake.getDeviceId());
+		lHandshake.setLatitude(pHandshake.getLatitude());
+		lHandshake.setLongitude(pHandshake.getLongitude());
+		lHandshake.setProvider(pHandshake.getProvider());
+		lHandshake.setSpeed(pHandshake.getSpeed());
+		lHandshake.setTimeCreatedMs(pHandshake.getTimeCreatedMs());
+		lHandshake.setTimeCreatedTimeZoneOffsetMs(pHandshake
+				.getTimeCreatedTimeZoneOffsetMs());
+
+		return lHandshake;
 	}
 
 }

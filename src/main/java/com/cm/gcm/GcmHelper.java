@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 import com.cm.config.Configuration;
 import com.cm.contentmanager.content.ContentHelper;
 import com.cm.contentserver.ContentRequest;
+import com.cm.util.Utils;
 import com.google.android.gcm.server.Constants;
 import com.google.android.gcm.server.Message;
 import com.google.android.gcm.server.Message.Builder;
@@ -45,12 +47,12 @@ public class GcmHelper {
 	 * @param pContentRequest
 	 * @return
 	 * @throws DeviceNotRegisteredException
-	 * @throws DeviceHasMoreThanOneRegistration
+	 * @throws DeviceHasMultipleRegistrations
+	 * @throws IOException
 	 */
 	public boolean sendContentListMessage(String pGcmId,
-			ContentRequest pContentRequest)
-			throws DeviceNotRegisteredException,
-			DeviceHasMoreThanOneRegistration {
+			ContentRequest pContentRequest) throws IOException,
+			DeviceNotRegisteredException, DeviceHasMultipleRegistrations {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
@@ -79,7 +81,18 @@ public class GcmHelper {
 							+ Configuration.MESSAGE_TYPE_SEND_TO_SYNC
 									.getValue() + " message to device");
 				}
-				this.sendMessage(pGcmId, lValues);
+				try {
+					this.sendMessage(pGcmId, lValues);
+				} catch (DeviceNotRegisteredException e) {
+					LOGGER.warning("Device was never registered");
+					handleDeviceNotRegistered(pGcmId);
+					throw e;
+				} catch (DeviceHasMultipleRegistrations e) {
+					LOGGER.warning("Device has more than one registration");
+					handleDeviceHasMultipleRegistrations(pGcmId,
+							e.getCanonicalRegistrationId());
+					throw e;
+				}
 
 			} else {
 				if (LOGGER.isLoggable(Level.INFO))
@@ -92,7 +105,13 @@ public class GcmHelper {
 		}
 	}
 
-	public void sendContentListMessages(ContentRequest pContentRequest) {
+	/**
+	 * 
+	 * @param pContentRequest
+	 * @throws IOException
+	 */
+	public void sendContentListMessages(ContentRequest pContentRequest)
+			throws IOException {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
@@ -140,7 +159,20 @@ public class GcmHelper {
 										.getValue() + " message to device");
 					}
 
-					this.sendMulticastMessage(lGcmRegIds, lValues);
+					List<String> lRetriableRegIds = this.sendMulticastMessage(
+							lGcmRegIds, lValues);
+					if (!lRetriableRegIds.isEmpty()) {
+						// TODO: Queue the messages for retry
+						for (Iterator<String> iterator = lRetriableRegIds
+								.iterator(); iterator.hasNext();) {
+							String lRetriableRegId = iterator.next();
+							// do it one message at a time
+							Utils.triggerSendContentListMessage(
+									pContentRequest.getTrackingId(),
+									lRetriableRegId);
+
+						}
+					}
 				} else {
 					LOGGER.log(Level.SEVERE,
 							"No GCM registration requests found");
@@ -153,11 +185,42 @@ public class GcmHelper {
 		}
 	}
 
-	private void sendMulticastMessage(List<String> pGcmRegistrationIds,
-			Map<String, String> pValues) {
+	private void handleDeviceNotRegistered(String pGcmId) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
+			// TODO: force the device to re-register
+			gcmService.updateDeviceNotRegisteredWithGcm(pGcmId);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	private void handleDeviceHasMultipleRegistrations(String pGcmId,
+			String pCanonicalGcmId) {
+
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			// TODO: handle this scenario
+			// 1. update it locally
+			// 2. send the update back to the device, and have it
+			// save it locally
+			gcmService.updateWithCanonicalRegId(pGcmId, pCanonicalGcmId);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	private List<String> sendMulticastMessage(List<String> pGcmRegistrationIds,
+			Map<String, String> pValues) throws IOException {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			List<String> lRetriableRegIds = new ArrayList<String>();
+
 			Builder lBuilder = new Message.Builder();
 			for (Iterator<String> iterator = pValues.keySet().iterator(); iterator
 					.hasNext();) {
@@ -166,25 +229,23 @@ public class GcmHelper {
 			}
 			Message lMessage = lBuilder.build();
 			MulticastResult multicastResult;
-			try {
-				if (mSender == null) {
-					mSender = new Sender(GOOGLE_API_KEY);
-				}
-				multicastResult = mSender.send(lMessage, pGcmRegistrationIds,
-						Integer.valueOf(Configuration.GCM_MAX_ATTEMPTS
-								.getValue()));
-			} catch (IOException e) {
-				LOGGER.log(Level.SEVERE, "Exception posting " + lMessage, e);
-				return;
+			if (mSender == null) {
+				mSender = new Sender(GOOGLE_API_KEY);
 			}
-			boolean allDone = true;
+			multicastResult = mSender.send(lMessage, pGcmRegistrationIds,
+					Integer.valueOf(Configuration.GCM_MAX_ATTEMPTS.getValue()));
+			// boolean allDone = true;
 			// check if any registration id must be updated
 			if (multicastResult.getCanonicalIds() != 0) {
 				List<Result> results = multicastResult.getResults();
 				for (int i = 0; i < results.size(); i++) {
-					String canonicalRegId = results.get(i)
+					String lCanonicalRegId = results.get(i)
 							.getCanonicalRegistrationId();
-					if (canonicalRegId != null) {
+					if (lCanonicalRegId != null) {
+						String lGcmId = pGcmRegistrationIds.get(i);
+						handleDeviceHasMultipleRegistrations(lGcmId,
+								lCanonicalRegId);
+
 						// String gcmId = regIds.get(i);
 						// GcmDataStore.updateRegistration(gcmId,
 						// canonicalRegId);
@@ -194,31 +255,28 @@ public class GcmHelper {
 			if (multicastResult.getFailure() != 0) {
 				// there were failures, check if any could be retried
 				List<Result> results = multicastResult.getResults();
-				List<String> retriableRegIds = new ArrayList<String>();
 				for (int i = 0; i < results.size(); i++) {
 					String error = results.get(i).getErrorCodeName();
 					if (error != null) {
-						// String gcmId = regIds.get(i);
-						// LOGGER.warning("Got error (" + error + ") for gcmId "
-						// + gcmId);
+						String lGcmId = pGcmRegistrationIds.get(i);
+						LOGGER.warning("Got error (" + error + ") for gcmId "
+								+ lGcmId);
 						if (error.equals(Constants.ERROR_NOT_REGISTERED)) {
 							// application has been removed from device -
 							// unregister
 							// it
 							// GcmDataStore.unregister(gcmId);
+							handleDeviceNotRegistered(lGcmId);
 						}
 						if (error.equals(Constants.ERROR_UNAVAILABLE)) {
-							// retriableRegIds.add(gcmId);
+							lRetriableRegIds.add(lGcmId);
 						}
 					}
 				}
-				if (!retriableRegIds.isEmpty()) {
-					// update task
-					// GcmDataStore.updateMulticast(multicastKey,
-					// retriableRegIds);
-					allDone = false;
-				}
+
 			}
+			return lRetriableRegIds;
+
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting");
@@ -231,11 +289,12 @@ public class GcmHelper {
 	 * @param pValues
 	 * @return
 	 * @throws DeviceNotRegisteredException
-	 * @throws DeviceHasMoreThanOneRegistration
+	 * @throws DeviceHasMultipleRegistrations
+	 * @throws IOException
 	 */
 	private boolean sendMessage(String pGcmId, Map<String, String> pValues)
 			throws DeviceNotRegisteredException,
-			DeviceHasMoreThanOneRegistration {
+			DeviceHasMultipleRegistrations, IOException {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
@@ -254,11 +313,12 @@ public class GcmHelper {
 	 * @param pMessage
 	 * @return
 	 * @throws DeviceNotRegisteredException
-	 * @throws DeviceHasMoreThanOneRegistration
+	 * @throws DeviceHasMultipleRegistrations
+	 * @throws IOException
 	 */
 	private boolean sendMessage(String pGcmId, String pMessageType,
 			String pMessage) throws DeviceNotRegisteredException,
-			DeviceHasMoreThanOneRegistration {
+			DeviceHasMultipleRegistrations, IOException {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
@@ -271,7 +331,7 @@ public class GcmHelper {
 
 	private boolean sendSingleMessage(String pGcmId, Map<String, String> pValues)
 			throws DeviceNotRegisteredException,
-			DeviceHasMoreThanOneRegistration {
+			DeviceHasMultipleRegistrations, IOException {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
@@ -293,7 +353,7 @@ public class GcmHelper {
 
 	private boolean sendSingleMessage(String pGcmId, String pMessageType,
 			String pMessage) throws DeviceNotRegisteredException,
-			DeviceHasMoreThanOneRegistration {
+			DeviceHasMultipleRegistrations, IOException {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
@@ -311,7 +371,7 @@ public class GcmHelper {
 
 	private boolean sendSingleMessage(String pGcmId, Message mMessage)
 			throws DeviceNotRegisteredException,
-			DeviceHasMoreThanOneRegistration {
+			DeviceHasMultipleRegistrations, IOException {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
@@ -323,13 +383,8 @@ public class GcmHelper {
 			}
 
 			Result result;
-			try {
-				result = mSender.send(mMessage, pGcmId, Integer
-						.valueOf(Configuration.GCM_MAX_ATTEMPTS.getValue()));
-			} catch (IOException e) {
-				LOGGER.log(Level.SEVERE, "Exception posting " + mMessage, e);
-				return false;
-			}
+			result = mSender.send(mMessage, pGcmId,
+					Integer.valueOf(Configuration.GCM_MAX_ATTEMPTS.getValue()));
 			if (result == null) {
 				return false;
 			}
@@ -340,17 +395,17 @@ public class GcmHelper {
 				if (canonicalRegId != null) {
 					// same device has more than on registration id: update it
 					LOGGER.finest("canonicalRegId " + canonicalRegId);
-					// GcmDataStore.updateRegistration(gcmId, canonicalRegId);
-					throw new DeviceHasMoreThanOneRegistration(canonicalRegId);
+					DeviceHasMultipleRegistrations lEx = new DeviceHasMultipleRegistrations();
+					lEx.setCanonicalRegistrationId(canonicalRegId);
+					throw lEx;
 				}
 				return true;
 			} else {
 				String error = result.getErrorCodeName();
 				if (error.equals(Constants.ERROR_NOT_REGISTERED)) {
-					// application has been removed from device - unregister it
-					// GcmDataStore.unregister(gcmId);
-					throw new DeviceNotRegisteredException(
-							result.getErrorCodeName());
+					DeviceNotRegisteredException lEx = new DeviceNotRegisteredException();
+					lEx.setCode(result.getErrorCodeName());
+					lEx.setMessage("Device is not registered with GCM servers");
 				} else {
 					LOGGER.severe("Error sending message to device " + pGcmId
 							+ ": " + error);

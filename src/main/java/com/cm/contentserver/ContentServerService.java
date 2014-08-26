@@ -47,9 +47,10 @@ public class ContentServerService {
 						.get(lApplicationId, false));
 
 				for (ContentGroup lContentGroup : lContentGroups) {
-					lContents.addAll(validateContent(contentService
-							.get(lApplicationId,
-									lContentGroup.getId(), false, true)));
+					lContents
+							.addAll(validateContent(contentService.get(
+									lApplicationId, lContentGroup.getId(),
+									false, true)));
 				}
 
 			} else {
@@ -80,6 +81,18 @@ public class ContentServerService {
 				LOGGER.info("Exiting isUpdateOverWifiOnly");
 		}
 
+	}
+
+	public void upsert(Handshake pHandshake) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering upsert");
+			contentServerDao.upsertHandshake(pHandshake);
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting upsert");
+		}
 	}
 
 	private Long resolveApplicationId(String trackingId) {

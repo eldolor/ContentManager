@@ -47,13 +47,15 @@ public class DropBoxController {
 				return null;
 			}
 
-		} catch (Exception e) {
+		} catch (Throwable e) {
+			// handled by GcmManager
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting doUpload");
 		}
-		return null;
 	}
 
 	@RequestMapping(value = "/secured/dropbox/url", method = RequestMethod.GET, produces = "application/json")
@@ -68,13 +70,15 @@ public class DropBoxController {
 				LOGGER.info("Returning Url " + url);
 			return "{\"url\":\"" + url + "\"}";
 
-		} catch (Exception e) {
+		} catch (Throwable e) {
+			// handled by GcmManager
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting getDropboxUrl");
 		}
-		return null;
 	}
 
 }

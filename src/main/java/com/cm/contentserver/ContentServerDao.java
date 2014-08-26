@@ -67,10 +67,11 @@ public class ContentServerDao {
 					lHandshake.setLastKnownTimestamp(pHandshake
 							.getLastKnownTimestamp());
 
-					// update
-					lHandshake.setTimeUpdatedMs(System.currentTimeMillis());
-					lHandshake.setTimeUpdatedTimeZoneOffsetMs((long) TimeZone
-							.getDefault().getRawOffset());
+					// use the timecreated values provided by the handset for
+					// time updated
+					lHandshake.setTimeUpdatedMs(lHandshake.getTimeCreatedMs());
+					lHandshake.setTimeUpdatedTimeZoneOffsetMs(lHandshake
+							.getTimeCreatedTimeZoneOffsetMs());
 				} else {
 					// save
 					pm.makePersistent(pHandshake);

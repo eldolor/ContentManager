@@ -27,10 +27,14 @@ class GcmDao {
 			try {
 				pm = PMF.get().getPersistenceManager();
 				Query q = pm.newQuery(GcmRegistrationRequest.class);
-				q.setFilter("trackingId == trackingIdParam && deleted = deletedParam && deprecated == deprecatedParam");
-				q.declareParameters("String trackingIdParam, Boolean deletedParam, Boolean deprecatedParam");
-				return (List<GcmRegistrationRequest>) q.execute(trackingId,
-						Boolean.valueOf(false), Boolean.valueOf(false));
+				q.setFilter("trackingId == trackingIdParam && gcmDeviceNotRegistered == gcmDeviceNotRegisteredParam && deleted == deletedParam && deprecated == deprecatedParam");
+				q.declareParameters("String trackingIdParam, Boolean gcmDeviceNotRegisteredParam, Boolean deletedParam, Boolean deprecatedParam");
+				Object[] _array = new Object[4];
+				_array[0] = trackingId;
+				_array[1] = Boolean.valueOf(false);
+				_array[2] = Boolean.valueOf(false);
+				_array[3] = Boolean.valueOf(false);
+				return (List<GcmRegistrationRequest>) q.executeWithArray(_array);
 			} finally {
 				if (pm != null) {
 					pm.close();

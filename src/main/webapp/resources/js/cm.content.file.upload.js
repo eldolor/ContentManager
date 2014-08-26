@@ -1,6 +1,6 @@
 function setupContentDropBox(url) {
 	var lUrl = url;
-	console.log("setupContentDropBox url: " + lUrl);
+	log("setupContentDropBox url: " + lUrl);
 
 	var dropbox = $('#content_dropbox'), message = $('.message', dropbox);
 

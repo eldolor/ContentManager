@@ -103,6 +103,11 @@ public class ApplicationController {
 				LOGGER.info("Entering getApplication");
 			response.setStatus(HttpServletResponse.SC_OK);
 			return applicationService.getApplication(id);
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting getApplication");
@@ -142,6 +147,11 @@ public class ApplicationController {
 			}
 			response.setStatus(HttpServletResponse.SC_OK);
 			return applications;
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting getApplications");
@@ -171,6 +181,10 @@ public class ApplicationController {
 			Utils.triggerChangesStagedMessage(id);
 			Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId);
 
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting deleteApplication");
@@ -204,6 +218,11 @@ public class ApplicationController {
 				response.setStatus(HttpServletResponse.SC_CREATED);
 				return null;
 			}
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting doCreateApplication");
@@ -259,6 +278,11 @@ public class ApplicationController {
 
 				return null;
 			}
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting doUpdateApplication");
@@ -320,6 +344,10 @@ public class ApplicationController {
 			}
 
 			response.setStatus(HttpServletResponse.SC_OK);
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting pushChanges");

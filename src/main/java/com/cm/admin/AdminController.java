@@ -16,6 +16,7 @@
 package com.cm.admin;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,6 +36,7 @@ import com.cm.accountmanagement.account.Account;
 import com.cm.admin.plan.CanonicalPlanName;
 import com.cm.admin.plan.Plan;
 import com.cm.common.entity.Result;
+import com.cm.gcm.GcmRegistrationRequest;
 import com.cm.usermanagement.user.User;
 import com.cm.usermanagement.user.UserService;
 import com.cm.util.PMF;
@@ -198,6 +200,52 @@ public class AdminController {
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting createPlans");
+		}
+	}
+
+	@RequestMapping(value = "/tasks/updategcmregistrationrequests", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody
+	Result updateGcmRegistrationRequests(HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering updateGcmRegistrationRequests");
+			try {
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("Entering getGcmRegistrationRequests");
+
+				PersistenceManager pm = null;
+
+				try {
+					pm = PMF.get().getPersistenceManager();
+					Query q = pm.newQuery(GcmRegistrationRequest.class);
+					List<GcmRegistrationRequest> lList = (List<GcmRegistrationRequest>) q
+							.execute();
+					for (GcmRegistrationRequest gcmRegistrationRequest : lList) {
+						gcmRegistrationRequest.setDeprecated(Boolean
+								.valueOf(false));
+						gcmRegistrationRequest
+								.setGcmDeviceNotRegistered(Boolean
+										.valueOf(false));
+						gcmRegistrationRequest
+								.setGcmDeviceHasMultipleRegistrations(Boolean
+										.valueOf(false));
+					}
+				} finally {
+					if (pm != null) {
+						pm.close();
+					}
+				}
+			} finally {
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("Exiting getGcmRegistrationRequests");
+			}
+
+			Result result = new Result();
+			result.setResult(Result.SUCCESS);
+			return result;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting updateGcmRegistrationRequests");
 		}
 	}
 }

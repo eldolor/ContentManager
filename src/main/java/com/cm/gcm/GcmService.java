@@ -81,10 +81,14 @@ public class GcmService {
 
 			List<GcmRegistrationRequest> lGcmRegistrationRequests = gcmDao
 					.getGcmRegistrationRequests(trackingId);
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Returning "
-						+ ((lGcmRegistrationRequests != null) ? lGcmRegistrationRequests
-								.size() : 0) + " GCM registration requests");
+			int lSize = (lGcmRegistrationRequests != null) ? lGcmRegistrationRequests
+					.size() : 0;
+			if (lSize == 0)
+				LOGGER.warning("Returning " + lSize
+						+ " GCM registration requests");
+			else
+				LOGGER.info("Returning " + lSize + " GCM registration requests");
+
 			return lGcmRegistrationRequests;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))

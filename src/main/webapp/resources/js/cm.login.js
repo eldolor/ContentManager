@@ -37,7 +37,7 @@ function setup() {
 		// deprecated valid & invalid
 		$('#loginForm').on('invalid', function() {
 			var invalid_fields = $(this).find('[data-invalid]');
-			console.log(invalid_fields);
+			log(invalid_fields);
 		}).on('valid', function() {
 			login();
 		});
@@ -52,7 +52,7 @@ function setup() {
 		// deprecated valid & invalid
 		$('#forgotPasswordForm').on('invalid', function() {
 			var invalid_fields = $(this).find('[data-invalid]');
-			console.log(invalid_fields);
+			log(invalid_fields);
 		}).on('valid', function() {
 			submitForgotPasswordRequest();
 		});
@@ -118,31 +118,45 @@ function loginAsync() {
 		var objString = JSON.stringify(loginObj, null, 2);
 		// alert(contentgroupObjString);
 		// create via sync call
-		var jqxhr = $.ajax({
-			url : "j_spring_security_check",
-			type : "POST",
-			data : objString,
-			processData : false,
-			dataType : "json",
-			contentType : "application/json",
-			async : false,
-			statusCode : {
-				200 : function() {
-					window.location.href = '/applications';
-				},
-				400 : function(text) {
-					try {
-						$('#login_errors').html(getErrorMessages(text));
+		var jqxhr = $
+				.ajax({
+					url : "j_spring_security_check",
+					type : "POST",
+					data : objString,
+					processData : false,
+					dataType : "json",
+					contentType : "application/json",
+					async : false,
+					statusCode : {
+						200 : function() {
+							window.location.href = '/applications';
+						},
+						400 : function(text) {
+							try {
+								$('#login_errors').html(getErrorMessages(text));
+								$('#login_errors').show();
+							} catch (err) {
+								handleError("login", err);
+							}
+						},
+						503 : function() {
+							$('#login_errors')
+									.html(
+											'Unable to process the request. Please try again later');
+							$('#login_errors').show();
+						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						log(errorThrown);
+						$('#login_errors')
+								.html(
+										'Unable to process the request. Please try again later');
 						$('#login_errors').show();
-					} catch (err) {
-						handleError("login", err);
+					},
+					complete : function(xhr, textStatus) {
+						log(xhr.status);
 					}
-				}
-			},
-			complete : function(xhr, textStatus) {
-				console.log(xhr.status);
-			}
-		});
+				});
 
 		return false;
 	} catch (err) {
@@ -177,10 +191,16 @@ function submitForgotPasswordRequest() {
 									'close');
 							$('#forgot_password_request_submitted_message')
 									.show();
+						},
+						503 : function() {
+							$('#forgot_password_errors')
+									.html(
+											'Unable to process the request. Please try again later');
+							$('#forgot_password_errors').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
-						console.log(errorThrown);
+						log(errorThrown);
 						$('#forgot_password_errors')
 								.html(
 										'Unable to process the request. Please try again later');

@@ -44,6 +44,11 @@ public class ContentStatController {
 			response.setStatus(HttpServletResponse.SC_CREATED);
 			return lResult;
 
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting doCreateContentStat");
@@ -59,6 +64,10 @@ public class ContentStatController {
 
 			response.setStatus(HttpServletResponse.SC_CREATED);
 
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting doCreateContentStat");

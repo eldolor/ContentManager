@@ -48,7 +48,7 @@ function setup() {
 		// deprecated valid & invalid
 		$('#forgotPasswordForm').on('invalid', function() {
 			var invalid_fields = $(this).find('[data-invalid]');
-			console.log(invalid_fields);
+			log(invalid_fields);
 		}).on('valid', function() {
 			submitForgotPasswordRequest();
 		});
@@ -168,10 +168,17 @@ function changePassword() {
 							} catch (err) {
 								handleError("updateContentEnabled", err);
 							}
+						},
+						503 : function() {
+							$('#user_message').hide();
+							$('#change_password_errors')
+									.html(
+											'Unable to process the request. Please try again later');
+							$('#change_password_errors').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
-						console.log(errorThrown);
+						log(errorThrown);
 						$('#user_message').hide();
 						$('#change_password_errors')
 								.html(
@@ -183,7 +190,7 @@ function changePassword() {
 						$('.button').removeClass('disabled');
 						$('#changePasswordForm').trigger("reset");
 
-						console.log(xhr.status);
+						log(xhr.status);
 					}
 
 				});
@@ -224,10 +231,16 @@ function submitForgotPasswordRequest() {
 									'close');
 							$('#forgot_password_request_submitted_message')
 									.show();
+						},
+						503 : function() {
+							$('#forgot_password_errors')
+									.html(
+											'Unable to process the request. Please try again later');
+							$('#forgot_password_errors').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
-						console.log(errorThrown);
+						log(errorThrown);
 						$('#forgot_password_errors')
 								.html(
 										'Unable to process the request. Please try again later');

@@ -95,6 +95,11 @@ public class MessageController {
 			response.setStatus(HttpServletResponse.SC_OK);
 			return null;
 
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting getMessages");
@@ -116,6 +121,10 @@ public class MessageController {
 
 			response.setStatus(HttpServletResponse.SC_OK);
 
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting markMessageAsRead");

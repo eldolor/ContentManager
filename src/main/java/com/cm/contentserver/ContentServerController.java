@@ -112,23 +112,30 @@ public class ContentServerController {
 			}
 			response.setStatus(HttpServletResponse.SC_OK);
 			return lContentList;
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting getContent");
 		}
 	}
 
-	@RequestMapping(value = "/contentserver/handshake", method = RequestMethod.POST, consumes = "application/json")
-	public List<ValidationError> doHandshakePost(
+	@RequestMapping(value = "/contentserver/handshake", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	public @ResponseBody
+	List<ValidationError> doHandshakePost(
 			@RequestBody com.cm.contentserver.transfer.Handshake pHandshake,
 			HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering doHandshake");
+				LOGGER.info("Entering");
 			// convert to domain format, and save/update
 			Handshake lHandshake = convertToDomainFormat(pHandshake);
-			{
+			contentServerService.upsert(lHandshake);
 
+			{
 				// device sends its stored gcm id
 				GcmRegistrationRequest lGcmRegistrationRequest = gcmService
 						.getGcmRegistrationRequest(pHandshake
@@ -137,11 +144,10 @@ public class ContentServerController {
 				List<ValidationError> lErrors = gcmService
 						.evaluateGcmRegistrationStatus(lGcmRegistrationRequest);
 				if (lErrors != null && (!lErrors.isEmpty())) {
+					LOGGER.warning("Returning " + lErrors.size() + " error(s)");
 					response.setStatus(HttpServletResponse.SC_CONFLICT);
 					return lErrors;
 				}
-
-				contentServerService.upsert(lHandshake);
 			}
 
 			{
@@ -173,8 +179,8 @@ public class ContentServerController {
 					Application lApplication = applicationService
 							.getApplicationByTrackingId(
 									lHandshake.getTrackingId(), true/**
-							 * included
-							 * deleted application, as that might have been the
+							 * include
+							 * deleted applications, as that might have been the
 							 * change
 							 **/
 							);
@@ -249,9 +255,14 @@ public class ContentServerController {
 			// always
 			response.setStatus(HttpServletResponse.SC_OK);
 			return null;
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting doHandshake");
+				LOGGER.info("Exiting");
 		}
 	}
 
@@ -279,8 +290,11 @@ public class ContentServerController {
 				LOGGER.info("No content found for key " + key);
 				response.setStatus(HttpServletResponse.SC_NO_CONTENT);
 			}
-		} catch (Exception e) {
+		} catch (Throwable e) {
+			// handled by GcmManager
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting doServe");
@@ -288,15 +302,19 @@ public class ContentServerController {
 		return null;
 	}
 
-	@RequestMapping(value = "/contentserver/dropbox", method = RequestMethod.POST, consumes = "application/json")
-	public @ResponseBody
-	String doServePost(@RequestParam String key, HttpServletResponse response) {
+	@RequestMapping(value = "/contentserver/dropbox", method = RequestMethod.POST)
+	public void doServePost(@RequestParam String key, HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering doServePost");
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Key: " + key);
+
 			BlobKey blobKey = new BlobKey(key);
 			final BlobInfo blobInfo = mBlobInfoFactory.loadBlobInfo(blobKey);
 			if (blobInfo != null) {
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("Returning content for key " + key);
 				response.setHeader("Content-Disposition",
 						"attachment; filename=" + blobInfo.getFilename());
 				BlobstoreServiceFactory.getBlobstoreService().serve(blobKey,
@@ -305,13 +323,14 @@ public class ContentServerController {
 				LOGGER.info("No content found for key " + key);
 				response.setStatus(HttpServletResponse.SC_NO_CONTENT);
 			}
-		} catch (Exception e) {
+		} catch (Throwable e) {
+			// handled by GcmManager
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting doServePost");
 		}
-		return null;
 	}
 
 	@RequestMapping(value = "/tasks/contentserver/updatelastknowntimestamp/{trackingId}", method = RequestMethod.POST)

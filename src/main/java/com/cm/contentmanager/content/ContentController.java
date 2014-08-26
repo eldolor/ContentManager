@@ -110,6 +110,11 @@ public class ContentController {
 			}
 			response.setStatus(HttpServletResponse.SC_OK);
 			return content;
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting getAllContent");
@@ -143,6 +148,11 @@ public class ContentController {
 			}
 			response.setStatus(HttpServletResponse.SC_OK);
 			return content;
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting getContent");
@@ -176,6 +186,11 @@ public class ContentController {
 							lContent.getId(), lContent.getUri());
 				return null;
 			}
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting doCreateContentGroup");
@@ -207,6 +222,11 @@ public class ContentController {
 							content.getId(), content.getUri());
 				return null;
 			}
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting doUpdateContentGroup");
@@ -239,6 +259,10 @@ public class ContentController {
 			Utils.triggerChangesStagedMessage(id);
 			Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId);
 
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting deleteContent");
@@ -269,6 +293,11 @@ public class ContentController {
 				response.setStatus(HttpServletResponse.SC_CREATED);
 				return null;
 			}
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting doUpdateCampaign");

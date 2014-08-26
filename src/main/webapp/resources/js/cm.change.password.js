@@ -78,10 +78,17 @@ function changePassword() {
 						200 : function() {
 							$('#user_message').show();
 							$('#user_errors').hide();
+						},
+						503 : function() {
+							$('#user_message').hide();
+							$('#user_errors')
+									.html(
+											'Unable to process the request. Please try again later');
+							$('#user_errors').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
-						console.log(errorThrown);
+						log(errorThrown);
 						$('#user_message').hide();
 						$('#user_errors')
 								.html(
@@ -93,7 +100,7 @@ function changePassword() {
 						$('.button').removeClass('disabled');
 						$('#changePasswordForm').trigger("reset");
 
-						console.log(xhr.status);
+						log(xhr.status);
 					}
 
 				});

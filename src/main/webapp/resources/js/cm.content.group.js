@@ -89,17 +89,25 @@ function setSelectedApplication(id) {
 	try {
 		// load entry info via sync call
 		var url = "/secured/application/" + id;
-		var jqxhr = $.ajax({
-			url : url,
-			type : "GET",
-			contentType : "application/json",
-			async : false,
-			statusCode : {
-				200 : function(application) {
-					mSelectedApplication = application;
-				}
-			}
-		});
+		var jqxhr = $
+				.ajax({
+					url : url,
+					type : "GET",
+					contentType : "application/json",
+					async : false,
+					statusCode : {
+						200 : function(application) {
+							mSelectedApplication = application;
+						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						log(errorThrown);
+						$('#contentgroup_errors')
+								.html(
+										'Unable to process the request. Please try again later');
+						$('#contentgroup_errors').show();
+					}
+				});
 	} catch (err) {
 		handleError("setSelectedApplication", err);
 	} finally {
@@ -113,25 +121,39 @@ function getContentGroups(pApplicationId) {
 		// open wait div
 		openWait();
 
-		var jqxhr = $.ajax({
-			url : "/secured/" + pApplicationId + "/contentgroups",
-			type : "GET",
-			contentType : "application/json",
-			async : false,
-			statusCode : {
-				200 : function(contentGroups) {
-					handleDisplayContentGroups_Callback(contentGroups);
-					// Google Analytics
-					ga('send', {
-						'hitType' : 'pageview',
-						'page' : '/secured/' + pApplicationId
-								+ '/contentgroups',
-						'title' : PageTitle.CONTENT_GROUPS
-					});
-					// End Google Analytics
-				}
-			}
-		});
+		var jqxhr = $
+				.ajax({
+					url : "/secured/" + pApplicationId + "/contentgroups",
+					type : "GET",
+					contentType : "application/json",
+					async : false,
+					statusCode : {
+						200 : function(contentGroups) {
+							handleDisplayContentGroups_Callback(contentGroups);
+							// Google Analytics
+							ga('send', {
+								'hitType' : 'pageview',
+								'page' : '/secured/' + pApplicationId
+										+ '/contentgroups',
+								'title' : PageTitle.CONTENT_GROUPS
+							});
+							// End Google Analytics
+						},
+						503 : function() {
+							$('#contentgroup_errors')
+									.html(
+											'Unable to process the request. Please try again later');
+							$('#contentgroup_errors').show();
+						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						log(errorThrown);
+						$('#contentgroup_errors')
+								.html(
+										'Unable to process the request. Please try again later');
+						$('#contentgroup_errors').show();
+					}
+				});
 		jqxhr.always(function() {
 			// close wait div
 			closeWait();
@@ -209,28 +231,43 @@ function updateContentGroupEnabled(pContentGroupId, pContentGroupEnabled,
 			timeUpdatedTimeZoneOffsetMs : (lDate.getTimezoneOffset() * 60 * 1000)
 		};
 		var lContentGroupObjString = JSON.stringify(lContentGroupObj, null, 2);
-		var jqxhr = $.ajax({
-			url : "/secured/contentgroup/enabled",
-			type : "PUT",
-			data : lContentGroupObjString,
-			processData : false,
-			dataType : "json",
-			contentType : "application/json",
-			async : false,
-			statusCode : {
-				201 : function() {
-					getContentGroups(mSelectedApplication.id);
-					// window.location.href = '/contentgroups';
-				},
-				400 : function(text) {
-					try {
-						$('#contentgroup_errors').html(getErrorMessages(text));
-					} catch (err) {
-						handleError("updateContentGroupEnabled", err);
+		var jqxhr = $
+				.ajax({
+					url : "/secured/contentgroup/enabled",
+					type : "PUT",
+					data : lContentGroupObjString,
+					processData : false,
+					dataType : "json",
+					contentType : "application/json",
+					async : false,
+					statusCode : {
+						201 : function() {
+							getContentGroups(mSelectedApplication.id);
+							// window.location.href = '/contentgroups';
+						},
+						400 : function(text) {
+							try {
+								$('#contentgroup_errors').html(
+										getErrorMessages(text));
+							} catch (err) {
+								handleError("updateContentGroupEnabled", err);
+							}
+						},
+						503 : function() {
+							$('#contentgroup_errors')
+									.html(
+											'Unable to process the request. Please try again later');
+							$('#contentgroup_errors').show();
+						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						log(errorThrown);
+						$('#contentgroup_errors')
+								.html(
+										'Unable to process the request. Please try again later');
+						$('#contentgroup_errors').show();
 					}
-				}
-			}
-		});
+				});
 		jqxhr.always(function() {
 			// close wait div
 			closeWait();
@@ -250,23 +287,41 @@ function displayContentGroupStats(id, name) {
 		openWait();
 		// load entry info via ajax
 		var url = "/secured/contentgroupadstats/" + id;
-		var jqxhr = $.ajax({
-			url : url,
-			type : "GET",
-			contentType : "application/json",
-			statusCode : {
-				200 : function(adStats) {
-					$("#contentgroupAccordianGroup" + id).popover(
-							{
-								selector : '#contentgroupAccordianGroup' + id,
-								content : 'Clicks: ' + adStats.clicks
-										+ ', Impressions: '
-										+ adStats.impressions
-							});
-					$("#contentgroupAccordianGroup" + id).popover('toggle');
-				}
-			}
-		});
+		var jqxhr = $
+				.ajax({
+					url : url,
+					type : "GET",
+					contentType : "application/json",
+					statusCode : {
+						200 : function(adStats) {
+							$("#contentgroupAccordianGroup" + id)
+									.popover(
+											{
+												selector : '#contentgroupAccordianGroup'
+														+ id,
+												content : 'Clicks: '
+														+ adStats.clicks
+														+ ', Impressions: '
+														+ adStats.impressions
+											});
+							$("#contentgroupAccordianGroup" + id).popover(
+									'toggle');
+						},
+						503 : function() {
+							$('#contentgroup_errors')
+									.html(
+											'Unable to process the request. Please try again later');
+							$('#contentgroup_errors').show();
+						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						log(errorThrown);
+						$('#contentgroup_errors')
+								.html(
+										'Unable to process the request. Please try again later');
+						$('#contentgroup_errors').show();
+					}
+				});
 		jqxhr.always(function() {
 			// close wait div
 			closeWait();
@@ -338,7 +393,7 @@ function editContentGroup(id) {
 									function() {
 										var invalid_fields = $(this).find(
 												'[data-invalid]');
-										console.log(invalid_fields);
+										log(invalid_fields);
 									}).on('valid', function() {
 								updateContentGroup();
 							});
@@ -351,15 +406,22 @@ function editContentGroup(id) {
 							});
 
 							$('#contentgroup_errors').empty();
+						},
+						503 : function() {
+							$('#contentgroup_errors')
+									.html(
+											'Unable to process the request. Please try again later');
+							$('#contentgroup_errors').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
-						console.log(errorThrown);
+						log(errorThrown);
 						$('#contentgroup_errors')
 								.html(
 										'Unable to process the request. Please try again later');
 						$('#contentgroup_errors').show();
 					}
+
 				});
 		jqxhr.always(function() {
 			// close wait div
@@ -383,7 +445,7 @@ function newContentGroup() {
 		// deprecated valid & invalid
 		$('#contentGroupForm').on('invalid', function() {
 			var invalid_fields = $(this).find('[data-invalid]');
-			console.log(invalid_fields);
+			log(invalid_fields);
 		}).on('valid', function() {
 			createContentGroup();
 		});
@@ -417,7 +479,7 @@ function createContentGroup() {
 	try {
 		$('#progress_bar').show();
 		$('.button').addClass('disabled');
-		
+
 		var _enabled;
 		if ($('#contentgroup_enabled').is(':checked')) {
 			_enabled = true;
@@ -472,18 +534,24 @@ function createContentGroup() {
 								handleError("submitContentGroup", err);
 							}
 						},
-						error : function(xhr, textStatus, errorThrown) {
-							console.log(errorThrown);
+						503 : function() {
 							$('#contentgroup_errors')
 									.html(
 											'Unable to process the request. Please try again later');
 							$('#contentgroup_errors').show();
-						},
-						complete : function(xhr, textStatus) {
-							$('.meter').css("width", "100%");
-							$('.button').removeClass('disabled');
-							console.log(xhr.status);
 						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						log(errorThrown);
+						$('#contentgroup_errors')
+								.html(
+										'Unable to process the request. Please try again later');
+						$('#contentgroup_errors').show();
+					},
+					complete : function(xhr, textStatus) {
+						$('.meter').css("width", "100%");
+						$('.button').removeClass('disabled');
+						log(xhr.status);
 					}
 				});
 
@@ -549,18 +617,24 @@ function updateContentGroup() {
 								handleError("updateContentGroup", err);
 							}
 						},
-						error : function(xhr, textStatus, errorThrown) {
-							console.log(errorThrown);
+						503 : function() {
 							$('#contentgroup_errors')
 									.html(
 											'Unable to process the request. Please try again later');
 							$('#contentgroup_errors').show();
-						},
-						complete : function(xhr, textStatus) {
-							$('.meter').css("width", "100%");
-							$('.button').removeClass('disabled');
-							console.log(xhr.status);
 						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						log(errorThrown);
+						$('#contentgroup_errors')
+								.html(
+										'Unable to process the request. Please try again later');
+						$('#contentgroup_errors').show();
+					},
+					complete : function(xhr, textStatus) {
+						$('.meter').css("width", "100%");
+						$('.button').removeClass('disabled');
+						log(xhr.status);
 					}
 				});
 
@@ -579,24 +653,39 @@ function deleteContentGroup(id) {
 		var _timeUpdatedMs = _date.getTime();
 		var _timeUpdatedTimeZoneOffsetMs = (_date.getTimezoneOffset() * 60 * 1000);
 
-		displayConfirm("Are you sure you want to delete this ContentGroup?",
+		displayConfirm(
+				"Are you sure you want to delete this ContentGroup?",
 				function() {
 					wait("confirm_wait");
 					var url = "/secured/contentgroup/" + id + "/"
 							+ _timeUpdatedMs + "/"
 							+ _timeUpdatedTimeZoneOffsetMs;
-					var jqxhr = $.ajax({
-						url : url,
-						type : "DELETE",
-						contentType : "application/json",
-						statusCode : {
-							200 : function() {
-								$('#content_group_create').hide();
-								location.reload();
-								// getContentGroups(mSelectedApplication.id);
-							}
-						}
-					});
+					var jqxhr = $
+							.ajax({
+								url : url,
+								type : "DELETE",
+								contentType : "application/json",
+								statusCode : {
+									200 : function() {
+										$('#content_group_create').hide();
+										location.reload();
+										// getContentGroups(mSelectedApplication.id);
+									},
+									503 : function() {
+										$('#contentgroup_errors')
+												.html(
+														'Unable to process the request. Please try again later');
+										$('#contentgroup_errors').show();
+									}
+								},
+								error : function(xhr, textStatus, errorThrown) {
+									log(errorThrown);
+									$('#contentgroup_errors')
+											.html(
+													'Unable to process the request. Please try again later');
+									$('#contentgroup_errors').show();
+								}
+							});
 					jqxhr.always(function(msg) {
 						clearWait("confirm_wait");
 					});

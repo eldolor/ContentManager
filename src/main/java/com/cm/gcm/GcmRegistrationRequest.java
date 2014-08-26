@@ -32,11 +32,11 @@ public class GcmRegistrationRequest {
 	@Persistent
 	private String altitude;
 	@Persistent
-	private boolean deleted;
+	private Boolean deleted = false;
 
 	@Persistent
-	private boolean deprecated;
-	
+	private Boolean deprecated = false;
+
 	@Persistent
 	private Boolean gcmDeviceNotRegistered = false;
 	@Persistent
@@ -86,12 +86,8 @@ public class GcmRegistrationRequest {
 		this.id = id;
 	}
 
-	public Boolean isDeleted() {
-		return deleted;
-	}
-
-	public void setDeleted(Boolean deleted) {
-		this.deleted = deleted;
+	public boolean isDeleted() {
+		return (deleted == null) ? false : deleted;
 	}
 
 	public Long getTimeCreatedMs() {
@@ -182,26 +178,27 @@ public class GcmRegistrationRequest {
 		this.altitude = altitude;
 	}
 
-	public Boolean getGcmDeviceNotRegistered() {
-		return gcmDeviceNotRegistered;
+	public boolean getGcmDeviceNotRegistered() {
+		return (gcmDeviceNotRegistered == null) ? false
+				: gcmDeviceNotRegistered;
 	}
 
-	public void setGcmDeviceNotRegistered(Boolean gcmDeviceNotRegistered) {
+	public void setGcmDeviceNotRegistered(boolean gcmDeviceNotRegistered) {
 		this.gcmDeviceNotRegistered = gcmDeviceNotRegistered;
 	}
 
-	public Boolean getGcmDeviceHasMultipleRegistrations() {
-		return gcmDeviceHasMultipleRegistrations;
+	public boolean getGcmDeviceHasMultipleRegistrations() {
+		return (gcmDeviceHasMultipleRegistrations == null) ? false
+				: gcmDeviceHasMultipleRegistrations;
 	}
 
 	public void setGcmDeviceHasMultipleRegistrations(
-			Boolean gcmDeviceHasMultipleRegistrations) {
+			boolean gcmDeviceHasMultipleRegistrations) {
 		this.gcmDeviceHasMultipleRegistrations = gcmDeviceHasMultipleRegistrations;
 	}
 
-
 	public boolean isDeprecated() {
-		return deprecated;
+		return (deprecated == null) ? false : deprecated;
 	}
 
 	public void setDeprecated(boolean deprecated) {

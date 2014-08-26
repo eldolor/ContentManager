@@ -158,24 +158,38 @@ function setupBreadcrumbs() {
 function getApplications() {
 	log("getApplications", "Entering");
 	try {
-		var jqxhr = $.ajax({
-			url : "/secured/applications",
-			type : "GET",
-			contentType : "application/json",
-			async : false,
-			statusCode : {
-				200 : function(applications) {
-					handleDisplayApplications_Callback(applications);
-					// Google Analytics
-					ga('send', {
-						'hitType' : 'pageview',
-						'page' : '/secured/applications',
-						'title' : PageTitle.APPLICATIONS
-					});
-					// End Google Analytics
-				}
-			}
-		});
+		var jqxhr = $
+				.ajax({
+					url : "/secured/applications",
+					type : "GET",
+					contentType : "application/json",
+					async : false,
+					statusCode : {
+						200 : function(applications) {
+							handleDisplayApplications_Callback(applications);
+							// Google Analytics
+							ga('send', {
+								'hitType' : 'pageview',
+								'page' : '/secured/applications',
+								'title' : PageTitle.APPLICATIONS
+							});
+							// End Google Analytics
+						},
+						503 : function() {
+							$('#application_errors')
+									.html(
+											'Unable to process the request. Please try again later');
+							$('#application_errors').show();
+						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						log(errorThrown);
+						$('#application_errors')
+								.html(
+										'Unable to process the request. Please try again later');
+						$('#application_errors').show();
+					}
+				});
 
 	} catch (err) {
 		handleError("getApplications", err);
@@ -205,7 +219,7 @@ function handleDisplayApplications_Callback(pApplications) {
 			// log(JSON.stringify(lApplication));
 			if (lApplication.changesStaged) {
 				lInnerHtml += "<p><a href=\"javascript:void(0);\" onclick=\"pushChangestoHandsets('"
-						+ lApplication.trackingId
+						+ lApplication.id
 						+ "')\" class=\"button tiny alert\">Push Changes to Handsets</a></p>";
 			}
 			lInnerHtml += "</div></div><hr>";
@@ -219,37 +233,44 @@ function handleDisplayApplications_Callback(pApplications) {
 		log("handleDisplayApplications_Callback", "Exiting");
 	}
 }
-function pushChangestoHandsets(pTrackingId) {
+function pushChangestoHandsets(pApplicationId) {
 	// load entry info via ajax
 	log("pushChangestoHandsets", "Entering");
 	try {
-		var jqxhr = $.ajax({
-			url : "/secured/pushchanges/" + pTrackingId,
-			type : "POST",
-			processData : false,
-			dataType : "json",
-			contentType : "application/json",
-			async : true,
-			statusCode : {
-				200 : function() {
-					location.reload();
-				},
-				400 : function(text) {
-					try {
-						log("No application found for tracking id "
-								+ pTrackingId);
-					} catch (err) {
-						handleError("pushChangestoHandsets", err);
+		var jqxhr = $
+				.ajax({
+					url : "/secured/pushchanges/" + pApplicationId,
+					type : "POST",
+					processData : false,
+					dataType : "json",
+					contentType : "application/json",
+					async : true,
+					statusCode : {
+						200 : function() {
+							location.reload();
+						},
+						400 : function(text) {
+							try {
+								log("No application found for tracking id "
+										+ pTrackingId);
+							} catch (err) {
+								handleError("pushChangestoHandsets", err);
+							}
+						},
+						503 : function() {
+							$('#application_errors')
+									.html(
+											'Unable to process the request. Please try again later');
+							$('#application_errors').show();
+						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						log(errorThrown);
+					},
+					complete : function(xhr, textStatus) {
+						log(xhr.status);
 					}
-				},
-				error : function(xhr, textStatus, errorThrown) {
-					console.log(errorThrown);
-				},
-				complete : function(xhr, textStatus) {
-					console.log(xhr.status);
-				}
-			}
-		});
+				});
 
 		return false;
 
@@ -312,13 +333,20 @@ function updateApplicationEnabled(pApplicationId, pApplicationEnabled,
 								handleError("updateApplicationEnabled", err);
 							}
 						},
-						error : function(xhr, textStatus, errorThrown) {
-							console.log(errorThrown);
+						503 : function() {
+							log(errorThrown);
 							$('#application_errors')
 									.html(
 											'Unable to process the request. Please try again later');
 							$('#application_errors').show();
 						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						log(errorThrown);
+						$('#application_errors')
+								.html(
+										'Unable to process the request. Please try again later');
+						$('#application_errors').show();
 					}
 				});
 
@@ -353,10 +381,16 @@ function displayApplicationStats(id, name) {
 									});
 							$("#applicationAccordianGroup" + id).popover(
 									'toggle');
+						},
+						503 : function() {
+							$('#application_errors')
+									.html(
+											'Unable to process the request. Please try again later');
+							$('#application_errors').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
-						console.log(errorThrown);
+						log(errorThrown);
 						$('#application_errors')
 								.html(
 										'Unable to process the request. Please try again later');
@@ -389,71 +423,93 @@ function editApplication(id) {
 		$('#application_create').show();
 		// load entry info via ajax
 		var url = "/secured/application/" + id;
-		var jqxhr = $.ajax({
-			url : url,
-			type : "GET",
-			contentType : "application/json",
-			statusCode : {
-				200 : function(application) {
+		var jqxhr = $
+				.ajax({
+					url : url,
+					type : "GET",
+					contentType : "application/json",
+					statusCode : {
+						200 : function(application) {
 
-					$('#application_id').val(application.id);
-					$('#application_name').val(application.name);
-					$('#application_description').val(application.description);
-					// add more
-					$('#application_userid').val(application.sponsoredUserId);
+							$('#application_id').val(application.id);
+							$('#application_name').val(application.name);
+							$('#application_description').val(
+									application.description);
+							// add more
+							$('#application_userid').val(
+									application.sponsoredUserId);
 
-					log("editApplication", "Application enabled: "
-							+ application.enabled);
-					if (application.updateOverWifiOnly == true) {
-						$('#application_update_over_wifi_only').attr('checked',
-								'checked');
-					} else {
-						$('#application_update_over_wifi_only').removeAttr(
-								'checked');
+							log("editApplication", "Application enabled: "
+									+ application.enabled);
+							if (application.updateOverWifiOnly == true) {
+								$('#application_update_over_wifi_only').attr(
+										'checked', 'checked');
+							} else {
+								$('#application_update_over_wifi_only')
+										.removeAttr('checked');
+							}
+
+							if (application.enabled == true) {
+								$('#application_enabled').attr('checked',
+										'checked');
+							} else {
+								$('#application_enabled').removeAttr('checked');
+							}
+							$('#application_save_button').html('update');
+
+							// not using valid.fndtn.abide & invalid.fndtn.abide
+							// as it
+							// causes the form to be submitted twice. Instead
+							// use the
+							// deprecated valid & invalid
+							$('#applicationForm').on(
+									'invalid',
+									function() {
+										var invalid_fields = $(this).find(
+												'[data-invalid]');
+										log(invalid_fields);
+									}).on(
+									'valid',
+									function() {
+										log('editApplication: valid!');
+										updateApplication();
+										// Google Analytics
+										ga('send', 'event',
+												Category.APPLICATION,
+												Action.UPDATE);
+										// End Google Analytics
+									});
+
+							// unbind click listener to reset
+							$('#application_cancel_button').unbind();
+							$('#application_cancel_button').click(
+									function() {
+										$('#application_create').hide();
+										$('#applications_list').show();
+										// Google Analytics
+										ga('send', 'event',
+												Category.APPLICATION,
+												Action.CANCEL);
+										// End Google Analytics
+									});
+
+							$('#application_errors').empty();
+						},
+						503 : function() {
+							$('#application_errors')
+									.html(
+											'Unable to process the request. Please try again later');
+							$('#application_errors').show();
+						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						log(errorThrown);
+						$('#application_errors')
+								.html(
+										'Unable to process the request. Please try again later');
+						$('#application_errors').show();
 					}
-
-					if (application.enabled == true) {
-						$('#application_enabled').attr('checked', 'checked');
-					} else {
-						$('#application_enabled').removeAttr('checked');
-					}
-					$('#application_save_button').html('update');
-
-					// not using valid.fndtn.abide & invalid.fndtn.abide
-					// as it
-					// causes the form to be submitted twice. Instead
-					// use the
-					// deprecated valid & invalid
-					$('#applicationForm').on('invalid', function() {
-						var invalid_fields = $(this).find('[data-invalid]');
-						log(invalid_fields);
-					}).on(
-							'valid',
-							function() {
-								log('editApplication: valid!');
-								updateApplication();
-								// Google Analytics
-								ga('send', 'event', Category.APPLICATION,
-										Action.UPDATE);
-								// End Google Analytics
-							});
-
-					// unbind click listener to reset
-					$('#application_cancel_button').unbind();
-					$('#application_cancel_button').click(
-							function() {
-								$('#application_create').hide();
-								$('#applications_list').show();
-								// Google Analytics
-								ga('send', 'event', Category.APPLICATION,
-										Action.CANCEL);
-								// End Google Analytics
-							});
-
-					$('#application_errors').empty();
-				}
-			}
-		});
+				});
 		jqxhr.always(function() {
 			// close wait div
 			closeWait();
@@ -573,18 +629,24 @@ function createApplication() {
 								handleError("submitApplication", err);
 							}
 						},
-						error : function(xhr, textStatus, errorThrown) {
-							console.log(errorThrown);
+						503 : function() {
 							$('#application_errors')
 									.html(
 											'Unable to process the request. Please try again later');
 							$('#application_errors').show();
-						},
-						complete : function(xhr, textStatus) {
-							$('.meter').css("width", "100%");
-							$('.button').removeClass('disabled');
-							console.log(xhr.status);
 						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						log(errorThrown);
+						$('#application_errors')
+								.html(
+										'Unable to process the request. Please try again later');
+						$('#application_errors').show();
+					},
+					complete : function(xhr, textStatus) {
+						$('.meter').css("width", "100%");
+						$('.button').removeClass('disabled');
+						log(xhr.status);
 					}
 				});
 
@@ -653,18 +715,24 @@ function updateApplication() {
 								handleError("updateApplication", err);
 							}
 						},
-						error : function(xhr, textStatus, errorThrown) {
-							console.log(errorThrown);
+						503 : function() {
 							$('#application_errors')
 									.html(
 											'Unable to process the request. Please try again later');
 							$('#application_errors').show();
-						},
-						complete : function(xhr, textStatus) {
-							$('.meter').css("width", "100%");
-							$('.button').removeClass('disabled');
-							console.log(xhr.status);
 						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						log(errorThrown);
+						$('#application_errors')
+								.html(
+										'Unable to process the request. Please try again later');
+						$('#application_errors').show();
+					},
+					complete : function(xhr, textStatus) {
+						$('.meter').css("width", "100%");
+						$('.button').removeClass('disabled');
+						log(xhr.status);
 					}
 				});
 
@@ -703,10 +771,16 @@ function deleteApplication(id) {
 										$('#application_create').hide();
 										location.reload();
 										// getApplications();
+									},
+									503 : function() {
+										$('#application_errors')
+												.html(
+														'Unable to process the request. Please try again later');
+										$('#application_errors').show();
 									}
 								},
 								error : function(xhr, textStatus, errorThrown) {
-									console.log(errorThrown);
+									log(errorThrown);
 									$('#application_errors')
 											.html(
 													'Unable to process the request. Please try again later');

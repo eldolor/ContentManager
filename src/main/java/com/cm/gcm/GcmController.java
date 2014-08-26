@@ -92,6 +92,11 @@ public class GcmController {
 			LOGGER.log(Level.SEVERE, "Unable to connect with GCM servers.", e);
 			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 			return null;
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting register");
@@ -116,6 +121,10 @@ public class GcmController {
 			gcmService.deprecate(gcmRegistrationRequest.getDeprecatedGcmId());
 			response.setStatus(HttpServletResponse.SC_OK);
 
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting register");
@@ -191,6 +200,10 @@ public class GcmController {
 			gcmService.unRegister(gcmId);
 
 			response.setStatus(HttpServletResponse.SC_OK);
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting register");

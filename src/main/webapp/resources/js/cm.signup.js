@@ -100,37 +100,54 @@ function signup() {
 		var objString = JSON.stringify(signupObj, null, 2);
 
 		// create via sync call
-		var jqxhr = $.ajax({
-			url : "/signup",
-			type : "POST",
-			data : objString,
-			processData : false,
-			dataType : "json",
-			contentType : "application/json",
-			async : true,
-			statusCode : {
-				201 : function() {
+		var jqxhr = $
+				.ajax({
+					url : "/signup",
+					type : "POST",
+					data : objString,
+					processData : false,
+					dataType : "json",
+					contentType : "application/json",
+					async : true,
+					statusCode : {
+						201 : function() {
 
-					postSignupAutoLogin($('#userName').val(), $('#password')
-							.val());
-				},
-				400 : function(text) {
-					try {
-						// TODO: how do display error during post signup auto
-						// login
-						$('#signup_errors').html(getErrorMessages(text));
+							postSignupAutoLogin($('#userName').val(), $(
+									'#password').val());
+						},
+						400 : function(text) {
+							try {
+								// TODO: how do display error during post signup
+								// auto
+								// login
+								$('#signup_errors')
+										.html(getErrorMessages(text));
+								$('#signup_errors').show();
+							} catch (err) {
+								handleError("signup", err);
+							}
+						},
+						503 : function() {
+							$('#signup_errors')
+									.html(
+											'Unable to process the request. Please try again later');
+							$('#signup_errors').show();
+						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						log(errorThrown);
+						$('#signup_errors')
+								.html(
+										'Unable to process the request. Please try again later');
 						$('#signup_errors').show();
-					} catch (err) {
-						handleError("signup", err);
+
+					},
+					complete : function(xhr, textStatus) {
+						$('.meter').css("width", "100%");
+						$('.button').removeClass('disabled');
+						log(xhr.status);
 					}
-				}
-			},
-			complete : function(xhr, textStatus) {
-				$('.meter').css("width", "100%");
-				$('.button').removeClass('disabled');
-				console.log(xhr.status);
-			}
-		});
+				});
 		jqxhr.always(function() {
 			// close wait div
 			closeWait();

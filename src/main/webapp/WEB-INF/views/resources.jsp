@@ -38,7 +38,7 @@
 <!-- <script type="text/javascript" src="/resources/js/datejs/date-en-US.js"></script> -->
 
 <script type="text/javascript"
-	src="/resources/js/momentjs/moment.1.7.2.min.js"></script>
+	src="/resources/js/momentjs/moment.2.8.2.js"></script>
 <!-- End Date Related -->
 
 

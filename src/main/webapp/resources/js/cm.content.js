@@ -115,17 +115,25 @@ function setSelectedApplication(id) {
 	try {
 		// load entry info via sync call
 		var url = "/secured/application/" + id;
-		var jqxhr = $.ajax({
-			url : url,
-			type : "GET",
-			contentType : "application/json",
-			async : false,
-			statusCode : {
-				200 : function(application) {
-					mSelectedApplication = application;
-				}
-			}
-		});
+		var jqxhr = $
+				.ajax({
+					url : url,
+					type : "GET",
+					contentType : "application/json",
+					async : false,
+					statusCode : {
+						200 : function(application) {
+							mSelectedApplication = application;
+						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						log(errorThrown);
+						$('#content_errors')
+								.html(
+										'Unable to process the request. Please try again later');
+						$('#content_errors').show();
+					}
+				});
 	} catch (err) {
 		handleError("setSelectedApplication", err);
 	} finally {
@@ -137,17 +145,25 @@ function setSelectedContentGroup(id) {
 	try {
 		// load entry info via sync call
 		var url = "/secured/contentgroup/" + id;
-		var jqxhr = $.ajax({
-			url : url,
-			type : "GET",
-			contentType : "application/json",
-			async : false,
-			statusCode : {
-				200 : function(contentgroup) {
-					mSelectedContentGroup = contentgroup;
-				}
-			}
-		});
+		var jqxhr = $
+				.ajax({
+					url : url,
+					type : "GET",
+					contentType : "application/json",
+					async : false,
+					statusCode : {
+						200 : function(contentgroup) {
+							mSelectedContentGroup = contentgroup;
+						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						log(errorThrown);
+						$('#content_errors')
+								.html(
+										'Unable to process the request. Please try again later');
+						$('#content_errors').show();
+					}
+				});
 	} catch (err) {
 		handleError("selectedContentGroup", err);
 	} finally {
@@ -159,26 +175,40 @@ function getContent(pApplicationId, pContentGroupId) {
 	log("getContent", "Entering");
 	try {
 
-		var jqxhr = $.ajax({
-			url : "/secured/" + pApplicationId + '/' + pContentGroupId
-					+ "/content/",
-			type : "GET",
-			contentType : "application/json",
-			async : false,
-			statusCode : {
-				200 : function(content) {
-					handleDisplayContent_Callback(content);
-					// Google Analytics
-					ga('send', {
-						'hitType' : 'pageview',
-						'page' : '/secured/' + pApplicationId + '/'
-								+ pContentGroupId + '/content/',
-						'title' : PageTitle.CONTENTS
-					});
-					// End Google Analytics
-				}
-			}
-		});
+		var jqxhr = $
+				.ajax({
+					url : "/secured/" + pApplicationId + '/' + pContentGroupId
+							+ "/content/",
+					type : "GET",
+					contentType : "application/json",
+					async : false,
+					statusCode : {
+						200 : function(content) {
+							handleDisplayContent_Callback(content);
+							// Google Analytics
+							ga('send', {
+								'hitType' : 'pageview',
+								'page' : '/secured/' + pApplicationId + '/'
+										+ pContentGroupId + '/content/',
+								'title' : PageTitle.CONTENTS
+							});
+							// End Google Analytics
+						},
+						503 : function() {
+							$('#content_errors')
+									.html(
+											'Unable to process the request. Please try again later');
+							$('#content_errors').show();
+						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						log(errorThrown);
+						$('#content_errors')
+								.html(
+										'Unable to process the request. Please try again later');
+						$('#content_errors').show();
+					}
+				});
 		jqxhr.always(function() {
 			// close wait div
 			closeWait();
@@ -238,27 +268,42 @@ function updateContentEnabled(pContentId, pContentEnabled, pElementName) {
 			timeUpdatedTimeZoneOffsetMs : (lDate.getTimezoneOffset() * 60 * 1000)
 		};
 		var lContentObjString = JSON.stringify(lContentObj, null, 2);
-		var jqxhr = $.ajax({
-			url : "/secured/content/enabled",
-			type : "PUT",
-			data : lContentObjString,
-			processData : false,
-			dataType : "json",
-			contentType : "application/json",
-			async : false,
-			statusCode : {
-				201 : function() {
-					window.location.href = '/content';
-				},
-				400 : function(text) {
-					try {
-						$('#content_errors').html(getErrorMessages(text));
-					} catch (err) {
-						handleError("updateContentEnabled", err);
+		var jqxhr = $
+				.ajax({
+					url : "/secured/content/enabled",
+					type : "PUT",
+					data : lContentObjString,
+					processData : false,
+					dataType : "json",
+					contentType : "application/json",
+					async : false,
+					statusCode : {
+						201 : function() {
+							window.location.href = '/content';
+						},
+						400 : function(text) {
+							try {
+								$('#content_errors').html(
+										getErrorMessages(text));
+							} catch (err) {
+								handleError("updateContentEnabled", err);
+							}
+						},
+						503 : function() {
+							$('#content_errors')
+									.html(
+											'Unable to process the request. Please try again later');
+							$('#content_errors').show();
+						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						log(errorThrown);
+						$('#content_errors')
+								.html(
+										'Unable to process the request. Please try again later');
+						$('#content_errors').show();
 					}
-				}
-			}
-		});
+				});
 		jqxhr.always(function() {
 			// close wait div
 			closeWait();
@@ -278,23 +323,31 @@ function displayContentStats(id, name) {
 		openWait();
 		// load entry info via ajax
 		var url = "/secured/contentadstats/" + id;
-		var jqxhr = $.ajax({
-			url : url,
-			type : "GET",
-			contentType : "application/json",
-			statusCode : {
-				200 : function(adStats) {
-					$("#contentAccordian" + id).popover(
-							{
-								selector : '#contentAccordian' + id,
-								content : 'Clicks: ' + adStats.clicks
-										+ ', Impressions: '
-										+ adStats.impressions
-							});
-					$("#contentAccordian" + id).popover('toggle');
-				}
-			}
-		});
+		var jqxhr = $
+				.ajax({
+					url : url,
+					type : "GET",
+					contentType : "application/json",
+					statusCode : {
+						200 : function(adStats) {
+							$("#contentAccordian" + id).popover(
+									{
+										selector : '#contentAccordian' + id,
+										content : 'Clicks: ' + adStats.clicks
+												+ ', Impressions: '
+												+ adStats.impressions
+									});
+							$("#contentAccordian" + id).popover('toggle');
+						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						log(errorThrown);
+						$('#content_errors')
+								.html(
+										'Unable to process the request. Please try again later');
+						$('#content_errors').show();
+					}
+				});
 		jqxhr.always(function() {
 			// close wait div
 			closeWait();
@@ -388,7 +441,7 @@ function editContent(id) {
 									function() {
 										var invalid_fields = $(this).find(
 												'[data-invalid]');
-										console.log(invalid_fields);
+										log(invalid_fields);
 									}).on('valid', function() {
 								updateContent();
 							});
@@ -401,13 +454,19 @@ function editContent(id) {
 
 							$('#content_errors').empty();
 						},
-						error : function(xhr, textStatus, errorThrown) {
-							console.log(errorThrown);
+						503 : function() {
 							$('#content_errors')
 									.html(
 											'Unable to process the request. Please try again later');
 							$('#content_errors').show();
 						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						log(errorThrown);
+						$('#content_errors')
+								.html(
+										'Unable to process the request. Please try again later');
+						$('#content_errors').show();
 					}
 				});
 		jqxhr.always(function() {
@@ -426,17 +485,31 @@ function selectedContent(id) {
 	try {
 		// load entry info via sync call
 		var url = "/secured/content/" + id;
-		var jqxhr = $.ajax({
-			url : url,
-			type : "GET",
-			contentType : "application/json",
-			async : false,
-			statusCode : {
-				200 : function(content) {
-					mSelectedContent = content;
-				}
-			}
-		});
+		var jqxhr = $
+				.ajax({
+					url : url,
+					type : "GET",
+					contentType : "application/json",
+					async : false,
+					statusCode : {
+						200 : function(content) {
+							mSelectedContent = content;
+						},
+						503 : function() {
+							$('#content_errors')
+									.html(
+											'Unable to process the request. Please try again later');
+							$('#content_errors').show();
+						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						log(errorThrown);
+						$('#content_errors')
+								.html(
+										'Unable to process the request. Please try again later');
+						$('#content_errors').show();
+					}
+				});
 	} catch (err) {
 		handleError("selectedContent", err);
 	} finally {
@@ -517,7 +590,20 @@ function viewContent(pContentId) {
 										'open');
 							}
 
+						},
+						503 : function() {
+							$('#content_errors')
+									.html(
+											'Unable to process the request. Please try again later');
+							$('#content_errors').show();
 						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						log(errorThrown);
+						$('#content_errors')
+								.html(
+										'Unable to process the request. Please try again later');
+						$('#content_errors').show();
 					}
 				});
 	} catch (err) {
@@ -574,7 +660,7 @@ function newContent() {
 		// deprecated valid & invalid
 		$('#contentForm').on('invalid', function() {
 			var invalid_fields = $(this).find('[data-invalid]');
-			console.log(invalid_fields);
+			log(invalid_fields);
 		}).on('valid', function() {
 			createContent();
 		});
@@ -659,10 +745,16 @@ function createContent() {
 							} catch (err) {
 								handleError("createContent", err);
 							}
+						},
+						503 : function() {
+							$('#content_errors')
+									.html(
+											'Unable to process the request. Please try again later');
+							$('#content_errors').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
-						console.log(errorThrown);
+						log(errorThrown);
 						$('#content_errors')
 								.html(
 										'Unable to process the request. Please try again later');
@@ -671,7 +763,7 @@ function createContent() {
 					complete : function(xhr, textStatus) {
 						$('.meter').css("width", "100%");
 						$('.button').removeClass('disabled');
-						console.log(xhr.status);
+						log(xhr.status);
 					}
 				});
 		jqxhr.always(function() {
@@ -746,10 +838,16 @@ function updateContent() {
 							} catch (err) {
 								handleError("updateContent", err);
 							}
+						},
+						503 : function() {
+							$('#content_errors')
+									.html(
+											'Unable to process the request. Please try again later');
+							$('#content_errors').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
-						console.log(errorThrown);
+						log(errorThrown);
 						$('#content_errors')
 								.html(
 										'Unable to process the request. Please try again later');
@@ -758,7 +856,7 @@ function updateContent() {
 					complete : function(xhr, textStatus) {
 						$('.meter').css("width", "100%");
 						$('.button').removeClass('disabled');
-						console.log(xhr.status);
+						log(xhr.status);
 					}
 				});
 		jqxhr.always(function() {
@@ -781,24 +879,39 @@ function deleteContent(id) {
 		var _timeUpdatedMs = _date.getTime();
 		var _timeUpdatedTimeZoneOffsetMs = (_date.getTimezoneOffset() * 60 * 1000);
 
-		displayConfirm("Are you sure you want to delete this Content?",
+		displayConfirm(
+				"Are you sure you want to delete this Content?",
 				function() {
 					wait("confirm_wait");
 					var url = "/secured/content/" + id + "/" + _timeUpdatedMs
 							+ "/" + _timeUpdatedTimeZoneOffsetMs;
-					var jqxhr = $.ajax({
-						url : url,
-						type : "DELETE",
-						contentType : "application/json",
-						statusCode : {
-							200 : function() {
-								$('#content_create').hide();
-								location.reload();
-								// getContent(mSelectedApplication.id,
-								// mSelectedContentGroup.id);
-							}
-						}
-					});
+					var jqxhr = $
+							.ajax({
+								url : url,
+								type : "DELETE",
+								contentType : "application/json",
+								statusCode : {
+									200 : function() {
+										$('#content_create').hide();
+										location.reload();
+										// getContent(mSelectedApplication.id,
+										// mSelectedContentGroup.id);
+									},
+									503 : function() {
+										$('#content_errors')
+												.html(
+														'Unable to process the request. Please try again later');
+										$('#content_errors').show();
+									}
+								},
+								error : function(xhr, textStatus, errorThrown) {
+									log(errorThrown);
+									$('#content_errors')
+											.html(
+													'Unable to process the request. Please try again later');
+									$('#content_errors').show();
+								}
+							});
 					jqxhr.always(function(msg) {
 						clearWait("confirm_wait");
 					});

@@ -126,17 +126,11 @@ public class UserManagementController {
 				response.setStatus(HttpServletResponse.SC_CREATED);
 				return null;
 			}
-		} catch (Throwable t) {
-			LOGGER.log(Level.SEVERE, t.getMessage(), t);
-			List<ValidationError> errors = new ArrayList<ValidationError>();
-			ValidationError error = new ValidationError();
-			error.setCode("error");
-			error.setDescription("Unable to sign up. Please try again later");
-			errors.add(error);
-			LOGGER.log(Level.WARNING,
-					"Unable to sign up. Please try again later");
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			return errors;
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting doSignup");

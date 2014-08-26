@@ -134,7 +134,7 @@ function getDisplayDate(transferDate) {
 			if (_date != null) {
 				return _date.format('\L');
 			} else {
-				console.log("Unable to parse " + transferDate);
+				log("Unable to parse " + transferDate);
 				return transferDate;
 			}
 		}
@@ -151,7 +151,7 @@ function getDisplayDateAndTime(transferDateAndTime) {
 			if (_date != null) {
 				return _date.format('MM/D/YYYY h:mm a Z');
 			} else {
-				console.log("Unable to parse " + transferDateAndTime);
+				log("Unable to parse " + transferDateAndTime);
 				return transferDateAndTime;
 			}
 		}
@@ -214,7 +214,7 @@ function handleError(functionName, err) {
 		txt = functionName + "()\n\n";
 		txt += "There was an error on this page.\n\n";
 		txt += "Error description: " + err.message + "\n\n";
-		console.log(txt);
+		log(txt);
 		if (mDebugEnabled = "Y") {
 			$('#main_errors').html(txt);
 		} else {
@@ -229,7 +229,7 @@ function handleError(functionName, err) {
 		txt = functionName + "()\n\n";
 		txt += "There was an error on this page.\n\n";
 		txt += "Error description: " + err.message + "\n\n";
-		console.log(txt);
+		log(txt);
 	}
 }
 

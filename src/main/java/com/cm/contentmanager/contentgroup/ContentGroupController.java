@@ -103,6 +103,11 @@ public class ContentGroupController {
 			}
 			response.setStatus(HttpServletResponse.SC_OK);
 			return contentGroups;
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting getContentGroups");
@@ -124,6 +129,11 @@ public class ContentGroupController {
 				LOGGER.info("Entering getContentGroup");
 			response.setStatus(HttpServletResponse.SC_OK);
 			return contentGroupService.get(id);
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting getContentGroup");
@@ -157,6 +167,10 @@ public class ContentGroupController {
 			Utils.triggerChangesStagedMessage(id);
 			Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId);
 
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting deleteContentGroup");
@@ -189,6 +203,11 @@ public class ContentGroupController {
 				Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId);
 				return null;
 			}
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting doCreateContentGroup");
@@ -221,7 +240,12 @@ public class ContentGroupController {
 
 				return null;
 			}
-		} finally {
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
+	} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting doUpdateContentGroup");
 		}

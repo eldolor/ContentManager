@@ -33,6 +33,25 @@ import com.google.appengine.api.taskqueue.TaskOptions.Method;
 public class Utils {
 	private static final Logger LOGGER = Logger
 			.getLogger(Utils.class.getName());
+	public static void triggerUpdateQuotaMessage(Long pAccountId) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering triggerUpdateQuotaMessage");
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Triggering message to mark changes staged");
+			Queue queue = QueueFactory.getQueue("contentqueue");
+			TaskOptions taskOptions = TaskOptions.Builder
+					.withUrl(
+							"/tasks/quota/update/"
+									+ pAccountId)
+					.param("accountId", String.valueOf(pAccountId))
+					.method(Method.POST);
+			queue.add(taskOptions);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting triggerUpdateQuotaMessage");
+		}
+	}
 
 	public static void triggerChangesStagedMessage(Long pApplicationId) {
 		try {

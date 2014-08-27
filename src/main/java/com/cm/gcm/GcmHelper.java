@@ -56,6 +56,7 @@ public class GcmHelper {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
+			
 			String lJsonArrayString = contentHelper.getContent(pContentRequest);
 			if (lJsonArrayString != null) {
 				HashMap<String, String> lValues = new HashMap<String, String>();

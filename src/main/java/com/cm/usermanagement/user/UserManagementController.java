@@ -27,7 +27,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.cm.admin.plan.CanonicalApplicationQuota;
 import com.cm.admin.plan.CanonicalPlanName;
+import com.cm.admin.plan.CanonicalPlanQuota;
 import com.cm.config.Configuration;
 import com.cm.contentmanager.application.Application;
 import com.cm.contentmanager.application.ApplicationService;
@@ -36,6 +38,8 @@ import com.cm.contentmanager.content.Content;
 import com.cm.contentmanager.content.ContentService;
 import com.cm.contentmanager.contentgroup.ContentGroup;
 import com.cm.contentmanager.contentgroup.ContentGroupService;
+import com.cm.quota.Quota;
+import com.cm.quota.QuotaService;
 import com.cm.stripe.StripeCustomer;
 import com.cm.stripe.StripeCustomerService;
 import com.cm.usermanagement.user.transfer.ForgotPasswordRequest;
@@ -61,6 +65,8 @@ public class UserManagementController {
 	private ContentGroupService contentGroupService;
 	@Autowired
 	private ContentService contentService;
+	@Autowired
+	private QuotaService quotaService;
 
 	private static final Logger LOGGER = Logger
 			.getLogger(UserManagementController.class.getName());
@@ -122,6 +128,21 @@ public class UserManagementController {
 				ContentGroup lContentGroup = createDemoContentGroup(
 						lDomainUser, lApplication);
 				createDemoContent(lDomainUser, lApplication, lContentGroup);
+
+				// assign them the free quota
+				Quota lQuota = new Quota();
+				lQuota.setAccountId(lUser.getAccountId());
+				// default to free
+				lQuota.setCanonicalPlanName(CanonicalPlanName.FREE.getValue());
+				lQuota.setStorageLimitInBytes(CanonicalPlanQuota.FREE
+						.getValue());
+				lQuota.setApplicationLimit(CanonicalApplicationQuota.FREE
+						.getValue());
+
+				lQuota.setTimeCreatedMs(System.currentTimeMillis());
+				lQuota.setTimeCreatedTimeZoneOffsetMs((long) TimeZone
+						.getDefault().getRawOffset());
+				quotaService.create(lQuota);
 
 				response.setStatus(HttpServletResponse.SC_CREATED);
 				return null;
@@ -193,8 +214,7 @@ public class UserManagementController {
 			// set high date
 			lContentGroup.setEndDateMs(Long.MAX_VALUE);
 
-			lContentGroup = contentGroupService.save(pUser,
-					lContentGroup);
+			lContentGroup = contentGroupService.save(pUser, lContentGroup);
 			return lContentGroup;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))

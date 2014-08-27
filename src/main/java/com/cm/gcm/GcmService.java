@@ -22,6 +22,9 @@ public class GcmService {
 	public static final String DEVICE_REGISTRATION_ID_DELETED_ERROR_CODE = "DeviceRegistrationIdDeleted";
 	public static final String DEVICE_HAS_MULTIPLE_REGISTRATIONS_ERROR_CODE = "DeviceHasMultipleRegistrations";
 	public static final String DEVICE_NOT_REGISTERED_ERROR_CODE = "DeviceNotRegistered";
+	public static final String MISSING_TRACKING_ID_ERROR_CODE = "MissingTrackingId";
+	public static final String MISSING_GCM_ID_ERROR_CODE = "MissingGcmId";
+	public static final String MISSING_DEPRECATED_GCM_ID_ERROR_CODE = "MissingDeprecatedGcmId";
 
 	public void register(GcmRegistrationRequest gcmRegistrationRequest) {
 		try {

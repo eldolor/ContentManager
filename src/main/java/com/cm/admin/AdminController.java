@@ -33,10 +33,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cm.accountmanagement.account.Account;
+import com.cm.admin.plan.CanonicalApplicationQuota;
 import com.cm.admin.plan.CanonicalPlanName;
+import com.cm.admin.plan.CanonicalPlanQuota;
 import com.cm.admin.plan.Plan;
 import com.cm.common.entity.Result;
 import com.cm.gcm.GcmRegistrationRequest;
+import com.cm.quota.Quota;
 import com.cm.usermanagement.user.User;
 import com.cm.usermanagement.user.UserService;
 import com.cm.util.PMF;
@@ -229,6 +232,60 @@ public class AdminController {
 						gcmRegistrationRequest
 								.setGcmDeviceHasMultipleRegistrations(Boolean
 										.valueOf(false));
+					}
+				} finally {
+					if (pm != null) {
+						pm.close();
+					}
+				}
+			} finally {
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("Exiting getGcmRegistrationRequests");
+			}
+
+			Result result = new Result();
+			result.setResult(Result.SUCCESS);
+			return result;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting updateGcmRegistrationRequests");
+		}
+	}
+
+	@RequestMapping(value = "/tasks/assignfreequotas", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody
+	Result assignFreeQuotas(HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering updateGcmRegistrationRequests");
+			try {
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("Entering getGcmRegistrationRequests");
+
+				PersistenceManager pm = null;
+
+				try {
+					pm = PMF.get().getPersistenceManager();
+					Query q = pm.newQuery(Account.class);
+					List<Account> lList = (List<Account>) q.execute();
+					for (Account lAccount : lList) {
+						// assign them the free quota
+						Quota lQuota = new Quota();
+						lQuota.setAccountId(lAccount.getId());
+						// default to free
+						lQuota.setCanonicalPlanName(CanonicalPlanName.FREE
+								.getValue());
+						lQuota.setStorageLimitInBytes(CanonicalPlanQuota.FREE
+								.getValue());
+						lQuota.setApplicationLimit(CanonicalApplicationQuota.FREE
+								.getValue());
+
+						lQuota.setTimeCreatedMs(System.currentTimeMillis());
+						lQuota.setTimeCreatedTimeZoneOffsetMs((long) TimeZone
+								.getDefault().getRawOffset());
+						// save
+						pm.makePersistent(lQuota);
+
 					}
 				} finally {
 					if (pm != null) {

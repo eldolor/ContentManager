@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.cm.contentmanager.application.ApplicationService;
+import com.cm.quota.QuotaService;
 import com.cm.usermanagement.user.UserService;
 import com.cm.util.Utils;
 import com.cm.util.ValidationError;
@@ -173,6 +174,8 @@ public class ContentController {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return errors;
 			} else {
+				
+
 				Content lContent = contentService.save(
 						userService.getLoggedInUser(), content);
 				response.setStatus(HttpServletResponse.SC_CREATED);

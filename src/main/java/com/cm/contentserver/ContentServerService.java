@@ -99,7 +99,7 @@ public class ContentServerService {
 		Application lApplication = applicationService
 				.getApplicationByTrackingId(trackingId, false);
 		// TODO: hard-wired for now
-		return lApplication.getId();
+		return (lApplication!=null)? lApplication.getId():null;
 	}
 
 	private List<ContentGroup> filterContentGroupByEffectiveDate(

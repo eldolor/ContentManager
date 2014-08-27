@@ -524,39 +524,86 @@ function editApplication(id) {
 function newApplication() {
 	log("newApplication", "Entering");
 	try {
-		$('#application_errors').hide();
+		// validate quota
+		var url = "//secured/quota/application/validate";
+		var jqxhr = $
+				.ajax({
+					url : url,
+					type : "GET",
+					contentType : "application/json",
+					statusCode : {
+						200 : function(application) {
 
-		$('#application_save_button').html('create');
-		// not using valid.fndtn.abide & invalid.fndtn.abide as it
-		// causes the form to be submitted twice. Instead use the
-		// deprecated valid & invalid
-		// unbind click listener to reset
-		$('#applicationForm').on('invalid', function() {
-			var invalid_fields = $(this).find('[data-invalid]');
-			log(invalid_fields);
-		}).on('valid', function() {
-			log('newApplication: valid!');
-			createApplication();
-			// Google Analytics
-			ga('send', 'event', Category.APPLICATION, Action.CREATE);
-			// End Google Analytics
+							$('#application_errors').hide();
+
+							$('#application_save_button').html('create');
+							// not using valid.fndtn.abide & invalid.fndtn.abide
+							// as it
+							// causes the form to be submitted twice. Instead
+							// use the
+							// deprecated valid & invalid
+							// unbind click listener to reset
+							$('#applicationForm').on(
+									'invalid',
+									function() {
+										var invalid_fields = $(this).find(
+												'[data-invalid]');
+										log(invalid_fields);
+									}).on(
+									'valid',
+									function() {
+										log('newApplication: valid!');
+										createApplication();
+										// Google Analytics
+										ga('send', 'event',
+												Category.APPLICATION,
+												Action.CREATE);
+										// End Google Analytics
+									});
+							$('#application_cancel_button').unbind();
+							$('#application_cancel_button').click(function() {
+								$('#application_create').hide();
+								$('#applications_list').show();
+							});
+
+							$('#application_id').val('');
+							$('#application_name').val('');
+							$('#application_description').val('');
+							$('#application_userid').val('');
+
+							$('#application_update_over_wifi_only').attr(
+									'checked', 'checked');
+							// set default
+							$('#application_enabled')
+									.attr('checked', 'checked');
+
+							$('#application_errors').empty();
+						},
+						409 : function() {
+							// insufficient quota
+							displayConfirm(
+									"Please upgrade your Plan to create more applications",
+									null);
+						},
+						503 : function() {
+							$('#application_errors')
+									.html(
+											'Unable to process the request. Please try again later');
+							$('#application_errors').show();
+						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						log(errorThrown);
+						$('#application_errors')
+								.html(
+										'Unable to process the request. Please try again later');
+						$('#application_errors').show();
+					}
+				});
+		jqxhr.always(function() {
+			// close wait div
+			closeWait();
 		});
-		$('#application_cancel_button').unbind();
-		$('#application_cancel_button').click(function() {
-			$('#application_create').hide();
-			$('#applications_list').show();
-		});
-
-		$('#application_id').val('');
-		$('#application_name').val('');
-		$('#application_description').val('');
-		$('#application_userid').val('');
-
-		$('#application_update_over_wifi_only').attr('checked', 'checked');
-		// set default
-		$('#application_enabled').attr('checked', 'checked');
-
-		$('#application_errors').empty();
 
 	} catch (err) {
 		handleError("newApplication", err);

@@ -34,8 +34,9 @@ public class Content {
 	private String type;
 	@Persistent
 	private String uri;
+	// default to zero, as it impacts deserialization on the handsets
 	@Persistent
-	private Long sizeInBytes;
+	private Long sizeInBytes = 0L;
 	@Persistent
 	public Boolean deleted = false;
 	@Persistent
@@ -202,7 +203,8 @@ public class Content {
 	}
 
 	public Long getSizeInBytes() {
-		return sizeInBytes;
+		// return 0L as it impacts deserialization on the handset
+		return (sizeInBytes == null) ? 0L : sizeInBytes;
 	}
 
 	public void setSizeInBytes(Long sizeInBytes) {

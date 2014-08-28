@@ -5,12 +5,8 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-import com.cm.admin.plan.CanonicalApplicationQuota;
-import com.cm.admin.plan.CanonicalPlanName;
-import com.cm.admin.plan.CanonicalPlanQuota;
-
 @PersistenceCapable
-public class Quota {
+public class ApplicationQuotaUsed {
 
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -18,17 +14,8 @@ public class Quota {
 
 	@Persistent
 	private Long accountId;
-
-	// default to free
 	@Persistent
-	private String canonicalPlanName = CanonicalPlanName.FREE.getValue();
-	// default to free
-	@Persistent
-	private Long storageLimitInBytes = CanonicalPlanQuota.FREE.getValue();
-
-	@Persistent
-	private Integer applicationLimit = CanonicalApplicationQuota.FREE
-			.getValue();
+	private Integer applicationsUsed;
 
 	@Persistent
 	private Long timeCreatedMs;
@@ -39,7 +26,7 @@ public class Quota {
 	@Persistent
 	private Long timeUpdatedTimeZoneOffsetMs;
 
-	public Quota() {
+	public ApplicationQuotaUsed() {
 		super();
 	}
 
@@ -83,14 +70,6 @@ public class Quota {
 		this.timeUpdatedTimeZoneOffsetMs = timeUpdatedTimeZoneOffsetMs;
 	}
 
-	public String getCanonicalPlanName() {
-		return canonicalPlanName;
-	}
-
-	public void setCanonicalPlanName(String canonicalPlanName) {
-		this.canonicalPlanName = canonicalPlanName;
-	}
-
 	public Long getAccountId() {
 		return accountId;
 	}
@@ -99,20 +78,12 @@ public class Quota {
 		this.accountId = accountId;
 	}
 
-	public Integer getApplicationLimit() {
-		return (applicationLimit != null) ? applicationLimit : 0;
+	public Integer getApplicationsUsed() {
+		return applicationsUsed;
 	}
 
-	public void setApplicationLimit(Integer applicationLimit) {
-		this.applicationLimit = applicationLimit;
-	}
-
-	public Long getStorageLimitInBytes() {
-		return (storageLimitInBytes != null) ? storageLimitInBytes : 0L;
-	}
-
-	public void setStorageLimitInBytes(Long storageLimitInBytes) {
-		this.storageLimitInBytes = storageLimitInBytes;
+	public void setApplicationsUsed(Integer applicationsUsed) {
+		this.applicationsUsed = applicationsUsed;
 	}
 
 }

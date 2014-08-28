@@ -38,11 +38,17 @@ import com.cm.admin.plan.CanonicalPlanName;
 import com.cm.admin.plan.CanonicalPlanQuota;
 import com.cm.admin.plan.Plan;
 import com.cm.common.entity.Result;
+import com.cm.contentmanager.application.Application;
+import com.cm.contentmanager.application.ApplicationService;
+import com.cm.contentmanager.content.Content;
+import com.cm.contentmanager.content.ContentService;
 import com.cm.gcm.GcmRegistrationRequest;
 import com.cm.quota.Quota;
+import com.cm.quota.QuotaService;
 import com.cm.usermanagement.user.User;
 import com.cm.usermanagement.user.UserService;
 import com.cm.util.PMF;
+import com.cm.util.Utils;
 import com.google.appengine.api.blobstore.BlobInfo;
 import com.google.appengine.api.blobstore.BlobInfoFactory;
 import com.google.appengine.api.blobstore.BlobstoreService;
@@ -55,13 +61,19 @@ public class AdminController {
 			.getName());
 
 	@Autowired
+	private QuotaService quotaService;
+	@Autowired
 	private UserService userService;
 	@Autowired
 	private com.cm.accountmanagement.account.AccountService accountService;
 	@Autowired
 	private com.cm.admin.plan.PlanDao planDao;
+	@Autowired
+	private ContentService contentService;
+	@Autowired
+	private ApplicationService applicationService;
 
-	@RequestMapping(value = "/tasks/deleteusers", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/admin/deleteusers", method = RequestMethod.GET, produces = "application/json")
 	public void deleteUsers(HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -85,7 +97,7 @@ public class AdminController {
 		}
 	}
 
-	@RequestMapping(value = "/tasks/deleteblobstore", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/admin/deleteblobstore", method = RequestMethod.GET, produces = "application/json")
 	public void deleteBlobStore(HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -106,7 +118,7 @@ public class AdminController {
 		}
 	}
 
-	@RequestMapping(value = "/tasks/createsu", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/admin/createsu", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody
 	Result createSu(HttpServletResponse response) {
 		try {
@@ -165,7 +177,7 @@ public class AdminController {
 		}
 	}
 
-	@RequestMapping(value = "/tasks/createplans", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/admin/createplans", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody
 	Result createPlans(HttpServletResponse response) {
 		try {
@@ -206,7 +218,7 @@ public class AdminController {
 		}
 	}
 
-	@RequestMapping(value = "/tasks/updategcmregistrationrequests", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/admin/updategcmregistrationrequests", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody
 	Result updateGcmRegistrationRequests(HttpServletResponse response) {
 		try {
@@ -252,7 +264,7 @@ public class AdminController {
 		}
 	}
 
-	@RequestMapping(value = "/tasks/assignfreequotas", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/admin/assignfreequotas", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody
 	Result assignFreeQuotas(HttpServletResponse response) {
 		try {
@@ -305,4 +317,74 @@ public class AdminController {
 				LOGGER.info("Exiting updateGcmRegistrationRequests");
 		}
 	}
+
+	@RequestMapping(value = "/admin/content/size/update", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody
+	Result updateSize(HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			List<Account> lAccounts = accountService.getAccounts();
+			for (Account account : lAccounts) {
+				List<Application> lApplications = applicationService
+						.getApplicationsByAccountId(account.getId());
+				for (Application lApplication : lApplications) {
+					List<Content> lContentList = contentService.get(
+							lApplication.getId(), false);
+					for (Content lContent : lContentList) {
+						if (!Utils.isEmpty(lContent.getUri())) {
+							Utils.triggerUpdateContentSizeInBytesMessage(
+									lContent.getId(), lContent.getUri());
+						}
+					}
+				}
+			}
+			Result result = new Result();
+			result.setResult(Result.SUCCESS);
+			return result;
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+
+		}
+	}
+
+	@RequestMapping(value = "/admin/quota/update", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody
+	Result updateQuota(HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			List<Account> lAccounts = accountService.getAccounts();
+			for (Account account : lAccounts) {
+				List<Application> lApplications = applicationService
+						.getApplicationsByAccountId(account.getId());
+				int lApplicationsUsed = lApplications.size();
+				quotaService.upsertApplicationUtilization(account.getId(),
+						lApplicationsUsed);
+				for (Application lApplication : lApplications) {
+					long lStorageUsedInBytes = 0;
+					List<Content> lContentList = contentService.get(
+							lApplication.getId(), false);
+					for (Content lContent : lContentList) {
+						// roll up size
+						lStorageUsedInBytes += lContent.getSizeInBytes();
+					}
+					// update for each application
+					quotaService.upsertStorageUtilization(account.getId(),
+							lApplication.getId(), lStorageUsedInBytes);
+				}
+			}
+			Result result = new Result();
+			result.setResult(Result.SUCCESS);
+			return result;
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+
+		}
+	}
+
 }

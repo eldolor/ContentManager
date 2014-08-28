@@ -125,8 +125,6 @@ function setupLeftNavBar() {
 		$('#left_nav_bar_link_1').click(function() {
 			// $('#application_create_modal').foundation('reveal',
 			// 'open');
-			$('#applications_list').hide();
-			$('#application_create').show();
 			newApplication();
 			// Google Analytics
 			ga('send', 'event', Category.APPLICATION, Action.CREATE_NEW);
@@ -525,7 +523,7 @@ function newApplication() {
 	log("newApplication", "Entering");
 	try {
 		// validate quota
-		var url = "//secured/quota/application/validate";
+		var url = "/secured/quota/application/validate";
 		var jqxhr = $
 				.ajax({
 					url : url,
@@ -533,6 +531,9 @@ function newApplication() {
 					contentType : "application/json",
 					statusCode : {
 						200 : function(application) {
+
+							$('#applications_list').hide();
+							$('#application_create').show();
 
 							$('#application_errors').hide();
 
@@ -581,9 +582,11 @@ function newApplication() {
 						},
 						409 : function() {
 							// insufficient quota
-							displayConfirm(
+							displayUpgrade(
 									"Please upgrade your Plan to create more applications",
-									null);
+									function() {
+										window.location.href = '/account';
+									});
 						},
 						503 : function() {
 							$('#application_errors')
@@ -600,10 +603,6 @@ function newApplication() {
 						$('#application_errors').show();
 					}
 				});
-		jqxhr.always(function() {
-			// close wait div
-			closeWait();
-		});
 
 	} catch (err) {
 		handleError("newApplication", err);

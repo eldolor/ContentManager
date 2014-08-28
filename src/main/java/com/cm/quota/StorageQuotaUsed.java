@@ -5,12 +5,8 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-import com.cm.admin.plan.CanonicalApplicationQuota;
-import com.cm.admin.plan.CanonicalPlanName;
-import com.cm.admin.plan.CanonicalPlanQuota;
-
 @PersistenceCapable
-public class Quota {
+public class StorageQuotaUsed {
 
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -18,17 +14,11 @@ public class Quota {
 
 	@Persistent
 	private Long accountId;
-
-	// default to free
 	@Persistent
-	private String canonicalPlanName = CanonicalPlanName.FREE.getValue();
-	// default to free
-	@Persistent
-	private Long storageLimitInBytes = CanonicalPlanQuota.FREE.getValue();
+	private Long applicationId;
 
 	@Persistent
-	private Integer applicationLimit = CanonicalApplicationQuota.FREE
-			.getValue();
+	private Long storageUsedInBytes;
 
 	@Persistent
 	private Long timeCreatedMs;
@@ -39,7 +29,7 @@ public class Quota {
 	@Persistent
 	private Long timeUpdatedTimeZoneOffsetMs;
 
-	public Quota() {
+	public StorageQuotaUsed() {
 		super();
 	}
 
@@ -83,14 +73,6 @@ public class Quota {
 		this.timeUpdatedTimeZoneOffsetMs = timeUpdatedTimeZoneOffsetMs;
 	}
 
-	public String getCanonicalPlanName() {
-		return canonicalPlanName;
-	}
-
-	public void setCanonicalPlanName(String canonicalPlanName) {
-		this.canonicalPlanName = canonicalPlanName;
-	}
-
 	public Long getAccountId() {
 		return accountId;
 	}
@@ -99,20 +81,20 @@ public class Quota {
 		this.accountId = accountId;
 	}
 
-	public Integer getApplicationLimit() {
-		return (applicationLimit != null) ? applicationLimit : 0;
+	public Long getStorageUsedInBytes() {
+		return (storageUsedInBytes != null) ? storageUsedInBytes : 0L;
 	}
 
-	public void setApplicationLimit(Integer applicationLimit) {
-		this.applicationLimit = applicationLimit;
+	public void setStorageUsedInBytes(Long storageUsedInBytes) {
+		this.storageUsedInBytes = storageUsedInBytes;
 	}
 
-	public Long getStorageLimitInBytes() {
-		return (storageLimitInBytes != null) ? storageLimitInBytes : 0L;
+	public Long getApplicationId() {
+		return applicationId;
 	}
 
-	public void setStorageLimitInBytes(Long storageLimitInBytes) {
-		this.storageLimitInBytes = storageLimitInBytes;
+	public void setApplicationId(Long applicationId) {
+		this.applicationId = applicationId;
 	}
 
 }

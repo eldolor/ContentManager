@@ -7,6 +7,17 @@
 <%@page
 	import="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"%><html>
 
+<!-- Begin Upgrade -->
+<div class="reveal-modal small" id="upgrade_modal" data-reveal>
+	<h3 id="upgradeModalLabel">Upgrade</h3>
+	<div class="row">
+		<div id="upgrade_message"></div>
+		<div>&nbsp;</div>
+	</div>
+	<button id="upgrade_yes_button" class="button">upgrade</button>
+	<a class="close-reveal-modal">&#215;</a>
+</div>
+<!-- End Upgrade -->
 
 <!-- Begin Forgot Password -->
 <div class="reveal-modal small" id="forgot_password_modal" data-reveal>

@@ -323,7 +323,20 @@ function displayConfirm(message, callback) {
 	$('#confirm_modal').foundation('reveal', 'open');
 
 }
+function displayUpgrade(message, callback) {
+	$("#upgrade_message").html(message);
+	// if the user clicks "yes"
+	$('#upgrade_yes_button').bind('click', function() {
+		// call the callback
+		if ($.isFunction(callback)) {
+			callback.apply();
+		}
+		$('#upgrade_modal').foundation('reveal', 'close');
+	});
 
+	$('#upgrade_modal').foundation('reveal', 'open');
+
+}
 var imageCount = 9; // max images displayed in the image gallery
 function shiftGallery(index, entry_id, frames, max) {
 

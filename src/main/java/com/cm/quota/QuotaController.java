@@ -15,7 +15,6 @@
 
 package com.cm.quota;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
@@ -29,30 +28,28 @@ import net.sf.jsr107cache.CacheManager;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
-import com.cm.contentmanager.content.ContentHelper;
+import com.cm.contentmanager.application.Application;
+import com.cm.contentmanager.application.ApplicationService;
+import com.cm.contentmanager.content.Content;
+import com.cm.contentmanager.content.ContentService;
 import com.cm.usermanagement.user.User;
 import com.cm.usermanagement.user.UserService;
-import com.cm.util.Utils;
-import com.cm.util.ValidationError;
-import com.google.appengine.api.taskqueue.Queue;
-import com.google.appengine.api.taskqueue.QueueFactory;
-import com.google.appengine.api.taskqueue.TaskOptions;
-import com.google.appengine.api.taskqueue.TaskOptions.Method;
 
 @Controller
 public class QuotaController {
 	@Autowired
 	private QuotaService quotaService;
 	@Autowired
+	private ContentService contentService;
+	@Autowired
 	private UserService userService;
+	@Autowired
+	private ApplicationService applicationService;
 
 	private static final Logger LOGGER = Logger.getLogger(QuotaController.class
 			.getName());
@@ -123,22 +120,51 @@ public class QuotaController {
 		}
 	}
 
+	@RequestMapping(value = "/tasks/quota/update/{accountId}", method = RequestMethod.POST)
+	public void updateQuota(@PathVariable Long accountId,
+			HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			List<Application> lApplications = applicationService
+					.getApplicationsByAccountId(accountId);
+			int lApplicationsUsed = lApplications.size();
+			quotaService.upsertApplicationUtilization(accountId,
+					lApplicationsUsed);
+			for (Application lApplication : lApplications) {
+				long lStorageUsedInBytes = 0;
+				List<Content> lContentList = contentService.get(
+						lApplication.getId(), false);
+				for (Content lContent : lContentList) {
+					// roll up size
+					lStorageUsedInBytes += lContent.getSizeInBytes();
+				}
+				// update for each application
+				quotaService.upsertStorageUtilization(accountId,
+						lApplication.getId(), lStorageUsedInBytes);
+			}
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+
+		}
+	}
+
 	private com.cm.quota.transfer.Quota convert(Quota pQuota) {
 		com.cm.quota.transfer.Quota lQuota = new com.cm.quota.transfer.Quota();
 		lQuota.setApplicationLimit(pQuota.getApplicationLimit());
 		lQuota.setCanonicalPlanName(pQuota.getCanonicalPlanName());
 		lQuota.setStorageLimitInBytes(pQuota.getStorageLimitInBytes());
-		lQuota.setStorageUsedInBytes(pQuota.getStorageUsedInBytes());
 		lQuota.setApplicationLimit(pQuota.getApplicationLimit());
-		lQuota.setApplicationsUsed(pQuota.getApplicationsUsed());
 
-		int lPercentageStorageUtilized = Math
-				.round((pQuota.getStorageUsedInBytes() / pQuota
-						.getStorageLimitInBytes()) * 100);
-		lQuota.setPercentageStorageUsed(lPercentageStorageUtilized);
-		int lPercentageApplicationUtilized = Math.round((pQuota
-				.getApplicationsUsed() / pQuota.getApplicationLimit()) * 100);
-		lQuota.setPercentageApplicationUsed(lPercentageApplicationUtilized);
+		// int lPercentageStorageUtilized = Math
+		// .round((pQuota.getStorageUsedInBytes() / pQuota
+		// .getStorageLimitInBytes()) * 100);
+		// lQuota.setPercentageStorageUsed(lPercentageStorageUtilized);
+		// int lPercentageApplicationUtilized = Math.round((pQuota
+		// .getApplicationsUsed() / pQuota.getApplicationLimit()) * 100);
+		// lQuota.setPercentageApplicationUsed(lPercentageApplicationUtilized);
 		return lQuota;
 	}
 

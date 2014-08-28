@@ -19,12 +19,19 @@ public class QuotaService {
 	public static final String APPLICATION_QUOTA_REACHED_ERROR_CODE = "ApplicationQuotaReached";
 	public static final String STORAGE_QUOTA_REACHED_ERROR_CODE = "StorageQuotaReached";
 
-	public boolean hasSufficientStorageQuota(Long accountId) {
+	public boolean hasSufficientStorageQuota(Long accountId, Long applicationId) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
+			StorageQuotaUsed lStorageQuotaUsed = quotaDao.getStorageQuotaUsed(
+					accountId, applicationId);
 			Quota lQuota = quotaDao.get(accountId);
-			if (lQuota.getStorageUsedInBytes() < lQuota
+
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Storage used: "
+						+ lStorageQuotaUsed.getStorageUsedInBytes()
+						+ " Storage Limit: " + lQuota.getStorageLimitInBytes());
+			if (lStorageQuotaUsed.getStorageUsedInBytes() < lQuota
 					.getStorageLimitInBytes())
 				return true;
 			return false;
@@ -40,9 +47,21 @@ public class QuotaService {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Account Id: " + accountId);
+			ApplicationQuotaUsed lApplicationQuotaUsed = quotaDao
+					.getApplicationQuotaUsed(accountId);
+
 			Quota lQuota = quotaDao.get(accountId);
-			if (lQuota.getApplicationsUsed() < lQuota.getApplicationLimit())
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Applications used: "
+						+ lApplicationQuotaUsed.getApplicationsUsed()
+						+ " Application Limit: " + lQuota.getApplicationLimit());
+
+			if (lApplicationQuotaUsed.getApplicationsUsed() < lQuota
+					.getApplicationLimit()) {
 				return true;
+			}
 			return false;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -68,11 +87,13 @@ public class QuotaService {
 
 	}
 
-	public void updateStorageUtilization(Long accountId, Long storageUsedInBytes) {
+	public void upsertStorageUtilization(Long accountId, Long applicationId,
+			Long storageUsedInBytes) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
-			quotaDao.updateStorageUtilization(accountId, storageUsedInBytes);
+			quotaDao.upsertStorageUtilization(accountId, applicationId,
+					storageUsedInBytes);
 
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -82,12 +103,12 @@ public class QuotaService {
 
 	}
 
-	public void updateApplicationUtilization(Long accountId,
+	public void upsertApplicationUtilization(Long accountId,
 			int applicationsUsed) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
-			quotaDao.updateApplicationUtilization(accountId, applicationsUsed);
+			quotaDao.upsertApplicationUtilization(accountId, applicationsUsed);
 
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -101,7 +122,7 @@ public class QuotaService {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
-			quotaDao.save(quota);
+			quotaDao.create(quota);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting");

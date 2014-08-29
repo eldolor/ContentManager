@@ -27,13 +27,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.cm.admin.plan.CanonicalApplicationQuota;
-import com.cm.admin.plan.CanonicalPlanName;
-import com.cm.admin.plan.CanonicalPlanQuota;
+import com.cm.config.CanonicalApplicationQuota;
+import com.cm.config.CanonicalContentType;
+import com.cm.config.CanonicalPlanName;
+import com.cm.config.CanonicalStorageQuota;
 import com.cm.config.Configuration;
 import com.cm.contentmanager.application.Application;
 import com.cm.contentmanager.application.ApplicationService;
-import com.cm.contentmanager.content.CanonicalContentType;
 import com.cm.contentmanager.content.Content;
 import com.cm.contentmanager.content.ContentService;
 import com.cm.contentmanager.contentgroup.ContentGroup;
@@ -134,7 +134,7 @@ public class UserManagementController {
 				lQuota.setAccountId(lUser.getAccountId());
 				// default to free
 				lQuota.setCanonicalPlanName(CanonicalPlanName.FREE.getValue());
-				lQuota.setStorageLimitInBytes(CanonicalPlanQuota.FREE
+				lQuota.setStorageLimitInBytes(CanonicalStorageQuota.FREE
 						.getValue());
 				lQuota.setApplicationLimit(CanonicalApplicationQuota.FREE
 						.getValue());
@@ -403,15 +403,7 @@ public class UserManagementController {
 				userService.save(lForgotPasswordRequest);
 
 				// send out the email
-				{
-					Queue queue = QueueFactory.getQueue("emailqueue");
-					TaskOptions taskOptions = TaskOptions.Builder
-							.withUrl(
-									"/tasks/email/sendforgotpasswordemail/"
-											+ lGuid).param("guid", lGuid)
-							.method(Method.POST);
-					queue.add(taskOptions);
-				}
+				Utils.triggerForgotPasswordEmailMessage(lGuid, 0);
 			} else {
 				LOGGER.log(Level.WARNING, "The user does not exist");
 			}
@@ -440,11 +432,10 @@ public class UserManagementController {
 			htmlBody.append(lEmailMessage);
 			try {
 				Utils.sendEmail(
-						Configuration.FORGOT_PASSWORD_FROM_EMAIL_ADDRESS
-								.getValue(),
-						Configuration.FORGOT_PASSWORD_FROM_NAME.getValue(),
-						lRequest.getEmail(), "", Configuration.SITE_NAME
-								.getValue(), htmlBody.toString(), null);
+						Configuration.FORGOT_PASSWORD_FROM_EMAIL_ADDRESS,
+						Configuration.FORGOT_PASSWORD_FROM_NAME,
+						lRequest.getEmail(), "", Configuration.SITE_NAME,
+						htmlBody.toString(), null);
 			} catch (UnsupportedEncodingException e) {
 				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			} catch (MessagingException e) {

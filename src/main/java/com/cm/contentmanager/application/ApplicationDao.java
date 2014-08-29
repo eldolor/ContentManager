@@ -1,6 +1,7 @@
 package com.cm.contentmanager.application;
 
 import java.util.List;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -281,6 +282,39 @@ class ApplicationDao {
 		}
 	}
 
+	void deleteOnPlanDowngrade(Long id) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering delete");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Application lApplication = pm.getObjectById(Application.class,
+						id);
+				if (lApplication != null) {
+					lApplication.setDeleted(true);
+					lApplication.setDeletedOnPlanDowngrade(true);
+					lApplication.setTimeUpdatedMs(System.currentTimeMillis());
+					lApplication.setTimeUpdatedTimeZoneOffsetMs((long) TimeZone
+							.getDefault().getRawOffset());
+					if (LOGGER.isLoggable(Level.INFO))
+						LOGGER.info(id + " application marked for deletion");
+				} else {
+					LOGGER.log(Level.WARNING, id + "  APPLICATION NOT FOUND!");
+				}
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting delete");
+		}
+	}
+
 	void restore(Long id, Long timeUpdatedMs, Long timeUpdatedTimeZoneOffsetMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -289,13 +323,46 @@ class ApplicationDao {
 
 			try {
 				pm = PMF.get().getPersistenceManager();
-				Application lContentGroup = pm.getObjectById(Application.class,
+				Application lApplication = pm.getObjectById(Application.class,
 						id);
-				if (lContentGroup != null) {
-					lContentGroup.setDeleted(false);
-					lContentGroup.setTimeUpdatedMs(timeUpdatedMs);
-					lContentGroup
+				if (lApplication != null) {
+					lApplication.setDeleted(false);
+					lApplication.setDeletedOnPlanDowngrade(false);
+					lApplication.setTimeUpdatedMs(timeUpdatedMs);
+					lApplication
 							.setTimeUpdatedTimeZoneOffsetMs(timeUpdatedTimeZoneOffsetMs);
+					if (LOGGER.isLoggable(Level.INFO))
+						LOGGER.info(id + " application restored");
+				} else {
+					LOGGER.log(Level.WARNING, id + "  APPLICATION NOT FOUND!");
+				}
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting restore");
+		}
+	}
+
+	void restoreOnPlanUpgrade(Long id) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Application lApplication = pm.getObjectById(Application.class,
+						id);
+				if (lApplication != null) {
+					lApplication.setDeleted(false);
+					lApplication.setTimeUpdatedMs(System.currentTimeMillis());
+					lApplication.setTimeUpdatedTimeZoneOffsetMs((long) TimeZone
+							.getDefault().getRawOffset());
 					if (LOGGER.isLoggable(Level.INFO))
 						LOGGER.info(id + " application restored");
 				} else {

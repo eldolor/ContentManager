@@ -5,9 +5,9 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-import com.cm.admin.plan.CanonicalApplicationQuota;
-import com.cm.admin.plan.CanonicalPlanName;
-import com.cm.admin.plan.CanonicalPlanQuota;
+import com.cm.config.CanonicalApplicationQuota;
+import com.cm.config.CanonicalPlanName;
+import com.cm.config.CanonicalStorageQuota;
 
 @PersistenceCapable
 public class Quota {
@@ -24,7 +24,7 @@ public class Quota {
 	private String canonicalPlanName = CanonicalPlanName.FREE.getValue();
 	// default to free
 	@Persistent
-	private Long storageLimitInBytes = CanonicalPlanQuota.FREE.getValue();
+	private Long storageLimitInBytes = CanonicalStorageQuota.FREE.getValue();
 
 	@Persistent
 	private Integer applicationLimit = CanonicalApplicationQuota.FREE

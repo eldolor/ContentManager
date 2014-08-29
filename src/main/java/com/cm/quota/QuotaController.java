@@ -16,7 +16,9 @@
 package com.cm.quota;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,12 +35,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.cm.config.CanonicalApplicationQuota;
+import com.cm.config.CanonicalPlanName;
+import com.cm.config.CanonicalStorageQuota;
 import com.cm.contentmanager.application.Application;
 import com.cm.contentmanager.application.ApplicationService;
 import com.cm.contentmanager.content.Content;
 import com.cm.contentmanager.content.ContentService;
+import com.cm.stripe.StripeCustomer;
+import com.cm.stripe.StripeCustomerService;
 import com.cm.usermanagement.user.User;
 import com.cm.usermanagement.user.UserService;
+import com.cm.util.Utils;
 
 @Controller
 public class QuotaController {
@@ -50,6 +58,8 @@ public class QuotaController {
 	private UserService userService;
 	@Autowired
 	private ApplicationService applicationService;
+	@Autowired
+	private StripeCustomerService stripeCustomerService;
 
 	private static final Logger LOGGER = Logger.getLogger(QuotaController.class
 			.getName());
@@ -120,9 +130,112 @@ public class QuotaController {
 		}
 	}
 
+	@RequestMapping(value = "/tasks/quota/utilization/update/{accountId}", method = RequestMethod.POST)
+	public void updateQuotaUtilizaton(@PathVariable Long accountId,
+			HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			updateQuotaUtilizaton(accountId);
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+
+		}
+	}
+
 	@RequestMapping(value = "/tasks/quota/update/{accountId}", method = RequestMethod.POST)
 	public void updateQuota(@PathVariable Long accountId,
 			HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+
+			StripeCustomer lStripeCustomer = stripeCustomerService
+					.get(accountId);
+			String lNewCanonicalPlanName = lStripeCustomer
+					.getCanonicalPlanName();
+
+			Quota lExistingQuota = quotaService.get(accountId);
+
+			boolean lIsDowngrade = isDowngrade(
+					lExistingQuota.getCanonicalPlanName(),
+					lNewCanonicalPlanName);
+
+			// evaluate and update the quota allocated to the account
+			// appropriately
+			if (lNewCanonicalPlanName.equals(CanonicalPlanName.FREE.getValue())) {
+				quotaService
+						.updatePlan(accountId, CanonicalPlanName.FREE,
+								CanonicalStorageQuota.FREE,
+								CanonicalApplicationQuota.FREE);
+				if (lIsDowngrade)
+					deleteApplicationsOnPlanDowngrade(accountId,
+							CanonicalApplicationQuota.FREE.getValue());
+				else
+					restoreApplicationsOnPlanUpgrade(accountId,
+							CanonicalApplicationQuota.FREE.getValue());
+			} else if (lNewCanonicalPlanName.equals(CanonicalPlanName.LARGE
+					.getValue())) {
+				quotaService.updatePlan(accountId, CanonicalPlanName.LARGE,
+						CanonicalStorageQuota.LARGE,
+						CanonicalApplicationQuota.LARGE);
+				if (lIsDowngrade)
+					deleteApplicationsOnPlanDowngrade(accountId,
+							CanonicalApplicationQuota.LARGE.getValue());
+				else
+					restoreApplicationsOnPlanUpgrade(accountId,
+							CanonicalApplicationQuota.LARGE.getValue());
+			} else if (lNewCanonicalPlanName.equals(CanonicalPlanName.MEDIUM
+					.getValue())) {
+				quotaService.updatePlan(accountId, CanonicalPlanName.MEDIUM,
+						CanonicalStorageQuota.MEDIUM,
+						CanonicalApplicationQuota.MEDIUM);
+				if (lIsDowngrade)
+					deleteApplicationsOnPlanDowngrade(accountId,
+							CanonicalApplicationQuota.MEDIUM.getValue());
+				else
+					restoreApplicationsOnPlanUpgrade(accountId,
+							CanonicalApplicationQuota.MEDIUM.getValue());
+			} else if (lNewCanonicalPlanName.equals(CanonicalPlanName.MICRO
+					.getValue())) {
+				quotaService.updatePlan(accountId, CanonicalPlanName.MICRO,
+						CanonicalStorageQuota.MICRO,
+						CanonicalApplicationQuota.MICRO);
+				if (lIsDowngrade)
+					deleteApplicationsOnPlanDowngrade(accountId,
+							CanonicalApplicationQuota.MICRO.getValue());
+				else
+					restoreApplicationsOnPlanUpgrade(accountId,
+							CanonicalApplicationQuota.MICRO.getValue());
+			} else if (lNewCanonicalPlanName.equals(CanonicalPlanName.SMALL
+					.getValue())) {
+				quotaService.updatePlan(accountId, CanonicalPlanName.SMALL,
+						CanonicalStorageQuota.SMALL,
+						CanonicalApplicationQuota.SMALL);
+				if (lIsDowngrade)
+					deleteApplicationsOnPlanDowngrade(accountId,
+							CanonicalApplicationQuota.SMALL.getValue());
+				else
+					restoreApplicationsOnPlanUpgrade(accountId,
+							CanonicalApplicationQuota.SMALL.getValue());
+			}
+
+			// update the quota utilization; messaging will add the desired
+			// latency required for the quota related changes to be committed to
+			// the DB prior to lookup
+			//TODO: Should this be removed for production environment?
+			Utils.triggerUpdateQuotaUtilizationMessage(accountId, 3000);
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+
+		}
+	}
+
+	private void updateQuotaUtilizaton(Long accountId) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
@@ -149,6 +262,100 @@ public class QuotaController {
 				LOGGER.info("Exiting");
 
 		}
+	}
+
+	private boolean isDowngrade(String pExistingPlanName,
+			String pNewCanonicalPlanName) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			if (getCanonicalPlanLevel(pExistingPlanName) > getCanonicalPlanLevel(pNewCanonicalPlanName)) {
+				return true;
+			}
+			return false;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+
+		}
+	}
+
+	private int getCanonicalPlanLevel(String pCanonicalPlanName) {
+		if (pCanonicalPlanName.equals(CanonicalPlanName.FREE.getValue())) {
+			return CanonicalPlanName.FREE.getLevel();
+		} else if (pCanonicalPlanName
+				.equals(CanonicalPlanName.LARGE.getValue())) {
+			return CanonicalPlanName.LARGE.getLevel();
+		} else if (pCanonicalPlanName.equals(CanonicalPlanName.MEDIUM
+				.getValue())) {
+			return CanonicalPlanName.MEDIUM.getLevel();
+		} else if (pCanonicalPlanName
+				.equals(CanonicalPlanName.MICRO.getValue())) {
+			return CanonicalPlanName.MICRO.getLevel();
+		} else if (pCanonicalPlanName
+				.equals(CanonicalPlanName.SMALL.getValue())) {
+			return CanonicalPlanName.SMALL.getLevel();
+		}
+		return -1;
+	}
+
+	private void deleteApplicationsOnPlanDowngrade(Long pAccountId, int quota) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			// only select those applications that have not been deleted by the
+			// user(FIFO order)
+			List<Application> lApplications = applicationService
+					.getApplicationsByAccountId(pAccountId);
+			// disable beyond the quota limit
+			for (int i = quota; i < lApplications.size(); i++) {
+				Application lApplication = lApplications.get(i);
+				applicationService
+						.deleteApplicationOnPlanDowngrade(lApplication.getId());
+
+			}
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Disabled "
+						+ ((lApplications.size() > quota) ? (lApplications
+								.size() - quota) : 0) + " applications");
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+
+		}
+
+	}
+
+	private void restoreApplicationsOnPlanUpgrade(Long pAccountId, int quota) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			// include deleted (FIFO order)
+			List<Application> lApplications = applicationService
+					.getApplicationsByAccountId(pAccountId, true);
+			int lRestoredCount = 0;
+			// enable upto the quota limit
+			if (lApplications.size() > quota) {
+				for (int i = 0; i < quota; i++) {
+					Application lApplication = lApplications.get(i);
+					if (lApplication.isDeletedOnPlanDowngrade()) {
+						applicationService
+								.restoreApplicationOnPlanUpgrade(lApplication
+										.getId());
+						lRestoredCount++;
+					}
+				}
+			}
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Enabled " + lRestoredCount + " applications");
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+
+		}
+
 	}
 
 	private com.cm.quota.transfer.Quota convert(Quota pQuota) {

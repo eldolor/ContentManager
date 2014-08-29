@@ -248,8 +248,8 @@ public class ContentServerController {
 				// in
 				// case both values are zero (uninitialized)
 				if (lLastKnownTimestamp >= lHandshake.getLastKnownTimestamp()) {
-					Utils.triggerSendContentListMessages(lHandshake
-							.getTrackingId());
+					Utils.triggerSendContentListMessages(
+							lHandshake.getTrackingId(), 0);
 				}
 			}
 			// always
@@ -303,7 +303,8 @@ public class ContentServerController {
 	}
 
 	@RequestMapping(value = "/contentserver/dropbox", method = RequestMethod.POST)
-	public void doServePost(@RequestParam String key, HttpServletResponse response) {
+	public void doServePost(@RequestParam String key,
+			HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering doServePost");

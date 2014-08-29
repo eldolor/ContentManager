@@ -156,12 +156,13 @@ function setupBreadcrumbs() {
 function getApplications() {
 	log("getApplications", "Entering");
 	try {
+		$('#content_progress_bar').show();
 		var jqxhr = $
 				.ajax({
 					url : "/secured/applications",
 					type : "GET",
 					contentType : "application/json",
-					async : false,
+					async : true,
 					statusCode : {
 						200 : function(applications) {
 							handleDisplayApplications_Callback(applications);
@@ -224,6 +225,9 @@ function handleDisplayApplications_Callback(pApplications) {
 		}
 
 		$('#applications_list').empty().html(lInnerHtml);
+		// progress bar
+		$('#content_progress_bar').css("width", "100%");
+		$('#content_progress_bar').hide();
 	} catch (err) {
 		handleError("handleDisplayApplications_Callback", err);
 	} finally {
@@ -410,6 +414,11 @@ function displayApplicationStats(id, name) {
 function editApplication(id) {
 	log("editApplication", "Entering");
 	try {
+		//reset the form contents
+		$('#applicationForm').trigger("reset");
+		$('#progress_bar_top, #progress_bar_bottom').show();
+		$('.button').addClass('disabled');
+
 		$('#application_errors').hide();
 
 		$('#application_cancel_button').unbind();
@@ -426,6 +435,7 @@ function editApplication(id) {
 					url : url,
 					type : "GET",
 					contentType : "application/json",
+					async : true,
 					statusCode : {
 						200 : function(application) {
 
@@ -506,6 +516,12 @@ function editApplication(id) {
 								.html(
 										'Unable to process the request. Please try again later');
 						$('#application_errors').show();
+					},
+					complete : function(xhr, textStatus) {
+						$('#progress_bar_top, #progress_bar_bottom').css("width", "100%");
+						$('#progress_bar_top, #progress_bar_bottom').hide();
+						$('.button').removeClass('disabled');
+						log(xhr.status);
 					}
 				});
 		jqxhr.always(function() {
@@ -522,6 +538,8 @@ function editApplication(id) {
 function newApplication() {
 	log("newApplication", "Entering");
 	try {
+		//reset the form contents
+		$('#applicationForm').trigger("reset");
 		// validate quota
 		var url = "/secured/quota/application/validate";
 		var jqxhr = $
@@ -614,7 +632,7 @@ function newApplication() {
 function createApplication() {
 	log("createApplication", "Entering");
 	try {
-		$('#progress_bar').show();
+		$('#progress_bar_top, #progress_bar_bottom').show();
 		$('.button').addClass('disabled');
 		var _enabled;
 		if ($('#application_enabled').is(':checked')) {
@@ -690,7 +708,7 @@ function createApplication() {
 						$('#application_errors').show();
 					},
 					complete : function(xhr, textStatus) {
-						$('.meter').css("width", "100%");
+						$('#progress_bar_top, #progress_bar_bottom').css("width", "100%");
 						$('.button').removeClass('disabled');
 						log(xhr.status);
 					}
@@ -707,7 +725,7 @@ function createApplication() {
 function updateApplication() {
 
 	log("updateApplication", "Entering");
-	$('#progress_bar').show();
+	$('#progress_bar_top, #progress_bar_bottom').show();
 	$('.button').addClass('disabled');
 	var _enabled;
 
@@ -776,7 +794,7 @@ function updateApplication() {
 						$('#application_errors').show();
 					},
 					complete : function(xhr, textStatus) {
-						$('.meter').css("width", "100%");
+						$('#progress_bar_top, #progress_bar_bottom').css("width", "100%");
 						$('.button').removeClass('disabled');
 						log(xhr.status);
 					}

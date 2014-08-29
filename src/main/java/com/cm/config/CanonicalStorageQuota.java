@@ -1,13 +1,13 @@
-package com.cm.admin.plan;
+package com.cm.config;
 
-public enum CanonicalPlanQuota {
+public enum CanonicalStorageQuota {
 	LARGE(85899345920L) /** 4GB *20 **/
 	, MEDIUM(32212254720L), SMALL(10737418240L), MICRO(2684354560L), FREE(
-			104857600L);
+			1024L);
 
 	private long value;
 
-	private CanonicalPlanQuota(long value) {
+	private CanonicalStorageQuota(long value) {
 		this.value = value;
 	}
 

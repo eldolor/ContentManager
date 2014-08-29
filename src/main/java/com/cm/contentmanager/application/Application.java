@@ -40,6 +40,9 @@ public class Application implements Serializable {
 	private Boolean deleted = false;
 
 	@Persistent
+	private Boolean deletedOnPlanDowngrade = false;
+
+	@Persistent
 	private Boolean changesStaged = false;
 
 	@Persistent
@@ -161,6 +164,15 @@ public class Application implements Serializable {
 
 	public void setChangesStaged(Boolean changesStaged) {
 		this.changesStaged = changesStaged;
+	}
+
+	public boolean isDeletedOnPlanDowngrade() {
+		return (deletedOnPlanDowngrade != null) ? deletedOnPlanDowngrade
+				: false;
+	}
+
+	public void setDeletedOnPlanDowngrade(Boolean deletedOnPlanDowngrade) {
+		this.deletedOnPlanDowngrade = deletedOnPlanDowngrade;
 	}
 
 }

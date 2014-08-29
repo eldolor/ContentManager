@@ -33,11 +33,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cm.accountmanagement.account.Account;
-import com.cm.admin.plan.CanonicalApplicationQuota;
-import com.cm.admin.plan.CanonicalPlanName;
-import com.cm.admin.plan.CanonicalPlanQuota;
 import com.cm.admin.plan.Plan;
 import com.cm.common.entity.Result;
+import com.cm.config.CanonicalApplicationQuota;
+import com.cm.config.CanonicalPlanName;
+import com.cm.config.CanonicalStorageQuota;
 import com.cm.contentmanager.application.Application;
 import com.cm.contentmanager.application.ApplicationService;
 import com.cm.contentmanager.content.Content;
@@ -287,7 +287,7 @@ public class AdminController {
 						// default to free
 						lQuota.setCanonicalPlanName(CanonicalPlanName.FREE
 								.getValue());
-						lQuota.setStorageLimitInBytes(CanonicalPlanQuota.FREE
+						lQuota.setStorageLimitInBytes(CanonicalStorageQuota.FREE
 								.getValue());
 						lQuota.setApplicationLimit(CanonicalApplicationQuota.FREE
 								.getValue());
@@ -334,7 +334,7 @@ public class AdminController {
 					for (Content lContent : lContentList) {
 						if (!Utils.isEmpty(lContent.getUri())) {
 							Utils.triggerUpdateContentSizeInBytesMessage(
-									lContent.getId(), lContent.getUri());
+									lContent.getId(), lContent.getUri(), 0);
 						}
 					}
 				}

@@ -6,9 +6,9 @@ import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cm.admin.plan.CanonicalApplicationQuota;
-import com.cm.admin.plan.CanonicalPlanName;
-import com.cm.admin.plan.CanonicalPlanQuota;
+import com.cm.config.CanonicalApplicationQuota;
+import com.cm.config.CanonicalPlanName;
+import com.cm.config.CanonicalStorageQuota;
 
 @Service
 public class QuotaService {
@@ -72,13 +72,13 @@ public class QuotaService {
 	}
 
 	public void updatePlan(Long accountId, CanonicalPlanName canonicalPlanName,
-			CanonicalPlanQuota canonicalPlanQuota,
+			CanonicalStorageQuota canonicalStorageQuota,
 			CanonicalApplicationQuota canonicalApplicationQuota) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
 			quotaDao.updatePlan(accountId, canonicalPlanName,
-					canonicalPlanQuota, canonicalApplicationQuota);
+					canonicalStorageQuota, canonicalApplicationQuota);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting");

@@ -154,6 +154,18 @@ public class ApplicationService {
 
 	}
 
+	public void deleteApplicationOnPlanDowngrade(Long id) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering deleteApplicationOnPlanDowngrade");
+			applicationDao.deleteOnPlanDowngrade(id);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting deleteApplicationOnPlanDowngrade");
+		}
+
+	}
+
 	public void restoreApplication(Long id, Long timeUpdatedMs,
 			Long timeUpdatedTimeZoneOffsetMs) {
 		try {
@@ -164,6 +176,17 @@ public class ApplicationService {
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting restoreApplication");
+		}
+
+	}
+	public void restoreApplicationOnPlanUpgrade(Long id) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering restoreApplicationOnPlanUpgrade");
+			applicationDao.restoreOnPlanUpgrade(id);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting restoreApplicationOnPlanUpgrade");
 		}
 
 	}

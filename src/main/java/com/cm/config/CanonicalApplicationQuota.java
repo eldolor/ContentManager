@@ -1,4 +1,4 @@
-package com.cm.admin.plan;
+package com.cm.config;
 
 public enum CanonicalApplicationQuota {
 	LARGE(20), MEDIUM(15), SMALL(10), MICRO(5), FREE(1);

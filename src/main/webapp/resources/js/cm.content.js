@@ -60,6 +60,9 @@ function setup() {
 						});
 
 		getContent(mSelectedApplication.id, mSelectedContentGroup.id);
+
+		// set the available storage quota per plan
+		setAvailableStorageQuota();
 	} catch (err) {
 		handleError("setup", err);
 	} finally {
@@ -154,6 +157,12 @@ function setSelectedContentGroup(id) {
 					statusCode : {
 						200 : function(contentgroup) {
 							mSelectedContentGroup = contentgroup;
+						},
+						503 : function() {
+							$('#content_errors')
+									.html(
+											'Unable to process the request. Please try again later');
+							$('#content_errors').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
@@ -171,17 +180,60 @@ function setSelectedContentGroup(id) {
 	}
 }
 
+function setAvailableStorageQuota() {
+	try {
+		log("getAvailableStorageQuota", "Entering");
+
+		var url = "/secured/quota";
+		var jqxhr = $
+				.ajax({
+					url : url,
+					type : "GET",
+					contentType : "application/json",
+					async : true,
+					statusCode : {
+						200 : function(quota) {
+							// calculate
+							var lAvailableStorageQuotaInMB = Math
+									.round(((quota.storageLimitInBytes - quota.storageUsedInBytes) / 1024) / 1024);
+							mAvailableStorageQuotaInMB = (lAvailableStorageQuotaInMB < 1) ? 1
+									: lAvailableStorageQuotaInMB;
+							log("getAvailableStorageQuota",
+									"Available storage in MB is "
+											+ lAvailableStorageQuotaInMB);
+						},
+						503 : function() {
+							$('#content_errors').html(
+									'Unable to get available storage quota');
+							$('#content_errors').show();
+						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						log(errorThrown);
+						$('#content_errors')
+								.html(
+										'Unable to process the request. Please try again later');
+						$('#content_errors').show();
+					}
+				});
+	} catch (err) {
+		handleError("getAvailableStorageQuota", err);
+
+	} finally {
+		log("getAvailableStorageQuota", "Exiting");
+	}
+}
 function getContent(pApplicationId, pContentGroupId) {
 	log("getContent", "Entering");
 	try {
-
+		$('#content_progress_bar').show();
 		var jqxhr = $
 				.ajax({
 					url : "/secured/" + pApplicationId + '/' + pContentGroupId
 							+ "/content/",
 					type : "GET",
 					contentType : "application/json",
-					async : false,
+					async : true,
 					statusCode : {
 						200 : function(content) {
 							handleDisplayContent_Callback(content);
@@ -209,10 +261,6 @@ function getContent(pApplicationId, pContentGroupId) {
 						$('#content_errors').show();
 					}
 				});
-		jqxhr.always(function() {
-			// close wait div
-			closeWait();
-		});
 
 	} catch (err) {
 		handleError("getContent", err);
@@ -246,6 +294,9 @@ function handleDisplayContent_Callback(pContent) {
 		}
 
 		$('#content_list').empty().html(lInnerHtml);
+		// progress bar
+		$('#content_progress_bar').css("width", "100%");
+		$('#content_progress_bar').hide();
 	} catch (err) {
 		handleError("handleDisplayContent_Callback", err);
 	} finally {
@@ -363,6 +414,11 @@ function displayContentStats(id, name) {
 function editContent(id) {
 	log("editContent", "Entering");
 	try {
+		$('#progress_bar_top, #progress_bar_bottom').show();
+		$('.button').addClass('disabled');
+		//reset the form contents
+		$('#contentForm').trigger("reset");
+		
 		$('#content_errors').hide();
 
 		$('#content_cancel_button').unbind();
@@ -379,6 +435,7 @@ function editContent(id) {
 					url : url,
 					type : "GET",
 					contentType : "application/json",
+					async : true,
 					statusCode : {
 						200 : function(content) {
 
@@ -412,7 +469,8 @@ function editContent(id) {
 							}
 
 							var dropBoxUrl = getDropboxUrl();
-							setupContentDropBox(dropBoxUrl);
+							setupContentDropBox(dropBoxUrl,
+									mAvailableStorageQuotaInMB);
 							$("#content_dropbox").hide();
 							// reset
 							$('#upload_content').unbind();
@@ -467,6 +525,12 @@ function editContent(id) {
 								.html(
 										'Unable to process the request. Please try again later');
 						$('#content_errors').show();
+					},
+					complete : function(xhr, textStatus) {
+						$('#progress_bar_top, #progress_bar_bottom').css("width", "100%");
+						$('#progress_bar_top, #progress_bar_bottom').hide();
+						$('.button').removeClass('disabled');
+						log(xhr.status);
 					}
 				});
 		jqxhr.always(function() {
@@ -617,6 +681,9 @@ function viewContent(pContentId) {
 function newContent() {
 	log("newContent", "Entering");
 	try {
+		//reset the form contents
+		$('#contentForm').trigger("reset");
+
 		// set the application id
 		$('#application_id').val(mSelectedApplication.id);
 		// set the content group id
@@ -641,7 +708,7 @@ function newContent() {
 		$('#content_enabled').attr('checked', 'checked');
 
 		var dropBoxUrl = getDropboxUrl();
-		setupContentDropBox(dropBoxUrl);
+		setupContentDropBox(dropBoxUrl, mAvailableStorageQuotaInMB);
 		// $('#view_ad_video').hide();
 		// $('#view_video').hide();
 
@@ -683,7 +750,7 @@ function newContent() {
 function createContent() {
 	log("createContent", "Entering");
 	try {
-		$('#progress_bar').show();
+		$('#progress_bar_top, #progress_bar_bottom').show();
 		$('.button').addClass('disabled');
 		var lEnabled;
 		if ($('#content_enabled').is(':checked')) {
@@ -761,15 +828,11 @@ function createContent() {
 						$('#content_errors').show();
 					},
 					complete : function(xhr, textStatus) {
-						$('.meter').css("width", "100%");
+						$('#progress_bar_top, #progress_bar_bottom').css("width", "100%");
 						$('.button').removeClass('disabled');
 						log(xhr.status);
 					}
 				});
-		jqxhr.always(function() {
-			// close wait div
-			closeWait();
-		});
 
 		return false;
 	} catch (err) {
@@ -781,7 +844,7 @@ function createContent() {
 
 function updateContent() {
 	log("updateContent", "Entering");
-	$('#progress_bar').show();
+	$('#progress_bar_top, #progress_bar_bottom').show();
 	$('.button').addClass('disabled');
 	var lEnabled;
 	if ($('#content_enabled').is(':checked')) {
@@ -854,7 +917,7 @@ function updateContent() {
 						$('#content_errors').show();
 					},
 					complete : function(xhr, textStatus) {
-						$('.meter').css("width", "100%");
+						$('#progress_bar_top, #progress_bar_bottom').css("width", "100%");
 						$('.button').removeClass('disabled');
 						log(xhr.status);
 					}

@@ -5,7 +5,7 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-import com.cm.admin.plan.CanonicalPlanName;
+import com.cm.config.CanonicalPlanName;
 
 @PersistenceCapable
 public class Account {

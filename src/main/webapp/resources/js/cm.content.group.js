@@ -118,15 +118,14 @@ function setSelectedApplication(id) {
 function getContentGroups(pApplicationId) {
 	log("getContentGroups", "Entering");
 	try {
-		// open wait div
-		openWait();
+		$('#content_progress_bar').show();
 
 		var jqxhr = $
 				.ajax({
 					url : "/secured/" + pApplicationId + "/contentgroups",
 					type : "GET",
 					contentType : "application/json",
-					async : false,
+					async : true,
 					statusCode : {
 						200 : function(contentGroups) {
 							handleDisplayContentGroups_Callback(contentGroups);
@@ -154,10 +153,6 @@ function getContentGroups(pApplicationId) {
 						$('#contentgroup_errors').show();
 					}
 				});
-		jqxhr.always(function() {
-			// close wait div
-			closeWait();
-		});
 
 	} catch (err) {
 		handleError("getContentGroups", err);
@@ -192,6 +187,9 @@ function handleDisplayContentGroups_Callback(pContentGroups) {
 		}
 
 		$('#content_groups_list').empty().html(lInnerHtml);
+		// progress bar
+		$('#content_progress_bar').css("width", "100%");
+		$('#content_progress_bar').hide();
 	} catch (err) {
 		handleError("handleDisplayContentGroups_Callback", err);
 	} finally {
@@ -337,6 +335,10 @@ function displayContentGroupStats(id, name) {
 function editContentGroup(id) {
 	log("editContentGroup", "Entering");
 	try {
+		$('#progress_bar_top, #progress_bar_bottom').show();
+		$('.button').addClass('disabled');
+		//reset the form contents
+		$('#contentGroupForm').trigger("reset");
 		$('#contentgroup_errors').hide();
 
 		$('#contentgroup_cancel_button').unbind();
@@ -353,6 +355,7 @@ function editContentGroup(id) {
 					url : url,
 					type : "GET",
 					contentType : "application/json",
+					async : true,
 					statusCode : {
 						200 : function(contentgroup) {
 
@@ -420,6 +423,12 @@ function editContentGroup(id) {
 								.html(
 										'Unable to process the request. Please try again later');
 						$('#contentgroup_errors').show();
+					},
+					complete : function(xhr, textStatus) {
+						$('#progress_bar_top, #progress_bar_bottom').css("width", "100%");
+						$('#progress_bar_top, #progress_bar_bottom').hide();
+						$('.button').removeClass('disabled');
+						log(xhr.status);
 					}
 
 				});
@@ -437,6 +446,9 @@ function editContentGroup(id) {
 function newContentGroup() {
 	log("newContentGroup", "Entering");
 	try {
+		//reset the form contents
+		$('#contentGroupForm').trigger("reset");
+
 		$('#contentgroup_errors').hide();
 
 		$('#contentgroup_save_button').html('create');
@@ -477,7 +489,7 @@ function newContentGroup() {
 function createContentGroup() {
 	log("createContentGroup", "Entering");
 	try {
-		$('#progress_bar').show();
+		$('#progress_bar_top, #progress_bar_bottom').show();
 		$('.button').addClass('disabled');
 
 		var _enabled;
@@ -549,7 +561,8 @@ function createContentGroup() {
 						$('#contentgroup_errors').show();
 					},
 					complete : function(xhr, textStatus) {
-						$('.meter').css("width", "100%");
+						$('#progress_bar_top, #progress_bar_bottom').css("width", "100%");
+						$('#progress_bar_top, #progress_bar_bottom').hide();
 						$('.button').removeClass('disabled');
 						log(xhr.status);
 					}
@@ -566,7 +579,7 @@ function createContentGroup() {
 function updateContentGroup() {
 
 	log("updateContentGroup", "Entering");
-	$('#progress_bar').show();
+	$('#progress_bar_top, #progress_bar_bottom').show();
 	$('.button').addClass('disabled');
 	var _enabled;
 
@@ -632,7 +645,7 @@ function updateContentGroup() {
 						$('#contentgroup_errors').show();
 					},
 					complete : function(xhr, textStatus) {
-						$('.meter').css("width", "100%");
+						$('#progress_bar_top, #progress_bar_bottom').css("width", "100%");
 						$('.button').removeClass('disabled');
 						log(xhr.status);
 					}

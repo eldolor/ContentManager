@@ -42,6 +42,13 @@
 		<jsp:include page="left_nav_bar.jsp" flush="true"></jsp:include>
 
 		<div class="large-6 columns" id="content_area">
+			<div class="row" id="content_progress_bar">
+				<div class="large-12 columns">
+					<div class="progress radius">
+						<span class="meter" style="width: 40%"></span>
+					</div>
+				</div>
+			</div>
 			<div id="applications_list"></div>
 			<!-- Begin Content Group -->
 			<div id="application_create" style="display: none">
@@ -51,6 +58,13 @@
 						<input type="hidden" id="application_id" name="application_id" />
 						<input type="hidden" />
 
+						<div class="row" id="progress_bar_top" style="display: none">
+							<div class="large-12 columns">
+								<div class="progress radius">
+									<span class="meter" style="width: 40%"></span>
+								</div>
+							</div>
+						</div>
 						<div class="row">
 							<div class="large-12 columns">
 								<div class="name-field">
@@ -118,7 +132,7 @@
 								<a href="javascript:void(0);" id="application_cancel_button">cancel</a>
 							</div>
 						</div>
-						<div class="row" id="progress_bar" style="display: none">
+						<div class="row" id="progress_bar_bottom" style="display: none">
 							<div class="large-12 columns">
 								<div class="progress radius">
 									<span class="meter" style="width: 40%"></span>

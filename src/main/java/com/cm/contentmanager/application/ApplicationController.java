@@ -177,12 +177,12 @@ public class ApplicationController {
 					timeUpdatedTimeZoneOffsetMs);
 			String lTrackingId = applicationService.getApplication(id)
 					.getTrackingId();
-			Utils.triggerChangesStagedMessage(id);
-			Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId);
+			Utils.triggerChangesStagedMessage(id, 0);
+			Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId, 0);
 
 			// trigger message to update quota
-			Utils.triggerUpdateQuotaMessage(userService.getLoggedInUser()
-					.getAccountId());
+			Utils.triggerUpdateQuotaUtilizationMessage(userService.getLoggedInUser()
+					.getAccountId(), 0);
 
 		} catch (Throwable e) {
 			// handled by GcmManager
@@ -229,7 +229,10 @@ public class ApplicationController {
 				applicationService
 						.saveApplication(userService.getLoggedInUser(),
 								lTrackingId, application);
-				Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId);
+				Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId, 0);
+				// trigger message to update quota
+				Utils.triggerUpdateQuotaUtilizationMessage(userService.getLoggedInUser()
+						.getAccountId(), 0);
 				response.setStatus(HttpServletResponse.SC_CREATED);
 				return null;
 			}
@@ -286,8 +289,8 @@ public class ApplicationController {
 				applicationService.updateApplication(application);
 				String lTrackingId = applicationService.getApplication(
 						application.getId()).getTrackingId();
-				Utils.triggerChangesStagedMessage(application.getId());
-				Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId);
+				Utils.triggerChangesStagedMessage(application.getId(), 0);
+				Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId, 0);
 
 				response.setStatus(HttpServletResponse.SC_OK);
 
@@ -347,7 +350,7 @@ public class ApplicationController {
 				return;
 			}
 			applicationService.updateChangesStaged(lApplication.getId(), false);
-			Utils.triggerSendContentListMessages(lApplication.getTrackingId());
+			Utils.triggerSendContentListMessages(lApplication.getTrackingId(), 0);
 			// remove from memcache
 			try {
 				if (mCache != null) {

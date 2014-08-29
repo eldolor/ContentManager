@@ -49,6 +49,13 @@ setSelectedContentGroup(${contentGroupId});
 					id="contentgroup_name" class="radius label"></span>
 			</div>
 			<div>&nbsp;</div>
+			<div class="row" id="content_progress_bar" >
+				<div class="large-12 columns">
+					<div class="progress radius">
+						<span class="meter" style="width: 40%"></span>
+					</div>
+				</div>
+			</div>
 			<div id="content_list"></div>
 			<!-- Begin Content  -->
 			<div id="content_create" style="display: none">
@@ -61,6 +68,13 @@ setSelectedContentGroup(${contentGroupId});
 							type="hidden" id="content_uri" name="content_uri" /><input
 							type="hidden" id="content_type" name="content_type" />
 
+						<div class="row" id="progress_bar_top" style="display: none">
+							<div class="large-12 columns">
+								<div class="progress radius">
+									<span class="meter" style="width: 40%"></span>
+								</div>
+							</div>
+						</div>
 						<div class="row">
 							<div class="large-12 columns">
 								<div class="name-field">
@@ -190,6 +204,13 @@ setSelectedContentGroup(${contentGroupId});
 							<div class="large-12 columns">
 								<button id="content_save_button" class="button radius">create</button>
 								<a href="javascript:void(0);" id="content_cancel_button">cancel</a>
+							</div>
+						</div>
+						<div class="row" id="progress_bar_bottom" style="display: none">
+							<div class="large-12 columns">
+								<div class="progress radius">
+									<span class="meter" style="width: 40%"></span>
+								</div>
 							</div>
 						</div>
 					</fieldset>

@@ -42,7 +42,7 @@ public class ContentServerService {
 
 			if (lApplication != null && (!lApplication.isDeleted())
 					&& (lApplication.isEnabled())) {
-				// get all deleted as well
+				//
 				List<ContentGroup> lContentGroups = filterContentGroupByEffectiveDate(contentGroupService
 						.get(lApplicationId, false));
 

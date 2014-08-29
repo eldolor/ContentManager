@@ -60,8 +60,8 @@ class ContentDao {
 		}
 	}
 
-	List<Content> get(Long applicationId, Long contentGroupId,
-			boolean deleted, boolean enabled) {
+	List<Content> get(Long applicationId, Long contentGroupId, boolean deleted,
+			boolean enabled) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering get");
@@ -90,8 +90,7 @@ class ContentDao {
 		}
 	}
 
-	List<Content> get(Long applicationId, Long contentGroupId,
-			boolean deleted) {
+	List<Content> get(Long applicationId, Long contentGroupId, boolean deleted) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering get");
@@ -119,8 +118,8 @@ class ContentDao {
 		}
 	}
 
-	List<Content> get(Long applicationId, Long contentGroupId,
-			String type, boolean deleted, boolean enabled) {
+	List<Content> get(Long applicationId, Long contentGroupId, String type,
+			boolean deleted, boolean enabled) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering get");
@@ -216,8 +215,7 @@ class ContentDao {
 		}
 	}
 
-	void delete(Long id, Long timeUpdatedMs,
-			Long timeUpdatedTimeZoneOffsetMs) {
+	void delete(Long id, Long timeUpdatedMs, Long timeUpdatedTimeZoneOffsetMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering delete");
@@ -246,8 +244,7 @@ class ContentDao {
 		}
 	}
 
-	void restore(Long id, Long timeUpdatedMs,
-			Long timeUpdatedTimeZoneOffsetMs) {
+	void restore(Long id, Long timeUpdatedMs, Long timeUpdatedTimeZoneOffsetMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering restore");
@@ -276,8 +273,8 @@ class ContentDao {
 		}
 	}
 
-	void delete(Long applicationId, Long contentGroupId,
-			Long timeUpdatedMs, Long timeUpdatedTimeZoneOffsetMs) {
+	void delete(Long applicationId, Long contentGroupId, Long timeUpdatedMs,
+			Long timeUpdatedTimeZoneOffsetMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering delete");
@@ -344,7 +341,8 @@ class ContentDao {
 						.getTimeUpdatedTimeZoneOffsetMs());
 
 				_content.setSizeInBytes(content.getSizeInBytes());
-
+				_content.setUri(content.getUri());
+				_content.setType(content.getType());
 			} finally {
 				if (pm != null) {
 					pm.close();
@@ -367,7 +365,8 @@ class ContentDao {
 				Content _content = pm.getObjectById(Content.class, id);
 				// only the size
 				_content.setSizeInBytes(size);
-
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("Updating content size to " + size);
 			} finally {
 				if (pm != null) {
 					pm.close();

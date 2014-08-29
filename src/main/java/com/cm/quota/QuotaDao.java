@@ -10,9 +10,9 @@ import javax.jdo.Query;
 
 import org.springframework.stereotype.Component;
 
-import com.cm.admin.plan.CanonicalApplicationQuota;
-import com.cm.admin.plan.CanonicalPlanName;
-import com.cm.admin.plan.CanonicalPlanQuota;
+import com.cm.config.CanonicalApplicationQuota;
+import com.cm.config.CanonicalPlanName;
+import com.cm.config.CanonicalStorageQuota;
 import com.cm.util.PMF;
 
 @Component
@@ -143,7 +143,7 @@ class QuotaDao {
 	}
 
 	void updatePlan(Long accountId, CanonicalPlanName canonicalPlanName,
-			CanonicalPlanQuota canonicalPlanQuota,
+			CanonicalStorageQuota canonicalStorageQuota,
 			CanonicalApplicationQuota canonicalApplicationQuota) {
 		PersistenceManager pm = null;
 		try {
@@ -158,7 +158,8 @@ class QuotaDao {
 			if (lQuotas != null && (lQuotas.size() > 0)) {
 				lQuota = lQuotas.get(0);
 				lQuota.setCanonicalPlanName(canonicalPlanName.getValue());
-				lQuota.setStorageLimitInBytes(canonicalPlanQuota.getValue());
+				lQuota.setStorageLimitInBytes(canonicalStorageQuota.getValue());
+				lQuota.setApplicationLimit(canonicalApplicationQuota.getValue());
 				lQuota.setTimeUpdatedMs(System.currentTimeMillis());
 				lQuota.setTimeUpdatedTimeZoneOffsetMs((long) TimeZone
 						.getDefault().getRawOffset());
@@ -192,6 +193,9 @@ class QuotaDao {
 				lQuotaUsed.setTimeUpdatedMs(System.currentTimeMillis());
 				lQuotaUsed.setTimeUpdatedTimeZoneOffsetMs((long) TimeZone
 						.getDefault().getRawOffset());
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("Updating storage used to "
+							+ storageUsedInBytes);
 			} else {
 				// create new
 				lQuotaUsed = new StorageQuotaUsed();
@@ -202,6 +206,8 @@ class QuotaDao {
 				lQuotaUsed.setTimeCreatedTimeZoneOffsetMs((long) TimeZone
 						.getDefault().getRawOffset());
 				pm.makePersistent(lQuotaUsed);
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("Adding storage used to " + storageUsedInBytes);
 			}
 
 		} finally {
@@ -231,6 +237,9 @@ class QuotaDao {
 				lQuota.setTimeUpdatedMs(System.currentTimeMillis());
 				lQuota.setTimeUpdatedTimeZoneOffsetMs((long) TimeZone
 						.getDefault().getRawOffset());
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("Updating applications used to "
+							+ applicationsUsed);
 			} else {
 				// create new
 				lQuota = new ApplicationQuotaUsed();
@@ -240,6 +249,9 @@ class QuotaDao {
 				lQuota.setTimeCreatedTimeZoneOffsetMs((long) TimeZone
 						.getDefault().getRawOffset());
 				pm.makePersistent(lQuota);
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("Setting applications used to "
+							+ applicationsUsed);
 			}
 
 		} finally {

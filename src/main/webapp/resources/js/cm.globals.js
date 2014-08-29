@@ -4,6 +4,7 @@ var mSelectedApplication;
 var mSelectedContentGroup;
 var mSelectedContent;
 var mErrors;
+var mAvailableStorageQuotaInMB;
 
 var mLoggedInUser;
 

@@ -27,10 +27,9 @@ import com.google.android.gcm.server.Sender;
 @Component
 public class GcmHelper {
 	public Sender mSender;
-	private static final String GOOGLE_API_KEY = Configuration.GOOGLE_API_KEY
-			.getValue();
+	private static final String GOOGLE_API_KEY = Configuration.GOOGLE_API_KEY ;
 	private static final int GCM_MESSAGE_SIZE_LIMIT_BYTES = Integer
-			.valueOf(Configuration.GCM_MESSAGE_SIZE_LIMIT_BYTES.getValue());
+			.valueOf(Configuration.GCM_MESSAGE_SIZE_LIMIT_BYTES);
 
 	private static final Logger LOGGER = Logger.getLogger(GcmHelper.class
 			.getName());
@@ -64,23 +63,23 @@ public class GcmHelper {
 				if (lJsonArrayString.getBytes().length < GCM_MESSAGE_SIZE_LIMIT_BYTES) {
 					if (LOGGER.isLoggable(Level.INFO))
 						// send the gcm message to the device
-						lValues.put(Configuration.MESSAGE_TYPE.getValue(),
+						lValues.put(Configuration.MESSAGE_TYPE,
 								Configuration.MESSAGE_TYPE_CONTENT_LIST
-										.getValue());
+										);
 					lValues.put(
-							Configuration.MESSAGE_TYPE_CONTENT_LIST.getValue(),
+							Configuration.MESSAGE_TYPE_CONTENT_LIST,
 							lJsonArrayString);
 					LOGGER.info("Sending "
 							+ Configuration.MESSAGE_TYPE_CONTENT_LIST
-									.getValue() + " message to device");
+									 + " message to device");
 				} else {
 					// Payload size is greater than the GCM limit; send an
 					// SEND_TO_SYNC message to the device
-					lValues.put(Configuration.MESSAGE_TYPE.getValue(),
-							Configuration.MESSAGE_TYPE_SEND_TO_SYNC.getValue());
+					lValues.put(Configuration.MESSAGE_TYPE,
+							Configuration.MESSAGE_TYPE_SEND_TO_SYNC);
 					LOGGER.info("Sending "
 							+ Configuration.MESSAGE_TYPE_SEND_TO_SYNC
-									.getValue() + " message to device");
+									 + " message to device");
 				}
 				try {
 					this.sendMessage(pGcmId, lValues);
@@ -141,23 +140,23 @@ public class GcmHelper {
 
 					if (lJsonArrayString.getBytes().length < GCM_MESSAGE_SIZE_LIMIT_BYTES) {
 						// send the gcm message to the device
-						lValues.put(Configuration.MESSAGE_TYPE.getValue(),
+						lValues.put(Configuration.MESSAGE_TYPE,
 								Configuration.MESSAGE_TYPE_CONTENT_LIST
-										.getValue());
+										);
 						lValues.put(Configuration.MESSAGE_TYPE_CONTENT_LIST
-								.getValue(), lJsonArrayString);
+								, lJsonArrayString);
 						LOGGER.info("Sending "
 								+ Configuration.MESSAGE_TYPE_CONTENT_LIST
-										.getValue() + " message to device");
+										 + " message to device");
 					} else {
 						// Payload size is greater than the GCM limit; send an
 						// SEND_TO_SYNC message to the device
-						lValues.put(Configuration.MESSAGE_TYPE.getValue(),
+						lValues.put(Configuration.MESSAGE_TYPE,
 								Configuration.MESSAGE_TYPE_SEND_TO_SYNC
-										.getValue());
+										);
 						LOGGER.info("Sending "
 								+ Configuration.MESSAGE_TYPE_SEND_TO_SYNC
-										.getValue() + " message to device");
+										 + " message to device");
 					}
 
 					List<String> lRetriableRegIds = this.sendMulticastMessage(
@@ -170,7 +169,7 @@ public class GcmHelper {
 							// do it one message at a time
 							Utils.triggerSendContentListMessage(
 									pContentRequest.getTrackingId(),
-									lRetriableRegId);
+									lRetriableRegId, 0);
 
 						}
 					}
@@ -234,7 +233,7 @@ public class GcmHelper {
 				mSender = new Sender(GOOGLE_API_KEY);
 			}
 			multicastResult = mSender.send(lMessage, pGcmRegistrationIds,
-					Integer.valueOf(Configuration.GCM_MAX_ATTEMPTS.getValue()));
+					Integer.valueOf(Configuration.GCM_MAX_ATTEMPTS));
 			// boolean allDone = true;
 			// check if any registration id must be updated
 			if (multicastResult.getCanonicalIds() != 0) {
@@ -385,7 +384,7 @@ public class GcmHelper {
 
 			Result result;
 			result = mSender.send(mMessage, pGcmId,
-					Integer.valueOf(Configuration.GCM_MAX_ATTEMPTS.getValue()));
+					Integer.valueOf(Configuration.GCM_MAX_ATTEMPTS));
 			if (result == null) {
 				return false;
 			}

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cronentries>
+	<cron>
+		<url>/cron/cleanup/blobstore</url>
+		<description>Cleanup blobstore</description>
+		<schedule>every 24 hours</schedule>
+	</cron>
+
+</cronentries>

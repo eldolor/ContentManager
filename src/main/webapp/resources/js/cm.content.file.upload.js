@@ -6,9 +6,10 @@
  * @param pMaxFileSize
  *            the remaining quota in MB, per selected plan
  */
-function setupContentDropBox(pUrl, pMaxFileSize) {
+function setupContentDropBox(pUrl, pAvailableStorageQuotaInMB,
+		pPlanStorageQuotaInMB) {
 	log("setupContentDropBox url: " + pUrl + " max file size in MB: "
-			+ pMaxFileSize);
+			+ pAvailableStorageQuotaInMB);
 
 	var dropbox = $('#content_dropbox'), message = $('.message', dropbox);
 
@@ -16,7 +17,7 @@ function setupContentDropBox(pUrl, pMaxFileSize) {
 		// The name of the $_FILES entry:
 		paramname : 'file',
 		maxfiles : 1,
-		maxfilesize : pMaxFileSize,
+		maxfilesize : pAvailableStorageQuotaInMB,
 		// The domain name of the URL must match the domain name of the web page
 		// for the XHR request to work
 		url : pUrl,
@@ -30,17 +31,26 @@ function setupContentDropBox(pUrl, pMaxFileSize) {
 		error : function(err, file) {
 			switch (err) {
 			case 'BrowserNotSupported':
-				showMessage('Your browser does not support HTML5 file uploads!');
+				displayMessage('Your browser does not support HTML5 file uploads!');
 				break;
 			case 'TooManyFiles':
-				alert('Too many files! Please select 1 at most!');
+				displayMessage('Too many files! Please select 1 at most!');
 				break;
 			case 'FileTooLarge':
-				alert(file.name
-						+ ' is too large! Per your plan, you can only upload files up to ' + pMaxFileSize + "MB.");
+				// insufficient quota
+				displayUpgrade(
+						file.name
+								+ ' is too large! Your plan allows for'
+								+ pPlanStorageQuotaInMB
+								+ 'MB of total storage per application. You only have  '
+								+ pAvailableStorageQuotaInMB
+								+ "MB of storage available for this application. Please upgrade your Plan to add more storage",
+						function() {
+							window.location.href = '/account';
+						});
 				break;
 			default:
-				alert(err);
+				displayMessage(err);
 				break;
 			}
 		},

@@ -250,6 +250,33 @@ class ApplicationDao {
 		}
 	}
 
+	List<Application> getDeletedApplicationsOnPlanDowngradeByAccountId(
+			Long accountId) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(Application.class);
+				q.setFilter("accountId == accountIdParam && deletedOnPlanDowngrade == deletedOnPlanDowngradeParam");
+				q.declareParameters("Long accountIdParam, Boolean deletedOnPlanDowngradeParam");
+				q.setOrdering("timeUpdatedMs desc");
+				return (List<Application>) q.execute(accountId,
+						Boolean.valueOf(true));
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+
+	}
+
 	void delete(Long id, Long timeUpdatedMs, Long timeUpdatedTimeZoneOffsetMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -360,6 +387,7 @@ class ApplicationDao {
 						id);
 				if (lApplication != null) {
 					lApplication.setDeleted(false);
+					lApplication.setDeletedOnPlanDowngrade(false);
 					lApplication.setTimeUpdatedMs(System.currentTimeMillis());
 					lApplication.setTimeUpdatedTimeZoneOffsetMs((long) TimeZone
 							.getDefault().getRawOffset());

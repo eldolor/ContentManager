@@ -166,10 +166,9 @@ public class QuotaController {
 			// evaluate and update the quota allocated to the account
 			// appropriately
 			if (lNewCanonicalPlanName.equals(CanonicalPlanName.FREE.getValue())) {
-				quotaService
-						.updatePlan(accountId, CanonicalPlanName.FREE,
-								CanonicalStorageQuota.FREE,
-								CanonicalApplicationQuota.FREE);
+				quotaService.updatePlan(accountId, CanonicalPlanName.FREE,
+						CanonicalStorageQuota.FREE,
+						CanonicalApplicationQuota.FREE);
 				if (lIsDowngrade)
 					deleteApplicationsOnPlanDowngrade(accountId,
 							CanonicalApplicationQuota.FREE.getValue());
@@ -225,7 +224,7 @@ public class QuotaController {
 			// update the quota utilization; messaging will add the desired
 			// latency required for the quota related changes to be committed to
 			// the DB prior to lookup
-			//TODO: Should this be removed for production environment?
+			// TODO: Should this be removed for production environment?
 			Utils.triggerUpdateQuotaUtilizationMessage(accountId, 3000);
 
 		} finally {
@@ -331,21 +330,15 @@ public class QuotaController {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
-			// include deleted (FIFO order)
 			List<Application> lApplications = applicationService
-					.getApplicationsByAccountId(pAccountId, true);
+					.getDeletedApplicationsOnPlanDowngradeByAccountId(pAccountId);
 			int lRestoredCount = 0;
 			// enable upto the quota limit
-			if (lApplications.size() > quota) {
-				for (int i = 0; i < quota; i++) {
-					Application lApplication = lApplications.get(i);
-					if (lApplication.isDeletedOnPlanDowngrade()) {
-						applicationService
-								.restoreApplicationOnPlanUpgrade(lApplication
-										.getId());
-						lRestoredCount++;
-					}
-				}
+			for (int i = 0; (i < quota) && (i < lApplications.size()); i++) {
+				Application lApplication = lApplications.get(i);
+				applicationService.restoreApplicationOnPlanUpgrade(lApplication
+						.getId());
+				lRestoredCount++;
 			}
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Enabled " + lRestoredCount + " applications");

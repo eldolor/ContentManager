@@ -337,6 +337,12 @@ function displayUpgrade(message, callback) {
 	$('#upgrade_modal').foundation('reveal', 'open');
 
 }
+function displayMessage(message) {
+	$("#application_message").html(message);
+
+	$('#message_modal').foundation('reveal', 'open');
+
+}
 var imageCount = 9; // max images displayed in the image gallery
 function shiftGallery(index, entry_id, frames, max) {
 

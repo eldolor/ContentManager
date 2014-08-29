@@ -4,12 +4,12 @@ var mSelectedApplication;
 var mSelectedContentGroup;
 var mSelectedContent;
 var mErrors;
-var mAvailableStorageQuotaInMB;
+var mQuota;
 
 var mLoggedInUser;
 
 /** ***************************** */
-$.ajaxSetup ({
-    // Disable caching of AJAX responses
-    cache: false
+$.ajaxSetup({
+	// Disable caching of AJAX responses
+	cache : false
 });

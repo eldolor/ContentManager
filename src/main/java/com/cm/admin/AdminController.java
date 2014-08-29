@@ -1,20 +1,7 @@
-/*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
- */
 
 package com.cm.admin;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TimeZone;
@@ -51,6 +38,7 @@ import com.cm.util.PMF;
 import com.cm.util.Utils;
 import com.google.appengine.api.blobstore.BlobInfo;
 import com.google.appengine.api.blobstore.BlobInfoFactory;
+import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 
@@ -73,8 +61,9 @@ public class AdminController {
 	@Autowired
 	private ApplicationService applicationService;
 
-	@RequestMapping(value = "/admin/deleteusers", method = RequestMethod.GET, produces = "application/json")
-	public void deleteUsers(HttpServletResponse response) {
+	@RequestMapping(value = "/admin/delete/users", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody
+	Result deleteUsers(HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering deleteUsers");
@@ -83,13 +72,17 @@ public class AdminController {
 			try {
 				pm = PMF.get().getPersistenceManager();
 				Query q = pm.newQuery(User.class);
-				q.deletePersistentAll();
+				// Anshu: commented out for safety
+				// q.deletePersistentAll();
 				response.setStatus(HttpServletResponse.SC_OK);
 			} finally {
 				if (pm != null) {
 					pm.close();
 				}
 			}
+			Result result = new Result();
+			result.setResult(Result.SUCCESS);
+			return result;
 
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -97,8 +90,9 @@ public class AdminController {
 		}
 	}
 
-	@RequestMapping(value = "/admin/deleteblobstore", method = RequestMethod.GET, produces = "application/json")
-	public void deleteBlobStore(HttpServletResponse response) {
+	@RequestMapping(value = "/admin/delete/blobstore", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody
+	Result deleteBlobStore(HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering deleteBlobStore");
@@ -108,17 +102,90 @@ public class AdminController {
 					.queryBlobInfos();
 
 			while (iterator.hasNext()) {
-
-				blobstoreService.delete(iterator.next().getBlobKey());
+				// Anshu: commented out for safety
+				// blobstoreService.delete(iterator.next().getBlobKey());
 
 			}
+			Result result = new Result();
+			result.setResult(Result.SUCCESS);
+			return result;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting deleteBlobStore");
 		}
 	}
 
-	@RequestMapping(value = "/admin/createsu", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/cron/cleanup/blobstore", method = RequestMethod.GET)
+	public void cleanupBlobStoreCron(HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			Result lResult = this.cleanupBlobStore(response);
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info(lResult.toString());
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	@RequestMapping(value = "/admin/cleanup/blobstore", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody
+	Result cleanupBlobStore(HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			List<String> lUris = new ArrayList<String>();
+
+			List<Account> lAccounts = accountService.getAccounts();
+			int lCountContent = 0;
+			for (Account account : lAccounts) {
+
+				List<Application> lApplications = applicationService
+						.getApplicationsByAccountId(account.getId(), /**
+						 * include
+						 * deleted
+						 **/
+						true);
+				for (Application lApplication : lApplications) {
+					List<Content> lContentList = contentService.get(
+							lApplication.getId(), /** include deleted **/
+							true);
+					for (Content lContent : lContentList) {
+						lUris.add(lContent.getUri());
+						lCountContent++;
+					}
+				}
+			}
+			BlobstoreService blobstoreService = BlobstoreServiceFactory
+					.getBlobstoreService();
+			Iterator<BlobInfo> iterator = new BlobInfoFactory()
+					.queryBlobInfos();
+			int lCountDeleted = 0, lCountSkipped = 0;
+			while (iterator.hasNext()) {
+				BlobInfo lBlobInfo = iterator.next();
+				BlobKey lBlobKey = lBlobInfo.getBlobKey();
+				if (!lUris.contains(lBlobKey.getKeyString())) {
+					blobstoreService.delete(lBlobKey);
+					lCountDeleted++;
+				} else {
+					lCountSkipped++;
+				}
+			}
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Content Count is " + lCountContent + " "
+						+ lCountDeleted + " blobs deleted. " + lCountSkipped
+						+ " blobs skipped.");
+			Result result = new Result();
+			result.setResult(Result.SUCCESS);
+			return result;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	@RequestMapping(value = "/admin/create/default/su", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody
 	Result createSu(HttpServletResponse response) {
 		try {
@@ -145,7 +212,8 @@ public class AdminController {
 					.getUserByUserName(User.DEFAULT_SUPER_ADMIN_USER_NAME);
 			if (lUser == null) {
 				lUser = new User();
-				lUser.setEmail("su@coconutmartini.com");
+				lUser.setUsername(User.DEFAULT_SUPER_ADMIN_USER_NAME);
+				lUser.setEmail(User.DEFAULT_SUPER_ADMIN_USER_NAME);
 				lUser.setFirstName("Super");
 				lUser.setLastName("User");
 				// default to true
@@ -177,7 +245,7 @@ public class AdminController {
 		}
 	}
 
-	@RequestMapping(value = "/admin/createplans", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/admin/create/default/plans", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody
 	Result createPlans(HttpServletResponse response) {
 		try {
@@ -218,7 +286,7 @@ public class AdminController {
 		}
 	}
 
-	@RequestMapping(value = "/admin/updategcmregistrationrequests", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/admin/assign/default/value/gcmregistrationrequests", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody
 	Result updateGcmRegistrationRequests(HttpServletResponse response) {
 		try {
@@ -264,7 +332,7 @@ public class AdminController {
 		}
 	}
 
-	@RequestMapping(value = "/admin/assignfreequotas", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/admin/assign/default/quota", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody
 	Result assignFreeQuotas(HttpServletResponse response) {
 		try {
@@ -387,4 +455,76 @@ public class AdminController {
 		}
 	}
 
+	@RequestMapping(value = "/admin/assign/default/value/changesstaged", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody
+	Result defaultChangesStaged(HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			List<Account> lAccounts = accountService.getAccounts();
+			for (Account account : lAccounts) {
+				List<Application> lApplications = applicationService
+						.getApplicationsByAccountId(account.getId(), /**
+						 * include
+						 * deleted
+						 **/
+						true);
+				for (Application lApplication : lApplications) {
+					applicationService.updateChangesStaged(
+							lApplication.getId(), /** assign default value **/
+							false);
+				}
+			}
+			Result result = new Result();
+			result.setResult(Result.SUCCESS);
+			return result;
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+
+		}
+	}
+
+	@RequestMapping(value = "/admin/assign/default/value/deletedonplandowngrade", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody
+	Result defaultDeletedOnPlanDowngrade(HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			List<Account> lAccounts = accountService.getAccounts();
+			for (Account account : lAccounts) {
+				List<Application> lApplications = applicationService
+						.getApplicationsByAccountId(account.getId(), /**
+						 * include
+						 * deleted
+						 **/
+						true);
+				for (Application lApplication : lApplications) {
+					PersistenceManager pm = null;
+					try {
+						pm = PMF.get().getPersistenceManager();
+						Application _Application = pm.getObjectById(
+								Application.class, lApplication.getId());
+						// assign default value
+						_Application.setDeletedOnPlanDowngrade(false);
+
+					} finally {
+						if (pm != null) {
+							pm.close();
+						}
+					}
+
+				}
+			}
+			Result result = new Result();
+			result.setResult(Result.SUCCESS);
+			return result;
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+
+		}
+	}
 }

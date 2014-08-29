@@ -8,6 +8,16 @@
 	import="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"%><html>
 
 <!-- Begin Upgrade -->
+<div class="reveal-modal small" id="message_modal" data-reveal>
+	<div class="row">
+		<div id="application_message"></div>
+		<div>&nbsp;</div>
+	</div>
+	<a class="close-reveal-modal">&#215;</a>
+</div>
+<!-- End Upgrade -->
+
+<!-- Begin Upgrade -->
 <div class="reveal-modal small" id="upgrade_modal" data-reveal>
 	<h3 id="upgradeModalLabel">Upgrade</h3>
 	<div class="row">

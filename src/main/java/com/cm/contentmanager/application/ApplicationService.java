@@ -165,6 +165,17 @@ public class ApplicationService {
 		}
 
 	}
+	public List<Application> getDeletedApplicationsOnPlanDowngradeByAccountId(Long accountId) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			return applicationDao.getDeletedApplicationsOnPlanDowngradeByAccountId(accountId);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+
+	}
 
 	public void restoreApplication(Long id, Long timeUpdatedMs,
 			Long timeUpdatedTimeZoneOffsetMs) {
@@ -211,5 +222,6 @@ public class ApplicationService {
 				LOGGER.info("Exiting updateChangesStaged");
 		}
 	}
+	
 
 }

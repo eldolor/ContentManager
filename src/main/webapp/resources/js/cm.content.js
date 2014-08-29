@@ -193,14 +193,7 @@ function setAvailableStorageQuota() {
 					async : true,
 					statusCode : {
 						200 : function(quota) {
-							// calculate
-							var lAvailableStorageQuotaInMB = Math
-									.round(((quota.storageLimitInBytes - quota.storageUsedInBytes) / 1024) / 1024);
-							mAvailableStorageQuotaInMB = (lAvailableStorageQuotaInMB < 1) ? 1
-									: lAvailableStorageQuotaInMB;
-							log("getAvailableStorageQuota",
-									"Available storage in MB is "
-											+ lAvailableStorageQuotaInMB);
+							mQuota = quota;
 						},
 						503 : function() {
 							$('#content_errors').html(
@@ -416,9 +409,9 @@ function editContent(id) {
 	try {
 		$('#progress_bar_top, #progress_bar_bottom').show();
 		$('.button').addClass('disabled');
-		//reset the form contents
+		// reset the form contents
 		$('#contentForm').trigger("reset");
-		
+
 		$('#content_errors').hide();
 
 		$('#content_cancel_button').unbind();
@@ -469,8 +462,21 @@ function editContent(id) {
 							}
 
 							var dropBoxUrl = getDropboxUrl();
+							// calculate
+							var lAvailableStorageQuotaInMB = Math
+									.round(((mQuota.storageLimitInBytes - mQuota.storageUsedInBytes) / 1024) / 1024);
+							lAvailableStorageQuotaInMB = (lAvailableStorageQuotaInMB < 1) ? 1
+									: lAvailableStorageQuotaInMB;
+							var lPlanStorageQuotaInMB = Math
+									.round(((mQuota.storageLimitInBytes) / 1024) / 1024);
+							lPlanStorageQuotaInMB = (lPlanStorageQuotaInMB < 1) ? 1
+									: lPlanStorageQuotaInMB;
+							log("getAvailableStorageQuota",
+									"Available storage in MB is "
+											+ lAvailableStorageQuotaInMB);
 							setupContentDropBox(dropBoxUrl,
-									mAvailableStorageQuotaInMB);
+									lAvailableStorageQuotaInMB,
+									lPlanStorageQuotaInMB);
 							$("#content_dropbox").hide();
 							// reset
 							$('#upload_content').unbind();
@@ -527,7 +533,8 @@ function editContent(id) {
 						$('#content_errors').show();
 					},
 					complete : function(xhr, textStatus) {
-						$('#progress_bar_top, #progress_bar_bottom').css("width", "100%");
+						$('#progress_bar_top, #progress_bar_bottom').css(
+								"width", "100%");
 						$('#progress_bar_top, #progress_bar_bottom').hide();
 						$('.button').removeClass('disabled');
 						log(xhr.status);
@@ -681,7 +688,7 @@ function viewContent(pContentId) {
 function newContent() {
 	log("newContent", "Entering");
 	try {
-		//reset the form contents
+		// reset the form contents
 		$('#contentForm').trigger("reset");
 
 		// set the application id
@@ -708,7 +715,19 @@ function newContent() {
 		$('#content_enabled').attr('checked', 'checked');
 
 		var dropBoxUrl = getDropboxUrl();
-		setupContentDropBox(dropBoxUrl, mAvailableStorageQuotaInMB);
+		// calculate
+		var lAvailableStorageQuotaInMB = Math
+				.round(((mQuota.storageLimitInBytes - mQuota.storageUsedInBytes) / 1024) / 1024);
+		lAvailableStorageQuotaInMB = (lAvailableStorageQuotaInMB < 1) ? 1
+				: lAvailableStorageQuotaInMB;
+		var lPlanStorageQuotaInMB = Math
+				.round(((mQuota.storageLimitInBytes) / 1024) / 1024);
+		lPlanStorageQuotaInMB = (lPlanStorageQuotaInMB < 1) ? 1
+				: lPlanStorageQuotaInMB;
+		log("getAvailableStorageQuota", "Available storage in MB is "
+				+ lAvailableStorageQuotaInMB);
+		setupContentDropBox(dropBoxUrl, lAvailableStorageQuotaInMB,
+				lPlanStorageQuotaInMB);
 		// $('#view_ad_video').hide();
 		// $('#view_video').hide();
 
@@ -828,7 +847,8 @@ function createContent() {
 						$('#content_errors').show();
 					},
 					complete : function(xhr, textStatus) {
-						$('#progress_bar_top, #progress_bar_bottom').css("width", "100%");
+						$('#progress_bar_top, #progress_bar_bottom').css(
+								"width", "100%");
 						$('.button').removeClass('disabled');
 						log(xhr.status);
 					}
@@ -917,7 +937,8 @@ function updateContent() {
 						$('#content_errors').show();
 					},
 					complete : function(xhr, textStatus) {
-						$('#progress_bar_top, #progress_bar_bottom').css("width", "100%");
+						$('#progress_bar_top, #progress_bar_bottom').css(
+								"width", "100%");
 						$('.button').removeClass('disabled');
 						log(xhr.status);
 					}

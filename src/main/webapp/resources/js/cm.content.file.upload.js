@@ -6,10 +6,10 @@
  * @param pMaxFileSize
  *            the remaining quota in MB, per selected plan
  */
-function setupContentDropBox(pUrl, pAvailableStorageQuotaInMB,
-		pPlanStorageQuotaInMB) {
+function setupContentDropBox(pUrl, pAvailableStorageQuotaInBytes,
+		pDisplayUpgradeMessage) {
 	log("setupContentDropBox url: " + pUrl + " max file size in MB: "
-			+ pAvailableStorageQuotaInMB);
+			+ pAvailableStorageQuotaInBytes);
 
 	var dropbox = $('#content_dropbox'), message = $('.message', dropbox);
 
@@ -17,7 +17,7 @@ function setupContentDropBox(pUrl, pAvailableStorageQuotaInMB,
 		// The name of the $_FILES entry:
 		paramname : 'file',
 		maxfiles : 1,
-		maxfilesize : pAvailableStorageQuotaInMB,
+		maxfilesizeInBytes : pAvailableStorageQuotaInBytes,
 		// The domain name of the URL must match the domain name of the web page
 		// for the XHR request to work
 		url : pUrl,
@@ -38,16 +38,9 @@ function setupContentDropBox(pUrl, pAvailableStorageQuotaInMB,
 				break;
 			case 'FileTooLarge':
 				// insufficient quota
-				displayUpgrade(
-						file.name
-								+ ' is too large! Your plan allows for'
-								+ pPlanStorageQuotaInMB
-								+ 'MB of total storage per application. You only have  '
-								+ pAvailableStorageQuotaInMB
-								+ "MB of storage available for this application. Please upgrade your Plan to add more storage",
-						function() {
-							window.location.href = '/account';
-						});
+				displayUpgrade(pDisplayUpgradeMessage, function() {
+					window.location.href = '/account';
+				});
 				break;
 			default:
 				displayMessage(err);

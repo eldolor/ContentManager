@@ -3,6 +3,7 @@ package com.cm.quota.transfer;
 public class Quota {
 
 	private String canonicalPlanName;
+	private long applicationId;
 	private long storageLimitInBytes;
 	private long storageUsedInBytes;
 	private int applicationLimit;
@@ -65,6 +66,14 @@ public class Quota {
 
 	public void setApplicationsUsed(int applicationsUsed) {
 		this.applicationsUsed = applicationsUsed;
+	}
+
+	public long getApplicationId() {
+		return applicationId;
+	}
+
+	public void setApplicationId(long applicationId) {
+		this.applicationId = applicationId;
 	}
 
 }

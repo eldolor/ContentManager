@@ -20,7 +20,29 @@ class QuotaDao {
 	private static final Logger LOGGER = Logger.getLogger(QuotaDao.class
 			.getName());
 
-	Quota get(Long accountId) {
+	Quota get(Long applicationId) {
+		PersistenceManager pm = null;
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			pm = PMF.get().getPersistenceManager();
+			Query q = pm.newQuery(Quota.class);
+			q.setFilter("applicationId == applicationIdParam");
+			q.declareParameters("Long applicationIdParam");
+			List<Quota> lQuotas = (List<Quota>) q.execute(applicationId);
+			Quota lQuota = null;
+			if (lQuotas != null && (lQuotas.size() > 0)) {
+				lQuota = lQuotas.get(0);
+			}
+			return lQuota;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+
+		}
+
+	}
+	List<Quota> getAll(Long accountId) {
 		PersistenceManager pm = null;
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -29,12 +51,7 @@ class QuotaDao {
 			Query q = pm.newQuery(Quota.class);
 			q.setFilter("accountId == accountIdParam");
 			q.declareParameters("Long accountIdParam");
-			List<Quota> lQuotas = (List<Quota>) q.execute(accountId);
-			Quota lQuota = null;
-			if (lQuotas != null && (lQuotas.size() > 0)) {
-				lQuota = lQuotas.get(0);
-			}
-			return lQuota;
+			return (List<Quota>) q.execute(accountId);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting");

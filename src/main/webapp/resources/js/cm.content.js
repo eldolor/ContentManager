@@ -62,7 +62,7 @@ function setup() {
 		getContent(mSelectedApplication.id, mSelectedContentGroup.id);
 
 		// set the available storage quota per plan
-		setAvailableStorageQuota();
+		setAvailableStorageQuota(mSelectedApplication.id);
 	} catch (err) {
 		handleError("setup", err);
 	} finally {
@@ -180,11 +180,11 @@ function setSelectedContentGroup(id) {
 	}
 }
 
-function setAvailableStorageQuota() {
+function setAvailableStorageQuota(id) {
 	try {
 		log("getAvailableStorageQuota", "Entering");
 
-		var url = "/secured/quota";
+		var url = "/secured/quota/" + id;
 		var jqxhr = $
 				.ajax({
 					url : url,
@@ -463,8 +463,9 @@ function editContent(id) {
 
 							var dropBoxUrl = getDropboxUrl();
 
-							setupContentDropBox(dropBoxUrl,
-									mQuota.storageUsedInBytes,
+							setupContentDropBox(
+									dropBoxUrl,
+									(mQuota.storageLimitInBytes - mQuota.storageUsedInBytes),
 									getDisplayUpgradeMessage(mQuota));
 							$("#content_dropbox").hide();
 							// reset
@@ -560,20 +561,29 @@ function getDisplayUpgradeMessage(pQuota) {
 		lAvailableStorageQuotaMessage = lAvailableStorageQuotaInGB.toFixed(2)
 				+ 'GB';
 	}
-	// var lAvailableStorageQuotaMessage = Math
-	// .round(((pQuota.storageLimitInBytes - pQuota.storageUsedInBytes) / 1024)
-	// /
-	// 1024);
-	// lAvailableStorageQuotaInMB = (lAvailableStorageQuotaInMB < 1) ? 1
-	// : lAvailableStorageQuotaInMB;
+	var lPlanStorageQuotaMessage = '';
+	var lPlanStorageQuotaInKB = ((pQuota.storageLimitInBytes) / 1024);
+	var lPlanStorageQuotaInMB = (((pQuota.storageLimitInBytes) / 1024) / 1024);
+	var lPlanStorageQuotaInGB = ((((pQuota.storageLimitInBytes) / 1024) / 1024) / 1024);
+
+	// calculate
+	if (lPlanStorageQuotaInKB < 1) {
+		lPlanStorageQuotaMessage = '< 1KB';
+	} else if ((lPlanStorageQuotaInKB >= 1) && (lPlanStorageQuotaInMB < 1)) {
+		lPlanStorageQuotaMessage = Math.round(lPlanStorageQuotaInKB) + 'KB';
+	} else if ((lPlanStorageQuotaInMB >= 1) && (lPlanStorageQuotaInGB < 1)) {
+		lPlanStorageQuotaMessage = lPlanStorageQuotaInMB.toFixed(2) + 'MB';
+	} else if (lPlanStorageQuotaInGB >= 1) {
+		lPlanStorageQuotaMessage = lPlanStorageQuotaInGB.toFixed(2) + 'GB';
+	}
 	var lPlanStorageQuotaInMB = Math
 			.round(((pQuota.storageLimitInBytes) / 1024) / 1024);
 	lPlanStorageQuotaInMB = (lPlanStorageQuotaInMB < 1) ? 1
 			: lPlanStorageQuotaInMB;
 
 	var lDisplayUpgradeMessage = ' The selected file is too large! Your plan allows for '
-			+ lPlanStorageQuotaInMB
-			+ 'MB of total storage per application. You only have  '
+			+ lPlanStorageQuotaMessage
+			+ ' of total storage per application. You only have  '
 			+ lAvailableStorageQuotaMessage
 			+ " of storage available for this application. Please upgrade your Plan to add more storage";
 	log(lDisplayUpgradeMessage);
@@ -745,7 +755,8 @@ function newContent() {
 
 		var dropBoxUrl = getDropboxUrl();
 
-		setupContentDropBox(dropBoxUrl, mQuota.storageUsedInBytes,
+		setupContentDropBox(dropBoxUrl,
+				(mQuota.storageLimitInBytes - mQuota.storageUsedInBytes),
 				getDisplayUpgradeMessage(mQuota));
 
 		// $('#view_ad_video').hide();

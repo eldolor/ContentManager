@@ -418,9 +418,9 @@ public class AdminController {
 		}
 	}
 
-	@RequestMapping(value = "/admin/quota/update", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/admin/quota/utilization/update", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody
-	Result updateQuota(HttpServletResponse response) {
+	Result updateQuotaUtilization(HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");

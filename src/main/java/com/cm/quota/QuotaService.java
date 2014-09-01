@@ -1,5 +1,6 @@
 package com.cm.quota;
 
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,6 +19,36 @@ public class QuotaService {
 			.getName());
 	public static final String APPLICATION_QUOTA_REACHED_ERROR_CODE = "ApplicationQuotaReached";
 	public static final String STORAGE_QUOTA_REACHED_ERROR_CODE = "StorageQuotaReached";
+
+	public StorageQuotaUsed getStorageQuotaUsed(Long accountId,
+			Long applicationId) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			return quotaDao.getStorageQuotaUsed(accountId, applicationId);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+
+		}
+
+	}
+
+	public ApplicationQuotaUsed getApplicationQuotaUsed(Long accountId) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Account Id: " + accountId);
+			return quotaDao.getApplicationQuotaUsed(accountId);
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+
+		}
+
+	}
 
 	public boolean hasSufficientStorageQuota(Long accountId, Long applicationId) {
 		try {
@@ -136,6 +167,19 @@ public class QuotaService {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
 			return quotaDao.get(accountId);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+
+		}
+
+	}
+
+	public List<Quota> getAll(Long applicationId) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			return quotaDao.getAll(applicationId);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting");

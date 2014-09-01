@@ -56,6 +56,8 @@ function setup() {
 		// default behaviour
 		// $('#user_billing').show();
 
+		setupAccountUsage();
+
 	} catch (err) {
 		handleError("setup", err);
 	} finally {
@@ -104,6 +106,46 @@ function setupBreadcrumbs() {
 		log("setupBreadcrumbs", "Exiting");
 	}
 }
+
+function setupAccountUsage() {
+	log("setupAccountUsage", "Entering");
+	try {
+		var url = "/secured/quota";
+		var jqxhr = $
+				.ajax({
+					url : url,
+					type : "GET",
+					contentType : "application/json",
+					async : true,
+					statusCode : {
+						200 : function(quota) {
+							mQuota = quota;
+							var applicationLimit = mQuota.applicationLimit
+							var applicationsUsed
+							$('#applications_progress_bar')
+									.css("width", "100%");
+						},
+						503 : function() {
+							$('#content_errors').html(
+									'Unable to get available storage quota');
+							$('#content_errors').show();
+						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						log(errorThrown);
+						$('#content_errors')
+								.html(
+										'Unable to process the request. Please try again later');
+						$('#content_errors').show();
+					}
+				});
+	} catch (err) {
+		handleError("setupAccountUsage", err);
+	} finally {
+		log("setupAccountUsage", "Exiting");
+	}
+}
+
 function getLoggedInUser() {
 	log("getLoggedInUser", "Entering");
 	try {

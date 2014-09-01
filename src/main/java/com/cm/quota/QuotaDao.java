@@ -42,6 +42,7 @@ class QuotaDao {
 		}
 
 	}
+
 	List<Quota> getAll(Long accountId) {
 		PersistenceManager pm = null;
 		try {
@@ -100,6 +101,24 @@ class QuotaDao {
 				lQuota = lQuotas.get(0);
 			}
 			return lQuota;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+
+		}
+
+	}
+
+	List<StorageQuotaUsed> getStorageQuotaUsed(Long accountId) {
+		PersistenceManager pm = null;
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			pm = PMF.get().getPersistenceManager();
+			Query q = pm.newQuery(StorageQuotaUsed.class);
+			q.setFilter("accountId == accountIdParam");
+			q.declareParameters("Long accountIdParam");
+			return (List<StorageQuotaUsed>) q.execute(accountId);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting");

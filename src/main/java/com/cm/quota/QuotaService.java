@@ -34,6 +34,19 @@ public class QuotaService {
 
 	}
 
+	public List<StorageQuotaUsed> getStorageQuotaUsed(Long accountId) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			return quotaDao.getStorageQuotaUsed(accountId);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+
+		}
+
+	}
+
 	public ApplicationQuotaUsed getApplicationQuotaUsed(Long accountId) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))

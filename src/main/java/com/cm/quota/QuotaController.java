@@ -35,6 +35,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import sun.org.mozilla.javascript.internal.ast.ForInLoop;
+
 import com.cm.config.CanonicalApplicationQuota;
 import com.cm.config.CanonicalPlanName;
 import com.cm.config.CanonicalStorageQuota;
@@ -90,13 +92,13 @@ public class QuotaController {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getQuota");
 			User lUser = userService.getLoggedInUser();
-			
+
 			List<Quota> lQuotas = quotaService.getAll(lUser.getAccountId());
 
 			response.setStatus(HttpServletResponse.SC_OK);
 			return convert(lQuotas,
-					quotaService.getApplicationQuotaUsed(),
-					quotaService.getStorageQuotaUsed(lUser.getAccountId(), applicationId));
+					quotaService.getApplicationQuotaUsed(lUser.getAccountId()),
+					quotaService.getStorageQuotaUsed(lUser.getAccountId()));
 		} catch (Throwable e) {
 			// handled by GcmManager
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
@@ -116,10 +118,13 @@ public class QuotaController {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getQuota");
 
+			User lUser = userService.getLoggedInUser();
 			Quota lQuota = quotaService.get(applicationId);
 
 			response.setStatus(HttpServletResponse.SC_OK);
-			return convert(lQuota);
+			return convert(lQuota, quotaService.getApplicationQuotaUsed(lUser
+					.getAccountId()), quotaService.getStorageQuotaUsed(
+					lUser.getAccountId(), applicationId));
 		} catch (Throwable e) {
 			// handled by GcmManager
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
@@ -376,30 +381,49 @@ public class QuotaController {
 
 	}
 
-	private List<com.cm.quota.transfer.Quota> convert(List<Quota> pQuotas) {
+	private List<com.cm.quota.transfer.Quota> convert(List<Quota> pQuotas,
+			ApplicationQuotaUsed pApplicationQuotaUsed,
+			List<StorageQuotaUsed> pStorageQuotas) {
 		List<com.cm.quota.transfer.Quota> lList = new ArrayList<com.cm.quota.transfer.Quota>();
-		for (Quota quota : pQuotas) {
-			lList.add(convert(quota));
+		for (Quota lQuota : pQuotas) {
+			lList.addAll(convert(lQuota, pApplicationQuotaUsed, pStorageQuotas));
 		}
 
 		return lList;
 	}
 
-	private com.cm.quota.transfer.Quota convert(Quota pQuota) {
-		com.cm.quota.transfer.Quota lQuota = new com.cm.quota.transfer.Quota();
-		//lQuota.setApplicationId(pQuota.get);
-		lQuota.setApplicationLimit(pQuota.getApplicationLimit());
-		lQuota.setCanonicalPlanName(pQuota.getCanonicalPlanName());
-		lQuota.setStorageLimitInBytes(pQuota.getStorageLimitInBytes());
-		lQuota.setApplicationLimit(pQuota.getApplicationLimit());
+	private List<com.cm.quota.transfer.Quota> convert(Quota pQuota,
+			ApplicationQuotaUsed pApplicationQuotaUsed,
+			List<StorageQuotaUsed> pStorageQuotas) {
+		List<com.cm.quota.transfer.Quota> lList = new ArrayList<com.cm.quota.transfer.Quota>();
 
-//		int lPercentageStorageUtilized = Math.round((pQuota.get / pQuota
-//				.getStorageLimitInBytes()) * 100);
-//		lQuota.setPercentageStorageUsed(lPercentageStorageUtilized);
-//		int lPercentageApplicationUtilized = Math.round((pQuota
-//				.getApplicationsUsed() / pQuota.getApplicationLimit()) * 100);
-//		lQuota.setPercentageApplicationUsed(lPercentageApplicationUtilized);
+		for (StorageQuotaUsed lStorageQuotaUsed : pStorageQuotas) {
+			lList.add(convert(pQuota, pApplicationQuotaUsed, lStorageQuotaUsed));
+		}
+		return lList;
+	}
+
+	private com.cm.quota.transfer.Quota convert(Quota pQuota,
+			ApplicationQuotaUsed pApplicationQuotaUsed,
+			StorageQuotaUsed pStorageQuotaUsed) {
+		com.cm.quota.transfer.Quota lQuota = new com.cm.quota.transfer.Quota();
+		lQuota.setCanonicalPlanName(pQuota.getCanonicalPlanName());
+
+		lQuota.setApplicationLimit(pQuota.getApplicationLimit());
+		lQuota.setApplicationsUsed(pApplicationQuotaUsed.getApplicationsUsed());
+		int lPercentageApplicationUtilized = Math.round((pApplicationQuotaUsed
+				.getApplicationsUsed() / pQuota.getApplicationLimit()) * 100);
+		lQuota.setPercentageApplicationUsed(lPercentageApplicationUtilized);
+
+		lQuota.setStorageLimitInBytes(pQuota.getStorageLimitInBytes());
+		lQuota.setApplicationId(pStorageQuotaUsed.getApplicationId());
+		lQuota.setStorageUsedInBytes(pStorageQuotaUsed.getStorageUsedInBytes());
+		int lPercentageStorageUtilized = Math
+				.round((pStorageQuotaUsed.getStorageUsedInBytes() / pQuota
+						.getStorageLimitInBytes()) * 100);
+		lQuota.setPercentageStorageUsed(lPercentageStorageUtilized);
 		return lQuota;
+
 	}
 
 }

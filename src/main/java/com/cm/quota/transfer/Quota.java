@@ -1,15 +1,16 @@
 package com.cm.quota.transfer;
 
-public class Quota {
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Quota implements Serializable {
 
 	private String canonicalPlanName;
-	private long applicationId;
-	private long storageLimitInBytes;
-	private long storageUsedInBytes;
 	private int applicationLimit;
 	private int applicationsUsed;
+	private List<StorageQuota> storageQuota;
 
-	private int percentageStorageUsed;
 	private int percentageApplicationUsed;
 
 	public String getCanonicalPlanName() {
@@ -28,36 +29,12 @@ public class Quota {
 		this.applicationLimit = applicationLimit;
 	}
 
-	public long getStorageLimitInBytes() {
-		return storageLimitInBytes;
-	}
-
-	public void setStorageLimitInBytes(long storageLimitInBytes) {
-		this.storageLimitInBytes = storageLimitInBytes;
-	}
-
-	public int getPercentageStorageUsed() {
-		return percentageStorageUsed;
-	}
-
-	public void setPercentageStorageUsed(int percentageStorageUsed) {
-		this.percentageStorageUsed = percentageStorageUsed;
-	}
-
 	public int getPercentageApplicationUsed() {
 		return percentageApplicationUsed;
 	}
 
 	public void setPercentageApplicationUsed(int percentageApplicationUsed) {
 		this.percentageApplicationUsed = percentageApplicationUsed;
-	}
-
-	public long getStorageUsedInBytes() {
-		return storageUsedInBytes;
-	}
-
-	public void setStorageUsedInBytes(long storageUsedInBytes) {
-		this.storageUsedInBytes = storageUsedInBytes;
 	}
 
 	public int getApplicationsUsed() {
@@ -68,12 +45,19 @@ public class Quota {
 		this.applicationsUsed = applicationsUsed;
 	}
 
-	public long getApplicationId() {
-		return applicationId;
+	public List<StorageQuota> getStorageQuota() {
+		return storageQuota;
 	}
 
-	public void setApplicationId(long applicationId) {
-		this.applicationId = applicationId;
+	public void setStorageQuota(List<StorageQuota> storageQuota) {
+		this.storageQuota = storageQuota;
+	}
+
+	public void addStorageQuota(StorageQuota storageQuota) {
+		if (this.storageQuota == null)
+			this.storageQuota = new ArrayList<StorageQuota>();
+
+		this.storageQuota.add(storageQuota);
 	}
 
 }

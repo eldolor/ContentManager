@@ -52,15 +52,7 @@
 			<div class="large-9 columns content" id="account_usage">
 				<fieldset>
 					<legend>Account Usage</legend>
-					<label>Applications</label>
-					<div class="row" id="applications_progress_bar" >
-						<div class="large-12 columns">
-							<div class="progress radius success">
-								<span class="meter" ></span>
-							</div>
-						</div>
-					</div>
-
+					<div id="account_usage_details"></div>
 				</fieldset>
 			</div>
 			<div class="large-9 columns content" id="change_password">
@@ -81,7 +73,7 @@
 
 						<div>&nbsp;</div>
 						<div class="row">
-							<div class="large-12 columns" >
+							<div class="large-12 columns">
 								<span id="user_message" class="success radius label"
 									style="display: none">Password has been updated</span>
 							</div>
@@ -143,6 +135,7 @@
 						</div>
 						<div class="row" id="progress_bar" style="display: none">
 							<div class="large-12 columns">
+								<label>Loading...</label><br>
 								<div class="progress radius">
 									<span class="meter" style="width: 40%"></span>
 								</div>

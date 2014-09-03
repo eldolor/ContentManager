@@ -1,4 +1,3 @@
-
 package com.cm.admin;
 
 import java.util.ArrayList;
@@ -440,8 +439,8 @@ public class AdminController {
 						lStorageUsedInBytes += lContent.getSizeInBytes();
 					}
 					// update for each application
-					quotaService.upsertStorageUtilization(account.getId(),
-							lApplication.getId(), lStorageUsedInBytes);
+					quotaService.upsertStorageUtilization(lApplication,
+							lStorageUsedInBytes);
 				}
 			}
 			Result result = new Result();

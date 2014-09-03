@@ -120,10 +120,74 @@ function setupAccountUsage() {
 					statusCode : {
 						200 : function(quota) {
 							mQuota = quota;
-							var applicationLimit = mQuota.applicationLimit
-							var applicationsUsed
-							$('#applications_progress_bar')
-									.css("width", "100%");
+							// displayMessage(JSON.stringify(mQuota, null, 2));
+							// var lAppsUsedMessage = 'Using '
+							// + mQuota.applicationLimit + ' of '
+							// + mQuota.applicationLimit + ' applications';
+							// $('applications_used_message').html(
+							// lAppsUsedMessage);
+							// if (mQuota.percentageApplicationUsed == 100) {
+							// $('#applications_progress_bar').removeClass(
+							// 'success');
+							// $('#applications_progress_bar').addClass(
+							// 'alert');
+							// }
+							// $('#applications_progress_bar').css("width",
+							// (mQuota.percentageApplicationUsed + "%"));
+							var lAccountUsageDetailsHtml = '';
+
+							lAccountUsageDetailsHtml += '<div class=\"large-12 columns\"><label>'
+									+ 'Using '
+									+ mQuota.applicationsUsed
+									+ ' of '
+									+ mQuota.applicationLimit
+									+ ' applications</label><br>';
+							lAccountUsageDetailsHtml += '<div class=\"progress radius ';
+							if (mQuota.applicationsUsed >= mQuota.applicationLimit) {
+								lAccountUsageDetailsHtml += ' alert\" style=\" width: 100%\">';
+							} else if (mQuota.applicationsUsed == 0) {
+								lAccountUsageDetailsHtml += ' success\" style=\" width: 5%\">';
+							} else {
+								lAccountUsageDetailsHtml += ' success';
+								lAccountUsageDetailsHtml += '\" style=\" width: '
+										+ mQuota.percentageApplicationUsed
+										+ '%\">';
+							}
+
+							lAccountUsageDetailsHtml += '<span class="meter"></span></div></div>';
+
+							var lStorageQuota = null;
+							for (var int = 0; int < mQuota.storageQuota.length; int++) {
+								lStorageQuota = mQuota.storageQuota[int];
+								lAccountUsageDetailsHtml += '<div class=\"large-12 columns\"><label>'
+										+ lStorageQuota.trackingId
+										+ '  '
+										+ lStorageQuota.percentageStorageUsed
+										+ '% storage used</label><br>';
+								lAccountUsageDetailsHtml += '<div class=\"progress radius ';
+								if (lStorageQuota.storageUsedInBytes >= lStorageQuota.storageLimitInBytes) {
+									lAccountUsageDetailsHtml += ' alert\" style=\"width: 100%\">';
+								} else if (lStorageQuota.storageUsedInBytes == 0) {
+									lAccountUsageDetailsHtml += ' success\" style=\"width: 5%\">';// show
+									// 1%
+									// to
+									// display
+									// the
+									// progress
+									// bar
+								} else {
+									lAccountUsageDetailsHtml += ' success';
+									lAccountUsageDetailsHtml += '\" style=\"width: '
+											+ lStorageQuota.percentageStorageUsed
+											+ '%\">';
+								}
+								lAccountUsageDetailsHtml += '<span class="meter"></span></div></div>';
+							}
+							$('#account_usage_details').html(
+									lAccountUsageDetailsHtml);
+							// log("setupAccountUsage",
+							// lAccountUsageDetailsHtml);
+
 						},
 						503 : function() {
 							$('#content_errors').html(

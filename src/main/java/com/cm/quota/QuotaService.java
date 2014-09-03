@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.cm.config.CanonicalApplicationQuota;
 import com.cm.config.CanonicalPlanName;
 import com.cm.config.CanonicalStorageQuota;
+import com.cm.contentmanager.application.Application;
 
 @Service
 public class QuotaService {
@@ -131,12 +132,12 @@ public class QuotaService {
 
 	}
 
-	public void upsertStorageUtilization(Long accountId, Long applicationId,
+	public void upsertStorageUtilization(Application pApplication,
 			Long storageUsedInBytes) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
-			quotaDao.upsertStorageUtilization(accountId, applicationId,
+			quotaDao.upsertStorageUtilization(pApplication,
 					storageUsedInBytes);
 
 		} finally {
@@ -188,17 +189,5 @@ public class QuotaService {
 
 	}
 
-	public List<Quota> getAll(Long applicationId) {
-		try {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering");
-			return quotaDao.getAll(applicationId);
-		} finally {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting");
-
-		}
-
-	}
 
 }

@@ -462,11 +462,14 @@ function editContent(id) {
 							}
 
 							var dropBoxUrl = getDropboxUrl();
-
+							var lStorageQuota = null;
+							for (var int = 0; int < mQuota.storageQuota.length; int++) {
+								lStorageQuota = mQuota.storageQuota[int];
+							}
 							setupContentDropBox(
 									dropBoxUrl,
-									(mQuota.storageLimitInBytes - mQuota.storageUsedInBytes),
-									getDisplayUpgradeMessage(mQuota));
+									(lStorageQuota.storageLimitInBytes - lStorageQuota.storageUsedInBytes),
+									getDisplayUpgradeMessage(lStorageQuota));
 							$("#content_dropbox").hide();
 							// reset
 							$('#upload_content').unbind();
@@ -540,11 +543,11 @@ function editContent(id) {
 		log("editContent", "Exiting");
 	}
 }
-function getDisplayUpgradeMessage(pQuota) {
+function getDisplayUpgradeMessage(pStorageQuota) {
 	var lAvailableStorageQuotaMessage = '';
-	var lAvailableStorageQuotaInKB = ((pQuota.storageLimitInBytes - pQuota.storageUsedInBytes) / 1024);
-	var lAvailableStorageQuotaInMB = (((pQuota.storageLimitInBytes - pQuota.storageUsedInBytes) / 1024) / 1024);
-	var lAvailableStorageQuotaInGB = ((((pQuota.storageLimitInBytes - pQuota.storageUsedInBytes) / 1024) / 1024) / 1024);
+	var lAvailableStorageQuotaInKB = ((pStorageQuota.storageLimitInBytes - pStorageQuota.storageUsedInBytes) / 1024);
+	var lAvailableStorageQuotaInMB = (((pStorageQuota.storageLimitInBytes - pStorageQuota.storageUsedInBytes) / 1024) / 1024);
+	var lAvailableStorageQuotaInGB = ((((pStorageQuota.storageLimitInBytes - pStorageQuota.storageUsedInBytes) / 1024) / 1024) / 1024);
 
 	// calculate
 	if (lAvailableStorageQuotaInKB < 1) {
@@ -562,9 +565,9 @@ function getDisplayUpgradeMessage(pQuota) {
 				+ 'GB';
 	}
 	var lPlanStorageQuotaMessage = '';
-	var lPlanStorageQuotaInKB = ((pQuota.storageLimitInBytes) / 1024);
-	var lPlanStorageQuotaInMB = (((pQuota.storageLimitInBytes) / 1024) / 1024);
-	var lPlanStorageQuotaInGB = ((((pQuota.storageLimitInBytes) / 1024) / 1024) / 1024);
+	var lPlanStorageQuotaInKB = ((pStorageQuota.storageLimitInBytes) / 1024);
+	var lPlanStorageQuotaInMB = (((pStorageQuota.storageLimitInBytes) / 1024) / 1024);
+	var lPlanStorageQuotaInGB = ((((pStorageQuota.storageLimitInBytes) / 1024) / 1024) / 1024);
 
 	// calculate
 	if (lPlanStorageQuotaInKB < 1) {
@@ -577,7 +580,7 @@ function getDisplayUpgradeMessage(pQuota) {
 		lPlanStorageQuotaMessage = lPlanStorageQuotaInGB.toFixed(2) + 'GB';
 	}
 	var lPlanStorageQuotaInMB = Math
-			.round(((pQuota.storageLimitInBytes) / 1024) / 1024);
+			.round(((pStorageQuota.storageLimitInBytes) / 1024) / 1024);
 	lPlanStorageQuotaInMB = (lPlanStorageQuotaInMB < 1) ? 1
 			: lPlanStorageQuotaInMB;
 
@@ -754,10 +757,18 @@ function newContent() {
 		$('#content_enabled').attr('checked', 'checked');
 
 		var dropBoxUrl = getDropboxUrl();
+		var lStorageQuota = null;
+		for (var int = 0; int < mQuota.storageQuota.length; int++) {
+			lStorageQuota = mQuota.storageQuota[int];
+		}
+		setupContentDropBox(
+				dropBoxUrl,
+				(lStorageQuota.storageLimitInBytes - lStorageQuota.storageUsedInBytes),
+				getDisplayUpgradeMessage(lStorageQuota));
 
-		setupContentDropBox(dropBoxUrl,
-				(mQuota.storageLimitInBytes - mQuota.storageUsedInBytes),
-				getDisplayUpgradeMessage(mQuota));
+//		setupContentDropBox(dropBoxUrl,
+//				(mQuota.storageLimitInBytes - mQuota.storageUsedInBytes),
+//				getDisplayUpgradeMessage(mQuota));
 
 		// $('#view_ad_video').hide();
 		// $('#view_video').hide();

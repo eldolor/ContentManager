@@ -16,7 +16,9 @@ public class StorageQuotaUsed {
 	private Long accountId;
 	@Persistent
 	private Long applicationId;
-
+	@Persistent
+	private String trackingId;
+	
 	@Persistent
 	private Long storageUsedInBytes;
 
@@ -95,6 +97,14 @@ public class StorageQuotaUsed {
 
 	public void setApplicationId(Long applicationId) {
 		this.applicationId = applicationId;
+	}
+
+	public String getTrackingId() {
+		return trackingId;
+	}
+
+	public void setTrackingId(String trackingId) {
+		this.trackingId = trackingId;
 	}
 
 }

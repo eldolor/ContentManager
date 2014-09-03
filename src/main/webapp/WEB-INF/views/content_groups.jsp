@@ -49,6 +49,7 @@
 			<div>&nbsp;</div>
 			<div class="row" id="content_progress_bar">
 				<div class="large-12 columns">
+					<label>Loading...</label><br>
 					<div class="progress radius">
 						<span class="meter" style="width: 40%"></span>
 					</div>
@@ -154,6 +155,7 @@
 						</div>
 						<div class="row" id="progress_bar_bottom" style="display: none">
 							<div class="large-12 columns">
+								<label>Loading...</label><br>
 								<div class="progress radius">
 									<span class="meter" style="width: 40%"></span>
 								</div>

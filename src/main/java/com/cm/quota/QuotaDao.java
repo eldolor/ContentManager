@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import com.cm.config.CanonicalApplicationQuota;
 import com.cm.config.CanonicalPlanName;
 import com.cm.config.CanonicalStorageQuota;
+import com.cm.contentmanager.application.Application;
 import com.cm.util.PMF;
 
 @Component
@@ -20,30 +21,7 @@ class QuotaDao {
 	private static final Logger LOGGER = Logger.getLogger(QuotaDao.class
 			.getName());
 
-	Quota get(Long applicationId) {
-		PersistenceManager pm = null;
-		try {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering");
-			pm = PMF.get().getPersistenceManager();
-			Query q = pm.newQuery(Quota.class);
-			q.setFilter("applicationId == applicationIdParam");
-			q.declareParameters("Long applicationIdParam");
-			List<Quota> lQuotas = (List<Quota>) q.execute(applicationId);
-			Quota lQuota = null;
-			if (lQuotas != null && (lQuotas.size() > 0)) {
-				lQuota = lQuotas.get(0);
-			}
-			return lQuota;
-		} finally {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting");
-
-		}
-
-	}
-
-	List<Quota> getAll(Long accountId) {
+	Quota get(Long accountId) {
 		PersistenceManager pm = null;
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -52,7 +30,12 @@ class QuotaDao {
 			Query q = pm.newQuery(Quota.class);
 			q.setFilter("accountId == accountIdParam");
 			q.declareParameters("Long accountIdParam");
-			return (List<Quota>) q.execute(accountId);
+			List<Quota> lQuotas = (List<Quota>) q.execute(accountId);
+			Quota lQuota = null;
+			if (lQuotas != null && (lQuotas.size() > 0)) {
+				lQuota = lQuotas.get(0);
+			}
+			return lQuota;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting");
@@ -210,7 +193,7 @@ class QuotaDao {
 		}
 	}
 
-	void upsertStorageUtilization(Long accountId, Long applicationId,
+	void upsertStorageUtilization(Application pApplication,
 			Long storageUsedInBytes) {
 		PersistenceManager pm = null;
 		try {
@@ -221,7 +204,7 @@ class QuotaDao {
 			q.setFilter("accountId == accountIdParam && applicationId == applicationIdParam");
 			q.declareParameters("Long accountIdParam, Long applicationIdParam");
 			List<StorageQuotaUsed> lList = (List<StorageQuotaUsed>) q.execute(
-					accountId, applicationId);
+					pApplication.getAccountId(), pApplication.getId());
 			StorageQuotaUsed lQuotaUsed = null;
 			if (lList != null && (lList.size() > 0)) {
 				lQuotaUsed = lList.get(0);
@@ -235,8 +218,9 @@ class QuotaDao {
 			} else {
 				// create new
 				lQuotaUsed = new StorageQuotaUsed();
-				lQuotaUsed.setAccountId(accountId);
-				lQuotaUsed.setApplicationId(applicationId);
+				lQuotaUsed.setAccountId(pApplication.getAccountId());
+				lQuotaUsed.setApplicationId(pApplication.getId());
+				lQuotaUsed.setTrackingId(pApplication.getTrackingId());
 				lQuotaUsed.setStorageUsedInBytes(storageUsedInBytes);
 				lQuotaUsed.setTimeCreatedMs(System.currentTimeMillis());
 				lQuotaUsed.setTimeCreatedTimeZoneOffsetMs((long) TimeZone

@@ -5,6 +5,7 @@ import java.io.Serializable;
 public class StorageQuota implements Serializable {
 	private String canonicalPlanName;
 	private long applicationId;
+	private String trackingId;
 	private long storageLimitInBytes;
 	private long storageUsedInBytes;
 	private int percentageStorageUsed;
@@ -47,6 +48,14 @@ public class StorageQuota implements Serializable {
 
 	public void setPercentageStorageUsed(int percentageStorageUsed) {
 		this.percentageStorageUsed = percentageStorageUsed;
+	}
+
+	public String getTrackingId() {
+		return trackingId;
+	}
+
+	public void setTrackingId(String trackingId) {
+		this.trackingId = trackingId;
 	}
 
 }

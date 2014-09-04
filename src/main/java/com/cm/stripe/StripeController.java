@@ -83,6 +83,7 @@ public class StripeController {
 																// with
 					// Stripe.js
 					lCustomerParams.put("email", lUser.getEmail());
+					lCustomerParams.put("interval", "month");
 					Map<String, String> lCustomerMetadata = new HashMap<String, String>();
 					lCustomerMetadata.put("userId",
 							String.valueOf(lUser.getId()));
@@ -239,6 +240,7 @@ public class StripeController {
 					Map<String, Object> lSubscriptionParams = new HashMap<String, Object>();
 					// subscribe to the new plan selected
 					lSubscriptionParams.put("plan", canonicalPlanName);
+					lSubscriptionParams.put("prorate", false);
 					Subscription lSubscription = lCustomer
 							.updateSubscription(lSubscriptionParams);
 

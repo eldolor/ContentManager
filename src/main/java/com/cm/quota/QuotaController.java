@@ -366,8 +366,14 @@ public class QuotaController {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("New Quota: " + quota);
+			// RESTORE for the entire account, and not just for a user
 			List<Application> lApplications = applicationService
 					.getDeletedApplicationsOnPlanDowngradeByAccountId(pAccountId);
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Retrieved " + lApplications.size()
+						+ " that need to be restored");
 			int lRestoredCount = 0;
 			// enable upto the quota limit
 			for (int i = 0; (i < quota) && (i < lApplications.size()); i++) {
@@ -377,7 +383,7 @@ public class QuotaController {
 				lRestoredCount++;
 			}
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Enabled " + lRestoredCount + " applications");
+				LOGGER.info("Restored " + lRestoredCount + " applications");
 
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))

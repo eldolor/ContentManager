@@ -41,6 +41,7 @@ public class ContentServerService {
 					.getApplication(lApplicationId);
 
 			if (lApplication != null && (!lApplication.isDeleted())
+					&& (!lApplication.isDeletedOnPlanDowngrade())
 					&& (lApplication.isEnabled())) {
 				//
 				List<ContentGroup> lContentGroups = filterContentGroupByEffectiveDate(contentGroupService
@@ -55,8 +56,9 @@ public class ContentServerService {
 
 			} else {
 				if (LOGGER.isLoggable(Level.INFO))
-					LOGGER.log(Level.WARNING,
-							"Application does not exist, or is deleted, or is not enabled");
+					LOGGER.log(
+							Level.WARNING,
+							"Application does not exist, or is deleted, or is not enabled, or is deleted on plan downgrade");
 			}
 			contentServerDao.saveContentRequest(pContentRequest);
 			return lContents;
@@ -99,7 +101,7 @@ public class ContentServerService {
 		Application lApplication = applicationService
 				.getApplicationByTrackingId(trackingId, false);
 		// TODO: hard-wired for now
-		return (lApplication!=null)? lApplication.getId():null;
+		return (lApplication != null) ? lApplication.getId() : null;
 	}
 
 	private List<ContentGroup> filterContentGroupByEffectiveDate(

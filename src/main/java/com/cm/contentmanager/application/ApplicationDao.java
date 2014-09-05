@@ -18,6 +18,80 @@ class ApplicationDao {
 	private static final Logger LOGGER = Logger.getLogger(ApplicationDao.class
 			.getName());
 
+	List<Application> search(String searchTerm) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(Application.class);
+				q.setFilter("deleted == deletedParam");
+				q.declareParameters("Boolean deletedParam");
+				q.setOrdering("timeUpdatedMs desc");
+				return (List<Application>) q.execute(new Boolean(false));
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	List<Application> searchByAccountId(Long accountId, String searchTerm) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(Application.class);
+				q.setFilter("accountId == accountIdParam && deleted == deletedParam");
+				q.declareParameters("Long accountIdParam, Boolean deletedParam");
+				q.setOrdering("userId desc, deletedOnPlanDowngrade , timeUpdatedMs desc");
+				return (List<Application>) q.execute(accountId, new Boolean(
+						false));
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	List<Application> searchByUserId(Long userId, String searchTerm) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(Application.class);
+				q.setFilter("userId == userIdParam && deleted == deletedParam");
+				q.declareParameters("Long userIdParam, Boolean deletedParam");
+				q.setOrdering("deletedOnPlanDowngrade , timeUpdatedMs desc");
+				return (List<Application>) q
+						.execute(userId, new Boolean(false));
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
 	Application save(Application application) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -143,7 +217,7 @@ class ApplicationDao {
 				Query q = pm.newQuery(Application.class);
 				q.setFilter("userId == userIdParam && deleted == deletedParam");
 				q.declareParameters("Long userIdParam, Boolean deletedParam");
-				q.setOrdering("timeUpdatedMs desc");
+				q.setOrdering("deletedOnPlanDowngrade , timeUpdatedMs desc");
 				return (List<Application>) q
 						.execute(userId, new Boolean(false));
 			} finally {
@@ -202,7 +276,7 @@ class ApplicationDao {
 				Query q = pm.newQuery(Application.class);
 				q.setFilter("accountId == accountIdParam && deleted == deletedParam");
 				q.declareParameters("Long accountIdParam, Boolean deletedParam");
-				q.setOrdering("timeUpdatedMs desc");
+				q.setOrdering("userId desc, deletedOnPlanDowngrade , timeUpdatedMs desc");
 				return (List<Application>) q.execute(accountId, new Boolean(
 						false));
 			} finally {
@@ -248,6 +322,32 @@ class ApplicationDao {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting getApplicationsByAccountId");
 		}
+	}
+
+	List<Application> getDeletedApplicationsOnPlanDowngradeByUserId(Long userId) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(Application.class);
+				q.setFilter("userId == userIdParam && deletedOnPlanDowngrade == deletedOnPlanDowngradeParam");
+				q.declareParameters("Long userIdParam, Boolean deletedOnPlanDowngradeParam");
+				q.setOrdering("timeUpdatedMs desc");
+				return (List<Application>) q.execute(userId,
+						Boolean.valueOf(true));
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+
 	}
 
 	List<Application> getDeletedApplicationsOnPlanDowngradeByAccountId(
@@ -320,7 +420,8 @@ class ApplicationDao {
 				Application lApplication = pm.getObjectById(Application.class,
 						id);
 				if (lApplication != null) {
-					lApplication.setDeleted(true);
+					// Do not mark apps as deleted, The apps will be displayed
+					// greyed out
 					lApplication.setDeletedOnPlanDowngrade(true);
 					lApplication.setTimeUpdatedMs(System.currentTimeMillis());
 					lApplication.setTimeUpdatedTimeZoneOffsetMs((long) TimeZone
@@ -339,39 +440,6 @@ class ApplicationDao {
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting delete");
-		}
-	}
-
-	void restore(Long id, Long timeUpdatedMs, Long timeUpdatedTimeZoneOffsetMs) {
-		try {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering restore");
-			PersistenceManager pm = null;
-
-			try {
-				pm = PMF.get().getPersistenceManager();
-				Application lApplication = pm.getObjectById(Application.class,
-						id);
-				if (lApplication != null) {
-					lApplication.setDeleted(false);
-					lApplication.setDeletedOnPlanDowngrade(false);
-					lApplication.setTimeUpdatedMs(timeUpdatedMs);
-					lApplication
-							.setTimeUpdatedTimeZoneOffsetMs(timeUpdatedTimeZoneOffsetMs);
-					if (LOGGER.isLoggable(Level.INFO))
-						LOGGER.info(id + " application restored");
-				} else {
-					LOGGER.log(Level.WARNING, id + "  APPLICATION NOT FOUND!");
-				}
-			} finally {
-				if (pm != null) {
-					pm.close();
-				}
-			}
-
-		} finally {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting restore");
 		}
 	}
 

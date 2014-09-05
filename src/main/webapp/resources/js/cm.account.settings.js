@@ -166,7 +166,7 @@ function setupAccountUsage() {
 										+ '% storage used</label><br>';
 								lAccountUsageDetailsHtml += '<div class=\"progress radius ';
 								if (lStorageQuota.storageUsedInBytes >= lStorageQuota.storageLimitInBytes) {
-									lAccountUsageDetailsHtml += ' alert\" style=\"width: 100%\">';:
+									lAccountUsageDetailsHtml += ' alert\" style=\"width: 100%\">';
 								} else if (lStorageQuota.storageUsedInBytes == 0) {
 									lAccountUsageDetailsHtml += ' success\" style=\"width: 5%\">';// show
 									// 1%

@@ -1,37 +1,3 @@
-jQuery(function($) {
-	try {
-		log("function($)", "Entering");
-		setup();
-		// call this post setup
-		// $(document).foundation('joyride', 'start');
-	} catch (err) {
-		handleError("function($)", err);
-	} finally {
-		log("function($)", "Exiting");
-	}
-});
-
-function setup() {
-	try {
-		log("setup", "Entering");
-		$(document).foundation();
-
-		var doc = document.documentElement;
-		doc.setAttribute('data-useragent', navigator.userAgent);
-		// enable abide form validation
-		$(document).foundation('abide', 'events');
-		$(document).foundation('alert', 'events');
-
-		setupLeftNavBar();
-		setupBreadcrumbs();
-		displayAnyMessage();
-		getApplications();
-	} catch (err) {
-		handleError("setup", err);
-	} finally {
-		log("function($)", "Exiting");
-	}
-}
 function displayAnyMessage() {
 	log("displayAnyMessage", "Entering");
 	try {
@@ -114,45 +80,7 @@ function displayAnyMessage() {
 		log("displayAnyMessage", "Exiting");
 	}
 }
-function setupLeftNavBar() {
-	log("setupLeftNavBar", "Entering");
-	try {
-		$('#left_nav_bar')
-				.empty()
-				.html(
-						'<li><a id=\"left_nav_bar_link_1\" href=\"javascript:void(0);\" >Create Application</a></li>');
-		$('#left_nav_bar_link_1').unbind();
-		$('#left_nav_bar_link_1').click(function() {
-			// $('#application_create_modal').foundation('reveal',
-			// 'open');
-			newApplication();
-			// Google Analytics
-			ga('send', 'event', Category.APPLICATION, Action.CREATE_NEW);
-			// End Google Analytics
-		});
 
-	} catch (err) {
-		handleError("setupLeftNavBar", err);
-	} finally {
-		log("setupLeftNavBar", "Exiting");
-	}
-}
-
-function setupBreadcrumbs() {
-	log("setupBreadcrumbs", "Entering");
-	try {
-		var lHtml = $('#breadcrumbs').html();
-		$('#breadcrumbs')
-				.html(
-						lHtml
-								+ "<a id=\"breadcrumb_applications\" href=\"/applications\">Applications</a>");
-
-	} catch (err) {
-		handleError("setupBreadcrumbs", err);
-	} finally {
-		log("setupBreadcrumbs", "Exiting");
-	}
-}
 function getApplications() {
 	log("getApplications", "Entering");
 	try {
@@ -202,24 +130,37 @@ function getApplications() {
 function handleDisplayApplications_Callback(pApplications) {
 	log("handleDisplayApplications_Callback", "Entering");
 	try {
-		var lInnerHtml = "<div class=\"row\"> <div class=\"large-6 columns\">";
+		// displayMessage(JSON.stringify(pApplications, null, 2));
+		var lInnerHtml = '';
 		for (var int = 0; int < pApplications.length; int++) {
 			var lApplication = pApplications[int];
-			lInnerHtml += "<p><span data-tooltip class=\"has-tip\" title=\"Click here to view this Application\"><a href=\"javascript:void(0)\" onclick=\"displayContentGroups("
-					+ lApplication.id + ")\"><strong>";
-			lInnerHtml += lApplication.name;
-			lInnerHtml += "</strong></a></span></p>";
-			lInnerHtml += "<ul class=\"inline-list\"> <li><a class=\"small\" href=\"javascript:void(0)\" onclick=\"editApplication("
-					+ lApplication.id
-					+ ")\">edit</a></li> <li><a class=\"small\" href=\"javascript:void(0)\" onclick=\"deleteApplication("
-					+ lApplication.id + ")\">delete</a></li></ul>";
-			lInnerHtml += "<p><span id=\"application_trackingid\" class=\"secondary radius label\">Application Id: "
-					+ lApplication.trackingId + "</span></p>";
-			// log(JSON.stringify(lApplication));
-			if (lApplication.changesStaged) {
-				lInnerHtml += "<p><a href=\"javascript:void(0);\" onclick=\"pushChangestoHandsets('"
+			lInnerHtml += "<div class=\"row\"> <div class=\"large-6 columns\">";
+			if (lApplication.deletedOnPlanDowngrade == false) {
+				lInnerHtml += "<p><span data-tooltip class=\"has-tip\" title=\"Click here to view this Application\"><a href=\"javascript:void(0)\" onclick=\"displayContentGroups("
+						+ lApplication.id + ")\"><strong>";
+				lInnerHtml += lApplication.name;
+				lInnerHtml += "</strong></a></span></p>";
+				lInnerHtml += "<ul class=\"inline-list\"> <li><a class=\"small\" href=\"javascript:void(0)\" onclick=\"editApplication("
 						+ lApplication.id
-						+ "')\" class=\"button tiny alert\">Push Changes to Handsets</a></p>";
+						+ ")\">edit</a></li> <li><a class=\"small\" href=\"javascript:void(0)\" onclick=\"deleteApplication("
+						+ lApplication.id + ")\">delete</a></li></ul>";
+				lInnerHtml += "<p><span id=\"application_trackingid\" class=\"secondary radius label\">Application Id: "
+						+ lApplication.trackingId + "</span></p>";
+				// log(JSON.stringify(lApplication));
+				if (lApplication.changesStaged) {
+					lInnerHtml += "<p><a href=\"javascript:void(0);\" onclick=\"pushChangestoHandsets('"
+							+ lApplication.id
+							+ "')\" class=\"button tiny alert\">Push Changes to Handsets</a></p>";
+				}
+			} else {
+				lInnerHtml += "<p>";
+				lInnerHtml += lApplication.name;
+				lInnerHtml += "</p>";
+				lInnerHtml += "<ul class=\"inline-list\"><li>edit</li> <li>delete</li></ul>";
+				lInnerHtml += "<p><span id=\"application_trackingid\" class=\"secondary radius label\">Application Id: "
+						+ lApplication.trackingId + "</span></p>";
+				lInnerHtml += "<p><a href=\"/account\" class=\"button tiny success\">Upgrade to Access</a></p>";
+
 			}
 			lInnerHtml += "</div></div><hr>";
 		}
@@ -414,7 +355,7 @@ function displayApplicationStats(id, name) {
 function editApplication(id) {
 	log("editApplication", "Entering");
 	try {
-		//reset the form contents
+		// reset the form contents
 		$('#applicationForm').trigger("reset");
 		$('#progress_bar_top, #progress_bar_bottom').show();
 		$('.button').addClass('disabled');
@@ -518,7 +459,8 @@ function editApplication(id) {
 						$('#application_errors').show();
 					},
 					complete : function(xhr, textStatus) {
-						$('#progress_bar_top, #progress_bar_bottom').css("width", "100%");
+						$('#progress_bar_top, #progress_bar_bottom').css(
+								"width", "100%");
 						$('#progress_bar_top, #progress_bar_bottom').hide();
 						$('.button').removeClass('disabled');
 						log(xhr.status);
@@ -538,7 +480,7 @@ function editApplication(id) {
 function newApplication() {
 	log("newApplication", "Entering");
 	try {
-		//reset the form contents
+		// reset the form contents
 		$('#applicationForm').trigger("reset");
 		// validate quota
 		var url = "/secured/quota/application/validate";
@@ -708,7 +650,8 @@ function createApplication() {
 						$('#application_errors').show();
 					},
 					complete : function(xhr, textStatus) {
-						$('#progress_bar_top, #progress_bar_bottom').css("width", "100%");
+						$('#progress_bar_top, #progress_bar_bottom').css(
+								"width", "100%");
 						$('.button').removeClass('disabled');
 						log(xhr.status);
 					}
@@ -794,7 +737,8 @@ function updateApplication() {
 						$('#application_errors').show();
 					},
 					complete : function(xhr, textStatus) {
-						$('#progress_bar_top, #progress_bar_bottom').css("width", "100%");
+						$('#progress_bar_top, #progress_bar_bottom').css(
+								"width", "100%");
 						$('.button').removeClass('disabled');
 						log(xhr.status);
 					}

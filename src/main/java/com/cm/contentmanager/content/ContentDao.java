@@ -17,6 +17,79 @@ class ContentDao {
 	private static final Logger LOGGER = Logger.getLogger(ContentDao.class
 			.getName());
 
+	List<Content> search(String searchTerm) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(Content.class);
+				q.setFilter("deleted == deletedParam");
+				q.declareParameters("Boolean deletedParam");
+				q.setOrdering("timeUpdatedMs desc");
+				return (List<Content>) q.execute(new Boolean(false));
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	List<Content> searchByAccountId(Long accountId, String searchTerm) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(Content.class);
+				q.setFilter("accountId == accountIdParam && deleted == deletedParam");
+				q.declareParameters("Long accountIdParam, Boolean deletedParam");
+				q.setOrdering("userId desc, timeUpdatedMs desc");
+				return (List<Content>) q.execute(accountId, new Boolean(
+						false));
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	List<Content> searchByUserId(Long userId, String searchTerm) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(Content.class);
+				q.setFilter("userId == userIdParam && deleted == deletedParam");
+				q.declareParameters("Long userIdParam, Boolean deletedParam");
+				q.setOrdering("timeUpdatedMs desc");
+				return (List<Content>) q
+						.execute(userId, new Boolean(false));
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
 	Content save(Content content) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))

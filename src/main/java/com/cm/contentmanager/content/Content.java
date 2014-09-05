@@ -5,8 +5,10 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.cm.contentmanager.search.transfer.Searchable;
+
 @PersistenceCapable
-public class Content {
+public class Content implements Searchable {
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Long id;

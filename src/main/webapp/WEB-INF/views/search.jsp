@@ -23,8 +23,15 @@
 <jsp:include page="resources.jsp" flush="true"></jsp:include>
 
 <!-- Begin Custom -->
-<script type="text/javascript" src="/resources/js/cm.application.setup.js"></script>
+<script type="text/javascript">
+<!--Note: Place this above cm.search.js -->
+	var mSearchTerm = '${searchTerm}';
+</script>
+<script type="text/javascript" src="/resources/js/cm.search.js"></script>
 <script type="text/javascript" src="/resources/js/cm.application.js"></script>
+<script type="text/javascript" src="/resources/js/cm.content.group.js"></script>
+<script type="text/javascript" src="/resources/js/cm.content.js"></script>
+
 <!-- End Custom -->
 
 
@@ -35,7 +42,6 @@
 	<jsp:include page="common.jsp"></jsp:include>
 	<jsp:include page="header.jsp"></jsp:include>
 	<br>
-	<jsp:include page="message.jsp"></jsp:include>
 	<jsp:include page="breadcrumbs.jsp"></jsp:include>
 	<br>
 	<div class="row">
@@ -44,9 +50,17 @@
 
 		<div class="large-6 columns" id="content_area">
 			<jsp:include page="progress_bar.jsp"></jsp:include>
+			<h3>Applications</h3>
 			<div id="applications_list"></div>
+			<h3>Content Groups</h3>
+			<div id="content_groups_list"></div>
+			<h3>Content</h3>
+			<div id="content_list"></div>
+			<jsp:include page="create_content.jsp"></jsp:include>
+			<jsp:include page="create_content_group.jsp"></jsp:include>
 			<jsp:include page="create_application.jsp"></jsp:include>
 		</div>
+
 
 		<!-- Instructions on how to use the page -->
 		<aside class="large-3 columns hide-for-small" id="right_aside">
@@ -54,7 +68,7 @@
 			<dl>
 				<dt>Application</dt>
 				<dd>Describe what is an application here</dd>
-				<dt>Enabled</dt>
+				<dt>Content</dt>
 				<dd>Describe what is enabling or disabling an application here.</dd>
 			</dl>
 		</aside>

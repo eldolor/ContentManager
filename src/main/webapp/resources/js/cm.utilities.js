@@ -1,4 +1,5 @@
 /** Begin Utilities ******************************** */
+
 function setErrors(pErrors) {
 	log("setErrors", "Entering");
 	try {

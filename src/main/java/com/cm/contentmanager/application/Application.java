@@ -1,14 +1,14 @@
 package com.cm.contentmanager.application;
 
-import java.io.Serializable;
-
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.cm.contentmanager.search.transfer.Searchable;
+
 @PersistenceCapable
-public class Application implements Serializable {
+public class Application implements Searchable {
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Long id;

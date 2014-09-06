@@ -46,32 +46,25 @@
 	<br>
 	<div class="row">
 
-		<jsp:include page="left_nav_bar.jsp" flush="true"></jsp:include>
-
-		<div class="large-6 columns" id="content_area">
+		<div class="large-12 columns" id="content_area">
 			<jsp:include page="progress_bar.jsp"></jsp:include>
-			<h3>Applications</h3>
-			<div id="applications_list"></div>
-			<h3>Content Groups</h3>
-			<div id="content_groups_list"></div>
-			<h3>Content</h3>
-			<div id="content_list"></div>
-			<jsp:include page="create_content.jsp"></jsp:include>
-			<jsp:include page="create_content_group.jsp"></jsp:include>
-			<jsp:include page="create_application.jsp"></jsp:include>
+			<div class="large-4 columns">
+				<h3>Applications</h3>
+				<div id="applications_list"></div>
+				<jsp:include page="create_application.jsp"></jsp:include>
+			</div>
+			<div class="large-4 columns">
+				<h3>Content Groups</h3>
+				<div id="content_groups_list"></div>
+				<jsp:include page="create_content_group.jsp"></jsp:include>
+			</div>
+			<div class="large-4 columns">
+				<h3>Content</h3>
+				<div id="content_list"></div>
+				<jsp:include page="create_content.jsp"></jsp:include>
+			</div>
+
 		</div>
-
-
-		<!-- Instructions on how to use the page -->
-		<aside class="large-3 columns hide-for-small" id="right_aside">
-			<p>Place instructions on how to use the page here.</p>
-			<dl>
-				<dt>Application</dt>
-				<dd>Describe what is an application here</dd>
-				<dt>Content</dt>
-				<dd>Describe what is enabling or disabling an application here.</dd>
-			</dl>
-		</aside>
 
 	</div>
 

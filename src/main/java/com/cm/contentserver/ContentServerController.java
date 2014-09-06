@@ -1,6 +1,5 @@
 package com.cm.contentserver;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
@@ -27,8 +26,6 @@ import com.cm.contentmanager.content.Content;
 import com.cm.contentmanager.content.ContentService;
 import com.cm.contentmanager.contentgroup.ContentGroup;
 import com.cm.contentmanager.contentgroup.ContentGroupService;
-import com.cm.gcm.DeviceHasMultipleRegistrations;
-import com.cm.gcm.DeviceNotRegisteredException;
 import com.cm.gcm.GcmRegistrationRequest;
 import com.cm.gcm.GcmService;
 import com.cm.util.Utils;

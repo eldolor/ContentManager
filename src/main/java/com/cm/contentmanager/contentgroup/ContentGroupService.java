@@ -7,7 +7,6 @@ import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cm.contentmanager.application.Application;
 import com.cm.usermanagement.user.User;
 import com.cm.util.Utils;
 

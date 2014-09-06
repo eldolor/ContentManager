@@ -448,6 +448,11 @@ public class QuotaController {
 	private com.cm.quota.transfer.StorageQuota convertStorageQuota(
 			Quota pQuota, ApplicationQuotaUsed pApplicationQuotaUsed,
 			StorageQuotaUsed pStorageQuotaUsed) {
+		if (pStorageQuotaUsed == null) {
+			LOGGER.log(Level.WARNING, "StorageQuotaUsed is NULL");
+			return null;
+		}
+
 		com.cm.quota.transfer.StorageQuota lStorageQuota = new com.cm.quota.transfer.StorageQuota();
 		lStorageQuota.setApplicationId(pStorageQuotaUsed.getApplicationId());
 		lStorageQuota.setTrackingId(pStorageQuotaUsed.getTrackingId());

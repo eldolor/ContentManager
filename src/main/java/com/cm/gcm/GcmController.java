@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cm.contentmanager.application.ApplicationService;
-import com.cm.contentmanager.content.Content;
 import com.cm.contentmanager.content.ContentHelper;
 import com.cm.contentserver.ContentRequest;
 import com.cm.gcm.transfer.GcmRegistrationRequest;

@@ -19,37 +19,13 @@ function setup() {
 		var doc = document.documentElement;
 		doc.setAttribute('data-useragent', navigator.userAgent);
 
-		setupLeftNavBar();
 		setupBreadcrumbs();
+
 		getSearchResults(mSearchTerm);
 	} catch (err) {
 		handleError("setup", err);
 	} finally {
 		log("function($)", "Exiting");
-	}
-}
-
-function setupLeftNavBar() {
-	log("setupLeftNavBar", "Entering");
-	try {
-		$('#left_nav_bar')
-				.empty()
-				.html(
-						'<li><a id=\"left_nav_bar_link_1\" href=\"javascript:void(0);\" >TODO</a></li>');
-		$('#left_nav_bar_link_1').unbind();
-		$('#left_nav_bar_link_1').click(function() {
-			// $('#application_create_modal').foundation('reveal',
-			// 'open');
-			newApplication();
-			// Google Analytics
-			ga('send', 'event', Category.APPLICATION, Action.CREATE_NEW);
-			// End Google Analytics
-		});
-
-	} catch (err) {
-		handleError("setupLeftNavBar", err);
-	} finally {
-		log("setupLeftNavBar", "Exiting");
 	}
 }
 
@@ -74,7 +50,7 @@ function getSearchResults(pSearchCriteria) {
 		$('#content_progress_bar').show();
 		var jqxhr = $
 				.ajax({
-					url : "/secured/search/"+ pSearchCriteria,
+					url : "/secured/search/" + pSearchCriteria,
 					type : "GET",
 					contentType : "application/json",
 					async : true,

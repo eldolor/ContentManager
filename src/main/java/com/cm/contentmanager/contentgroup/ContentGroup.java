@@ -22,6 +22,9 @@ public class ContentGroup implements Searchable {
 
 	@Persistent
 	private String name;
+	/** search index **/
+	@Persistent
+	private String nameIdx;
 
 	@Persistent
 	private String description;
@@ -179,6 +182,14 @@ public class ContentGroup implements Searchable {
 
 	public void setAccountId(Long accountId) {
 		this.accountId = accountId;
+	}
+
+	public String getNameIdx() {
+		return nameIdx;
+	}
+
+	public void setNameIdx(String nameIdx) {
+		this.nameIdx = nameIdx;
 	}
 
 }

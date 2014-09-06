@@ -9,7 +9,7 @@ import javax.jdo.Query;
 
 import org.springframework.stereotype.Component;
 
-import com.cm.contentmanager.contentgroup.ContentGroup;
+import com.cm.util.Anglicizer;
 import com.cm.util.PMF;
 
 @Component
@@ -26,10 +26,15 @@ class ContentDao {
 			try {
 				pm = PMF.get().getPersistenceManager();
 				Query q = pm.newQuery(Content.class);
-				q.setFilter("deleted == deletedParam");
-				q.declareParameters("Boolean deletedParam");
-				q.setOrdering("timeUpdatedMs desc");
-				return (List<Content>) q.execute(new Boolean(false));
+				q.setFilter("nameIdx >= nameParam1 && nameIdx < nameParam2 && deleted == deletedParam");
+				q.declareParameters("String nameParam1, String nameParam2, Boolean deletedParam");
+				q.setOrdering("nameIdx, timeUpdatedMs desc");
+				String lNameParam1 = Anglicizer.anglicize(searchTerm.trim());
+				Object[] _array = new Object[3];
+				_array[0] = lNameParam1;
+				_array[1] = lNameParam1 + "\ufffd";
+				_array[2] = Boolean.valueOf(false);
+				return (List<Content>) q.executeWithArray(_array);
 			} finally {
 				if (pm != null) {
 					pm.close();
@@ -50,11 +55,16 @@ class ContentDao {
 			try {
 				pm = PMF.get().getPersistenceManager();
 				Query q = pm.newQuery(Content.class);
-				q.setFilter("accountId == accountIdParam && deleted == deletedParam");
-				q.declareParameters("Long accountIdParam, Boolean deletedParam");
-				q.setOrdering("userId desc, timeUpdatedMs desc");
-				return (List<Content>) q.execute(accountId, new Boolean(
-						false));
+				q.setFilter("accountId == accountIdParam && nameIdx >= nameParam1 && nameIdx < nameParam2 && deleted == deletedParam");
+				q.declareParameters("Long accountIdParam, String nameParam1, String nameParam2, Boolean deletedParam");
+				q.setOrdering("nameIdx, timeUpdatedMs desc");
+				String lNameParam1 = Anglicizer.anglicize(searchTerm.trim());
+				Object[] _array = new Object[4];
+				_array[0] = accountId;
+				_array[1] = lNameParam1;
+				_array[2] = lNameParam1 + "\ufffd";
+				_array[3] = Boolean.valueOf(false);
+				return (List<Content>) q.executeWithArray(_array);
 			} finally {
 				if (pm != null) {
 					pm.close();
@@ -75,11 +85,16 @@ class ContentDao {
 			try {
 				pm = PMF.get().getPersistenceManager();
 				Query q = pm.newQuery(Content.class);
-				q.setFilter("userId == userIdParam && deleted == deletedParam");
-				q.declareParameters("Long userIdParam, Boolean deletedParam");
-				q.setOrdering("timeUpdatedMs desc");
-				return (List<Content>) q
-						.execute(userId, new Boolean(false));
+				q.setFilter("userId == userIdParam && nameIdx >= nameParam1 && nameIdx < nameParam2 && deleted == deletedParam");
+				q.declareParameters("Long userIdParam, String nameParam1, String nameParam2, Boolean deletedParam");
+				q.setOrdering("nameIdx, timeUpdatedMs desc");
+				String lNameParam1 = Anglicizer.anglicize(searchTerm.trim());
+				Object[] _array = new Object[4];
+				_array[0] = userId;
+				_array[1] = lNameParam1;
+				_array[2] = lNameParam1 + "\ufffd";
+				_array[3] = Boolean.valueOf(false);
+				return (List<Content>) q.executeWithArray(_array);
 			} finally {
 				if (pm != null) {
 					pm.close();
@@ -90,6 +105,7 @@ class ContentDao {
 				LOGGER.info("Exiting");
 		}
 	}
+
 	Content save(Content content) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -97,6 +113,7 @@ class ContentDao {
 			PersistenceManager pm = null;
 			try {
 				pm = PMF.get().getPersistenceManager();
+				content.setNameIdx(content.getName().toLowerCase());
 				return pm.makePersistent(content);
 
 			} finally {
@@ -400,6 +417,7 @@ class ContentDao {
 				_content.setEnabled(content.isEnabled());
 
 				_content.setName(content.getName());
+				_content.setNameIdx(content.getName().toLowerCase());
 				_content.setDescription(content.getDescription());
 
 				// for existing contents

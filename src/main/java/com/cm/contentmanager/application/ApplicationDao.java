@@ -11,6 +11,7 @@ import javax.jdo.Query;
 
 import org.springframework.stereotype.Component;
 
+import com.cm.util.Anglicizer;
 import com.cm.util.PMF;
 
 @Component
@@ -27,10 +28,16 @@ class ApplicationDao {
 			try {
 				pm = PMF.get().getPersistenceManager();
 				Query q = pm.newQuery(Application.class);
-				q.setFilter("deleted == deletedParam");
-				q.declareParameters("Boolean deletedParam");
-				q.setOrdering("timeUpdatedMs desc");
-				return (List<Application>) q.execute(new Boolean(false));
+				q.setFilter("nameIdx >= nameParam1 && nameIdx < nameParam2 && deleted == deletedParam");
+				q.declareParameters("String nameParam1, String nameParam2, Boolean deletedParam");
+				q.setOrdering("nameIdx, deletedOnPlanDowngrade , timeUpdatedMs desc");
+				String lNameParam1 = Anglicizer.anglicize(searchTerm.trim());
+				Object[] _array = new Object[3];
+				_array[0] = lNameParam1;
+				_array[1] = lNameParam1 + "\ufffd";
+				_array[2] = Boolean.valueOf(false);
+				return (List<Application>) q.executeWithArray(_array);
+
 			} finally {
 				if (pm != null) {
 					pm.close();
@@ -51,11 +58,16 @@ class ApplicationDao {
 			try {
 				pm = PMF.get().getPersistenceManager();
 				Query q = pm.newQuery(Application.class);
-				q.setFilter("accountId == accountIdParam && deleted == deletedParam");
-				q.declareParameters("Long accountIdParam, Boolean deletedParam");
-				q.setOrdering("userId desc, deletedOnPlanDowngrade , timeUpdatedMs desc");
-				return (List<Application>) q.execute(accountId, new Boolean(
-						false));
+				q.setFilter("accountId == accountIdParam && nameIdx >= nameParam1 && nameIdx < nameParam2 && deleted == deletedParam");
+				q.declareParameters("Long accountIdParam, String nameParam1, String nameParam2, Boolean deletedParam");
+				q.setOrdering("nameIdx, deletedOnPlanDowngrade , timeUpdatedMs desc");
+				String lNameParam1 = Anglicizer.anglicize(searchTerm.trim());
+				Object[] _array = new Object[4];
+				_array[0] = accountId;
+				_array[1] = lNameParam1;
+				_array[2] = lNameParam1 + "\ufffd";
+				_array[3] = Boolean.valueOf(false);
+				return (List<Application>) q.executeWithArray(_array);
 			} finally {
 				if (pm != null) {
 					pm.close();
@@ -76,11 +88,16 @@ class ApplicationDao {
 			try {
 				pm = PMF.get().getPersistenceManager();
 				Query q = pm.newQuery(Application.class);
-				q.setFilter("userId == userIdParam && deleted == deletedParam");
-				q.declareParameters("Long userIdParam, Boolean deletedParam");
-				q.setOrdering("deletedOnPlanDowngrade , timeUpdatedMs desc");
-				return (List<Application>) q
-						.execute(userId, new Boolean(false));
+				q.setFilter("userId == userIdParam && nameIdx >= nameParam1 && nameIdx < nameParam2 && deleted == deletedParam");
+				q.declareParameters("Long userIdParam, String nameParam1, String nameParam2, Boolean deletedParam");
+				q.setOrdering("nameIdx, deletedOnPlanDowngrade , timeUpdatedMs desc");
+				String lNameParam1 = Anglicizer.anglicize(searchTerm.trim());
+				Object[] _array = new Object[4];
+				_array[0] = userId;
+				_array[1] = lNameParam1;
+				_array[2] = lNameParam1 + "\ufffd";
+				_array[3] = Boolean.valueOf(false);
+				return (List<Application>) q.executeWithArray(_array);
 			} finally {
 				if (pm != null) {
 					pm.close();
@@ -99,6 +116,7 @@ class ApplicationDao {
 			PersistenceManager pm = null;
 			try {
 				pm = PMF.get().getPersistenceManager();
+				application.setNameIdx(application.getName().toLowerCase());
 				return pm.makePersistent(application);
 
 			} finally {
@@ -490,6 +508,7 @@ class ApplicationDao {
 
 				lApplication.setDescription(pApplication.getDescription());
 				lApplication.setName(pApplication.getName());
+				lApplication.setNameIdx(lApplication.getName().toLowerCase());
 				lApplication.setUpdateOverWifiOnly(pApplication
 						.isUpdateOverWifiOnly());
 				lApplication.setEnabled(pApplication.isEnabled());

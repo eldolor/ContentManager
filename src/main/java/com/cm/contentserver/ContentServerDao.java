@@ -1,7 +1,6 @@
 package com.cm.contentserver;
 
 import java.util.List;
-import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -10,7 +9,6 @@ import javax.jdo.Query;
 
 import org.springframework.stereotype.Component;
 
-import com.cm.contentmanager.contentgroup.ContentGroup;
 import com.cm.util.PMF;
 
 @Component

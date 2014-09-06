@@ -65,7 +65,7 @@ function setSelectedContentGroup(id) {
 	}
 }
 
-function setAvailableStorageQuota(id) {
+function setAvailableStorageQuota(id, isAsync) {
 	try {
 		log("getAvailableStorageQuota", "Entering");
 
@@ -75,7 +75,43 @@ function setAvailableStorageQuota(id) {
 					url : url,
 					type : "GET",
 					contentType : "application/json",
-					async : true,
+					async : isAsync,
+					statusCode : {
+						200 : function(quota) {
+							mQuota = quota;
+						},
+						503 : function() {
+							$('#content_errors').html(
+									'Unable to get available storage quota');
+							$('#content_errors').show();
+						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						log(errorThrown);
+						$('#content_errors')
+								.html(
+										'Unable to process the request. Please try again later');
+						$('#content_errors').show();
+					}
+				});
+	} catch (err) {
+		handleError("getAvailableStorageQuota", err);
+
+	} finally {
+		log("getAvailableStorageQuota", "Exiting");
+	}
+}
+function setAllAvailableStorageQuota(isAsync) {
+	try {
+		log("getAvailableStorageQuota", "Entering");
+
+		var url = "/secured/quota/";
+		var jqxhr = $
+				.ajax({
+					url : url,
+					type : "GET",
+					contentType : "application/json",
+					async : isAsync,
 					statusCode : {
 						200 : function(quota) {
 							mQuota = quota;
@@ -349,13 +385,25 @@ function editContent(id) {
 
 							var dropBoxUrl = getDropboxUrl();
 							var lStorageQuota = null;
+							/**
+							 * Begin: to support 'edit' functionality from
+							 * Search
+							 */
+							if (mQuota == null) {
+								setAllAvailableStorageQuota(false);
+							}
+							/**
+							 * End: to support 'edit' functionality from Search
+							 */
+
 							for (var int = 0; int < mQuota.storageQuota.length; int++) {
 								lStorageQuota = mQuota.storageQuota[int];
 							}
-							setupContentDropBox(
-									dropBoxUrl,
-									(lStorageQuota.storageLimitInBytes - lStorageQuota.storageUsedInBytes),
-									getDisplayUpgradeMessage(lStorageQuota));
+							if (lStorageQuota != null)
+								setupContentDropBox(
+										dropBoxUrl,
+										(lStorageQuota.storageLimitInBytes - lStorageQuota.storageUsedInBytes),
+										getDisplayUpgradeMessage(lStorageQuota));
 							$("#content_dropbox").hide();
 							// reset
 							$('#upload_content').unbind();
@@ -652,9 +700,9 @@ function newContent() {
 				(lStorageQuota.storageLimitInBytes - lStorageQuota.storageUsedInBytes),
 				getDisplayUpgradeMessage(lStorageQuota));
 
-//		setupContentDropBox(dropBoxUrl,
-//				(mQuota.storageLimitInBytes - mQuota.storageUsedInBytes),
-//				getDisplayUpgradeMessage(mQuota));
+		// setupContentDropBox(dropBoxUrl,
+		// (mQuota.storageLimitInBytes - mQuota.storageUsedInBytes),
+		// getDisplayUpgradeMessage(mQuota));
 
 		// $('#view_ad_video').hide();
 		// $('#view_video').hide();

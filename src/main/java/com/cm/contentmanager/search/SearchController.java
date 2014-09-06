@@ -15,6 +15,7 @@
 
 package com.cm.contentmanager.search;
 
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -84,9 +85,10 @@ public class SearchController {
 	Map<String, List<Searchable>> getSearchResults(
 			@PathVariable String searchTerm, HttpServletResponse response) {
 		try {
+			 String lSearchTerm = URLDecoder.decode(searchTerm, "UTF-8");
 			if (LOGGER.isLoggable(Level.INFO)) {
 				LOGGER.info("Entering getSearchResults");
-				LOGGER.info("Search Term: " + searchTerm);
+				LOGGER.info("Search Term: " + lSearchTerm);
 			}
 			User user = userService.getLoggedInUser();
 			Map<String, List<Searchable>> lSearchResults = new HashMap<String, List<Searchable>>();
@@ -95,23 +97,23 @@ public class SearchController {
 			List<Content> lContents = new ArrayList<Content>();
 
 			if (user.getRole().equals(User.ROLE_SUPER_ADMIN)) {
-				lApplications = applicationService.search(searchTerm);
-				lContentGroups = contentGroupService.search(searchTerm);
-				lContents = contentService.search(searchTerm);
+				lApplications = applicationService.search(lSearchTerm);
+				lContentGroups = contentGroupService.search(lSearchTerm);
+				lContents = contentService.search(lSearchTerm);
 			} else if (user.getRole().equals(User.ROLE_ADMIN)) {
 				lApplications = applicationService.searchByAccountId(
-						user.getAccountId(), searchTerm);
+						user.getAccountId(), lSearchTerm);
 				lContentGroups = contentGroupService.searchByAccountId(
-						user.getAccountId(), searchTerm);
+						user.getAccountId(), lSearchTerm);
 				lContents = contentService.searchByAccountId(
-						user.getAccountId(), searchTerm);
+						user.getAccountId(), lSearchTerm);
 			} else if (user.getRole().equals(User.ROLE_USER)) {
 				lApplications = applicationService.searchByUserId(user.getId(),
-						searchTerm);
+						lSearchTerm);
 				lContentGroups = contentGroupService.searchByUserId(
-						user.getId(), searchTerm);
+						user.getId(), lSearchTerm);
 				lContents = contentService.searchByUserId(user.getId(),
-						searchTerm);
+						lSearchTerm);
 			}
 
 			{

@@ -12,11 +12,11 @@
 		try {
 			log("function($)", "Entering");
 			$('#search_button').unbind();
-			$('#search_button').click(
-					function() {
-						window.location.href = '/search/'
-								+ $('#search_term').val();
-					});
+			$('#search_button').click(function() {
+				var lSearchTerm = $('#search_term').val();
+				if (lSearchTerm != null && lSearchTerm != '')
+					window.location.href = '/search/' + lSearchTerm;
+			});
 
 		} catch (err) {
 			handleError("function($)", err);

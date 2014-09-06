@@ -22,6 +22,9 @@ public class Content implements Searchable {
 	private Long userId;
 	@Persistent
 	private String name;
+	/** search index **/
+	@Persistent
+	private String nameIdx;
 	@Persistent
 	private String description;
 	@Persistent
@@ -211,6 +214,14 @@ public class Content implements Searchable {
 
 	public void setSizeInBytes(Long sizeInBytes) {
 		this.sizeInBytes = sizeInBytes;
+	}
+
+	public String getNameIdx() {
+		return nameIdx;
+	}
+
+	public void setNameIdx(String nameIdx) {
+		this.nameIdx = nameIdx;
 	}
 
 }

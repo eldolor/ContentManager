@@ -28,6 +28,7 @@ import com.cm.contentmanager.application.Application;
 import com.cm.contentmanager.application.ApplicationService;
 import com.cm.contentmanager.content.Content;
 import com.cm.contentmanager.content.ContentService;
+import com.cm.contentmanager.contentgroup.ContentGroup;
 import com.cm.gcm.GcmRegistrationRequest;
 import com.cm.quota.Quota;
 import com.cm.quota.QuotaService;
@@ -526,4 +527,77 @@ public class AdminController {
 
 		}
 	}
+
+	@RequestMapping(value = "/admin/search/indexes/update", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody
+	Result updateSearchIndexes(HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			{
+				PersistenceManager pm = null;
+
+				try {
+					pm = PMF.get().getPersistenceManager();
+					Query q = pm.newQuery(Application.class);
+					List<Application> lApplications = (List<Application>) q
+							.execute();
+					for (Application application : lApplications) {
+						application.setNameIdx(application.getName()
+								.toLowerCase());
+					}
+				} finally {
+					if (pm != null) {
+						pm.close();
+					}
+				}
+
+			}
+			{
+				PersistenceManager pm = null;
+
+				try {
+					pm = PMF.get().getPersistenceManager();
+					Query q = pm.newQuery(ContentGroup.class);
+					List<ContentGroup> lContentGroups = (List<ContentGroup>) q
+							.execute();
+					for (ContentGroup contentGroup : lContentGroups) {
+						contentGroup.setNameIdx(contentGroup.getName()
+								.toLowerCase());
+					}
+				} finally {
+					if (pm != null) {
+						pm.close();
+					}
+				}
+
+			}
+			{
+				PersistenceManager pm = null;
+
+				try {
+					pm = PMF.get().getPersistenceManager();
+					Query q = pm.newQuery(Content.class);
+					List<Content> lContents = (List<Content>) q.execute();
+					for (Content content : lContents) {
+						content.setNameIdx(content.getName().toLowerCase());
+					}
+				} finally {
+					if (pm != null) {
+						pm.close();
+					}
+				}
+
+			}
+			Result result = new Result();
+			result.setResult(Result.SUCCESS);
+			return result;
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+
+		}
+	}
+
 }

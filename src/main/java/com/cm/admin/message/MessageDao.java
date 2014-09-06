@@ -10,7 +10,6 @@ import javax.jdo.Query;
 
 import org.springframework.stereotype.Component;
 
-import com.cm.contentmanager.application.Application;
 import com.cm.util.PMF;
 
 @Component

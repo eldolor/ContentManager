@@ -62,7 +62,7 @@ function setup() {
 		getContent(mSelectedApplication.id, mSelectedContentGroup.id);
 
 		// set the available storage quota per plan
-		setAvailableStorageQuota(mSelectedApplication.id);
+		setAvailableStorageQuota(mSelectedApplication.id, true);
 	} catch (err) {
 		handleError("setup", err);
 	} finally {

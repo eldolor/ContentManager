@@ -56,6 +56,8 @@ function setup() {
 		// default behaviour
 		// $('#user_billing').show();
 
+		setupAccountUsage();
+
 	} catch (err) {
 		handleError("setup", err);
 	} finally {
@@ -104,6 +106,110 @@ function setupBreadcrumbs() {
 		log("setupBreadcrumbs", "Exiting");
 	}
 }
+
+function setupAccountUsage() {
+	log("setupAccountUsage", "Entering");
+	try {
+		var url = "/secured/quota";
+		var jqxhr = $
+				.ajax({
+					url : url,
+					type : "GET",
+					contentType : "application/json",
+					async : true,
+					statusCode : {
+						200 : function(quota) {
+							mQuota = quota;
+							// displayMessage(JSON.stringify(mQuota, null, 2));
+							// var lAppsUsedMessage = 'Using '
+							// + mQuota.applicationLimit + ' of '
+							// + mQuota.applicationLimit + ' applications';
+							// $('applications_used_message').html(
+							// lAppsUsedMessage);
+							// if (mQuota.percentageApplicationUsed == 100) {
+							// $('#applications_progress_bar').removeClass(
+							// 'success');
+							// $('#applications_progress_bar').addClass(
+							// 'alert');
+							// }
+							// $('#applications_progress_bar').css("width",
+							// (mQuota.percentageApplicationUsed + "%"));
+							var lAccountUsageDetailsHtml = '';
+
+							lAccountUsageDetailsHtml += '<div class=\"large-12 columns\"><label>'
+									+ 'Using '
+									+ mQuota.applicationsUsed
+									+ ' of '
+									+ mQuota.applicationLimit
+									+ ' applications</label><br>';
+							lAccountUsageDetailsHtml += '<div class=\"progress radius ';
+							if (mQuota.applicationsUsed >= mQuota.applicationLimit) {
+								lAccountUsageDetailsHtml += ' alert\" style=\" width: 100%\">';
+							} else if (mQuota.applicationsUsed == 0) {
+								lAccountUsageDetailsHtml += ' success\" style=\" width: 5%\">';
+							} else {
+								lAccountUsageDetailsHtml += ' success';
+								lAccountUsageDetailsHtml += '\" style=\" width: '
+										+ mQuota.percentageApplicationUsed
+										+ '%\">';
+							}
+
+							lAccountUsageDetailsHtml += '<span class="meter"></span></div></div>';
+
+							var lStorageQuota = null;
+							for (var int = 0; int < mQuota.storageQuota.length; int++) {
+								lStorageQuota = mQuota.storageQuota[int];
+								lAccountUsageDetailsHtml += '<div class=\"large-12 columns\"><label>'
+										+ lStorageQuota.trackingId
+										+ ':  '
+										+ lStorageQuota.percentageStorageUsed
+										+ '% storage used</label><br>';
+								lAccountUsageDetailsHtml += '<div class=\"progress radius ';
+								if (lStorageQuota.storageUsedInBytes >= lStorageQuota.storageLimitInBytes) {
+									lAccountUsageDetailsHtml += ' alert\" style=\"width: 100%\">';
+								} else if (lStorageQuota.storageUsedInBytes == 0) {
+									lAccountUsageDetailsHtml += ' success\" style=\"width: 5%\">';// show
+									// 1%
+									// to
+									// display
+									// the
+									// progress
+									// bar
+								} else {
+									lAccountUsageDetailsHtml += ' success';
+									lAccountUsageDetailsHtml += '\" style=\"width: '
+											+ lStorageQuota.percentageStorageUsed
+											+ '%\">';
+								}
+								lAccountUsageDetailsHtml += '<span class="meter"></span></div></div>';
+							}
+							$('#account_usage_details').html(
+									lAccountUsageDetailsHtml);
+							// log("setupAccountUsage",
+							// lAccountUsageDetailsHtml);
+
+						},
+						503 : function() {
+							$('#content_errors').html(
+									'Unable to get available storage quota');
+							$('#content_errors').show();
+						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						log(errorThrown);
+						$('#content_errors')
+								.html(
+										'Unable to process the request. Please try again later');
+						$('#content_errors').show();
+					}
+				});
+	} catch (err) {
+		handleError("setupAccountUsage", err);
+	} finally {
+		log("setupAccountUsage", "Exiting");
+	}
+}
+
 function getLoggedInUser() {
 	log("getLoggedInUser", "Entering");
 	try {

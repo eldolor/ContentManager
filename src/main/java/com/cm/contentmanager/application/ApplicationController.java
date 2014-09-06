@@ -38,14 +38,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.cm.contentmanager.content.ContentHelper;
+import com.cm.quota.QuotaService;
 import com.cm.usermanagement.user.User;
 import com.cm.usermanagement.user.UserService;
 import com.cm.util.Utils;
 import com.cm.util.ValidationError;
-import com.google.appengine.api.taskqueue.Queue;
-import com.google.appengine.api.taskqueue.QueueFactory;
-import com.google.appengine.api.taskqueue.TaskOptions;
-import com.google.appengine.api.taskqueue.TaskOptions.Method;
 
 @Controller
 public class ApplicationController {
@@ -55,6 +52,8 @@ public class ApplicationController {
 	private UserService userService;
 	@Autowired
 	private ContentHelper contentHelper;
+	@Autowired
+	private QuotaService quotaService;
 
 	private static final Logger LOGGER = Logger
 			.getLogger(ApplicationController.class.getName());
@@ -178,8 +177,12 @@ public class ApplicationController {
 					timeUpdatedTimeZoneOffsetMs);
 			String lTrackingId = applicationService.getApplication(id)
 					.getTrackingId();
-			Utils.triggerChangesStagedMessage(id);
-			Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId);
+			Utils.triggerChangesStagedMessage(id, 0);
+			Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId, 0);
+
+			// trigger message to update quota
+			Utils.triggerUpdateQuotaUtilizationMessage(userService.getLoggedInUser()
+					.getAccountId(), 0);
 
 		} catch (Throwable e) {
 			// handled by GcmManager
@@ -209,12 +212,27 @@ public class ApplicationController {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return errors;
 			} else {
+				// validate if there is a sufficient quota
+				if (!quotaService.hasSufficientApplicationQuota(userService
+						.getLoggedInUser().getAccountId())) {
+					ValidationError error = new ValidationError();
+					error.setCode(QuotaService.APPLICATION_QUOTA_REACHED_ERROR_CODE);
+					error.setDescription("Application quota reached");
+					errors.add(error);
+					LOGGER.log(Level.WARNING, "Application quota reached");
+					response.setStatus(HttpServletResponse.SC_CONFLICT);
+					return errors;
+				}
+
 				String lTrackingId = createTrackingId(userService
 						.getLoggedInUser());
 				applicationService
 						.saveApplication(userService.getLoggedInUser(),
 								lTrackingId, application);
-				Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId);
+				Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId, 0);
+				// trigger message to update quota
+				Utils.triggerUpdateQuotaUtilizationMessage(userService.getLoggedInUser()
+						.getAccountId(), 0);
 				response.setStatus(HttpServletResponse.SC_CREATED);
 				return null;
 			}
@@ -271,8 +289,8 @@ public class ApplicationController {
 				applicationService.updateApplication(application);
 				String lTrackingId = applicationService.getApplication(
 						application.getId()).getTrackingId();
-				Utils.triggerChangesStagedMessage(application.getId());
-				Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId);
+				Utils.triggerChangesStagedMessage(application.getId(), 0);
+				Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId, 0);
 
 				response.setStatus(HttpServletResponse.SC_OK);
 
@@ -297,8 +315,9 @@ public class ApplicationController {
 				LOGGER.info("Entering markChangesStaged");
 
 			applicationService.updateChangesStaged(applicationId, true);
-			String lTrackingId = applicationService.getApplication(applicationId).getTrackingId();
-			
+			String lTrackingId = applicationService.getApplication(
+					applicationId).getTrackingId();
+
 			// update memcache
 			try {
 				if (mCache != null) {
@@ -331,11 +350,12 @@ public class ApplicationController {
 				return;
 			}
 			applicationService.updateChangesStaged(lApplication.getId(), false);
-			Utils.triggerSendContentListMessages(lApplication.getTrackingId());
+			Utils.triggerSendContentListMessages(lApplication.getTrackingId(), 0);
 			// remove from memcache
 			try {
 				if (mCache != null) {
-					mCache.remove(lApplication.getTrackingId() + "changes_staged");
+					mCache.remove(lApplication.getTrackingId()
+							+ "changes_staged");
 					if (LOGGER.isLoggable(Level.INFO))
 						LOGGER.info("removed from memcache");
 				}

@@ -17,4 +17,11 @@ public class Result implements Serializable {
     public void setResult(String result) {
         this.result = result;
     }
+
+	@Override
+	public String toString() {
+		return "Result [result=" + result + "]";
+	}
+    
+    
 }

@@ -1,115 +1,3 @@
-jQuery(function($) {
-	try {
-		log("function($)", "Entering");
-		setup();
-		// call this post setup
-		// $(document).foundation('joyride', 'start');
-	} catch (err) {
-		handleError("function($)", err);
-	} finally {
-		log("function($)", "Exiting");
-	}
-});
-
-function setup() {
-	try {
-		log("setup", "Entering");
-		$(document).foundation();
-
-		var doc = document.documentElement;
-		doc.setAttribute('data-useragent', navigator.userAgent);
-		// enable abide form validation
-		$(document).foundation('abide', 'events');
-		setupLeftNavBar();
-		setupBreadcrumbs();
-
-		$("#content_start_date").datepicker({
-			altFormat : 'mm/dd/yy',
-			altField : '#content_start_date'
-		});
-		$("#content_end_date").datepicker({
-			altFormat : 'mm/dd/yy',
-			altField : '#content_end_date'
-		});
-		// set application and content group name
-		$('#application_name').html(
-				'Application:&nbsp;' + mSelectedApplication.name);
-		$('#contentgroup_name').html(
-				'Content Group:&nbsp;' + mSelectedContentGroup.name);
-
-		$("#jquery_jplayer_1").jPlayer({
-			swfPath : "/resources/js/jquery",
-			supplied : "webmv, ogv, m4v",
-			size : {
-				width : "640px",
-				height : "360px",
-				cssClass : "jp-video-360p"
-			},
-			errorAlerts : true,
-			warningAlerts : true
-		});
-		$('#content_create')
-				.on(
-						'hidden',
-						function() {
-							$(this).removeData();
-							$("#content_dropbox").empty();
-							$("#content_dropbox")
-									.html(
-											"<span class=\"message\">Drop content here to upload</span>");
-						});
-
-		getContent(mSelectedApplication.id, mSelectedContentGroup.id);
-	} catch (err) {
-		handleError("setup", err);
-	} finally {
-		log("function($)", "Exiting");
-	}
-}
-
-function setupLeftNavBar() {
-	log("setupLeftNavBar", "Entering");
-	try {
-		$('#left_nav_bar')
-				.empty()
-				.html(
-						'<li><a id=\"left_nav_bar_link_1\" href=\"javascript:void(0);\" >Create Content</a></li>');
-		$('#left_nav_bar_link_1').unbind();
-		$('#left_nav_bar_link_1').click(function() {
-			$('#contents_list').hide();
-			$('#content_create').show();
-			newContent();
-		});
-
-	} catch (err) {
-		handleError("setupLeftNavBar", err);
-	} finally {
-		log("setupLeftNavBar", "Exiting");
-	}
-}
-
-function setupBreadcrumbs() {
-	log("setupBreadcrumbs", "Entering");
-	try {
-		var lHtml = $('#breadcrumbs').html();
-		$('#breadcrumbs')
-				.html(
-						lHtml
-								+ "<a id=\"breadcrumb_applications\" href=\"/applications\">Applications</a>"
-								+ "<a id=\"breadcrumb_content_groups\" href=\"/"
-								+ mSelectedApplication.id
-								+ "/contentgroups\">Content Groups</a>"
-								+ "<a id=\"breadcrumb_content_groups\" href=\"/"
-								+ mSelectedApplication.id + "/"
-								+ mSelectedContentGroup.id
-								+ "/content\">Content</a>");
-
-	} catch (err) {
-		handleError("setupBreadcrumbs", err);
-	} finally {
-		log("setupBreadcrumbs", "Exiting");
-	}
-}
 function setSelectedApplication(id) {
 	log("setSelectedApplication", "Entering");
 	try {
@@ -154,6 +42,12 @@ function setSelectedContentGroup(id) {
 					statusCode : {
 						200 : function(contentgroup) {
 							mSelectedContentGroup = contentgroup;
+						},
+						503 : function() {
+							$('#content_errors')
+									.html(
+											'Unable to process the request. Please try again later');
+							$('#content_errors').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
@@ -171,17 +65,89 @@ function setSelectedContentGroup(id) {
 	}
 }
 
+function setAvailableStorageQuota(id, isAsync) {
+	try {
+		log("getAvailableStorageQuota", "Entering");
+
+		var url = "/secured/quota/" + id;
+		var jqxhr = $
+				.ajax({
+					url : url,
+					type : "GET",
+					contentType : "application/json",
+					async : isAsync,
+					statusCode : {
+						200 : function(quota) {
+							mQuota = quota;
+						},
+						503 : function() {
+							$('#content_errors').html(
+									'Unable to get available storage quota');
+							$('#content_errors').show();
+						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						log(errorThrown);
+						$('#content_errors')
+								.html(
+										'Unable to process the request. Please try again later');
+						$('#content_errors').show();
+					}
+				});
+	} catch (err) {
+		handleError("getAvailableStorageQuota", err);
+
+	} finally {
+		log("getAvailableStorageQuota", "Exiting");
+	}
+}
+function setAllAvailableStorageQuota(isAsync) {
+	try {
+		log("getAvailableStorageQuota", "Entering");
+
+		var url = "/secured/quota/";
+		var jqxhr = $
+				.ajax({
+					url : url,
+					type : "GET",
+					contentType : "application/json",
+					async : isAsync,
+					statusCode : {
+						200 : function(quota) {
+							mQuota = quota;
+						},
+						503 : function() {
+							$('#content_errors').html(
+									'Unable to get available storage quota');
+							$('#content_errors').show();
+						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						log(errorThrown);
+						$('#content_errors')
+								.html(
+										'Unable to process the request. Please try again later');
+						$('#content_errors').show();
+					}
+				});
+	} catch (err) {
+		handleError("getAvailableStorageQuota", err);
+
+	} finally {
+		log("getAvailableStorageQuota", "Exiting");
+	}
+}
 function getContent(pApplicationId, pContentGroupId) {
 	log("getContent", "Entering");
 	try {
-
+		$('#content_progress_bar').show();
 		var jqxhr = $
 				.ajax({
 					url : "/secured/" + pApplicationId + '/' + pContentGroupId
 							+ "/content/",
 					type : "GET",
 					contentType : "application/json",
-					async : false,
+					async : true,
 					statusCode : {
 						200 : function(content) {
 							handleDisplayContent_Callback(content);
@@ -209,10 +175,6 @@ function getContent(pApplicationId, pContentGroupId) {
 						$('#content_errors').show();
 					}
 				});
-		jqxhr.always(function() {
-			// close wait div
-			closeWait();
-		});
 
 	} catch (err) {
 		handleError("getContent", err);
@@ -226,9 +188,10 @@ function getContent(pApplicationId, pContentGroupId) {
 function handleDisplayContent_Callback(pContent) {
 	log("handleDisplayContent_Callback", "Entering");
 	try {
-		var lInnerHtml = "<div class=\"row\"> <div class=\"large-6 columns\">";
+		var lInnerHtml = '';
 		for (var int = 0; int < pContent.length; int++) {
 			var lContent = pContent[int];
+			lInnerHtml += "<div class=\"row\"> <div class=\"large-6 columns\">";
 			lInnerHtml += "<p><span data-tooltip class=\"has-tip\" title=\"Click here to view the content in this Content\"><a href=\"javascript:void(0)\" onclick=\"viewContent("
 					+ lContent.id + ")\"><strong>";
 			lInnerHtml += lContent.name;
@@ -246,6 +209,9 @@ function handleDisplayContent_Callback(pContent) {
 		}
 
 		$('#content_list').empty().html(lInnerHtml);
+		// progress bar
+		$('#content_progress_bar').css("width", "100%");
+		$('#content_progress_bar').hide();
 	} catch (err) {
 		handleError("handleDisplayContent_Callback", err);
 	} finally {
@@ -363,6 +329,11 @@ function displayContentStats(id, name) {
 function editContent(id) {
 	log("editContent", "Entering");
 	try {
+		$('#progress_bar_top, #progress_bar_bottom').show();
+		$('.button').addClass('disabled');
+		// reset the form contents
+		$('#contentForm').trigger("reset");
+
 		$('#content_errors').hide();
 
 		$('#content_cancel_button').unbind();
@@ -379,6 +350,7 @@ function editContent(id) {
 					url : url,
 					type : "GET",
 					contentType : "application/json",
+					async : true,
 					statusCode : {
 						200 : function(content) {
 
@@ -412,7 +384,26 @@ function editContent(id) {
 							}
 
 							var dropBoxUrl = getDropboxUrl();
-							setupContentDropBox(dropBoxUrl);
+							var lStorageQuota = null;
+							/**
+							 * Begin: to support 'edit' functionality from
+							 * Search
+							 */
+							if (mQuota == null) {
+								setAllAvailableStorageQuota(false);
+							}
+							/**
+							 * End: to support 'edit' functionality from Search
+							 */
+
+							for (var int = 0; int < mQuota.storageQuota.length; int++) {
+								lStorageQuota = mQuota.storageQuota[int];
+							}
+							if (lStorageQuota != null)
+								setupContentDropBox(
+										dropBoxUrl,
+										(lStorageQuota.storageLimitInBytes - lStorageQuota.storageUsedInBytes),
+										getDisplayUpgradeMessage(lStorageQuota));
 							$("#content_dropbox").hide();
 							// reset
 							$('#upload_content').unbind();
@@ -467,6 +458,13 @@ function editContent(id) {
 								.html(
 										'Unable to process the request. Please try again later');
 						$('#content_errors').show();
+					},
+					complete : function(xhr, textStatus) {
+						$('#progress_bar_top, #progress_bar_bottom').css(
+								"width", "100%");
+						$('#progress_bar_top, #progress_bar_bottom').hide();
+						$('.button').removeClass('disabled');
+						log(xhr.status);
 					}
 				});
 		jqxhr.always(function() {
@@ -478,6 +476,55 @@ function editContent(id) {
 	} finally {
 		log("editContent", "Exiting");
 	}
+}
+function getDisplayUpgradeMessage(pStorageQuota) {
+	var lAvailableStorageQuotaMessage = '';
+	var lAvailableStorageQuotaInKB = ((pStorageQuota.storageLimitInBytes - pStorageQuota.storageUsedInBytes) / 1024);
+	var lAvailableStorageQuotaInMB = (((pStorageQuota.storageLimitInBytes - pStorageQuota.storageUsedInBytes) / 1024) / 1024);
+	var lAvailableStorageQuotaInGB = ((((pStorageQuota.storageLimitInBytes - pStorageQuota.storageUsedInBytes) / 1024) / 1024) / 1024);
+
+	// calculate
+	if (lAvailableStorageQuotaInKB < 1) {
+		lAvailableStorageQuotaMessage = '< 1KB';
+	} else if ((lAvailableStorageQuotaInKB >= 1)
+			&& (lAvailableStorageQuotaInMB < 1)) {
+		lAvailableStorageQuotaMessage = Math.round(lAvailableStorageQuotaInKB)
+				+ 'KB';
+	} else if ((lAvailableStorageQuotaInMB >= 1)
+			&& (lAvailableStorageQuotaInGB < 1)) {
+		lAvailableStorageQuotaMessage = lAvailableStorageQuotaInMB.toFixed(2)
+				+ 'MB';
+	} else if (lAvailableStorageQuotaInGB >= 1) {
+		lAvailableStorageQuotaMessage = lAvailableStorageQuotaInGB.toFixed(2)
+				+ 'GB';
+	}
+	var lPlanStorageQuotaMessage = '';
+	var lPlanStorageQuotaInKB = ((pStorageQuota.storageLimitInBytes) / 1024);
+	var lPlanStorageQuotaInMB = (((pStorageQuota.storageLimitInBytes) / 1024) / 1024);
+	var lPlanStorageQuotaInGB = ((((pStorageQuota.storageLimitInBytes) / 1024) / 1024) / 1024);
+
+	// calculate
+	if (lPlanStorageQuotaInKB < 1) {
+		lPlanStorageQuotaMessage = '< 1KB';
+	} else if ((lPlanStorageQuotaInKB >= 1) && (lPlanStorageQuotaInMB < 1)) {
+		lPlanStorageQuotaMessage = Math.round(lPlanStorageQuotaInKB) + 'KB';
+	} else if ((lPlanStorageQuotaInMB >= 1) && (lPlanStorageQuotaInGB < 1)) {
+		lPlanStorageQuotaMessage = lPlanStorageQuotaInMB.toFixed(2) + 'MB';
+	} else if (lPlanStorageQuotaInGB >= 1) {
+		lPlanStorageQuotaMessage = lPlanStorageQuotaInGB.toFixed(2) + 'GB';
+	}
+	var lPlanStorageQuotaInMB = Math
+			.round(((pStorageQuota.storageLimitInBytes) / 1024) / 1024);
+	lPlanStorageQuotaInMB = (lPlanStorageQuotaInMB < 1) ? 1
+			: lPlanStorageQuotaInMB;
+
+	var lDisplayUpgradeMessage = ' The selected file is too large! Your plan allows for '
+			+ lPlanStorageQuotaMessage
+			+ ' of total storage per application. You only have  '
+			+ lAvailableStorageQuotaMessage
+			+ " of storage available for this application. Please upgrade your Plan to add more storage";
+	log(lDisplayUpgradeMessage);
+	return lDisplayUpgradeMessage;
 }
 
 function selectedContent(id) {
@@ -617,6 +664,9 @@ function viewContent(pContentId) {
 function newContent() {
 	log("newContent", "Entering");
 	try {
+		// reset the form contents
+		$('#contentForm').trigger("reset");
+
 		// set the application id
 		$('#application_id').val(mSelectedApplication.id);
 		// set the content group id
@@ -641,7 +691,19 @@ function newContent() {
 		$('#content_enabled').attr('checked', 'checked');
 
 		var dropBoxUrl = getDropboxUrl();
-		setupContentDropBox(dropBoxUrl);
+		var lStorageQuota = null;
+		for (var int = 0; int < mQuota.storageQuota.length; int++) {
+			lStorageQuota = mQuota.storageQuota[int];
+		}
+		setupContentDropBox(
+				dropBoxUrl,
+				(lStorageQuota.storageLimitInBytes - lStorageQuota.storageUsedInBytes),
+				getDisplayUpgradeMessage(lStorageQuota));
+
+		// setupContentDropBox(dropBoxUrl,
+		// (mQuota.storageLimitInBytes - mQuota.storageUsedInBytes),
+		// getDisplayUpgradeMessage(mQuota));
+
 		// $('#view_ad_video').hide();
 		// $('#view_video').hide();
 
@@ -683,7 +745,7 @@ function newContent() {
 function createContent() {
 	log("createContent", "Entering");
 	try {
-		$('#progress_bar').show();
+		$('#progress_bar_top, #progress_bar_bottom').show();
 		$('.button').addClass('disabled');
 		var lEnabled;
 		if ($('#content_enabled').is(':checked')) {
@@ -761,15 +823,12 @@ function createContent() {
 						$('#content_errors').show();
 					},
 					complete : function(xhr, textStatus) {
-						$('.meter').css("width", "100%");
+						$('#progress_bar_top, #progress_bar_bottom').css(
+								"width", "100%");
 						$('.button').removeClass('disabled');
 						log(xhr.status);
 					}
 				});
-		jqxhr.always(function() {
-			// close wait div
-			closeWait();
-		});
 
 		return false;
 	} catch (err) {
@@ -781,7 +840,7 @@ function createContent() {
 
 function updateContent() {
 	log("updateContent", "Entering");
-	$('#progress_bar').show();
+	$('#progress_bar_top, #progress_bar_bottom').show();
 	$('.button').addClass('disabled');
 	var lEnabled;
 	if ($('#content_enabled').is(':checked')) {
@@ -854,7 +913,8 @@ function updateContent() {
 						$('#content_errors').show();
 					},
 					complete : function(xhr, textStatus) {
-						$('.meter').css("width", "100%");
+						$('#progress_bar_top, #progress_bar_bottom').css(
+								"width", "100%");
 						$('.button').removeClass('disabled');
 						log(xhr.status);
 					}

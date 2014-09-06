@@ -27,7 +27,7 @@ public class ForgotPasswordEmailBuilder {
 	static final String DOCTYPE = "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">";
 	static final String HTML_BEGIN = "<html>";
 	static final String HEAD = "<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"><title>"
-			+ Configuration.SITE_NAME.getValue() + "</title></head>";
+			+ Configuration.SITE_NAME + "</title></head>";
 	static final String BODY_BEGIN = "<body style=\"" + BODY_STYLE + "\">";
 
 	static final String BODY_END = "</body>";
@@ -95,7 +95,7 @@ public class ForgotPasswordEmailBuilder {
 				+ TR_STYLE + "\">Thanks,</td></tr>");
 		lContent.append("<tr style=\"" + TR_STYLE + "\"><td style=\""
 				+ TR_STYLE + "\">Your friends at "
-				+ Configuration.SITE_NAME.getValue() + "</td></tr>");
+				+ Configuration.SITE_NAME+ "</td></tr>");
 		// end main row
 		lContent.append("</table></td></tr>");
 		// end div and table
@@ -107,6 +107,6 @@ public class ForgotPasswordEmailBuilder {
 
 	private String getUrl(String pGuid) {
 
-		return Configuration.FORGOT_PASSWORD_URL.getValue() + "/" + pGuid;
+		return Configuration.FORGOT_PASSWORD_URL + "/" + pGuid;
 	}
 }

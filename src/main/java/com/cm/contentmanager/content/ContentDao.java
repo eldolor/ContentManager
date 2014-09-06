@@ -9,13 +9,102 @@ import javax.jdo.Query;
 
 import org.springframework.stereotype.Component;
 
-import com.cm.contentmanager.contentgroup.ContentGroup;
+import com.cm.util.Anglicizer;
 import com.cm.util.PMF;
 
 @Component
 class ContentDao {
 	private static final Logger LOGGER = Logger.getLogger(ContentDao.class
 			.getName());
+
+	List<Content> search(String searchTerm) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(Content.class);
+				q.setFilter("nameIdx >= nameParam1 && nameIdx < nameParam2 && deleted == deletedParam");
+				q.declareParameters("String nameParam1, String nameParam2, Boolean deletedParam");
+				q.setOrdering("nameIdx, timeUpdatedMs desc");
+				String lNameParam1 = Anglicizer.anglicize(searchTerm.trim());
+				Object[] _array = new Object[3];
+				_array[0] = lNameParam1;
+				_array[1] = lNameParam1 + "\ufffd";
+				_array[2] = Boolean.valueOf(false);
+				return (List<Content>) q.executeWithArray(_array);
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	List<Content> searchByAccountId(Long accountId, String searchTerm) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(Content.class);
+				q.setFilter("accountId == accountIdParam && nameIdx >= nameParam1 && nameIdx < nameParam2 && deleted == deletedParam");
+				q.declareParameters("Long accountIdParam, String nameParam1, String nameParam2, Boolean deletedParam");
+				q.setOrdering("nameIdx, timeUpdatedMs desc");
+				String lNameParam1 = Anglicizer.anglicize(searchTerm.trim());
+				Object[] _array = new Object[4];
+				_array[0] = accountId;
+				_array[1] = lNameParam1;
+				_array[2] = lNameParam1 + "\ufffd";
+				_array[3] = Boolean.valueOf(false);
+				return (List<Content>) q.executeWithArray(_array);
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	List<Content> searchByUserId(Long userId, String searchTerm) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(Content.class);
+				q.setFilter("userId == userIdParam && nameIdx >= nameParam1 && nameIdx < nameParam2 && deleted == deletedParam");
+				q.declareParameters("Long userIdParam, String nameParam1, String nameParam2, Boolean deletedParam");
+				q.setOrdering("nameIdx, timeUpdatedMs desc");
+				String lNameParam1 = Anglicizer.anglicize(searchTerm.trim());
+				Object[] _array = new Object[4];
+				_array[0] = userId;
+				_array[1] = lNameParam1;
+				_array[2] = lNameParam1 + "\ufffd";
+				_array[3] = Boolean.valueOf(false);
+				return (List<Content>) q.executeWithArray(_array);
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
 
 	Content save(Content content) {
 		try {
@@ -24,6 +113,7 @@ class ContentDao {
 			PersistenceManager pm = null;
 			try {
 				pm = PMF.get().getPersistenceManager();
+				content.setNameIdx(content.getName().toLowerCase());
 				return pm.makePersistent(content);
 
 			} finally {
@@ -60,8 +150,8 @@ class ContentDao {
 		}
 	}
 
-	List<Content> get(Long applicationId, Long contentGroupId,
-			boolean deleted, boolean enabled) {
+	List<Content> get(Long applicationId, Long contentGroupId, boolean deleted,
+			boolean enabled) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering get");
@@ -90,8 +180,7 @@ class ContentDao {
 		}
 	}
 
-	List<Content> get(Long applicationId, Long contentGroupId,
-			boolean deleted) {
+	List<Content> get(Long applicationId, Long contentGroupId, boolean deleted) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering get");
@@ -119,8 +208,8 @@ class ContentDao {
 		}
 	}
 
-	List<Content> get(Long applicationId, Long contentGroupId,
-			String type, boolean deleted, boolean enabled) {
+	List<Content> get(Long applicationId, Long contentGroupId, String type,
+			boolean deleted, boolean enabled) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering get");
@@ -216,8 +305,7 @@ class ContentDao {
 		}
 	}
 
-	void delete(Long id, Long timeUpdatedMs,
-			Long timeUpdatedTimeZoneOffsetMs) {
+	void delete(Long id, Long timeUpdatedMs, Long timeUpdatedTimeZoneOffsetMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering delete");
@@ -246,8 +334,7 @@ class ContentDao {
 		}
 	}
 
-	void restore(Long id, Long timeUpdatedMs,
-			Long timeUpdatedTimeZoneOffsetMs) {
+	void restore(Long id, Long timeUpdatedMs, Long timeUpdatedTimeZoneOffsetMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering restore");
@@ -276,8 +363,8 @@ class ContentDao {
 		}
 	}
 
-	void delete(Long applicationId, Long contentGroupId,
-			Long timeUpdatedMs, Long timeUpdatedTimeZoneOffsetMs) {
+	void delete(Long applicationId, Long contentGroupId, Long timeUpdatedMs,
+			Long timeUpdatedTimeZoneOffsetMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering delete");
@@ -330,6 +417,7 @@ class ContentDao {
 				_content.setEnabled(content.isEnabled());
 
 				_content.setName(content.getName());
+				_content.setNameIdx(content.getName().toLowerCase());
 				_content.setDescription(content.getDescription());
 
 				// for existing contents
@@ -344,7 +432,8 @@ class ContentDao {
 						.getTimeUpdatedTimeZoneOffsetMs());
 
 				_content.setSizeInBytes(content.getSizeInBytes());
-
+				_content.setUri(content.getUri());
+				_content.setType(content.getType());
 			} finally {
 				if (pm != null) {
 					pm.close();
@@ -367,7 +456,8 @@ class ContentDao {
 				Content _content = pm.getObjectById(Content.class, id);
 				// only the size
 				_content.setSizeInBytes(size);
-
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("Updating content size to " + size);
 			} finally {
 				if (pm != null) {
 					pm.close();

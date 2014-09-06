@@ -1,89 +1,3 @@
-jQuery(function($) {
-	try {
-		log("function($)", "Entering");
-		setup();
-		// call this post setup
-		// $(document).foundation('joyride', 'start');
-	} catch (err) {
-		handleError("function($)", err);
-	} finally {
-		log("function($)", "Exiting");
-	}
-});
-
-function setup() {
-	try {
-		log("setup", "Entering");
-		$(document).foundation();
-
-		var doc = document.documentElement;
-		doc.setAttribute('data-useragent', navigator.userAgent);
-		// enable abide form validation
-		$(document).foundation('abide', 'events');
-		setupLeftNavBar();
-		setupBreadcrumbs();
-
-		$("#contentgroup_start_date").datepicker({
-			altFormat : 'mm/dd/yy',
-			altField : '#contentgroup_start_date'
-		});
-		$("#contentgroup_end_date").datepicker({
-			altFormat : 'mm/dd/yy',
-			altField : '#contentgroup_end_date'
-		});
-		// set application and content group name
-		$('#application_name').html(
-				'Application:&nbsp;' + mSelectedApplication.name);
-
-		// $('#cm_action').bind('click', alert('clicked'));
-		getContentGroups(mSelectedApplication.id);
-	} catch (err) {
-		handleError("setup", err);
-	} finally {
-		log("function($)", "Exiting");
-	}
-}
-
-function setupLeftNavBar() {
-	log("setupLeftNavBar", "Entering");
-	try {
-		$('#left_nav_bar')
-				.empty()
-				.html(
-						'<li><a id=\"left_nav_bar_link_1\" href=\"javascript:void(0);\" >Create Content Group</a></li>');
-		$('#left_nav_bar_link_1').unbind();
-		$('#left_nav_bar_link_1').click(function() {
-			// $('#content_group_create_modal').foundation('reveal', 'open');
-			$('#content_groups_list').hide();
-			$('#content_group_create').show();
-			newContentGroup();
-		});
-
-	} catch (err) {
-		handleError("setupLeftNavBar", err);
-	} finally {
-		log("setupLeftNavBar", "Exiting");
-	}
-}
-
-function setupBreadcrumbs() {
-	log("setupBreadcrumbs", "Entering");
-	try {
-		var lHtml = $('#breadcrumbs').html();
-		$('#breadcrumbs')
-				.html(
-						lHtml
-								+ "<a id=\"breadcrumb_applications\" href=\"/applications\">Applications</a>"
-								+ "<a id=\"breadcrumb_content_groups\" href=\"/"
-								+ mSelectedApplication.id
-								+ "/contentgroups\">Content Groups</a>");
-
-	} catch (err) {
-		handleError("setupBreadcrumbs", err);
-	} finally {
-		log("setupBreadcrumbs", "Exiting");
-	}
-}
 function setSelectedApplication(id) {
 	log("setSelectedApplication", "Entering");
 	try {
@@ -118,15 +32,14 @@ function setSelectedApplication(id) {
 function getContentGroups(pApplicationId) {
 	log("getContentGroups", "Entering");
 	try {
-		// open wait div
-		openWait();
+		$('#content_progress_bar').show();
 
 		var jqxhr = $
 				.ajax({
 					url : "/secured/" + pApplicationId + "/contentgroups",
 					type : "GET",
 					contentType : "application/json",
-					async : false,
+					async : true,
 					statusCode : {
 						200 : function(contentGroups) {
 							handleDisplayContentGroups_Callback(contentGroups);
@@ -154,10 +67,6 @@ function getContentGroups(pApplicationId) {
 						$('#contentgroup_errors').show();
 					}
 				});
-		jqxhr.always(function() {
-			// close wait div
-			closeWait();
-		});
 
 	} catch (err) {
 		handleError("getContentGroups", err);
@@ -171,9 +80,10 @@ function getContentGroups(pApplicationId) {
 function handleDisplayContentGroups_Callback(pContentGroups) {
 	log("handleDisplayContentGroups_Callback", "Entering");
 	try {
-		var lInnerHtml = "<div class=\"row\"> <div class=\"large-6 columns\">";
+		var lInnerHtml = '';
 		for (var int = 0; int < pContentGroups.length; int++) {
 			var lContentGroup = pContentGroups[int];
+			lInnerHtml += "<div class=\"row\"> <div class=\"large-6 columns\">";
 			lInnerHtml += "<p><span data-tooltip class=\"has-tip\" title=\"Click here to view the content in this Content Group\"><a href=\"javascript:void(0)\" onclick=\"displayContent(";
 			lInnerHtml += lContentGroup.applicationId;
 			lInnerHtml += ", ";
@@ -192,6 +102,9 @@ function handleDisplayContentGroups_Callback(pContentGroups) {
 		}
 
 		$('#content_groups_list').empty().html(lInnerHtml);
+		// progress bar
+		$('#content_progress_bar').css("width", "100%");
+		$('#content_progress_bar').hide();
 	} catch (err) {
 		handleError("handleDisplayContentGroups_Callback", err);
 	} finally {
@@ -337,6 +250,10 @@ function displayContentGroupStats(id, name) {
 function editContentGroup(id) {
 	log("editContentGroup", "Entering");
 	try {
+		$('#progress_bar_top, #progress_bar_bottom').show();
+		$('.button').addClass('disabled');
+		//reset the form contents
+		$('#contentGroupForm').trigger("reset");
 		$('#contentgroup_errors').hide();
 
 		$('#contentgroup_cancel_button').unbind();
@@ -353,6 +270,7 @@ function editContentGroup(id) {
 					url : url,
 					type : "GET",
 					contentType : "application/json",
+					async : true,
 					statusCode : {
 						200 : function(contentgroup) {
 
@@ -420,6 +338,12 @@ function editContentGroup(id) {
 								.html(
 										'Unable to process the request. Please try again later');
 						$('#contentgroup_errors').show();
+					},
+					complete : function(xhr, textStatus) {
+						$('#progress_bar_top, #progress_bar_bottom').css("width", "100%");
+						$('#progress_bar_top, #progress_bar_bottom').hide();
+						$('.button').removeClass('disabled');
+						log(xhr.status);
 					}
 
 				});
@@ -437,6 +361,9 @@ function editContentGroup(id) {
 function newContentGroup() {
 	log("newContentGroup", "Entering");
 	try {
+		//reset the form contents
+		$('#contentGroupForm').trigger("reset");
+
 		$('#contentgroup_errors').hide();
 
 		$('#contentgroup_save_button').html('create');
@@ -477,7 +404,7 @@ function newContentGroup() {
 function createContentGroup() {
 	log("createContentGroup", "Entering");
 	try {
-		$('#progress_bar').show();
+		$('#progress_bar_top, #progress_bar_bottom').show();
 		$('.button').addClass('disabled');
 
 		var _enabled;
@@ -549,7 +476,8 @@ function createContentGroup() {
 						$('#contentgroup_errors').show();
 					},
 					complete : function(xhr, textStatus) {
-						$('.meter').css("width", "100%");
+						$('#progress_bar_top, #progress_bar_bottom').css("width", "100%");
+						$('#progress_bar_top, #progress_bar_bottom').hide();
 						$('.button').removeClass('disabled');
 						log(xhr.status);
 					}
@@ -566,7 +494,7 @@ function createContentGroup() {
 function updateContentGroup() {
 
 	log("updateContentGroup", "Entering");
-	$('#progress_bar').show();
+	$('#progress_bar_top, #progress_bar_bottom').show();
 	$('.button').addClass('disabled');
 	var _enabled;
 
@@ -632,7 +560,7 @@ function updateContentGroup() {
 						$('#contentgroup_errors').show();
 					},
 					complete : function(xhr, textStatus) {
-						$('.meter').css("width", "100%");
+						$('#progress_bar_top, #progress_bar_bottom').css("width", "100%");
 						$('.button').removeClass('disabled');
 						log(xhr.status);
 					}

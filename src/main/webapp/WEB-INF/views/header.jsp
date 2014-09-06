@@ -7,7 +7,24 @@
 <%@page
 	import="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"%><html>
 
+<script type="text/javascript">
+	jQuery(function($) {
+		try {
+			log("function($)", "Entering");
+			$('#search_button').unbind();
+			$('#search_button').click(function() {
+				var lSearchTerm = $('#search_term').val();
+				if (lSearchTerm != null && lSearchTerm != '')
+					window.location.href = '/search/' + lSearchTerm;
+			});
 
+		} catch (err) {
+			handleError("function($)", err);
+		} finally {
+			log("function($)", "Exiting");
+		}
+	});
+</script>
 
 <div class="row">
 	<div class="large-12 columns">
@@ -24,15 +41,20 @@
 				</ul>
 				<section class="top-bar-section">
 					<ul class="left">
-						<li><a id="header_link_1" href="#" style="display: none">Link
-								1</a></li>
-						<li><a id="header_link_2" href="#" style="display: none">Link
-								2</a></li>
-						<sec:authorize ifAnyGranted="ROLE_SUPER_ADMIN">
-							<li><a id="accounts" href="./am">Accounts</a></li>
-						</sec:authorize>
-						<sec:authorize ifAnyGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN">
-							<li><a id="users" href="./um">Users</a></li>
+						<sec:authorize
+							ifAnyGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">
+							<li class="has-form">
+								<div class="row collapse">
+									<div class="large-8 small-9 columns">
+										<input type="text" id="search_term" name="search_term"
+											placeholder="...">
+									</div>
+									<div class="large-4 small-3 columns">
+										<a href="javascript:void(0);" id="search_button"
+											class="button expand">Search</a>
+									</div>
+								</div>
+							</li>
 						</sec:authorize>
 					</ul>
 					<ul class="right">
@@ -40,9 +62,7 @@
 							ifAnyGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">
 							<li class="active"><a id="myAccount" href="/account">Account
 									Settings</a></li>
-						</sec:authorize>
-						<sec:authorize
-							ifAnyGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">
+							<li class="divider"></li>
 							<li><a href="<c:url value="/j_spring_security_logout"/>">Sign
 									out </a></li>
 						</sec:authorize>

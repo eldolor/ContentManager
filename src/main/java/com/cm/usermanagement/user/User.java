@@ -74,9 +74,9 @@ public class User implements Serializable, UserDetails {
 	@NotPersistent
 	public static final String ROLE_USER = "ROLE_USER";
 	@NotPersistent
-	public static final String DEFAULT_SUPER_ADMIN_USER_NAME = "su";
+	public static final String DEFAULT_SUPER_ADMIN_USER_NAME = "su@coconutmartini.com";
 	@NotPersistent
-	public static final String DEFAULT_SUPER_ADMIN_PASSWORD = "pass1word";
+	public static final String DEFAULT_SUPER_ADMIN_PASSWORD = "Pass1Word";
 
 	@NotPersistent
 	private GrantedAuthority adminGrantedAuthority = new SimpleGrantedAuthority(

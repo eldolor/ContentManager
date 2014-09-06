@@ -19,6 +19,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import com.cm.config.Configuration;
 import com.cm.contentmanager.application.Application;
 import com.cm.contentmanager.content.Content;
 import com.cm.contentmanager.contentgroup.ContentGroup;
@@ -34,19 +35,78 @@ public class Utils {
 	private static final Logger LOGGER = Logger
 			.getLogger(Utils.class.getName());
 
-	public static void triggerChangesStagedMessage(Long pApplicationId) {
+	public static void triggerForgotPasswordEmailMessage(String pGuid,
+			long delay) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			Queue queue = QueueFactory.getQueue(Configuration.EMAIL_QUEUE_NAME);
+			TaskOptions taskOptions = TaskOptions.Builder
+					.withUrl("/tasks/email/sendforgotpasswordemail/" + pGuid)
+					.param("guid", pGuid).method(Method.POST)
+					.countdownMillis(delay);
+			queue.add(taskOptions);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+
+	}
+
+	public static void triggerUpdateQuotaMessage(Long pAccountId, long delay) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Triggering message to update quota");
+			Queue queue = QueueFactory
+					.getQueue(Configuration.CONTENT_QUEUE_NAME);
+			TaskOptions taskOptions = TaskOptions.Builder
+					.withUrl("/tasks/quota/update/" + pAccountId)
+					.param("accountId", String.valueOf(pAccountId))
+					.method(Method.POST).countdownMillis(delay);
+			queue.add(taskOptions);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	public static void triggerUpdateQuotaUtilizationMessage(Long pAccountId,
+			long delay) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Triggering message to update quota utilization");
+			Queue queue = QueueFactory
+					.getQueue(Configuration.CONTENT_QUEUE_NAME);
+			TaskOptions taskOptions = TaskOptions.Builder
+					.withUrl("/tasks/quota/utilization/update/" + pAccountId)
+					.param("accountId", String.valueOf(pAccountId))
+					.method(Method.POST).countdownMillis(delay);
+			queue.add(taskOptions);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	public static void triggerChangesStagedMessage(Long pApplicationId,
+			long delay) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering triggerChangesStagedMessage");
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Triggering message to mark changes staged");
-			Queue queue = QueueFactory.getQueue("contentqueue");
+			Queue queue = QueueFactory
+					.getQueue(Configuration.CONTENT_QUEUE_NAME);
 			TaskOptions taskOptions = TaskOptions.Builder
 					.withUrl(
 							"/tasks/application/changesstaged/"
 									+ pApplicationId)
 					.param("applicationId", String.valueOf(pApplicationId))
-					.method(Method.POST);
+					.method(Method.POST).countdownMillis(delay);
 			queue.add(taskOptions);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -55,19 +115,21 @@ public class Utils {
 	}
 
 	public static void triggerUpdateContentSizeInBytesMessage(Long pContentId,
-			String pUri) {
+			String pUri, long delay) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering triggerUpdateContentSizeInBytesMessage");
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Triggering message to update content size in bytes.");
-			Queue queue = QueueFactory.getQueue("contentqueue");
+			Queue queue = QueueFactory
+					.getQueue(Configuration.CONTENT_QUEUE_NAME);
 			TaskOptions taskOptions = TaskOptions.Builder
 					.withUrl(
 							"/tasks/content/updatesize/" + pContentId + "/"
 									+ pUri)
 					.param("id", String.valueOf(pContentId))
-					.param("uri", String.valueOf(pUri)).method(Method.POST);
+					.param("uri", String.valueOf(pUri)).method(Method.POST)
+					.countdownMillis(delay);
 			queue.add(taskOptions);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -75,17 +137,19 @@ public class Utils {
 		}
 	}
 
-	public static void triggerSendContentListMessages(String pTrackingId) {
+	public static void triggerSendContentListMessages(String pTrackingId,
+			long delay) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering triggerSendContentListMessage");
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Triggering message to send content list messages to handsets");
-			Queue queue = QueueFactory.getQueue("gcmqueue");
+			Queue queue = QueueFactory.getQueue(Configuration.GCM_QUEUE_NAME);
 			TaskOptions taskOptions = TaskOptions.Builder
 					.withUrl(
 							"/tasks/gcm/sendcontentlistmessages/" + pTrackingId)
-					.param("trackingId", pTrackingId).method(Method.POST);
+					.param("trackingId", pTrackingId).method(Method.POST)
+					.countdownMillis(delay);
 			queue.add(taskOptions);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -94,18 +158,18 @@ public class Utils {
 	}
 
 	public static void triggerSendContentListMessage(String pTrackingId,
-			String pGcmId) {
+			String pGcmId, long delay) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering triggerSendContentListMessage");
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Triggering message to send content list message to a single handset");
-			Queue queue = QueueFactory.getQueue("gcmqueue");
+			Queue queue = QueueFactory.getQueue(Configuration.GCM_QUEUE_NAME);
 			TaskOptions taskOptions = TaskOptions.Builder
 					.withUrl(
 							"/tasks/gcm/sendcontentlistmessage/" + pTrackingId
 									+ pGcmId).param("gcmId", pGcmId)
-					.method(Method.POST);
+					.method(Method.POST).countdownMillis(delay);
 			queue.add(taskOptions);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -113,18 +177,21 @@ public class Utils {
 		}
 	}
 
-	public static void triggerUpdateLastKnownTimestampMessage(String pTrackingId) {
+	public static void triggerUpdateLastKnownTimestampMessage(
+			String pTrackingId, long delay) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering triggerUpdateLastKnownTimestampMessage");
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Triggering message to update last known timestamp in Memcache");
-			Queue queue = QueueFactory.getQueue("contentqueue");
+			Queue queue = QueueFactory
+					.getQueue(Configuration.CONTENT_QUEUE_NAME);
 			TaskOptions taskOptions = TaskOptions.Builder
 					.withUrl(
 							"/tasks/contentserver/updatelastknowntimestamp/"
 									+ pTrackingId)
-					.param("trackingId", pTrackingId).method(Method.POST);
+					.param("trackingId", pTrackingId).method(Method.POST)
+					.countdownMillis(delay);
 			queue.add(taskOptions);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))

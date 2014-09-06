@@ -1,37 +1,3 @@
-jQuery(function($) {
-	try {
-		log("function($)", "Entering");
-		setup();
-		// call this post setup
-		// $(document).foundation('joyride', 'start');
-	} catch (err) {
-		handleError("function($)", err);
-	} finally {
-		log("function($)", "Exiting");
-	}
-});
-
-function setup() {
-	try {
-		log("setup", "Entering");
-		$(document).foundation();
-
-		var doc = document.documentElement;
-		doc.setAttribute('data-useragent', navigator.userAgent);
-		// enable abide form validation
-		$(document).foundation('abide', 'events');
-		$(document).foundation('alert', 'events');
-
-		setupLeftNavBar();
-		setupBreadcrumbs();
-		displayAnyMessage();
-		getApplications();
-	} catch (err) {
-		handleError("setup", err);
-	} finally {
-		log("function($)", "Exiting");
-	}
-}
 function displayAnyMessage() {
 	log("displayAnyMessage", "Entering");
 	try {
@@ -114,56 +80,17 @@ function displayAnyMessage() {
 		log("displayAnyMessage", "Exiting");
 	}
 }
-function setupLeftNavBar() {
-	log("setupLeftNavBar", "Entering");
-	try {
-		$('#left_nav_bar')
-				.empty()
-				.html(
-						'<li><a id=\"left_nav_bar_link_1\" href=\"javascript:void(0);\" >Create Application</a></li>');
-		$('#left_nav_bar_link_1').unbind();
-		$('#left_nav_bar_link_1').click(function() {
-			// $('#application_create_modal').foundation('reveal',
-			// 'open');
-			$('#applications_list').hide();
-			$('#application_create').show();
-			newApplication();
-			// Google Analytics
-			ga('send', 'event', Category.APPLICATION, Action.CREATE_NEW);
-			// End Google Analytics
-		});
 
-	} catch (err) {
-		handleError("setupLeftNavBar", err);
-	} finally {
-		log("setupLeftNavBar", "Exiting");
-	}
-}
-
-function setupBreadcrumbs() {
-	log("setupBreadcrumbs", "Entering");
-	try {
-		var lHtml = $('#breadcrumbs').html();
-		$('#breadcrumbs')
-				.html(
-						lHtml
-								+ "<a id=\"breadcrumb_applications\" href=\"/applications\">Applications</a>");
-
-	} catch (err) {
-		handleError("setupBreadcrumbs", err);
-	} finally {
-		log("setupBreadcrumbs", "Exiting");
-	}
-}
 function getApplications() {
 	log("getApplications", "Entering");
 	try {
+		$('#content_progress_bar').show();
 		var jqxhr = $
 				.ajax({
 					url : "/secured/applications",
 					type : "GET",
 					contentType : "application/json",
-					async : false,
+					async : true,
 					statusCode : {
 						200 : function(applications) {
 							handleDisplayApplications_Callback(applications);
@@ -203,29 +130,45 @@ function getApplications() {
 function handleDisplayApplications_Callback(pApplications) {
 	log("handleDisplayApplications_Callback", "Entering");
 	try {
-		var lInnerHtml = "<div class=\"row\"> <div class=\"large-6 columns\">";
+		// displayMessage(JSON.stringify(pApplications, null, 2));
+		var lInnerHtml = '';
 		for (var int = 0; int < pApplications.length; int++) {
 			var lApplication = pApplications[int];
-			lInnerHtml += "<p><span data-tooltip class=\"has-tip\" title=\"Click here to view this Application\"><a href=\"javascript:void(0)\" onclick=\"displayContentGroups("
-					+ lApplication.id + ")\"><strong>";
-			lInnerHtml += lApplication.name;
-			lInnerHtml += "</strong></a></span></p>";
-			lInnerHtml += "<ul class=\"inline-list\"> <li><a class=\"small\" href=\"javascript:void(0)\" onclick=\"editApplication("
-					+ lApplication.id
-					+ ")\">edit</a></li> <li><a class=\"small\" href=\"javascript:void(0)\" onclick=\"deleteApplication("
-					+ lApplication.id + ")\">delete</a></li></ul>";
-			lInnerHtml += "<p><span id=\"application_trackingid\" class=\"secondary radius label\">Application Id: "
-					+ lApplication.trackingId + "</span></p>";
-			// log(JSON.stringify(lApplication));
-			if (lApplication.changesStaged) {
-				lInnerHtml += "<p><a href=\"javascript:void(0);\" onclick=\"pushChangestoHandsets('"
+			lInnerHtml += "<div class=\"row\"> <div class=\"large-6 columns\">";
+			if (lApplication.deletedOnPlanDowngrade == false) {
+				lInnerHtml += "<p><span data-tooltip class=\"has-tip\" title=\"Click here to view this Application\"><a href=\"javascript:void(0)\" onclick=\"displayContentGroups("
+						+ lApplication.id + ")\"><strong>";
+				lInnerHtml += lApplication.name;
+				lInnerHtml += "</strong></a></span></p>";
+				lInnerHtml += "<ul class=\"inline-list\"> <li><a class=\"small\" href=\"javascript:void(0)\" onclick=\"editApplication("
 						+ lApplication.id
-						+ "')\" class=\"button tiny alert\">Push Changes to Handsets</a></p>";
+						+ ")\">edit</a></li> <li><a class=\"small\" href=\"javascript:void(0)\" onclick=\"deleteApplication("
+						+ lApplication.id + ")\">delete</a></li></ul>";
+				lInnerHtml += "<p><span id=\"application_trackingid\" class=\"secondary radius label\">Application Id: "
+						+ lApplication.trackingId + "</span></p>";
+				// log(JSON.stringify(lApplication));
+				if (lApplication.changesStaged) {
+					lInnerHtml += "<p><a href=\"javascript:void(0);\" onclick=\"pushChangestoHandsets('"
+							+ lApplication.id
+							+ "')\" class=\"button tiny alert\">Push Changes to Handsets</a></p>";
+				}
+			} else {
+				lInnerHtml += "<p>";
+				lInnerHtml += lApplication.name;
+				lInnerHtml += "</p>";
+				lInnerHtml += "<ul class=\"inline-list\"><li>edit</li> <li>delete</li></ul>";
+				lInnerHtml += "<p><span id=\"application_trackingid\" class=\"secondary radius label\">Application Id: "
+						+ lApplication.trackingId + "</span></p>";
+				lInnerHtml += "<p><a href=\"/account\" class=\"button tiny success\">Upgrade to Access</a></p>";
+
 			}
 			lInnerHtml += "</div></div><hr>";
 		}
 
 		$('#applications_list').empty().html(lInnerHtml);
+		// progress bar
+		$('#content_progress_bar').css("width", "100%");
+		$('#content_progress_bar').hide();
 	} catch (err) {
 		handleError("handleDisplayApplications_Callback", err);
 	} finally {
@@ -412,6 +355,11 @@ function displayApplicationStats(id, name) {
 function editApplication(id) {
 	log("editApplication", "Entering");
 	try {
+		// reset the form contents
+		$('#applicationForm').trigger("reset");
+		$('#progress_bar_top, #progress_bar_bottom').show();
+		$('.button').addClass('disabled');
+
 		$('#application_errors').hide();
 
 		$('#application_cancel_button').unbind();
@@ -428,6 +376,7 @@ function editApplication(id) {
 					url : url,
 					type : "GET",
 					contentType : "application/json",
+					async : true,
 					statusCode : {
 						200 : function(application) {
 
@@ -508,6 +457,13 @@ function editApplication(id) {
 								.html(
 										'Unable to process the request. Please try again later');
 						$('#application_errors').show();
+					},
+					complete : function(xhr, textStatus) {
+						$('#progress_bar_top, #progress_bar_bottom').css(
+								"width", "100%");
+						$('#progress_bar_top, #progress_bar_bottom').hide();
+						$('.button').removeClass('disabled');
+						log(xhr.status);
 					}
 				});
 		jqxhr.always(function() {
@@ -524,39 +480,89 @@ function editApplication(id) {
 function newApplication() {
 	log("newApplication", "Entering");
 	try {
-		$('#application_errors').hide();
+		// reset the form contents
+		$('#applicationForm').trigger("reset");
+		// validate quota
+		var url = "/secured/quota/application/validate";
+		var jqxhr = $
+				.ajax({
+					url : url,
+					type : "GET",
+					contentType : "application/json",
+					statusCode : {
+						200 : function(application) {
 
-		$('#application_save_button').html('create');
-		// not using valid.fndtn.abide & invalid.fndtn.abide as it
-		// causes the form to be submitted twice. Instead use the
-		// deprecated valid & invalid
-		// unbind click listener to reset
-		$('#applicationForm').on('invalid', function() {
-			var invalid_fields = $(this).find('[data-invalid]');
-			log(invalid_fields);
-		}).on('valid', function() {
-			log('newApplication: valid!');
-			createApplication();
-			// Google Analytics
-			ga('send', 'event', Category.APPLICATION, Action.CREATE);
-			// End Google Analytics
-		});
-		$('#application_cancel_button').unbind();
-		$('#application_cancel_button').click(function() {
-			$('#application_create').hide();
-			$('#applications_list').show();
-		});
+							$('#applications_list').hide();
+							$('#application_create').show();
 
-		$('#application_id').val('');
-		$('#application_name').val('');
-		$('#application_description').val('');
-		$('#application_userid').val('');
+							$('#application_errors').hide();
 
-		$('#application_update_over_wifi_only').attr('checked', 'checked');
-		// set default
-		$('#application_enabled').attr('checked', 'checked');
+							$('#application_save_button').html('create');
+							// not using valid.fndtn.abide & invalid.fndtn.abide
+							// as it
+							// causes the form to be submitted twice. Instead
+							// use the
+							// deprecated valid & invalid
+							// unbind click listener to reset
+							$('#applicationForm').on(
+									'invalid',
+									function() {
+										var invalid_fields = $(this).find(
+												'[data-invalid]');
+										log(invalid_fields);
+									}).on(
+									'valid',
+									function() {
+										log('newApplication: valid!');
+										createApplication();
+										// Google Analytics
+										ga('send', 'event',
+												Category.APPLICATION,
+												Action.CREATE);
+										// End Google Analytics
+									});
+							$('#application_cancel_button').unbind();
+							$('#application_cancel_button').click(function() {
+								$('#application_create').hide();
+								$('#applications_list').show();
+							});
 
-		$('#application_errors').empty();
+							$('#application_id').val('');
+							$('#application_name').val('');
+							$('#application_description').val('');
+							$('#application_userid').val('');
+
+							$('#application_update_over_wifi_only').attr(
+									'checked', 'checked');
+							// set default
+							$('#application_enabled')
+									.attr('checked', 'checked');
+
+							$('#application_errors').empty();
+						},
+						409 : function() {
+							// insufficient quota
+							displayUpgrade(
+									"Please upgrade your Plan to create more applications",
+									function() {
+										window.location.href = '/account';
+									});
+						},
+						503 : function() {
+							$('#application_errors')
+									.html(
+											'Unable to process the request. Please try again later');
+							$('#application_errors').show();
+						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						log(errorThrown);
+						$('#application_errors')
+								.html(
+										'Unable to process the request. Please try again later');
+						$('#application_errors').show();
+					}
+				});
 
 	} catch (err) {
 		handleError("newApplication", err);
@@ -568,7 +574,7 @@ function newApplication() {
 function createApplication() {
 	log("createApplication", "Entering");
 	try {
-		$('#progress_bar').show();
+		$('#progress_bar_top, #progress_bar_bottom').show();
 		$('.button').addClass('disabled');
 		var _enabled;
 		if ($('#application_enabled').is(':checked')) {
@@ -644,7 +650,8 @@ function createApplication() {
 						$('#application_errors').show();
 					},
 					complete : function(xhr, textStatus) {
-						$('.meter').css("width", "100%");
+						$('#progress_bar_top, #progress_bar_bottom').css(
+								"width", "100%");
 						$('.button').removeClass('disabled');
 						log(xhr.status);
 					}
@@ -661,7 +668,7 @@ function createApplication() {
 function updateApplication() {
 
 	log("updateApplication", "Entering");
-	$('#progress_bar').show();
+	$('#progress_bar_top, #progress_bar_bottom').show();
 	$('.button').addClass('disabled');
 	var _enabled;
 
@@ -730,7 +737,8 @@ function updateApplication() {
 						$('#application_errors').show();
 					},
 					complete : function(xhr, textStatus) {
-						$('.meter').css("width", "100%");
+						$('#progress_bar_top, #progress_bar_bottom').css(
+								"width", "100%");
 						$('.button').removeClass('disabled');
 						log(xhr.status);
 					}

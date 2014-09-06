@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.cm.admin.plan.CanonicalPlanName;
+import com.cm.config.CanonicalPlanName;
+import com.cm.config.Configuration;
 import com.cm.usermanagement.user.User;
 import com.cm.usermanagement.user.UserService;
 import com.cm.util.Utils;
@@ -62,7 +63,7 @@ public class StripeController {
 			LOGGER.info("Received token: " + stripeToken + " for user "
 					+ lUser.getUsername());
 			try {
-				Stripe.apiKey = "sk_test_4aEiOFaIp1sl35p1Gqjco3Is";
+				Stripe.apiKey = Configuration.STRIPE_API_KEY;
 
 				StripeCustomer lStoredStripeCustomer = stripeCustomerService
 						.get(lUser.getAccountId());
@@ -159,6 +160,9 @@ public class StripeController {
 												System.currentTimeMillis()));
 						stripeCustomerService.update(lStripeCustomer);
 					}
+					//trigger a message to update Quota, based on the selected plan
+					Utils.triggerUpdateQuotaMessage(lUser.getAccountId(), 0);
+					
 				} else {
 					ValidationError error = new ValidationError();
 					error.setCode("customer");
@@ -227,7 +231,7 @@ public class StripeController {
 				LOGGER.info("Entering updateSubscription");
 
 			User lUser = userService.getLoggedInUser();
-			Stripe.apiKey = "sk_test_4aEiOFaIp1sl35p1Gqjco3Is";
+			Stripe.apiKey = Configuration.STRIPE_API_KEY;
 			StripeCustomer lStripeCustomer = stripeCustomerService.get(lUser
 					.getAccountId());
 
@@ -257,6 +261,8 @@ public class StripeController {
 											System.currentTimeMillis()));
 
 					stripeCustomerService.update(lStripeCustomer);
+					//trigger a message to update Quota, based on the selected plan
+					Utils.triggerUpdateQuotaMessage(lUser.getAccountId(), 0);
 				} catch (Exception e) {
 					errors.addAll(processStripeExceptions(e));
 				}

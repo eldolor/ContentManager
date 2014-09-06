@@ -93,7 +93,7 @@
 									odio ornare sagittis.</h5>
 								<div class="show-for-small" style="text-align: center">
 									<a class="small radius button" href="/login">Sign In!</a><br>
-									<a class="small radius button" href="/signup">Sign Up!</a>
+									<a class="small radius button" href="/signup">Sign Up Now! It's easy and free.</a>
 								</div>
 							</div>
 							<div class="large-6 small-6 columns">
@@ -115,7 +115,7 @@
 						</div>
 					</a> <a id="user_sign_up" href="/signup">
 						<div class="panel radius callout" style="text-align: center">
-							<strong>Sign Up!</strong>
+							<strong>Sign Up Now! It's easy and free.</strong>
 						</div>
 					</a>
 				</div>

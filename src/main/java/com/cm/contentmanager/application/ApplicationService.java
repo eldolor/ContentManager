@@ -17,6 +17,51 @@ public class ApplicationService {
 	private static final Logger LOGGER = Logger
 			.getLogger(ApplicationService.class.getName());
 
+	public List<Application> search(String searchTerm) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			List<Application> applications = applicationDao.search(searchTerm);
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Returning " + applications.size()
+						+ " applications");
+			return applications;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	public List<Application> searchByUserId(Long userId, String searchTerm) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			List<Application> applications = applicationDao.searchByUserId(userId ,searchTerm);
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Returning " + applications.size()
+						+ " applications");
+			return applications;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	public List<Application> searchByAccountId(Long accountId, String searchTerm) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			List<Application> applications = applicationDao.searchByAccountId(accountId, searchTerm);
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Returning " + applications.size()
+						+ " applications");
+			return applications;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
 	public List<Application> getAllApplications() {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -154,16 +199,54 @@ public class ApplicationService {
 
 	}
 
-	public void restoreApplication(Long id, Long timeUpdatedMs,
-			Long timeUpdatedTimeZoneOffsetMs) {
+	public void deleteApplicationOnPlanDowngrade(Long id) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering restoreApplication");
-			applicationDao.restore(id, timeUpdatedMs,
-					timeUpdatedTimeZoneOffsetMs);
+				LOGGER.info("Entering deleteApplicationOnPlanDowngrade");
+			applicationDao.deleteOnPlanDowngrade(id);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting restoreApplication");
+				LOGGER.info("Exiting deleteApplicationOnPlanDowngrade");
+		}
+
+	}
+
+	public List<Application> getDeletedApplicationsOnPlanDowngradeByAccountId(
+			Long accountId) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			return applicationDao
+					.getDeletedApplicationsOnPlanDowngradeByAccountId(accountId);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+
+	}
+
+	public List<Application> getDeletedApplicationsOnPlanDowngradeByUserId(
+			Long userId) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			return applicationDao
+					.getDeletedApplicationsOnPlanDowngradeByUserId(userId);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+
+	}
+
+	public void restoreApplicationOnPlanUpgrade(Long id) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering restoreApplicationOnPlanUpgrade");
+			applicationDao.restoreOnPlanUpgrade(id);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting restoreApplicationOnPlanUpgrade");
 		}
 
 	}
@@ -178,6 +261,7 @@ public class ApplicationService {
 				LOGGER.info("Exiting updateApplication");
 		}
 	}
+
 	public void updateChangesStaged(Long pApplicationId, boolean pChangesStaged) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))

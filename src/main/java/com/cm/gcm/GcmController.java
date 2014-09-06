@@ -14,12 +14,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cm.contentmanager.application.ApplicationService;
 import com.cm.contentmanager.content.ContentHelper;
 import com.cm.contentserver.ContentRequest;
 import com.cm.gcm.transfer.GcmRegistrationRequest;
 import com.cm.usermanagement.user.UserService;
+import com.cm.util.Utils;
 import com.cm.util.ValidationError;
 
 @Controller
@@ -39,13 +41,21 @@ public class GcmController {
 	@Autowired
 	private ContentHelper contentHelper;
 
-	@RequestMapping(value = "/gcm/register", method = RequestMethod.POST)
-	public List<ValidationError> register(
+	@RequestMapping(value = "/gcm/register", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	public @ResponseBody
+	List<ValidationError> register(
 			@RequestBody GcmRegistrationRequest gcmRegistrationRequest,
 			HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering register");
+			// validate registration request
+			List<ValidationError> lErrors = validate(gcmRegistrationRequest);
+			if (!lErrors.isEmpty()) {
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				return lErrors;
+			}
+
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering Registering GCM:"
 						+ gcmRegistrationRequest.getGcmId());
@@ -104,30 +114,35 @@ public class GcmController {
 		}
 	}
 
-	@RequestMapping(value = "/gcm/register/canonical", method = RequestMethod.POST)
-	public void registerCanonical(
+	@RequestMapping(value = "/gcm/register/canonical", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	public @ResponseBody
+	List<ValidationError> registerCanonical(
 			@RequestBody GcmRegistrationRequest gcmRegistrationRequest,
 			HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering register");
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering registerCanonical GCM:"
-						+ gcmRegistrationRequest.getGcmId());
+				LOGGER.info("Entering registerCanonical");
+			// validate registration request
+			List<ValidationError> lErrors = validateCanonical(gcmRegistrationRequest);
+			if (!lErrors.isEmpty()) {
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				return lErrors;
+			}
 			com.cm.gcm.GcmRegistrationRequest lGcmReqistrationRequestDomainObject = convertToDomainObject(gcmRegistrationRequest);
 
 			gcmService.register(lGcmReqistrationRequestDomainObject);
 			// deprecate the use of the old gcm id
 			gcmService.deprecate(gcmRegistrationRequest.getDeprecatedGcmId());
 			response.setStatus(HttpServletResponse.SC_OK);
-
+			return null;
 		} catch (Throwable e) {
 			// handled by GcmManager
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting register");
+				LOGGER.info("Exiting registerCanonical");
 
 		}
 	}
@@ -283,6 +298,57 @@ public class GcmController {
 
 		}
 
+	}
+
+	private List<ValidationError> validate(
+			GcmRegistrationRequest gcmRegistrationRequest) {
+		try {
+			List<ValidationError> errors = new ArrayList<ValidationError>();
+			if (Utils.isEmpty(gcmRegistrationRequest.getTrackingId())) {
+				ValidationError error = new ValidationError();
+				// The exception contains the GCM error code
+				error.setCode(GcmService.MISSING_TRACKING_ID_ERROR_CODE);
+				error.setDescription("The tracking id is missing");
+				errors.add(error);
+				LOGGER.log(Level.WARNING, "The tracking id is missing");
+			}
+			if (Utils.isEmpty(gcmRegistrationRequest.getGcmId())) {
+				ValidationError error = new ValidationError();
+				// The exception contains the GCM error code
+				error.setCode(GcmService.MISSING_GCM_ID_ERROR_CODE);
+				error.setDescription("The gcm id is missing");
+				errors.add(error);
+				LOGGER.log(Level.WARNING, "The gcm id is missing");
+			}
+			return errors;
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting validate");
+		}
+	}
+
+	private List<ValidationError> validateCanonical(
+			GcmRegistrationRequest gcmRegistrationRequest) {
+		try {
+			List<ValidationError> errors = new ArrayList<ValidationError>();
+			if (Utils.isEmpty(gcmRegistrationRequest.getDeprecatedGcmId())) {
+				ValidationError error = new ValidationError();
+				// The exception contains the GCM error code
+				error.setCode(GcmService.MISSING_DEPRECATED_GCM_ID_ERROR_CODE);
+				error.setDescription("The deprecated gcm id is missing");
+				errors.add(error);
+				LOGGER.log(Level.WARNING, "The deprecated gcm id is missing");
+			}
+			// rest of the validations
+			errors.addAll(validate(gcmRegistrationRequest));
+
+			return errors;
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting validate");
+		}
 	}
 
 }

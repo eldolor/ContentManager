@@ -5,8 +5,10 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.cm.contentmanager.search.transfer.Searchable;
+
 @PersistenceCapable
-public class Content {
+public class Content implements Searchable {
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Long id;
@@ -20,6 +22,9 @@ public class Content {
 	private Long userId;
 	@Persistent
 	private String name;
+	/** search index **/
+	@Persistent
+	private String nameIdx;
 	@Persistent
 	private String description;
 	@Persistent
@@ -34,8 +39,9 @@ public class Content {
 	private String type;
 	@Persistent
 	private String uri;
+	// default to zero, as it impacts deserialization on the handsets
 	@Persistent
-	private Long sizeInBytes;
+	private Long sizeInBytes = 0L;
 	@Persistent
 	public Boolean deleted = false;
 	@Persistent
@@ -202,11 +208,20 @@ public class Content {
 	}
 
 	public Long getSizeInBytes() {
-		return sizeInBytes;
+		// return 0L as it impacts deserialization on the handset
+		return (sizeInBytes == null) ? 0L : sizeInBytes;
 	}
 
 	public void setSizeInBytes(Long sizeInBytes) {
 		this.sizeInBytes = sizeInBytes;
+	}
+
+	public String getNameIdx() {
+		return nameIdx;
+	}
+
+	public void setNameIdx(String nameIdx) {
+		this.nameIdx = nameIdx;
 	}
 
 }

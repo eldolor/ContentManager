@@ -27,25 +27,25 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.cm.admin.plan.CanonicalPlanName;
+import com.cm.config.CanonicalApplicationQuota;
+import com.cm.config.CanonicalContentType;
+import com.cm.config.CanonicalPlanName;
+import com.cm.config.CanonicalStorageQuota;
 import com.cm.config.Configuration;
 import com.cm.contentmanager.application.Application;
 import com.cm.contentmanager.application.ApplicationService;
-import com.cm.contentmanager.content.CanonicalContentType;
 import com.cm.contentmanager.content.Content;
 import com.cm.contentmanager.content.ContentService;
 import com.cm.contentmanager.contentgroup.ContentGroup;
 import com.cm.contentmanager.contentgroup.ContentGroupService;
+import com.cm.quota.Quota;
+import com.cm.quota.QuotaService;
 import com.cm.stripe.StripeCustomer;
 import com.cm.stripe.StripeCustomerService;
 import com.cm.usermanagement.user.transfer.ForgotPasswordRequest;
 import com.cm.usermanagement.user.transfer.PasswordChangeRequest;
 import com.cm.util.Utils;
 import com.cm.util.ValidationError;
-import com.google.appengine.api.taskqueue.Queue;
-import com.google.appengine.api.taskqueue.QueueFactory;
-import com.google.appengine.api.taskqueue.TaskOptions;
-import com.google.appengine.api.taskqueue.TaskOptions.Method;
 
 @Controller
 public class UserManagementController {
@@ -61,6 +61,8 @@ public class UserManagementController {
 	private ContentGroupService contentGroupService;
 	@Autowired
 	private ContentService contentService;
+	@Autowired
+	private QuotaService quotaService;
 
 	private static final Logger LOGGER = Logger
 			.getLogger(UserManagementController.class.getName());
@@ -122,6 +124,21 @@ public class UserManagementController {
 				ContentGroup lContentGroup = createDemoContentGroup(
 						lDomainUser, lApplication);
 				createDemoContent(lDomainUser, lApplication, lContentGroup);
+
+				// assign them the free quota
+				Quota lQuota = new Quota();
+				lQuota.setAccountId(lUser.getAccountId());
+				// default to free
+				lQuota.setCanonicalPlanName(CanonicalPlanName.FREE.getValue());
+				lQuota.setStorageLimitInBytes(CanonicalStorageQuota.FREE
+						.getValue());
+				lQuota.setApplicationLimit(CanonicalApplicationQuota.FREE
+						.getValue());
+
+				lQuota.setTimeCreatedMs(System.currentTimeMillis());
+				lQuota.setTimeCreatedTimeZoneOffsetMs((long) TimeZone
+						.getDefault().getRawOffset());
+				quotaService.create(lQuota);
 
 				response.setStatus(HttpServletResponse.SC_CREATED);
 				return null;
@@ -193,8 +210,7 @@ public class UserManagementController {
 			// set high date
 			lContentGroup.setEndDateMs(Long.MAX_VALUE);
 
-			lContentGroup = contentGroupService.save(pUser,
-					lContentGroup);
+			lContentGroup = contentGroupService.save(pUser, lContentGroup);
 			return lContentGroup;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -383,15 +399,7 @@ public class UserManagementController {
 				userService.save(lForgotPasswordRequest);
 
 				// send out the email
-				{
-					Queue queue = QueueFactory.getQueue("emailqueue");
-					TaskOptions taskOptions = TaskOptions.Builder
-							.withUrl(
-									"/tasks/email/sendforgotpasswordemail/"
-											+ lGuid).param("guid", lGuid)
-							.method(Method.POST);
-					queue.add(taskOptions);
-				}
+				Utils.triggerForgotPasswordEmailMessage(lGuid, 0);
 			} else {
 				LOGGER.log(Level.WARNING, "The user does not exist");
 			}
@@ -420,11 +428,10 @@ public class UserManagementController {
 			htmlBody.append(lEmailMessage);
 			try {
 				Utils.sendEmail(
-						Configuration.FORGOT_PASSWORD_FROM_EMAIL_ADDRESS
-								.getValue(),
-						Configuration.FORGOT_PASSWORD_FROM_NAME.getValue(),
-						lRequest.getEmail(), "", Configuration.SITE_NAME
-								.getValue(), htmlBody.toString(), null);
+						Configuration.FORGOT_PASSWORD_FROM_EMAIL_ADDRESS,
+						Configuration.FORGOT_PASSWORD_FROM_NAME,
+						lRequest.getEmail(), "", Configuration.SITE_NAME,
+						htmlBody.toString(), null);
 			} catch (UnsupportedEncodingException e) {
 				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			} catch (MessagingException e) {

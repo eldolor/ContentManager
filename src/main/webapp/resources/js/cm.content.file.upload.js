@@ -1,6 +1,15 @@
-function setupContentDropBox(url) {
-	var lUrl = url;
-	log("setupContentDropBox url: " + lUrl);
+/**
+ * Configures the drop box
+ * 
+ * @param pUrl
+ *            the url to upload the content to
+ * @param pMaxFileSize
+ *            the remaining quota in MB, per selected plan
+ */
+function setupContentDropBox(pUrl, pAvailableStorageQuotaInBytes,
+		pDisplayUpgradeMessage) {
+	log("setupContentDropBox url: " + pUrl + " max file size in MB: "
+			+ pAvailableStorageQuotaInBytes);
 
 	var dropbox = $('#content_dropbox'), message = $('.message', dropbox);
 
@@ -8,10 +17,10 @@ function setupContentDropBox(url) {
 		// The name of the $_FILES entry:
 		paramname : 'file',
 		maxfiles : 1,
-		maxfilesize : 10,
+		maxfilesizeInBytes : pAvailableStorageQuotaInBytes,
 		// The domain name of the URL must match the domain name of the web page
 		// for the XHR request to work
-		url : lUrl,
+		url : pUrl,
 
 		uploadFinished : function(i, file, response) {
 			$.data(file).addClass('done');
@@ -22,17 +31,19 @@ function setupContentDropBox(url) {
 		error : function(err, file) {
 			switch (err) {
 			case 'BrowserNotSupported':
-				showMessage('Your browser does not support HTML5 file uploads!');
+				displayMessage('Your browser does not support HTML5 file uploads!');
 				break;
 			case 'TooManyFiles':
-				alert('Too many files! Please select 1 at most! (configurable)');
+				displayMessage('Too many files! Please select 1 at most!');
 				break;
 			case 'FileTooLarge':
-				alert(file.name
-						+ ' is too large! Please upload files up to 10mb (configurable).');
+				// insufficient quota
+				displayUpgrade(pDisplayUpgradeMessage, function() {
+					window.location.href = '/account';
+				});
 				break;
 			default:
-				alert(err);
+				displayMessage(err);
 				break;
 			}
 		},

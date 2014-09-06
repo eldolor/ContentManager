@@ -39,12 +39,6 @@ import com.cm.util.ValidationError;
 import com.google.appengine.api.blobstore.BlobInfo;
 import com.google.appengine.api.blobstore.BlobInfoFactory;
 import com.google.appengine.api.blobstore.BlobKey;
-import com.google.appengine.api.blobstore.BlobstoreService;
-import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
-import com.google.appengine.api.taskqueue.Queue;
-import com.google.appengine.api.taskqueue.QueueFactory;
-import com.google.appengine.api.taskqueue.TaskOptions;
-import com.google.appengine.api.taskqueue.TaskOptions.Method;
 
 @Controller
 public class ContentController {
@@ -173,17 +167,22 @@ public class ContentController {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return errors;
 			} else {
+				
+
 				Content lContent = contentService.save(
 						userService.getLoggedInUser(), content);
 				response.setStatus(HttpServletResponse.SC_CREATED);
 				String lTrackingId = applicationService.getApplication(
 						content.getApplicationId()).getTrackingId();
-				Utils.triggerChangesStagedMessage(content.getApplicationId());
-				Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId);
-				if (Utils.isEmpty(lContent.getId())
-						&& Utils.isEmpty(lContent.getUri()))
+				Utils.triggerChangesStagedMessage(content.getApplicationId(), 0);
+				Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId, 0);
+				if (!Utils.isEmpty(content.getId())
+						&& (!Utils.isEmpty(content.getUri())))
 					Utils.triggerUpdateContentSizeInBytesMessage(
-							lContent.getId(), lContent.getUri());
+							lContent.getId(), lContent.getUri(), 0);
+				// trigger message to update quota
+				Utils.triggerUpdateQuotaUtilizationMessage(userService.getLoggedInUser()
+						.getAccountId(), 0);
 				return null;
 			}
 		} catch (Throwable e) {
@@ -214,12 +213,16 @@ public class ContentController {
 
 				String lTrackingId = applicationService.getApplication(
 						content.getApplicationId()).getTrackingId();
-				Utils.triggerChangesStagedMessage(content.getApplicationId());
-				Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId);
-				if (Utils.isEmpty(content.getId())
-						&& Utils.isEmpty(content.getUri()))
+				Utils.triggerChangesStagedMessage(content.getApplicationId(), 0);
+				Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId, 0);
+				if (!Utils.isEmpty(content.getId())
+						&& (!Utils.isEmpty(content.getUri())))
 					Utils.triggerUpdateContentSizeInBytesMessage(
-							content.getId(), content.getUri());
+							content.getId(), content.getUri(), 0);
+				// trigger message to update quota
+				//TODO: added artificial delay. Should this be removed in prod?
+				Utils.triggerUpdateQuotaUtilizationMessage(userService.getLoggedInUser()
+						.getAccountId(), 3000);
 				return null;
 			}
 		} catch (Throwable e) {
@@ -256,8 +259,11 @@ public class ContentController {
 			response.setStatus(HttpServletResponse.SC_OK);
 			String lTrackingId = applicationService.getApplication(
 					lApplicationId).getTrackingId();
-			Utils.triggerChangesStagedMessage(id);
-			Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId);
+			Utils.triggerChangesStagedMessage(id, 0);
+			Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId, 0);
+			// trigger message to update quota
+			Utils.triggerUpdateQuotaUtilizationMessage(userService.getLoggedInUser()
+					.getAccountId(), 0);
 
 		} catch (Throwable e) {
 			// handled by GcmManager
@@ -343,7 +349,11 @@ public class ContentController {
 			BlobKey blobKey = new BlobKey(uri);
 			final BlobInfo blobInfo = mBlobInfoFactory.loadBlobInfo(blobKey);
 			if (blobInfo != null) {
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("Content size is " + blobInfo.getSize());
 				contentService.updateContentSize(id, blobInfo.getSize());
+			} else {
+				LOGGER.warning("No size found for uri " + uri);
 			}
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))

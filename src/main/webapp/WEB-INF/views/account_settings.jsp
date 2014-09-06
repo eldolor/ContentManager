@@ -45,8 +45,16 @@
 			<li class="tab-title active"><a href="#user_billing">Billing</a></li>
 			<li class="tab-title"><a href="#change_password">Change
 					Password</a></li>
+			<li class="tab-title"><a href="#account_usage">Account Usage</a></li>
 		</ul>
+
 		<div class="tabs-content vertical">
+			<div class="large-9 columns content" id="account_usage">
+				<fieldset>
+					<legend>Account Usage</legend>
+					<div id="account_usage_details"></div>
+				</fieldset>
+			</div>
 			<div class="large-9 columns content" id="change_password">
 				<form id="changePasswordForm" name="changePasswordForm"
 					data-abide="ajax">
@@ -127,6 +135,7 @@
 						</div>
 						<div class="row" id="progress_bar" style="display: none">
 							<div class="large-12 columns">
+								<label>Loading...</label><br>
 								<div class="progress radius">
 									<span class="meter" style="width: 40%"></span>
 								</div>

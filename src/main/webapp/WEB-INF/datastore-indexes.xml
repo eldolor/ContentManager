@@ -44,18 +44,32 @@
 		<property name="type" direction="asc" />
 		<property name="timeCreatedMs" direction="desc" />
 	</datastore-index>
-	<datastore-index kind="Application" ancestor="false" source="manual">
-        <property name="accountId" direction="asc"/>
-        <property name="timeUpdatedMs" direction="desc"/>
-    </datastore-index>
-    <datastore-index kind="Application" ancestor="false" source="manual">
-        <property name="userId" direction="asc"/>
-        <property name="timeUpdatedMs" direction="desc"/>
-    </datastore-index>
-    <datastore-index kind="Application" ancestor="false" source="manual">
-        <property name="deleted" direction="asc"/>
-        <property name="userId" direction="asc"/>
-        <property name="timeUpdatedMs" direction="desc"/>
-    </datastore-index>
-    
+	<datastore-index kind="Application" ancestor="false"
+		source="manual">
+		<property name="accountId" direction="asc" />
+		<property name="timeUpdatedMs" direction="desc" />
+	</datastore-index>
+	<datastore-index kind="Application" ancestor="false"
+		source="manual">
+		<property name="userId" direction="asc" />
+		<property name="timeUpdatedMs" direction="desc" />
+	</datastore-index>
+	<datastore-index kind="Application" ancestor="false"
+		source="manual">
+		<property name="deleted" direction="asc" />
+		<property name="userId" direction="asc" />
+		<property name="timeUpdatedMs" direction="desc" />
+	</datastore-index>
+	<datastore-index kind="Application" ancestor="false"
+		source="manual">
+		<property name="accountId" direction="asc" />
+		<property name="deleted" direction="asc" />
+		<property name="timeUpdatedMs" direction="desc" />
+	</datastore-index>
+	<datastore-index kind="Application" ancestor="false"
+		source="manual">
+		<property name="accountId" direction="asc" />
+		<property name="deletedOnPlanDowngrade" direction="asc" />
+		<property name="timeUpdatedMs" direction="desc" />
+	</datastore-index>
 </datastore-indexes>

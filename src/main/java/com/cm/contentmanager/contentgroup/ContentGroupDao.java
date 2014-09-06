@@ -10,8 +10,7 @@ import javax.jdo.Query;
 
 import org.springframework.stereotype.Component;
 
-import com.cm.contentmanager.application.Application;
-import com.cm.contentmanager.content.Content;
+import com.cm.util.Anglicizer;
 import com.cm.util.PMF;
 
 @Component
@@ -19,6 +18,95 @@ public class ContentGroupDao {
 	private static final Logger LOGGER = Logger.getLogger(ContentGroupDao.class
 			.getName());
 
+	List<ContentGroup> search(String searchTerm) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(ContentGroup.class);
+				
+				q.setFilter("nameIdx >= nameParam1 && nameIdx < nameParam2 && deleted == deletedParam");
+				q.declareParameters("String nameParam1, String nameParam2, Boolean deletedParam");
+				q.setOrdering("nameIdx, timeUpdatedMs desc");
+				String lNameParam1 = Anglicizer.anglicize(searchTerm.trim());
+				Object[] _array = new Object[3];
+				_array[0] = lNameParam1;
+				_array[1] = lNameParam1 + "\ufffd";
+				_array[2] = Boolean.valueOf(false);
+				return (List<ContentGroup>) q.executeWithArray(_array);
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	List<ContentGroup> searchByAccountId(Long accountId, String searchTerm) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(ContentGroup.class);
+				q.setFilter("accountId == accountIdParam && nameIdx >= nameParam1 && nameIdx < nameParam2 && deleted == deletedParam");
+				q.declareParameters("Long accountIdParam, String nameParam1, String nameParam2, Boolean deletedParam");
+				q.setOrdering("nameIdx, timeUpdatedMs desc");
+				String lNameParam1 = Anglicizer.anglicize(searchTerm.trim());
+				Object[] _array = new Object[4];
+				_array[0] = accountId;
+				_array[1] = lNameParam1;
+				_array[2] = lNameParam1 + "\ufffd";
+				_array[3] = Boolean.valueOf(false);
+				return (List<ContentGroup>) q.executeWithArray(_array);
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	List<ContentGroup> searchByUserId(Long userId, String searchTerm) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(ContentGroup.class);
+				q.setFilter("userId == userIdParam && nameIdx >= nameParam1 && nameIdx < nameParam2 && deleted == deletedParam");
+				q.declareParameters("Long userIdParam, String nameParam1, String nameParam2, Boolean deletedParam");
+				q.setOrdering("nameIdx, timeUpdatedMs desc");
+				String lNameParam1 = Anglicizer.anglicize(searchTerm.trim());
+				Object[] _array = new Object[4];
+				_array[0] = userId;
+				_array[1] = lNameParam1;
+				_array[2] = lNameParam1 + "\ufffd";
+				_array[3] = Boolean.valueOf(false);
+				return (List<ContentGroup>) q.executeWithArray(_array);
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
 	public ContentGroup save(ContentGroup contentGroup) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -26,6 +114,7 @@ public class ContentGroupDao {
 			PersistenceManager pm = null;
 			try {
 				pm = PMF.get().getPersistenceManager();
+				contentGroup.setNameIdx(contentGroup.getName().toLowerCase());
 				return pm.makePersistent(contentGroup);
 
 			} finally {
@@ -177,6 +266,7 @@ public class ContentGroupDao {
 				// do not update applicationId
 				_contentGroup.setDescription(contentGroup.getDescription());
 				_contentGroup.setName(contentGroup.getName());
+				_contentGroup.setNameIdx(contentGroup.getName().toLowerCase());
 				_contentGroup.setStartDateIso8601(contentGroup
 						.getStartDateIso8601());
 				_contentGroup.setEndDateIso8601(contentGroup

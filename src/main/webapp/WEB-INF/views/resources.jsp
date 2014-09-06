@@ -107,11 +107,12 @@
 	var PageTitle = {
 		APPLICATIONS : "applications",
 		APPLICATION : "application",
-		CONTENT_GROUPS : "content_group",
+		CONTENT_GROUPS : "content_groups",
 		CONTENT_GROUP : "content_group",
 		CONTENTS : "contents",
 		CONTENT : "content",
-		ACCOUNT_SETTINGS : "account_settings"
+		ACCOUNT_SETTINGS : "account_settings",
+		SEARCH_RESULTS : "search_results"
 	};
 	var Category = {
 		APPLICATIONS : "applications",
@@ -139,3 +140,10 @@
 	};
 </script>
 <!-- End Google Analytics -->
+<script type="text/javascript">
+	var CanonicalSearchableType = {
+		APPLICATION : "application",
+		CONTENT_GROUP : "content_group",
+		CONTENT : "content"
+	};
+</script>

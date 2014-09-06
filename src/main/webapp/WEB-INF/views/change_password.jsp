@@ -100,6 +100,7 @@
 					</div>
 					<div class="row" id="progress_bar" style="display: none">
 						<div class="large-12 columns">
+							<label>Loading...</label><br>
 							<div class="progress radius">
 								<span class="meter" style="width: 40%"></span>
 							</div>

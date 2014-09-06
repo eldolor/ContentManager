@@ -33,16 +33,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.cm.contentmanager.application.ApplicationService;
-import com.cm.contentmanager.content.Content;
 import com.cm.contentmanager.content.ContentHelper;
-import com.cm.usermanagement.user.User;
 import com.cm.usermanagement.user.UserService;
 import com.cm.util.Utils;
 import com.cm.util.ValidationError;
-import com.google.appengine.api.taskqueue.Queue;
-import com.google.appengine.api.taskqueue.QueueFactory;
-import com.google.appengine.api.taskqueue.TaskOptions;
-import com.google.appengine.api.taskqueue.TaskOptions.Method;
 
 @Controller
 public class ContentGroupController {
@@ -90,7 +84,7 @@ public class ContentGroupController {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getContentGroups");
-			List<ContentGroup> contentGroups = null;
+		List<ContentGroup> contentGroups = null;
 
 			contentGroups = contentGroupService.get(applicationId, false);
 
@@ -164,8 +158,8 @@ public class ContentGroupController {
 			response.setStatus(HttpServletResponse.SC_OK);
 			String lTrackingId = applicationService.getApplication(
 					lApplicationId).getTrackingId();
-			Utils.triggerChangesStagedMessage(id);
-			Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId);
+			Utils.triggerChangesStagedMessage(id, 0);
+			Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId, 0);
 
 		} catch (Throwable e) {
 			// handled by GcmManager
@@ -200,7 +194,7 @@ public class ContentGroupController {
 				response.setStatus(HttpServletResponse.SC_CREATED);
 				String lTrackingId = applicationService.getApplication(
 						contentGroup.getApplicationId()).getTrackingId();
-				Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId);
+				Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId, 0);
 				return null;
 			}
 		} catch (Throwable e) {
@@ -235,8 +229,8 @@ public class ContentGroupController {
 				String lTrackingId = applicationService.getApplication(
 						contentGroup.getApplicationId()).getTrackingId();
 				Utils.triggerChangesStagedMessage(contentGroup
-						.getApplicationId());
-				Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId);
+						.getApplicationId(), 0);
+				Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId, 0);
 
 				return null;
 			}

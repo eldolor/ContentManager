@@ -23,6 +23,7 @@
 <jsp:include page="resources.jsp" flush="true"></jsp:include>
 
 <!-- Begin Custom -->
+<script type="text/javascript" src="/resources/js/cm.content.group.setup.js"></script>
 <script type="text/javascript" src="/resources/js/cm.content.group.js"></script>
 <!-- End Custom -->
 <script type="text/javascript">
@@ -47,108 +48,9 @@
 				<span id="application_name" class="radius label"></span>
 			</div>
 			<div>&nbsp;</div>
+			<jsp:include page="progress_bar.jsp"></jsp:include>
 			<div id="content_groups_list"></div>
-			<!-- Begin Content Group -->
-			<div id="content_group_create" style="display: none">
-				<form id="contentGroupForm" name="contentGroupForm"
-					data-abide="ajax">
-					<fieldset>
-						<legend>Content Group Setup</legend>
-						<input type="hidden" id="application_id" name="application_id" />
-						<input type="hidden" id="contentgroup_id" name="contentgroup_id" />
-						<input type="hidden" />
-
-						<div class="row">
-							<div class="large-12 columns">
-								<div class="name-field">
-									<label>Name <small>required</small><input type="text"
-										id="contentgroup_name" name="contentgroup_name"
-										required="required" placeholder="My First Content Group" />
-									</label> <small class="error">Name is required</small>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="large-12 columns">
-								<div class="input-wrapper">
-									<label>Description <textarea rows="5"
-											id="contentgroup_description" name="contentgroup_description"
-											placeholder="A short description of the content group"></textarea>
-									</label>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="large-12 columns">
-								<div class="input-wrapper">
-									<label>Start Date <small>required</small>
-										<div id="contentgroup_start_datepicker">
-											<input type="text" id="contentgroup_start_date"
-												name="contentgroup_start_date" required="required"
-												pattern="month_day_year" /> <br /> <small class="error">Please
-												enter a valid start date MM/DD/YYYY</small>
-										</div>
-									</label>
-								</div>
-							</div>
-						</div>
-
-						<div class="row">
-							<div class="large-12 columns">
-								<div class="input-wrapper">
-									<label><span data-tooltip class="has-tip"
-										title="Specify an End Date only if you want the content to expire after a certain date, or else leave it empty.">End
-											Date</span>
-										<div id="contentgroup_end_datepicker">
-											<input type="text" id="contentgroup_end_date"
-												name="contentgroup_end_date" pattern="month_day_year" /> <br />
-											<small class="error">Please enter a valid end date
-												MM/DD/YYYY</small>
-										</div> </label>
-								</div>
-							</div>
-						</div>
-
-						<div class="row">
-							<div class="large-12 columns">
-								<label><span data-tooltip class="has-tip"
-									title="Specify if the content group is enabled. This content group is enabled by default.">Enabled</span></label>
-							</div>
-						</div>
-						<div class="row">
-							<div class="large-12 columns">
-								<!-- <input id="contentgroup_enabled" type="checkbox"> -->
-								<div class="switch radius">
-									<input id="contentgroup_enabled" type="checkbox"
-										checked="checked"> <label for="contentgroup_enabled">Enabled</label>
-								</div>
-							</div>
-						</div>
-						<div>&nbsp;</div>
-						<div class="row">
-							<div class="large-12 columns">
-								<span id="contentgroup_errors" class="alert radius label"
-									style="display: none"></span>
-							</div>
-						</div>
-						<div>&nbsp;</div>
-						<div class="row">
-							<div class="large-12 columns">
-								<button id="contentgroup_save_button" class="button radius">create</button>
-								<a href="javascript:void(0);" id="contentgroup_cancel_button">cancel</a>
-							</div>
-						</div>
-						<div class="row" id="progress_bar" style="display: none">
-							<div class="large-12 columns">
-								<div class="progress radius">
-									<span class="meter" style="width: 40%"></span>
-								</div>
-							</div>
-						</div>
-					</fieldset>
-				</form>
-			</div>
-			<!-- End Content Group -->
+			<jsp:include page="create_content_group.jsp"></jsp:include>
 		</div>
 
 
@@ -163,7 +65,8 @@
 				<dt>End Date</dt>
 				<dd>...</dd>
 				<dt>Enabled</dt>
-				<dd>Describe what is enabling or disabling a content group here.</dd>
+				<dd>Describe what is enabling or disabling a content group
+					here.</dd>
 			</dl>
 		</aside>
 

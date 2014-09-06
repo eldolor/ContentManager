@@ -1,14 +1,14 @@
 package com.cm.contentmanager.contentgroup;
 
-import java.io.Serializable;
-
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.cm.contentmanager.search.transfer.Searchable;
+
 @PersistenceCapable
-public class ContentGroup implements Serializable {
+public class ContentGroup implements Searchable {
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Long id;
@@ -22,6 +22,9 @@ public class ContentGroup implements Serializable {
 
 	@Persistent
 	private String name;
+	/** search index **/
+	@Persistent
+	private String nameIdx;
 
 	@Persistent
 	private String description;
@@ -179,6 +182,14 @@ public class ContentGroup implements Serializable {
 
 	public void setAccountId(Long accountId) {
 		this.accountId = accountId;
+	}
+
+	public String getNameIdx() {
+		return nameIdx;
+	}
+
+	public void setNameIdx(String nameIdx) {
+		this.nameIdx = nameIdx;
 	}
 
 }

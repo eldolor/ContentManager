@@ -1,14 +1,14 @@
 package com.cm.contentmanager.application;
 
-import java.io.Serializable;
-
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.cm.contentmanager.search.transfer.Searchable;
+
 @PersistenceCapable
-public class Application implements Serializable {
+public class Application implements Searchable {
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Long id;
@@ -25,6 +25,10 @@ public class Application implements Serializable {
 	@Persistent
 	private String name;
 
+	/**search index**/
+	@Persistent
+	private String nameIdx;
+
 	@Persistent
 	private String description;
 
@@ -38,6 +42,9 @@ public class Application implements Serializable {
 
 	@Persistent
 	private Boolean deleted = false;
+
+	@Persistent
+	private Boolean deletedOnPlanDowngrade = false;
 
 	@Persistent
 	private Boolean changesStaged = false;
@@ -161,6 +168,23 @@ public class Application implements Serializable {
 
 	public void setChangesStaged(Boolean changesStaged) {
 		this.changesStaged = changesStaged;
+	}
+
+	public boolean isDeletedOnPlanDowngrade() {
+		return (deletedOnPlanDowngrade != null) ? deletedOnPlanDowngrade
+				: false;
+	}
+
+	public void setDeletedOnPlanDowngrade(Boolean deletedOnPlanDowngrade) {
+		this.deletedOnPlanDowngrade = deletedOnPlanDowngrade;
+	}
+
+	public String getNameIdx() {
+		return nameIdx;
+	}
+
+	public void setNameIdx(String nameIdx) {
+		this.nameIdx = nameIdx;
 	}
 
 }

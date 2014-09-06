@@ -1,4 +1,4 @@
-package com.cm.contentmanager.content;
+package com.cm.config;
 
 public enum CanonicalContentType {
 	VIDEO("video"), IMAGE("image");

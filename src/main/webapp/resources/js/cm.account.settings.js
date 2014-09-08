@@ -146,7 +146,7 @@ function setupAccountUsage() {
 							if (mQuota.applicationsUsed >= mQuota.applicationLimit) {
 								lAccountUsageDetailsHtml += ' alert\" style=\" width: 100%\">';
 							} else if (mQuota.applicationsUsed == 0) {
-								lAccountUsageDetailsHtml += ' success\" style=\" width: 5%\">';
+								lAccountUsageDetailsHtml += ' success\" style=\" width: 2%\">';
 							} else {
 								lAccountUsageDetailsHtml += ' success';
 								lAccountUsageDetailsHtml += '\" style=\" width: '
@@ -159,16 +159,17 @@ function setupAccountUsage() {
 							var lStorageQuota = null;
 							for (var int = 0; int < mQuota.storageQuota.length; int++) {
 								lStorageQuota = mQuota.storageQuota[int];
-								lAccountUsageDetailsHtml += '<div class=\"large-12 columns\"><label>'
+
+								lAccountUsageDetailsHtml += '<div class=\"large-12 columns\"> <span id=\"application_trackingid\" class=\"secondary radius label\">Application '
 										+ lStorageQuota.trackingId
-										+ ':  '
+										+ ':    <b>'
 										+ lStorageQuota.percentageStorageUsed
-										+ '% storage used</label><br>';
+										+ '%</b> storage used</span>';
 								lAccountUsageDetailsHtml += '<div class=\"progress radius ';
 								if (lStorageQuota.storageUsedInBytes >= lStorageQuota.storageLimitInBytes) {
 									lAccountUsageDetailsHtml += ' alert\" style=\"width: 100%\">';
 								} else if (lStorageQuota.storageUsedInBytes == 0) {
-									lAccountUsageDetailsHtml += ' success\" style=\"width: 5%\">';// show
+									lAccountUsageDetailsHtml += ' success\" style=\"width: 2%\">';// show
 									// 1%
 									// to
 									// display
@@ -362,4 +363,36 @@ function submitForgotPasswordRequest() {
 	}
 }
 
+function planUpdate(pPlanName, pProgressBarName) {
+	// $('.button').addClass('disabled');
+	$("#" + pProgressBarName).show();
+
+	// create via sync call
+	var jqxhr = $.ajax({
+		url : "/stripe/subscribe/update/" + pPlanName,
+		type : "POST",
+		async : true,
+		statusCode : {
+			200 : function() {
+				location.reload('/account');
+			},
+			409 : function(errors) {
+				log(errors);
+			},
+			503 : function() {
+
+			}
+		},
+		error : function(xhr, textStatus, errorThrown) {
+			log(errorThrown);
+		},
+		complete : function(xhr, textStatus) {
+			$('.meter').css("width", "100%");
+			// $('.button').removeClass('disabled');
+			log(xhr.status);
+		}
+	});
+	// always
+	return false;
+}
 /** *End***************************************** */

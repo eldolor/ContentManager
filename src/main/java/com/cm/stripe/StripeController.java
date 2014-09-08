@@ -8,9 +8,12 @@ import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -57,11 +60,13 @@ public class StripeController {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering subscribe");
+			
 
 			List<ValidationError> errors = new ArrayList<ValidationError>();
 			User lUser = userService.getLoggedInUser();
-			LOGGER.info("Received token: " + stripeToken + " for user "
-					+ lUser.getUsername());
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Received token: " + stripeToken + " for user "
+						+ lUser.getUsername());
 			try {
 				Stripe.apiKey = Configuration.STRIPE_API_KEY;
 
@@ -76,7 +81,8 @@ public class StripeController {
 						|| Utils.isCCExpiring(
 								lStoredStripeCustomer.getCardExpirationYear(),
 								lStoredStripeCustomer.getCardExpirationMonth())) {
-
+					if (LOGGER.isLoggable(Level.INFO))
+						LOGGER.info("Processing new customer");
 					Map<String, Object> lCustomerParams = new HashMap<String, Object>();
 					Map<String, Object> lSubscriptionParams = new HashMap<String, Object>();
 					// Stripe tokens can only be used once
@@ -95,6 +101,7 @@ public class StripeController {
 
 					// subscribe to the new plan selected
 					lSubscriptionParams.put("plan", canonicalPlanName);
+
 					Customer lCustomer = null;
 					Subscription lSubscription = null;
 					if (lStoredStripeCustomer == null) {
@@ -159,9 +166,10 @@ public class StripeController {
 												System.currentTimeMillis()));
 						stripeCustomerService.update(lStripeCustomer);
 					}
-					//trigger a message to update Quota, based on the selected plan
+					// trigger a message to update Quota, based on the selected
+					// plan
 					Utils.triggerUpdateQuotaMessage(lUser.getAccountId(), 0);
-					
+
 				} else {
 					ValidationError error = new ValidationError();
 					error.setCode("customer");
@@ -220,6 +228,7 @@ public class StripeController {
 		}
 	}
 
+	@Deprecated
 	@RequestMapping(value = "/stripe/subscribe/update", method = RequestMethod.POST)
 	public ModelAndView updateSubscription(
 			@RequestParam("canonicalPlanName") String canonicalPlanName,
@@ -243,6 +252,7 @@ public class StripeController {
 					Map<String, Object> lSubscriptionParams = new HashMap<String, Object>();
 					// subscribe to the new plan selected
 					lSubscriptionParams.put("plan", canonicalPlanName);
+					lSubscriptionParams.put("prorate", false);
 					Subscription lSubscription = lCustomer
 							.updateSubscription(lSubscriptionParams);
 
@@ -259,7 +269,8 @@ public class StripeController {
 											System.currentTimeMillis()));
 
 					stripeCustomerService.update(lStripeCustomer);
-					//trigger a message to update Quota, based on the selected plan
+					// trigger a message to update Quota, based on the selected
+					// plan
 					Utils.triggerUpdateQuotaMessage(lUser.getAccountId(), 0);
 				} catch (Exception e) {
 					errors.addAll(processStripeExceptions(e));
@@ -315,6 +326,72 @@ public class StripeController {
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting updateSubscription");
+		}
+	}
+
+	@RequestMapping(value = "/stripe/subscribe/update/{canonicalPlanName}", method = RequestMethod.POST)
+	public List<ValidationError> updatePlan(
+			@PathVariable String canonicalPlanName, HttpServletResponse response) {
+		List<ValidationError> errors = new ArrayList<ValidationError>();
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering ");
+
+			User lUser = userService.getLoggedInUser();
+			Stripe.apiKey = Configuration.STRIPE_API_KEY;
+			StripeCustomer lStripeCustomer = stripeCustomerService.get(lUser
+					.getAccountId());
+
+			if (lStripeCustomer != null) {
+				try {
+					// found an existing customer;
+					Customer lCustomer = Customer.retrieve(lStripeCustomer
+							.getStripeId());
+
+					Map<String, Object> lSubscriptionParams = new HashMap<String, Object>();
+					// subscribe to the new plan selected
+					lSubscriptionParams.put("plan", canonicalPlanName);
+					lSubscriptionParams.put("prorate", false);
+					Subscription lSubscription = lCustomer
+							.updateSubscription(lSubscriptionParams);
+
+					// update StripeCustomer and save locally
+					// TODO: handle scenario where update subscription succeed
+					// but saving StripeCustomer to DB fails
+					lStripeCustomer.setCanonicalPlanName(canonicalPlanName);
+					lStripeCustomer.setSubscriptionId(lSubscription.getId());
+					lStripeCustomer
+							.setTimeUpdatedMs(System.currentTimeMillis());
+					lStripeCustomer
+							.setTimeUpdatedTimeZoneOffsetMs((long) TimeZone
+									.getDefault().getOffset(
+											System.currentTimeMillis()));
+
+					stripeCustomerService.update(lStripeCustomer);
+					// trigger a message to update Quota, based on the selected
+					// plan
+					Utils.triggerUpdateQuotaMessage(lUser.getAccountId(), 0);
+				} catch (Exception e) {
+					errors.addAll(processStripeExceptions(e));
+				}
+
+			} else {
+				ValidationError error = new ValidationError();
+				error.setCode("customer");
+				error.setDescription("Customer is not yet subscribed");
+				errors.add(error);
+				LOGGER.log(Level.WARNING, "Customer is not yet subscribed");
+			}
+			if (!errors.isEmpty()) {
+				response.setStatus(HttpServletResponse.SC_CONFLICT);
+				return errors;
+			}
+			response.setStatus(HttpServletResponse.SC_OK);
+			return null;
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
 		}
 	}
 

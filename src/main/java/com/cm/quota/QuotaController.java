@@ -15,17 +15,13 @@
 
 package com.cm.quota;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletResponse;
-
-import net.sf.jsr107cache.Cache;
-import net.sf.jsr107cache.CacheFactory;
-import net.sf.jsr107cache.CacheManager;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -63,17 +59,8 @@ public class QuotaController {
 	private static final Logger LOGGER = Logger.getLogger(QuotaController.class
 			.getName());
 
-	private Cache mCache;
-
 	public QuotaController() {
 		super();
-		try {
-			CacheFactory cacheFactory = CacheManager.getInstance()
-					.getCacheFactory();
-			mCache = cacheFactory.createCache(Collections.emptyMap());
-		} catch (Throwable t) {
-			LOGGER.log(Level.SEVERE, "Memcache not initialized!", t);
-		}
 	}
 
 	/**
@@ -393,18 +380,6 @@ public class QuotaController {
 
 	}
 
-	// private List<com.cm.quota.transfer.Quota> convert(List<Quota> pQuotas,
-	// ApplicationQuotaUsed pApplicationQuotaUsed,
-	// List<StorageQuotaUsed> pStorageQuotas) {
-	// List<com.cm.quota.transfer.Quota> lList = new
-	// ArrayList<com.cm.quota.transfer.Quota>();
-	// for (Quota lQuota : pQuotas) {
-	// lList.addAll(convert(lQuota, pApplicationQuotaUsed, pStorageQuotas));
-	// }
-	//
-	// return lList;
-	// }
-
 	private com.cm.quota.transfer.Quota convert(Quota pQuota,
 			ApplicationQuotaUsed pApplicationQuotaUsed,
 			List<StorageQuotaUsed> pStorageQuotas) {
@@ -414,10 +389,12 @@ public class QuotaController {
 
 		lQuota.setApplicationLimit(pQuota.getApplicationLimit());
 		lQuota.setApplicationsUsed(pApplicationQuotaUsed.getApplicationsUsed());
-		int lPercentageApplicationUtilized = Math.round((pApplicationQuotaUsed
-				.getApplicationsUsed() / pQuota.getApplicationLimit()) * 100);
+		int lPercentageApplicationUtilized = ((int) ((pApplicationQuotaUsed
+				.getApplicationsUsed() * 100) / pQuota.getApplicationLimit()));
 		lQuota.setPercentageApplicationUsed(lPercentageApplicationUtilized);
-
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("setPercentageApplicationUsed: "
+					+ lPercentageApplicationUtilized);
 		for (StorageQuotaUsed lStorageQuotaUsed : pStorageQuotas) {
 			lList.add(convertStorageQuota(pQuota, pApplicationQuotaUsed,
 					lStorageQuotaUsed));
@@ -434,9 +411,13 @@ public class QuotaController {
 
 		lQuota.setApplicationLimit(pQuota.getApplicationLimit());
 		lQuota.setApplicationsUsed(pApplicationQuotaUsed.getApplicationsUsed());
-		int lPercentageApplicationUtilized = Math.round((pApplicationQuotaUsed
-				.getApplicationsUsed() / pQuota.getApplicationLimit()) * 100);
+		int lPercentageApplicationUtilized = ((int) ((pApplicationQuotaUsed
+				.getApplicationsUsed() * 100) / pQuota.getApplicationLimit()));
+
 		lQuota.setPercentageApplicationUsed(lPercentageApplicationUtilized);
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("setPercentageApplicationUsed: "
+					+ lPercentageApplicationUtilized);
 
 		lQuota.addStorageQuota(convertStorageQuota(pQuota,
 				pApplicationQuotaUsed, pStorageQuotaUsed));
@@ -459,10 +440,16 @@ public class QuotaController {
 		lStorageQuota.setStorageLimitInBytes(pQuota.getStorageLimitInBytes());
 		lStorageQuota.setStorageUsedInBytes(pStorageQuotaUsed
 				.getStorageUsedInBytes());
-		int lPercentageStorageUtilized = Math
-				.round((pStorageQuotaUsed.getStorageUsedInBytes() / pQuota
-						.getStorageLimitInBytes()) * 100);
+		BigDecimal lBd1 = new BigDecimal(
+				pStorageQuotaUsed.getStorageUsedInBytes() * 100);
+		BigDecimal lBd2 = new BigDecimal(pQuota.getStorageLimitInBytes());
+
+		int lPercentageStorageUtilized = (lBd1.divide(lBd2).movePointRight(2)
+				.intValue());
 		lStorageQuota.setPercentageStorageUsed(lPercentageStorageUtilized);
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("setPercentageStorageUsed: "
+					+ lPercentageStorageUtilized);
 		return lStorageQuota;
 
 	}

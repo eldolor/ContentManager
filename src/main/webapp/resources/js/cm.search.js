@@ -15,11 +15,14 @@ function setup() {
 	try {
 		log("setup", "Entering");
 		$(document).foundation();
+		$(document).foundation('abide', 'events');
 
 		var doc = document.documentElement;
 		doc.setAttribute('data-useragent', navigator.userAgent);
 
 		setupBreadcrumbs();
+		setupContentGroup();
+		setupContent();
 
 		getSearchResults(mSearchTerm);
 	} catch (err) {
@@ -44,6 +47,67 @@ function setupBreadcrumbs() {
 		log("setupBreadcrumbs", "Exiting");
 	}
 }
+
+function setupContent() {
+	log("setupContent", "Entering");
+	try {
+		$("#content_start_date").datepicker({
+			altFormat : 'mm/dd/yy',
+			altField : '#content_start_date'
+		});
+		$("#content_end_date").datepicker({
+			altFormat : 'mm/dd/yy',
+			altField : '#content_end_date'
+		});
+
+		$("#jquery_jplayer_1").jPlayer({
+			swfPath : "/resources/js/jquery",
+			supplied : "webmv, ogv, m4v",
+			size : {
+				width : "640px",
+				height : "360px",
+				cssClass : "jp-video-360p"
+			},
+			errorAlerts : true,
+			warningAlerts : true
+		});
+		$('#content_create')
+				.on(
+						'hidden',
+						function() {
+							$(this).removeData();
+							$("#content_dropbox").empty();
+							$("#content_dropbox")
+									.html(
+											"<span class=\"message\">Drop content here to upload</span>");
+						});
+
+	} catch (err) {
+		handleError("setupContent", err);
+	} finally {
+		log("setupContent", "Exiting");
+	}
+}
+function setupContentGroup() {
+	log("setupContentGroup", "Entering");
+	try {
+
+		$("#contentgroup_start_date").datepicker({
+			altFormat : 'mm/dd/yy',
+			altField : '#contentgroup_start_date'
+		});
+		$("#contentgroup_end_date").datepicker({
+			altFormat : 'mm/dd/yy',
+			altField : '#contentgroup_end_date'
+		});
+
+	} catch (err) {
+		handleError("setupContentGroup", err);
+	} finally {
+		log("setupContentGroup", "Exiting");
+	}
+}
+
 function getSearchResults(pSearchCriteria) {
 	log("getSearchResults", "Entering");
 	try {
@@ -93,7 +157,7 @@ function getSearchResults(pSearchCriteria) {
 function handleDisplaySearchResults_Callback(pSearchResults) {
 	log("handleDisplaySearchResults_Callback", "Entering");
 	try {
-		displayMessage(JSON.stringify(pSearchResults, null, 2));
+		// displayMessage(JSON.stringify(pSearchResults, null, 2));
 		handleDisplayApplications_Callback(pSearchResults.application);
 		handleDisplayContentGroups_Callback(pSearchResults.content_group);
 		handleDisplayContent_Callback(pSearchResults.content);

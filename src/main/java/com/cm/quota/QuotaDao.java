@@ -208,6 +208,8 @@ class QuotaDao {
 			StorageQuotaUsed lQuotaUsed = null;
 			if (lList != null && (lList.size() > 0)) {
 				lQuotaUsed = lList.get(0);
+				//TODO: delete later
+				lQuotaUsed.setTrackingId(pApplication.getTrackingId());
 				lQuotaUsed.setStorageUsedInBytes(storageUsedInBytes);
 				lQuotaUsed.setTimeUpdatedMs(System.currentTimeMillis());
 				lQuotaUsed.setTimeUpdatedTimeZoneOffsetMs((long) TimeZone

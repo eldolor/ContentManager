@@ -942,3 +942,45 @@
 18:00:40,094 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/usermanagement/user/PasswordChangeRequest.class" with enhanced definition
 18:00:40,103 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/usermanagement/user/User.class" with enhanced definition
 18:00:40,103 (main) INFO  [DataNucleus.Enhancer] - DataNucleus Enhancer completed with success for 18 classes. Timings : input=750 ms, enhance=240 ms, total=990 ms. Consult the log for full details
+19:33:26,546 (main) INFO  [DataNucleus.Enhancer] - DataNucleus Enhancer for API "JDO"
+19:33:26,762 (main) INFO  [DataNucleus.Enhancer] - DataNucleus Enhancer (version 3.1.1) : Enhancement of classes
+19:33:27,350 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/accountmanagement/account/Account.class" with enhanced definition
+19:33:27,357 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/admin/message/Message.class" with enhanced definition
+19:33:27,371 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/admin/plan/Plan.class" with enhanced definition
+19:33:27,378 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/common/entity/EventLocation.class" with enhanced definition
+19:33:27,406 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/contentmanager/application/Application.class" with enhanced definition
+19:33:27,420 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/contentmanager/content/Content.class" with enhanced definition
+19:33:27,432 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/contentmanager/contentgroup/ContentGroup.class" with enhanced definition
+19:33:27,441 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/contentmanager/contentstat/ContentStat.class" with enhanced definition
+19:33:27,450 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/contentserver/ContentRequest.class" with enhanced definition
+19:33:27,459 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/contentserver/Handshake.class" with enhanced definition
+19:33:27,467 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/gcm/GcmRegistrationRequest.class" with enhanced definition
+19:33:27,473 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/quota/ApplicationQuotaUsed.class" with enhanced definition
+19:33:27,481 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/quota/Quota.class" with enhanced definition
+19:33:27,486 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/quota/StorageQuotaUsed.class" with enhanced definition
+19:33:27,493 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/stripe/StripeCustomer.class" with enhanced definition
+19:33:27,498 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/usermanagement/user/ForgotPasswordRequest.class" with enhanced definition
+19:33:27,502 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/usermanagement/user/PasswordChangeRequest.class" with enhanced definition
+19:33:27,510 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/usermanagement/user/User.class" with enhanced definition
+19:33:27,511 (main) INFO  [DataNucleus.Enhancer] - DataNucleus Enhancer completed with success for 18 classes. Timings : input=547 ms, enhance=199 ms, total=746 ms. Consult the log for full details
+16:40:25,580 (main) INFO  [DataNucleus.Enhancer] - DataNucleus Enhancer for API "JDO"
+16:40:25,821 (main) INFO  [DataNucleus.Enhancer] - DataNucleus Enhancer (version 3.1.1) : Enhancement of classes
+16:40:26,438 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/accountmanagement/account/Account.class" with enhanced definition
+16:40:26,445 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/admin/message/Message.class" with enhanced definition
+16:40:26,459 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/admin/plan/Plan.class" with enhanced definition
+16:40:26,467 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/common/entity/EventLocation.class" with enhanced definition
+16:40:26,488 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/contentmanager/application/Application.class" with enhanced definition
+16:40:26,503 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/contentmanager/content/Content.class" with enhanced definition
+16:40:26,514 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/contentmanager/contentgroup/ContentGroup.class" with enhanced definition
+16:40:26,523 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/contentmanager/contentstat/ContentStat.class" with enhanced definition
+16:40:26,532 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/contentserver/ContentRequest.class" with enhanced definition
+16:40:26,542 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/contentserver/Handshake.class" with enhanced definition
+16:40:26,553 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/gcm/GcmRegistrationRequest.class" with enhanced definition
+16:40:26,559 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/quota/ApplicationQuotaUsed.class" with enhanced definition
+16:40:26,565 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/quota/Quota.class" with enhanced definition
+16:40:26,569 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/quota/StorageQuotaUsed.class" with enhanced definition
+16:40:26,575 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/stripe/StripeCustomer.class" with enhanced definition
+16:40:26,581 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/usermanagement/user/ForgotPasswordRequest.class" with enhanced definition
+16:40:26,585 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/usermanagement/user/PasswordChangeRequest.class" with enhanced definition
+16:40:26,592 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/usermanagement/user/User.class" with enhanced definition
+16:40:26,593 (main) INFO  [DataNucleus.Enhancer] - DataNucleus Enhancer completed with success for 18 classes. Timings : input=575 ms, enhance=193 ms, total=768 ms. Consult the log for full details

@@ -61,23 +61,25 @@
 			<div class="row">
 				<div class="large-12 columns">
 					<div class="input-wrapper">
-						<label><span data-tooltip class="has-tip"
-							title="Specify an End Date only if you want the content to expire after a certain date, or else leave it empty.">End
-								Date</span>
+						<label>End Date<span data-tooltip class="has-tip"
+							title="Specify an End Date only if you want the content to expire after a certain date, or else leave it empty."><img
+								alt="question_mark" src="/resources/images/question_mark.png"></span>
 							<div id="contentgroup_end_datepicker">
 								<input type="text" id="contentgroup_end_date"
 									name="contentgroup_end_date" pattern="month_day_year" /> <br />
 								<small class="error">Please enter a valid end date
 									MM/DD/YYYY</small>
-							</div> </label>
+							</div>
+						</label>
 					</div>
 				</div>
 			</div>
 
 			<div class="row">
 				<div class="large-12 columns">
-					<label><span data-tooltip class="has-tip"
-						title="Specify if the content group is enabled. This content group is enabled by default.">Enabled</span></label>
+					<label>Enabled<span data-tooltip class="has-tip"
+						title="Specify if the content group is enabled. This content group is enabled by default."><img
+							alt="question_mark" src="/resources/images/question_mark.png"></span></label>
 				</div>
 			</div>
 			<div class="row">

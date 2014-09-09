@@ -135,8 +135,7 @@ function setupAccountUsage() {
 							// $('#applications_progress_bar').css("width",
 							// (mQuota.percentageApplicationUsed + "%"));
 							var lAccountUsageDetailsHtml = '';
-
-							lAccountUsageDetailsHtml += '<div class=\"large-12 columns\"><label>'
+							lAccountUsageDetailsHtml += '<div class="row"><div class=\"large-12 columns\"><label>'
 									+ 'Using '
 									+ mQuota.applicationsUsed
 									+ ' of '
@@ -154,13 +153,13 @@ function setupAccountUsage() {
 										+ '%\">';
 							}
 
-							lAccountUsageDetailsHtml += '<span class="meter"></span></div></div>';
+							lAccountUsageDetailsHtml += '<span class="meter"></span></div></div></div>';
 
 							var lStorageQuota = null;
 							for (var int = 0; int < mQuota.storageQuota.length; int++) {
 								lStorageQuota = mQuota.storageQuota[int];
 
-								lAccountUsageDetailsHtml += '<div class=\"large-12 columns\"> <span id=\"application_trackingid\" class=\"secondary radius label\">Application '
+								lAccountUsageDetailsHtml += '<div class="row"><div class=\"large-12 columns\"> <span id=\"application_trackingid\" class=\"secondary radius label\">Application '
 										+ lStorageQuota.trackingId
 										+ ':    <b>'
 										+ lStorageQuota.percentageStorageUsed
@@ -182,7 +181,7 @@ function setupAccountUsage() {
 											+ lStorageQuota.percentageStorageUsed
 											+ '%\">';
 								}
-								lAccountUsageDetailsHtml += '<span class="meter"></span></div></div>';
+								lAccountUsageDetailsHtml += '<span class="meter"></span></div></div></div>';
 							}
 							$('#account_usage_details').html(
 									lAccountUsageDetailsHtml);

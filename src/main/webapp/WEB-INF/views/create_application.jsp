@@ -44,9 +44,10 @@
 			</div>
 			<div class="row">
 				<div class="large-12 columns">
-					<label><span data-tooltip class="has-tip"
-						title="Specify if you like the content to be auto-updated to devices over Wi-Fi Only. This is enabled by default.">Update
-							content over Wi-Fi only</span></label>
+					<label>Update content over Wi-Fi only<span data-tooltip
+						class="has-tip"
+						title="Specify if you like the content to be auto-updated to devices over Wi-Fi Only. This is enabled by default."><img
+							alt="question_mark" src="/resources/images/question_mark.png"></span></label>
 				</div>
 			</div>
 			<div class="row">
@@ -62,8 +63,9 @@
 
 			<div class="row">
 				<div class="large-12 columns">
-					<label><span data-tooltip class="has-tip"
-						title="Specify if the application is enabled. This application is enabled by default.">Enabled</span></label>
+					<label>Enabled<span data-tooltip class="has-tip"
+						title="Specify if the application is enabled. This application is enabled by default."><img
+							alt="question_mark" src="/resources/images/question_mark.png"></span></label>
 				</div>
 			</div>
 			<div class="row">

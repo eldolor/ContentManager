@@ -42,13 +42,16 @@
 
 		<%-- <jsp:include page="left_nav_bar.jsp" flush="true"></jsp:include> --%>
 		<ul class="tabs vertical" data-tab>
-			<li class="tab-title active"><a href="#user_billing">Billing</a></li>
+			<li class="tab-title active"><a href="#account_usage">Account
+					Usage</a></li>
+			<li class="tab-title"><a href="#user_billing">Billing</a></li>
+			<li class="tab-title"><a href="#user_plan">Plan</a></li>
 			<li class="tab-title"><a href="#change_password">Change
 					Password</a></li>
-			<li class="tab-title"><a href="#account_usage">Account Usage</a></li>
 		</ul>
 
 		<div class="tabs-content vertical">
+
 			<div class="large-9 columns content" id="account_usage">
 				<fieldset>
 					<legend>Account Usage</legend>
@@ -146,7 +149,7 @@
 			</div>
 			<!-- End Content  -->
 
-			<div class="large-9 columns content active" id="user_billing"
+			<div class="large-9 columns content active" id="user_plan"
 				data-equalizer>
 				<div data-magellan-expedition="fixed">
 					<fieldset>
@@ -455,8 +458,89 @@
 				</ul>
 
 			</div>
+
+			<div class="large-9 columns content" id="user_billing">
+				<form id="updateBillingForm" name="updateBillingForm"
+					data-abide="ajax">
+					<fieldset>
+						<legend>Billing</legend>
+
+						<div>&nbsp;</div>
+						<div class="row">
+							<div class="large-12 columns">
+								<span id="payment_info_updated_message"
+									class="success radius label" style="display: none">Your
+									payment information has been updated.</span>
+							</div>
+						</div>
+
+						<div>&nbsp;</div>
+						<div class="row">
+							<div class="large-12 columns">
+								<!-- 						<div class="password-field">
+							<label>Old Password <small>required</small><input
+								type="password" id="user_old_password" name="user_old_password"
+								required="required" />
+							</label> <small class="error">Old password is required</small>
+						</div>
+ -->
+							</div>
+						</div>
+						<div class="row">
+							<div class="large-12 columns">
+								<!-- 						<div class="password-field">
+							<label>New Password <small>required</small><input
+								type="password" id="user_new_password" name="user_new_password"
+								required="required" required
+								pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" />
+							</label> <small class="error">New password is required</small>
+						</div>
+ -->
+							</div>
+						</div>
+						<div class="row">
+							<div class="large-12 columns">
+								<!-- 						<div class="password-confirmation-field">
+							<label>Confirm New Password <small>required</small><input
+								type="password" id="user_confirm_new_password"
+								name="user_confirm_new_password"
+								data-equalto="user_new_password" required="required" required
+								pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" />
+							</label> <small class="error">The password did not match</small>
+						</div>
+ -->
+							</div>
+						</div>
+
+						<div>&nbsp;</div>
+						<div class="row">
+							<div class="large-12 columns">
+								<span id="payment_info_update_errors" class="alert radius label"
+									style="display: none"></span>
+							</div>
+						</div>
+
+						<div>&nbsp;</div>
+						<div class="row">
+							<div class="large-12 columns">
+								<button id="payment_info_update_button" class="button radius">update</button>
+							</div>
+						</div>
+						<div class="row" id="progress_bar" style="display: none">
+							<div class="large-12 columns">
+								<label>Loading...</label><br>
+								<div class="progress radius">
+									<span class="meter" style="width: 40%"></span>
+								</div>
+							</div>
+						</div>
+					</fieldset>
+				</form>
+			</div>
 		</div>
+
 	</div>
+
 
 
 

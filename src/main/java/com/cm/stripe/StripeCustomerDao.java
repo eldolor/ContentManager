@@ -10,6 +10,7 @@ import javax.jdo.Query;
 
 import org.springframework.stereotype.Component;
 
+import com.cm.contentmanager.application.Application;
 import com.cm.util.PMF;
 
 @Component
@@ -47,10 +48,10 @@ public class StripeCustomerDao {
 			try {
 				pm = PMF.get().getPersistenceManager();
 				Query q = pm.newQuery(StripeCustomer.class);
-				q.setFilter("accountId == accountIdParam");
-				q.declareParameters("Long accountIdParam");
-				List<StripeCustomer> lList = (List<StripeCustomer>) q
-						.execute(accountId);
+				q.setFilter("accountId == accountIdParam && deleted == deletedParam");
+				q.declareParameters("Long accountIdParam, Boolean deletedParam");
+				List<StripeCustomer> lList = (List<StripeCustomer>) q.execute(
+						accountId, Boolean.valueOf(false));
 				if (lList != null && (!lList.isEmpty()))
 					return lList.get(0);
 				else
@@ -85,12 +86,22 @@ public class StripeCustomerDao {
 						.getCanonicalPlanName());
 				lStripeCustomer
 						.setSubscriptionId(pCustomer.getSubscriptionId());
+				lStripeCustomer
+						.setSubscriptionId(pCustomer.getSubscriptionId());
+				lStripeCustomer.setSubscriptionStatus(pCustomer
+						.getSubscriptionStatus());
+				lStripeCustomer.setSubscriptionCurrentPeriodStart(pCustomer
+						.getSubscriptionCurrentPeriodStart());
+				lStripeCustomer.setSubscriptionCurrentPeriodEnd(pCustomer
+						.getSubscriptionCurrentPeriodEnd());
 				lStripeCustomer.setCardBrand(pCustomer.getCardBrand());
 				lStripeCustomer.setCardLast4(pCustomer.getCardLast4());
-				lStripeCustomer.setCardExpirationMonth(pCustomer
-						.getCardExpirationMonth());
-				lStripeCustomer.setCardExpirationYear(pCustomer
-						.getCardExpirationYear());
+				lStripeCustomer.setCardExpMonth(pCustomer.getCardExpMonth());
+				lStripeCustomer.setCardExpYear(pCustomer.getCardExpYear());
+				lStripeCustomer
+						.setCardAddressZip(pCustomer.getCardAddressZip());
+				lStripeCustomer.setCardFunding(pCustomer.getCardFunding());
+
 				lStripeCustomer.setTimeUpdatedMs(pCustomer.getTimeUpdatedMs());
 				lStripeCustomer.setTimeUpdatedTimeZoneOffsetMs(pCustomer
 						.getTimeUpdatedTimeZoneOffsetMs());
@@ -103,6 +114,39 @@ public class StripeCustomerDao {
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting updateApplication");
+		}
+	}
+
+	void delete(Long id, Long timeUpdatedMs, Long timeUpdatedTimeZoneOffsetMs) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering delete");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				StripeCustomer lCustomer = pm.getObjectById(
+						StripeCustomer.class, id);
+				if (lCustomer != null) {
+					lCustomer.setDeleted(true);
+					lCustomer.setTimeUpdatedMs(timeUpdatedMs);
+					lCustomer
+							.setTimeUpdatedTimeZoneOffsetMs(timeUpdatedTimeZoneOffsetMs);
+					if (LOGGER.isLoggable(Level.INFO))
+						LOGGER.info(id + " StripeCustomer marked for deletion");
+				} else {
+					LOGGER.log(Level.WARNING, id
+							+ "  StripeCustomer NOT FOUND!");
+				}
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting delete");
 		}
 	}
 

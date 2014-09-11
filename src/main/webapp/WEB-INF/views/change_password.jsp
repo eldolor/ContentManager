@@ -66,7 +66,7 @@
 									type="password" id="user_new_password" name="user_new_password"
 									required="required" required
 									pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" />
-								</label> <small class="error">New password is required</small>
+								</label> 
 							</div>
 						</div>
 					</div>

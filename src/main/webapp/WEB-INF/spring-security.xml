@@ -15,6 +15,9 @@
 	<security:http pattern="/contentserver**" security="none" />
 	<security:http pattern="/gcm**" security="none" />
 	<!-- End: utilized by the SDK -->
+	<!-- Begin: utilized by Stripe -->
+	<security:http pattern="/webhook/stripe/**" security="none" />
+	<!-- End: utilized by the SDK -->
 
 
 	<security:http auto-config="true" disable-url-rewriting="true">

@@ -28,7 +28,17 @@
 	<a class="close-reveal-modal">&#215;</a>
 </div>
 <!-- End Upgrade -->
-
+<div class="reveal-modal small" id="confirm_plan_change_modal"
+	data-reveal>
+	<h3 id="confirmPlanChangeModalLabel">Change Plan</h3>
+	<div class="row">
+		<div id="plan_change_message"></div>
+		<div>&nbsp;</div>
+	</div>
+	<button id="plan_change_yes_button" class="button">Change my
+		plan</button>
+	<a class="close-reveal-modal">&#215;</a>
+</div>
 <!-- Begin Forgot Password -->
 <div class="reveal-modal small" id="forgot_password_modal" data-reveal>
 	<div class="row">
@@ -49,7 +59,8 @@
 				<div>&nbsp;</div>
 				<div class="row">
 					<div class="large-12 columns">
-						<span id="user_forgot_password_errors" class="alert radius label" style="display: none"></span><br>
+						<span id="user_forgot_password_errors" class="alert radius label"
+							style="display: none"></span><br>
 					</div>
 				</div>
 				<div>&nbsp;</div>

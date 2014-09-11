@@ -339,11 +339,11 @@ public class UserManagementController {
 						CanonicalPlanName.FREE.getValue());
 			} else {
 				// check to see if the user's CC is expiring or has expired
-				if (Utils.isCCExpired(lStripeCustomer.getCardExpirationYear(),
-						lStripeCustomer.getCardExpirationMonth())
+				if (Utils.isCCExpired(lStripeCustomer.getCardExpYear(),
+						lStripeCustomer.getCardExpMonth())
 						|| Utils.isCCExpiring(
-								lStripeCustomer.getCardExpirationYear(),
-								lStripeCustomer.getCardExpirationMonth())) {
+								lStripeCustomer.getCardExpYear(),
+								lStripeCustomer.getCardExpMonth())) {
 					lIsUpdateCCInfo = true;
 				}
 				model.addAttribute("isSubscribed", true);

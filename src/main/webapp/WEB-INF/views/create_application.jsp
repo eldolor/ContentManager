@@ -28,7 +28,7 @@
 						<label>Name <small>required</small><input type="text"
 							id="application_name" name="application_name" required="required"
 							placeholder="My First Application" />
-						</label> <small class="error">Name is required</small>
+						</label>
 					</div>
 				</div>
 			</div>

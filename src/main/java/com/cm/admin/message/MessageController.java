@@ -69,6 +69,13 @@ public class MessageController {
 						// save message to db, which returns a message with an
 						// id
 						lMessage = messageDao.save(lMessage);
+					} else if /** different message for the same type generated **/
+					(!lUnviewedMessageByType.getMessage().equalsIgnoreCase(
+							lMessage.getMessage())) {
+						// delete the previous message
+						messageDao.delete(lUnviewedMessageByType.getId());
+						// save the new message
+						lMessage = messageDao.save(lMessage);
 					} else {
 						if (session.getAttribute(lMessage.getType()) == null) {
 							// set it in the user's session so that its not
@@ -186,8 +193,8 @@ public class MessageController {
 				return null;
 			}
 
-			if (Utils.isCCExpiring(pStripeCustomer.getCardExpirationYear(),
-					pStripeCustomer.getCardExpirationMonth())) {
+			if (Utils.isCCExpiring(pStripeCustomer.getCardExpYear(),
+					pStripeCustomer.getCardExpMonth())) {
 
 				// create message
 				Message lMessage = new Message();
@@ -226,8 +233,8 @@ public class MessageController {
 				LOGGER.log(Level.WARNING, "Stripe Customer is null");
 				return null;
 			}
-			if (Utils.isCCExpired(pStripeCustomer.getCardExpirationYear(),
-					pStripeCustomer.getCardExpirationMonth())) {
+			if (Utils.isCCExpired(pStripeCustomer.getCardExpYear(),
+					pStripeCustomer.getCardExpMonth())) {
 
 				// create message
 				Message lMessage = new Message();

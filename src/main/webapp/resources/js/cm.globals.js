@@ -7,6 +7,8 @@ var mErrors;
 var mQuota;
 
 var mLoggedInUser;
+var mIsNewCard;
+var mStripeCustomer;
 
 /** ***************************** */
 $.ajaxSetup({

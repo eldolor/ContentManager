@@ -10,17 +10,21 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.cm.config.CanonicalPlanName;
 import com.cm.config.Configuration;
+import com.cm.stripe.transfer.StripeCard;
 import com.cm.usermanagement.user.User;
 import com.cm.usermanagement.user.UserService;
 import com.cm.util.Utils;
@@ -60,7 +64,6 @@ public class StripeController {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering subscribe");
-			
 
 			List<ValidationError> errors = new ArrayList<ValidationError>();
 			User lUser = userService.getLoggedInUser();
@@ -76,11 +79,11 @@ public class StripeController {
 				// expired
 				if (lStoredStripeCustomer == null
 						|| Utils.isCCExpired(
-								lStoredStripeCustomer.getCardExpirationYear(),
-								lStoredStripeCustomer.getCardExpirationMonth())
+								lStoredStripeCustomer.getCardExpYear(),
+								lStoredStripeCustomer.getCardExpMonth())
 						|| Utils.isCCExpiring(
-								lStoredStripeCustomer.getCardExpirationYear(),
-								lStoredStripeCustomer.getCardExpirationMonth())) {
+								lStoredStripeCustomer.getCardExpYear(),
+								lStoredStripeCustomer.getCardExpMonth())) {
 					if (LOGGER.isLoggable(Level.INFO))
 						LOGGER.info("Processing new customer");
 					Map<String, Object> lCustomerParams = new HashMap<String, Object>();
@@ -135,19 +138,36 @@ public class StripeController {
 
 					// Stripe specific fields
 					lStripeCustomer.setStripeId(lCustomer.getId());
-					lStripeCustomer.setSubscriptionId(lSubscription.getId());
-					String lDefaultCardId = lCustomer.getDefaultCard();
-					CustomerCardCollection lCardCollection = lCustomer
-							.getCards();
-					Card lDefaultCard = lCardCollection
-							.retrieve(lDefaultCardId);
+					{
+						lStripeCustomer
+								.setSubscriptionId(lSubscription.getId());
+						lStripeCustomer.setSubscriptionStatus(lSubscription
+								.getStatus());
+						lStripeCustomer
+								.setSubscriptionCurrentPeriodStart(lSubscription
+										.getCurrentPeriodStart());
+						lStripeCustomer
+								.setSubscriptionCurrentPeriodEnd(lSubscription
+										.getCurrentPeriodEnd());
+					}
+					{
+						String lDefaultCardId = lCustomer.getDefaultCard();
+						CustomerCardCollection lCardCollection = lCustomer
+								.getCards();
+						Card lDefaultCard = lCardCollection
+								.retrieve(lDefaultCardId);
 
-					lStripeCustomer.setCardBrand(lDefaultCard.getBrand());
-					lStripeCustomer.setCardLast4(lDefaultCard.getLast4());
-					lStripeCustomer.setCardExpirationMonth(lDefaultCard
-							.getExpMonth());
-					lStripeCustomer.setCardExpirationYear(lDefaultCard
-							.getExpYear());
+						lStripeCustomer.setCardBrand(lDefaultCard.getBrand());
+						lStripeCustomer.setCardLast4(lDefaultCard.getLast4());
+						lStripeCustomer.setCardExpMonth(lDefaultCard
+								.getExpMonth());
+						lStripeCustomer.setCardExpYear(lDefaultCard
+								.getExpYear());
+						lStripeCustomer.setCardAddressZip(lDefaultCard
+								.getAddressZip());
+						lStripeCustomer.setCardFunding(lDefaultCard
+								.getFunding());
+					}
 
 					if (lStoredStripeCustomer == null) {
 						lStripeCustomer.setTimeCreatedMs(System
@@ -329,9 +349,10 @@ public class StripeController {
 		}
 	}
 
-	@RequestMapping(value = "/stripe/subscribe/update/{canonicalPlanName}", method = RequestMethod.POST)
-	public List<ValidationError> updatePlan(
-			@PathVariable String canonicalPlanName, HttpServletResponse response) {
+	@RequestMapping(value = "/stripe/subscribe/update/{canonicalPlanName}", method = RequestMethod.POST, produces = "application/json")
+	public @ResponseBody
+	List<ValidationError> updatePlan(@PathVariable String canonicalPlanName,
+			HttpServletResponse response) {
 		List<ValidationError> errors = new ArrayList<ValidationError>();
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -351,7 +372,9 @@ public class StripeController {
 					Map<String, Object> lSubscriptionParams = new HashMap<String, Object>();
 					// subscribe to the new plan selected
 					lSubscriptionParams.put("plan", canonicalPlanName);
-					lSubscriptionParams.put("prorate", false);
+					// the quota related changes come into
+					// effect right away
+					lSubscriptionParams.put("prorate", true);
 					Subscription lSubscription = lCustomer
 							.updateSubscription(lSubscriptionParams);
 
@@ -359,7 +382,18 @@ public class StripeController {
 					// TODO: handle scenario where update subscription succeed
 					// but saving StripeCustomer to DB fails
 					lStripeCustomer.setCanonicalPlanName(canonicalPlanName);
-					lStripeCustomer.setSubscriptionId(lSubscription.getId());
+					{
+						lStripeCustomer
+								.setSubscriptionId(lSubscription.getId());
+						lStripeCustomer.setSubscriptionStatus(lSubscription
+								.getStatus());
+						lStripeCustomer
+								.setSubscriptionCurrentPeriodStart(lSubscription
+										.getCurrentPeriodStart());
+						lStripeCustomer
+								.setSubscriptionCurrentPeriodEnd(lSubscription
+										.getCurrentPeriodEnd());
+					}
 					lStripeCustomer
 							.setTimeUpdatedMs(System.currentTimeMillis());
 					lStripeCustomer
@@ -389,6 +423,258 @@ public class StripeController {
 			response.setStatus(HttpServletResponse.SC_OK);
 			return null;
 
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	@RequestMapping(value = "/secured/stripe/customer", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody
+	StripeCustomer getStripeCustomer(HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering ");
+
+			User lUser = userService.getLoggedInUser();
+			Stripe.apiKey = Configuration.STRIPE_API_KEY;
+			StripeCustomer lStripeCustomer = stripeCustomerService.get(lUser
+					.getAccountId());
+			if (lStripeCustomer != null) {
+				response.setStatus(HttpServletResponse.SC_OK);
+				return lStripeCustomer;
+			} else {
+				response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+				return null;
+			}
+
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	@RequestMapping(value = "/secured/stripe/customer/card", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
+	public @ResponseBody
+	List<ValidationError> updateCard(@RequestBody StripeCard stripeCard,
+			HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+
+			List<ValidationError> errors = new ArrayList<ValidationError>();
+			User lUser = userService.getLoggedInUser();
+			try {
+				Stripe.apiKey = Configuration.STRIPE_API_KEY;
+
+				StripeCustomer lStoredStripeCustomer = stripeCustomerService
+						.get(lUser.getAccountId());
+				// customer does not exist or exists but with CC expiring or
+				// expired
+				if (lStoredStripeCustomer == null) {
+					ValidationError error = new ValidationError();
+					error.setCode("customer");
+					error.setDescription("Customer is not yet subscribed");
+					errors.add(error);
+					LOGGER.log(Level.WARNING, "Customer is not yet subscribed");
+					response.setStatus(HttpServletResponse.SC_CONFLICT);
+					return errors;
+				}
+				// validate
+
+				Customer lCustomer = Customer.retrieve(lStoredStripeCustomer
+						.getStripeId());
+				Card lCard = lCustomer.getCards().retrieve(
+						lCustomer.getDefaultCard());
+
+				Map<String, Object> lCardUpdateParams = new HashMap<String, Object>();
+
+				// required fields
+				lCardUpdateParams
+						.put("address_zip", stripeCard.getAddressZip());
+				lCardUpdateParams.put("exp_month", stripeCard.getExpMonth());
+				lCardUpdateParams.put("exp_year", stripeCard.getExpYear());
+
+				// optional fields
+				if (!Utils.isEmpty(stripeCard.getName()))
+					lCardUpdateParams.put("name", stripeCard.getName());
+				if (!Utils.isEmpty(stripeCard.getAddressCity()))
+					lCardUpdateParams.put("address_city",
+							stripeCard.getAddressCity());
+				if (!Utils.isEmpty(stripeCard.getAddressCountry()))
+					lCardUpdateParams.put("address_country",
+							stripeCard.getAddressCountry());
+				if (!Utils.isEmpty(stripeCard.getAddressLine1()))
+					lCardUpdateParams.put("address_line1",
+							stripeCard.getAddressLine1());
+				if (!Utils.isEmpty(stripeCard.getAddressLine2()))
+					lCardUpdateParams.put("address_line2",
+							stripeCard.getAddressLine2());
+				if (!Utils.isEmpty(stripeCard.getAddressState()))
+					lCardUpdateParams.put("address_state",
+							stripeCard.getAddressState());
+
+				lCard = lCard.update(lCardUpdateParams);
+
+				boolean isValidCard = true;
+				// validate
+				{
+					if (!lCard.getAddressZipCheck().equals("pass")) {
+						ValidationError error = new ValidationError();
+						error.setCode("addressZip");
+						error.setDescription("The postal code is not valid");
+						errors.add(error);
+						LOGGER.log(Level.WARNING,
+								"The postal code is not valid");
+						isValidCard = false;
+					}
+
+				}
+
+				if (isValidCard) {
+					lStoredStripeCustomer.setCardFunding(lCard.getFunding());
+					lStoredStripeCustomer.setCardAddressZip(lCard
+							.getAddressZip());
+					lStoredStripeCustomer.setCardExpMonth(lCard.getExpMonth());
+					lStoredStripeCustomer.setCardExpYear(lCard.getExpYear());
+					lStoredStripeCustomer.setTimeUpdatedMs(System
+							.currentTimeMillis());
+					lStoredStripeCustomer
+							.setTimeUpdatedTimeZoneOffsetMs((long) TimeZone
+									.getDefault().getOffset(
+											System.currentTimeMillis()));
+					stripeCustomerService.update(lStoredStripeCustomer);
+				}
+
+			} catch (Exception e) {
+				errors.addAll(processStripeExceptions(e));
+			}
+			if (!errors.isEmpty()) {
+				response.setStatus(HttpServletResponse.SC_CONFLICT);
+				return errors;
+			}
+			response.setStatus(HttpServletResponse.SC_OK);
+			return errors;
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	@RequestMapping(value = "/secured/stripe/customer/card", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	public @ResponseBody
+	List<ValidationError> newCard(@RequestBody StripeCard stripeCard,
+			HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+
+			List<ValidationError> errors = new ArrayList<ValidationError>();
+			User lUser = userService.getLoggedInUser();
+			try {
+				Stripe.apiKey = Configuration.STRIPE_API_KEY;
+
+				StripeCustomer lStoredStripeCustomer = stripeCustomerService
+						.get(lUser.getAccountId());
+				// customer does not exist or exists but with CC expiring or
+				// expired
+				if (lStoredStripeCustomer == null) {
+					ValidationError error = new ValidationError();
+					error.setCode("customer");
+					error.setDescription("Customer is not yet subscribed");
+					errors.add(error);
+					LOGGER.log(Level.WARNING, "Customer is not yet subscribed");
+					response.setStatus(HttpServletResponse.SC_CONFLICT);
+					return errors;
+				}
+
+				Customer lCustomer = Customer.retrieve(lStoredStripeCustomer
+						.getStripeId());
+
+				Map<String, Object> lNewCardParams = new HashMap<String, Object>();
+
+				// required fields
+				lNewCardParams.put("card", stripeCard.getStripeToken());
+				Card lCard = lCustomer.createCard(lNewCardParams);
+
+				// set this as the default card
+				// lCustomer.setDefaultCard(lCard.getId());
+				Map<String, Object> lUpdateParams = new HashMap<String, Object>();
+				lUpdateParams.put("default_card", lCard.getId());
+				lCustomer.update(lUpdateParams);
+
+				// then save it locally
+				lStoredStripeCustomer.setCardFunding(lCard.getFunding());
+				lStoredStripeCustomer.setCardBrand(lCard.getBrand());
+				lStoredStripeCustomer.setCardLast4(lCard.getLast4());
+				lStoredStripeCustomer.setCardExpMonth(lCard.getExpMonth());
+				lStoredStripeCustomer.setCardExpYear(lCard.getExpYear());
+				lStoredStripeCustomer.setCardAddressZip(lCard.getAddressZip());
+				lStoredStripeCustomer.setTimeUpdatedMs(System
+						.currentTimeMillis());
+				lStoredStripeCustomer
+						.setTimeUpdatedTimeZoneOffsetMs((long) TimeZone
+								.getDefault().getOffset(
+										System.currentTimeMillis()));
+				stripeCustomerService.update(lStoredStripeCustomer);
+
+			} catch (Exception e) {
+				errors.addAll(processStripeExceptions(e));
+			}
+			if (!errors.isEmpty()) {
+				response.setStatus(HttpServletResponse.SC_CONFLICT);
+				return errors;
+			}
+			response.setStatus(HttpServletResponse.SC_OK);
+			return errors;
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	@RequestMapping(value = "/webhook/stripe", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	public void processWebhook(@RequestBody JSONObject json,
+			HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			LOGGER.info(json.toString());
+			String lType = (String)json.get("type");
+			if (lType.equals("charge.succeeded")) {
+				// TODO: send out an email
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("Charge Succeeded");
+			} else if (lType.equals("charge.failed")) {
+				// TODO: send out an email
+				LOGGER.warning("Charge Failed!!!");
+			}
+			response.setStatus(HttpServletResponse.SC_OK);
+
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting");

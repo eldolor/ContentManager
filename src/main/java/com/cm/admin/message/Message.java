@@ -27,6 +27,8 @@ public class Message {
 
 	@Persistent
 	private String message;
+	@Persistent
+	private Boolean deleted = false;
 
 	@Persistent
 	private Long timeCreatedMs;
@@ -127,6 +129,14 @@ public class Message {
 
 	public void setMessageClass(String messageClass) {
 		this.messageClass = messageClass;
+	}
+
+	public boolean isDeleted() {
+		return (deleted != null) ? deleted : false;
+	}
+
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted;
 	}
 
 }

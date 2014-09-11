@@ -344,6 +344,20 @@ function displayMessage(message) {
 	$('#message_modal').foundation('reveal', 'open');
 
 }
+function displayConfirmPlanChange(message, callback) {
+	$("#plan_change_message").html(message);
+	// if the user clicks "yes"
+	$('#plan_change_yes_button').bind('click', function() {
+		// call the callback
+		if ($.isFunction(callback)) {
+			callback.apply();
+		}
+		$('#confirm_plan_change_modal').foundation('reveal', 'close');
+	});
+
+	$('#confirm_plan_change_modal').foundation('reveal', 'open');
+
+}
 var imageCount = 9; // max images displayed in the image gallery
 function shiftGallery(index, entry_id, frames, max) {
 

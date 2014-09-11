@@ -25,6 +25,19 @@ public class StripeCustomer {
 	private String stripeId;
 	@Persistent
 	private String subscriptionId;
+	@Persistent
+	private Boolean deleted = false;
+
+	// Start of the current period that the subscription has been invoiced for
+	@Persistent
+	private Long subscriptionCurrentPeriodStart;
+	// End of the current period that the subscription has been invoiced for. At
+	// the end of this period, a new invoice will be created.
+	@Persistent
+	private Long subscriptionCurrentPeriodEnd;
+	// Possible values are trialing, active, past_due, canceled, or unpaid.
+	@Persistent
+	private String subscriptionStatus;
 
 	@Persistent
 	private String cardBrand;
@@ -32,9 +45,13 @@ public class StripeCustomer {
 	@Persistent
 	private String cardLast4;
 	@Persistent
-	private Integer cardExpirationMonth;
+	private Integer cardExpMonth;
 	@Persistent
-	private Integer cardExpirationYear;
+	private Integer cardExpYear;
+	@Persistent
+	private String cardAddressZip;
+	@Persistent
+	private String cardFunding;
 
 	@Persistent
 	private String canonicalPlanName;
@@ -151,20 +168,69 @@ public class StripeCustomer {
 		this.cardLast4 = cardLast4;
 	}
 
-	public Integer getCardExpirationMonth() {
-		return cardExpirationMonth;
+	public boolean isDeleted() {
+		return (deleted != null) ? deleted : false;
 	}
 
-	public void setCardExpirationMonth(Integer cardExpirationMonth) {
-		this.cardExpirationMonth = cardExpirationMonth;
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted;
 	}
 
-	public Integer getCardExpirationYear() {
-		return cardExpirationYear;
+	public Integer getCardExpMonth() {
+		return cardExpMonth;
 	}
 
-	public void setCardExpirationYear(Integer cardExpirationYear) {
-		this.cardExpirationYear = cardExpirationYear;
+	public void setCardExpMonth(Integer cardExpMonth) {
+		this.cardExpMonth = cardExpMonth;
+	}
+
+	public Integer getCardExpYear() {
+		return cardExpYear;
+	}
+
+	public void setCardExpYear(Integer cardExpYear) {
+		this.cardExpYear = cardExpYear;
+	}
+
+	public String getCardAddressZip() {
+		return cardAddressZip;
+	}
+
+	public void setCardAddressZip(String cardAddressZip) {
+		this.cardAddressZip = cardAddressZip;
+	}
+
+	public String getCardFunding() {
+		return cardFunding;
+	}
+
+	public void setCardFunding(String cardFunding) {
+		this.cardFunding = cardFunding;
+	}
+
+	public Long getSubscriptionCurrentPeriodStart() {
+		return subscriptionCurrentPeriodStart;
+	}
+
+	public void setSubscriptionCurrentPeriodStart(
+			Long subscriptionCurrentPeriodStart) {
+		this.subscriptionCurrentPeriodStart = subscriptionCurrentPeriodStart;
+	}
+
+	public Long getSubscriptionCurrentPeriodEnd() {
+		return subscriptionCurrentPeriodEnd;
+	}
+
+	public void setSubscriptionCurrentPeriodEnd(Long subscriptionCurrentPeriodEnd) {
+		this.subscriptionCurrentPeriodEnd = subscriptionCurrentPeriodEnd;
+	}
+
+	public String getSubscriptionStatus() {
+		return subscriptionStatus;
+	}
+
+	public void setSubscriptionStatus(String subscriptionStatus) {
+		this.subscriptionStatus = subscriptionStatus;
 	}
 
 }

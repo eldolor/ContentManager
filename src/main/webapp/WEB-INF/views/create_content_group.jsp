@@ -29,7 +29,7 @@
 						<label>Name <small>required</small><input type="text"
 							id="contentgroup_name" name="contentgroup_name"
 							required="required" placeholder="My First Content Group" />
-						</label> <small class="error">Name is required</small>
+						</label> 
 					</div>
 				</div>
 			</div>

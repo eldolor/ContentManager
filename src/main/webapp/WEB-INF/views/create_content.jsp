@@ -31,7 +31,7 @@
 						<label>Name <small>required</small><input type="text"
 							id="content_name" name="content_name" required="required"
 							placeholder="Geronimo" />
-						</label> <small class="error">Name is required</small>
+						</label> 
 					</div>
 				</div>
 			</div>

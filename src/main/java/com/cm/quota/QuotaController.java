@@ -16,6 +16,7 @@
 package com.cm.quota;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -433,23 +434,28 @@ public class QuotaController {
 			LOGGER.log(Level.WARNING, "StorageQuotaUsed is NULL");
 			return null;
 		}
-
 		com.cm.quota.transfer.StorageQuota lStorageQuota = new com.cm.quota.transfer.StorageQuota();
 		lStorageQuota.setApplicationId(pStorageQuotaUsed.getApplicationId());
 		lStorageQuota.setTrackingId(pStorageQuotaUsed.getTrackingId());
 		lStorageQuota.setStorageLimitInBytes(pQuota.getStorageLimitInBytes());
 		lStorageQuota.setStorageUsedInBytes(pStorageQuotaUsed
 				.getStorageUsedInBytes());
-		BigDecimal lBd1 = new BigDecimal(
-				pStorageQuotaUsed.getStorageUsedInBytes() * 100);
-		BigDecimal lBd2 = new BigDecimal(pQuota.getStorageLimitInBytes());
 
-		int lPercentageStorageUtilized = (lBd1.divide(lBd2).movePointRight(2)
-				.intValue());
-		lStorageQuota.setPercentageStorageUsed(lPercentageStorageUtilized);
-		if (LOGGER.isLoggable(Level.INFO))
-			LOGGER.info("setPercentageStorageUsed: "
-					+ lPercentageStorageUtilized);
+		try {
+			BigDecimal lBd1 = new BigDecimal(
+					pStorageQuotaUsed.getStorageUsedInBytes() * 100);
+			BigDecimal lBd2 = new BigDecimal(pQuota.getStorageLimitInBytes());
+
+			// divide bg1 with bg2 with 0 scale
+			int lPercentageStorageUtilized = (lBd1.divide(lBd2, 0,
+					RoundingMode.CEILING).intValue());
+			lStorageQuota.setPercentageStorageUsed(lPercentageStorageUtilized);
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("setPercentageStorageUsed: "
+						+ lPercentageStorageUtilized);
+		} catch (ArithmeticException e) {
+			LOGGER.log(Level.WARNING, e.getMessage(), e);
+		}
 		return lStorageQuota;
 
 	}

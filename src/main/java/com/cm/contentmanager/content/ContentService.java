@@ -143,6 +143,17 @@ public class ContentService {
 		}
 	}
 
+	public Content get(String uri) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering get");
+			return contentDao.get(uri);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting get");
+		}
+	}
+
 	public Content save(User user, Content content) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))

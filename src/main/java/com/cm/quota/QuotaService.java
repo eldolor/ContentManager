@@ -131,6 +131,21 @@ public class QuotaService {
 		}
 
 	}
+	public void upsertBandwidthUtilization(Application pApplication,
+			Long bandwidthUsedInBytes) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			quotaDao.upsertBandwidthUtilization(pApplication,
+					bandwidthUsedInBytes);
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+
+		}
+
+	}
 
 	public void upsertStorageUtilization(Application pApplication,
 			Long storageUsedInBytes) {

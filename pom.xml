@@ -4,14 +4,14 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<packaging>war</packaging>
-	<version>0.1</version>
+	<version>0.2</version>
 
 	<groupId>com.cm.contentmanager</groupId>
 	<artifactId>ContentManager</artifactId>
 
 	<properties>
 		<appengine.app.version>1</appengine.app.version>
-		<appengine.target.version>1.9.7</appengine.target.version>
+		<appengine.target.version>1.9.11</appengine.target.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>4.0.6.RELEASE</spring.version>
 		<spring.security.version>3.2.4.RELEASE</spring.security.version>

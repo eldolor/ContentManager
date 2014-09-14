@@ -258,6 +258,25 @@ public class QuotaController {
 		}
 	}
 
+	@RequestMapping(value = "/tasks/bandwidth/utilization/update/{uri}", method = RequestMethod.POST)
+	public void updateBandwidthUtilizaton(@PathVariable String uri,
+			HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			Content lContent = contentService.get(uri);
+			Application lApplication = applicationService
+					.getApplication(lContent.getApplicationId());
+			quotaService.upsertBandwidthUtilization(lApplication,
+					lContent.getSizeInBytes());
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+
+		}
+	}
+
 	private void updateQuotaUtilizaton(Long accountId) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))

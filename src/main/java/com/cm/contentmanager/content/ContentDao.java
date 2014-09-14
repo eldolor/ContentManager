@@ -128,6 +128,37 @@ class ContentDao {
 		}
 	}
 
+	Content get(String uri) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering get");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(Content.class);
+				q.setFilter("uri == uriParam");
+				q.declareParameters("Long uriParam");
+				Object[] _array = new Object[1];
+				_array[0] = uri;
+				List<Content> lList = (List<Content>) q
+						.executeWithArray(_array);
+				if (lList != null && (!lList.isEmpty()))
+					return lList.get(0);
+				else
+					return null;
+
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting get");
+		}
+	}
+
 	Content get(Long id) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sf.jsr107cache.Cache;
@@ -263,74 +264,6 @@ public class ContentServerController {
 		}
 	}
 
-	/**
-	 * Access to this API is unsecured
-	 * 
-	 * @param key
-	 * @param response
-	 * @return
-	 */
-	@RequestMapping(value = "/contentserver/dropbox/{key}", method = RequestMethod.GET)
-	public @ResponseBody
-	String doServe(@PathVariable String key, HttpServletResponse response) {
-		try {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering doServe");
-			BlobKey blobKey = new BlobKey(key);
-			final BlobInfo blobInfo = mBlobInfoFactory.loadBlobInfo(blobKey);
-			if (blobInfo != null) {
-				response.setHeader("Content-Disposition",
-						"attachment; filename=" + blobInfo.getFilename());
-				BlobstoreServiceFactory.getBlobstoreService().serve(blobKey,
-						response);
-			} else {
-				LOGGER.info("No content found for key " + key);
-				response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-			}
-		} catch (Throwable e) {
-			// handled by GcmManager
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
-			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-			return null;
-		} finally {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting doServe");
-		}
-		return null;
-	}
-
-	@RequestMapping(value = "/contentserver/dropbox", method = RequestMethod.POST)
-	public void doServePost(@RequestParam String key,
-			HttpServletResponse response) {
-		try {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering doServePost");
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Key: " + key);
-
-			BlobKey blobKey = new BlobKey(key);
-			final BlobInfo blobInfo = mBlobInfoFactory.loadBlobInfo(blobKey);
-			if (blobInfo != null) {
-				if (LOGGER.isLoggable(Level.INFO))
-					LOGGER.info("Returning content for key " + key);
-				response.setHeader("Content-Disposition",
-						"attachment; filename=" + blobInfo.getFilename());
-				BlobstoreServiceFactory.getBlobstoreService().serve(blobKey,
-						response);
-			} else {
-				LOGGER.info("No content found for key " + key);
-				response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-			}
-		} catch (Throwable e) {
-			// handled by GcmManager
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
-			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-		} finally {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting doServePost");
-		}
-	}
-
 	@RequestMapping(value = "/tasks/contentserver/updatelastknowntimestamp/{trackingId}", method = RequestMethod.POST)
 	public void updateLastKnownTimestamp(@PathVariable String trackingId,
 			HttpServletResponse response) {
@@ -379,6 +312,91 @@ public class ContentServerController {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting updateLastKnownTimestamp");
 		}
+	}
+
+	/**
+	 * 
+	 * @param key
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/contentserver/dropbox/{key}", method = RequestMethod.GET)
+	public @ResponseBody
+	String doServeGet(@PathVariable String key, HttpServletRequest request,
+			HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering doServeGet");
+			BlobKey blobKey = new BlobKey(key);
+			final BlobInfo blobInfo = mBlobInfoFactory.loadBlobInfo(blobKey);
+			if (blobInfo != null) {
+				String lRangeRequestedHeader = request.getHeader("Range");
+				LOGGER.info("Range requested is " + lRangeRequestedHeader);
+				// not a partial request. Done so that bandwidth utilization is
+				// not counted multiple times
+				if ((lRangeRequestedHeader != null)
+						&& lRangeRequestedHeader.contains("0-")) {
+					Utils.triggerUpdateBandwidthUtilizationMessage(key, 0);
+				}
+				response.setHeader("Content-Disposition",
+						"attachment; filename=" + blobInfo.getFilename());
+				BlobstoreServiceFactory.getBlobstoreService().serve(blobKey,
+						response);
+			} else {
+				LOGGER.info("No content found for key " + key);
+				response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+			}
+		} catch (Throwable e) {
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting doServeGet");
+		}
+		return null;
+	}
+
+	@RequestMapping(value = "/contentserver/dropbox", method = RequestMethod.POST)
+	public @ResponseBody
+	String doServePost(@RequestParam String key, HttpServletRequest request,
+			HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering doServePost");
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Key: " + key);
+
+			BlobKey blobKey = new BlobKey(key);
+			final BlobInfo blobInfo = mBlobInfoFactory.loadBlobInfo(blobKey);
+			if (blobInfo != null) {
+				String lRangeRequestedHeader = request.getHeader("Range");
+				LOGGER.info("Range requested is " + lRangeRequestedHeader);
+				// not a partial request. Done so that bandwidth utilization is
+				// not counted multiple times
+				if ((lRangeRequestedHeader != null)
+						&& lRangeRequestedHeader.contains("0-")) {
+					Utils.triggerUpdateBandwidthUtilizationMessage(key, 0);
+				}
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("Returning content for key " + key);
+				response.setHeader("Content-Disposition",
+						"attachment; filename=" + blobInfo.getFilename());
+				BlobstoreServiceFactory.getBlobstoreService().serve(blobKey,
+						response);
+			} else {
+				LOGGER.info("No content found for key " + key);
+				response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+			}
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting doServePost");
+		}
+		return null;
 	}
 
 	private ContentRequest convertToDomainFormat(

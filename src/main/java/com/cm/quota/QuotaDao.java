@@ -14,7 +14,9 @@ import com.cm.config.CanonicalApplicationQuota;
 import com.cm.config.CanonicalPlanName;
 import com.cm.config.CanonicalStorageQuota;
 import com.cm.contentmanager.application.Application;
+import com.cm.contentmanager.content.Content;
 import com.cm.util.PMF;
+import com.cm.util.Utils;
 
 @Component
 class QuotaDao {
@@ -193,6 +195,81 @@ class QuotaDao {
 		}
 	}
 
+	void upsertBandwidthUtilization(Application pApplication,
+			Long bandwidthUsedInBytes) {
+		PersistenceManager pm = null;
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			pm = PMF.get().getPersistenceManager();
+			Query q = pm.newQuery(BandwidthQuotaUsed.class);
+			q.setFilter("accountId == accountIdParam && applicationId == applicationIdParam && subscriptionPeriodEndMs >= subscriptionPeriodEndMsParam");
+			q.declareParameters("Long accountIdParam, Long applicationIdParam, Long subscriptionPeriodEndMsParam");
+			q.setOrdering("subscriptionPeriodEndMs");
+
+			long lTimeNow = System.currentTimeMillis();
+
+			Object[] _array = new Object[3];
+			_array[0] = pApplication.getAccountId();
+			_array[1] = pApplication.getId();
+			_array[2] = lTimeNow;
+
+			List<BandwidthQuotaUsed> lList = (List<BandwidthQuotaUsed>) q
+					.executeWithArray(_array);
+
+			boolean lFound = false;
+			for (BandwidthQuotaUsed bandwidthQuotaUsed : lList) {
+				if (lTimeNow >= bandwidthQuotaUsed
+						.getSubscriptionPeriodStartMs()
+						&& lTimeNow <= bandwidthQuotaUsed
+								.getSubscriptionPeriodEndMs()) {
+
+					bandwidthQuotaUsed.setTrackingId(pApplication
+							.getTrackingId());
+					bandwidthQuotaUsed
+							.setBandwidthUsedInBytes(bandwidthUsedInBytes);
+					bandwidthQuotaUsed.setTimeUpdatedMs(System
+							.currentTimeMillis());
+					bandwidthQuotaUsed
+							.setTimeUpdatedTimeZoneOffsetMs((long) TimeZone
+									.getDefault().getRawOffset());
+					lFound = true;
+					break;
+				}
+			}
+			if (!lFound) {
+				// create new
+				BandwidthQuotaUsed lQuotaUsed = new BandwidthQuotaUsed();
+				lQuotaUsed.setAccountId(pApplication.getAccountId());
+				lQuotaUsed.setApplicationId(pApplication.getId());
+				lQuotaUsed.setTrackingId(pApplication.getTrackingId());
+				lQuotaUsed.setBandwidthUsedInBytes(bandwidthUsedInBytes);
+
+				TimeZone timeZone = TimeZone.getTimeZone("UTC");
+
+				lQuotaUsed.setSubscriptionPeriodStartMs(Utils.getStartOfDay(
+						timeZone).getTimeInMillis());
+				lQuotaUsed.setSubscriptionPeriodEndMs(Utils
+						.getOneMonthFromToday(timeZone).getTimeInMillis());
+
+				lQuotaUsed.setTimeCreatedMs(System.currentTimeMillis());
+				lQuotaUsed.setTimeCreatedTimeZoneOffsetMs((long) TimeZone
+						.getDefault().getRawOffset());
+				pm.makePersistent(lQuotaUsed);
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("Adding bandwidth used to "
+							+ bandwidthUsedInBytes);
+			}
+
+		} finally {
+			if (pm != null) {
+				pm.close();
+			}
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
 	void upsertStorageUtilization(Application pApplication,
 			Long storageUsedInBytes) {
 		PersistenceManager pm = null;
@@ -208,7 +285,7 @@ class QuotaDao {
 			StorageQuotaUsed lQuotaUsed = null;
 			if (lList != null && (lList.size() > 0)) {
 				lQuotaUsed = lList.get(0);
-				//TODO: delete later
+				// TODO: delete later
 				lQuotaUsed.setTrackingId(pApplication.getTrackingId());
 				lQuotaUsed.setStorageUsedInBytes(storageUsedInBytes);
 				lQuotaUsed.setTimeUpdatedMs(System.currentTimeMillis());

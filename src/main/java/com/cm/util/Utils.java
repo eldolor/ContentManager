@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,6 +35,25 @@ import com.google.appengine.api.taskqueue.TaskOptions.Method;
 public class Utils {
 	private static final Logger LOGGER = Logger
 			.getLogger(Utils.class.getName());
+
+	public static void triggerUpdateBandwidthUtilizationMessage(String pUri,
+			long delay) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			Queue queue = QueueFactory
+					.getQueue(Configuration.CONTENT_QUEUE_NAME);
+			TaskOptions taskOptions = TaskOptions.Builder
+					.withUrl("/tasks/bandwidth/utilization/update/" + pUri)
+					.param("uri", pUri).method(Method.POST)
+					.countdownMillis(delay);
+			queue.add(taskOptions);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+
+	}
 
 	public static void triggerForgotPasswordEmailMessage(String pGuid,
 			long delay) {
@@ -398,4 +418,28 @@ public class Utils {
 
 	}
 
+	public static Calendar getStartOfDay(TimeZone timeZone) {
+		Calendar calendar = Calendar.getInstance(timeZone);
+		int year = calendar.get(Calendar.YEAR);
+		int month = calendar.get(Calendar.MONTH);
+		int day = calendar.get(Calendar.DATE);
+		calendar.set(year, month, day, 0, 0, 0);
+		return calendar;
+	}
+
+	public static Calendar getEndOfDay(TimeZone timeZone) {
+		Calendar calendar = Calendar.getInstance(timeZone);
+		calendar.set(Calendar.MILLISECOND, 999);
+		int year = calendar.get(Calendar.YEAR);
+		int month = calendar.get(Calendar.MONTH);
+		int day = calendar.get(Calendar.DATE);
+		calendar.set(year, month, day, 23, 59, 59);
+		return calendar;
+	}
+
+	public static Calendar getOneMonthFromToday(TimeZone timeZone) {
+		Calendar calendar = getEndOfDay(timeZone);
+		calendar.add(Calendar.MONTH, 1);
+		return calendar;
+	}
 }

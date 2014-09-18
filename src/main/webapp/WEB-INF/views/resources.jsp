@@ -8,67 +8,67 @@
 	import="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"%><html>
 
 
-<link rel="stylesheet" href="/resources/css/foundation/foundation.css"
+<link rel="stylesheet" href="/resources/stylesheets/foundation/foundation.css"
 	type="text/css" />
 
 <!-- Begin Foundation Related -->
 <script type="text/javascript"
-	src="/resources/js/modernizr/modernizr.js"></script>
+	src="/resources/javascripts/modernizr/modernizr.js"></script>
 <script type="text/javascript"
-	src="/resources/js/jquery-2.1.1/jquery.min.js"></script>
-<script src="/resources/js/jquery-ui-1.11.0/jquery-ui.min.js"></script>
-<link href="/resources/css/jquery-ui-1.11.0/jquery-ui.min.css"
+	src="/resources/javascripts/jquery-2.1.1/jquery.min.js"></script>
+<script src="/resources/javascripts/jquery-ui-1.11.0/jquery-ui.min.js"></script>
+<link href="/resources/stylesheets/jquery-ui-1.11.0/jquery-ui.min.css"
 	rel="stylesheet" type="text/css" />
 <script type="text/javascript"
-	src="/resources/js/foundation/foundation.min.js"></script>
+	src="/resources/javascripts/foundation/foundation.min.js"></script>
 <script type="text/javascript"
-	src="/resources/js/foundation/foundation.reveal.js"></script>
-<script src="/resources/js/foundation/foundation.tooltip.js"></script>
-<script src="/resources/js/foundation/foundation.joyride.js"></script>
-<script src="/resources/js/foundation/foundation.dropdown.js"></script>
-<script src="/resources/js/foundation/foundation.abide.js"></script>
-<script src="/resources/js/jquery-2.1.1/jquery.cookie.js"></script>
-<script src="/resources/js/foundation/foundation.alert.js"></script>
-<script src="/resources/js/foundation/foundation.magellan.js"></script>
+	src="/resources/javascripts/foundation/foundation.reveal.js"></script>
+<script src="/resources/javascripts/foundation/foundation.tooltip.js"></script>
+<script src="/resources/javascripts/foundation/foundation.joyride.js"></script>
+<script src="/resources/javascripts/foundation/foundation.dropdown.js"></script>
+<script src="/resources/javascripts/foundation/foundation.abide.js"></script>
+<script src="/resources/javascripts/jquery-2.1.1/jquery.cookie.js"></script>
+<script src="/resources/javascripts/foundation/foundation.alert.js"></script>
+<script src="/resources/javascripts/foundation/foundation.magellan.js"></script>
 <!-- Begin Foundation Related -->
 
-<script type="text/javascript" src="/resources/js/json2.js"></script>
+<script type="text/javascript" src="/resources/javascripts/cm/json2.js"></script>
 
 <!-- Begin Date Related -->
-<!-- <script type="text/javascript" src="/resources/js/datejs/date-en-US.js"></script> -->
+<!-- <script type="text/javascript" src="/resources/javascripts/datejs/date-en-US.js"></script> -->
 
 <script type="text/javascript"
-	src="/resources/js/momentjs/moment.2.8.2.js"></script>
+	src="/resources/javascripts/momentjs/moment.2.8.2.js"></script>
 <!-- End Date Related -->
 
 
 <!-- JTable -->
-<script type="text/javascript"
-	src="/resources/js/jquery/jquery.dataTables.min.js"></script>
-<link href="/resources/css/demo_table.css" rel="stylesheet"
+<!-- <script type="text/javascript"
+	src="/resources/javascripts/jquery-plugins/jquery.dataTables.min.js"></script>
+<link href="/resources/stylesheets/demo_table.css" rel="stylesheet"
 	type="text/css" />
-<!-- JTable -->
+ --><!-- JTable -->
 
 <!-- Time Picker -->
 <script type="text/javascript"
-	src="/resources/js/jquery/jquery-ui-sliderAccess.js"></script>
+	src="/resources/javascripts/jquery-plugins/jquery-ui-sliderAccess.js"></script>
 <script type="text/javascript"
-	src="/resources/js/jquery/jquery-ui-timepicker-addon.js"></script>
-<link href="/resources/css/jquery-ui-timepicker-addon.css"
+	src="/resources/javascripts/jquery-plugins/jquery-ui-timepicker-addon.js"></script>
+<link href="/resources/stylesheets/jquery-plugins/jquery-ui-timepicker-addon.css"
 	rel="stylesheet" type="text/css" />
 <!-- Time Picker -->
 
 <!-- JPlayer -->
 <script type="text/javascript"
-	src="/resources/js/jquery/jquery.jplayer.2.2.0.min.js"></script>
-<link href="/resources/jplayer/skin/blue.monday/jplayer.blue.monday.css"
+	src="/resources/javascripts/jquery-plugins/jquery.jplayer.2.2.0.min.js"></script>
+<link href="/resources/stylesheets/jplayer/skin/blue.monday/jplayer.blue.monday.css"
 	rel="stylesheet" type="text/css" />
 <!-- JPlayer -->
 
 <!-- Scroll To  -->
-<script type="text/javascript"
-	src="/resources/js/jquery/jquery.scrollto-1.4.5.min.js"></script>
-<!-- Scroll To  -->
+<!-- <script type="text/javascript"
+	src="/resources/javascripts/jquery-plugins/jquery.scrollto-1.4.5.min.js"></script>
+ --><!-- Scroll To  -->
 
 
 
@@ -76,16 +76,16 @@
 
 <!-- Jquery File drop-->
 <script type="text/javascript"
-	src="/resources/js/cm.content.file.upload.js"></script>
+	src="/resources/javascripts/cm/cm.content.file.upload.js"></script>
 <script type="text/javascript"
-	src="/resources/js/jquery/jquery.filedrop.js"></script>
-<link href="/resources/css/content.dropbox.css" media="screen"
+	src="/resources/javascripts/jquery-plugins/jquery.filedrop.js"></script>
+<link href="/resources/stylesheets/cm/content.dropbox.css" media="screen"
 	rel="stylesheet" type="text/css" />
 <!-- Jquery File drop-->
 
 <!-- Custom Scripts -->
-<script type="text/javascript" src="/resources/js/cm.utilities.js"></script>
-<script type="text/javascript" src="/resources/js/cm.globals.js"></script>
+<script type="text/javascript" src="/resources/javascripts/cm/cm.utilities.js"></script>
+<script type="text/javascript" src="/resources/javascripts/cm/cm.globals.js"></script>
 <!-- Custom Scripts -->
 
 <!-- Google Analytics -->
@@ -147,3 +147,16 @@
 		CONTENT : "content"
 	};
 </script>
+
+
+<!-- Theme Related -->
+    <link href='http://fonts.googleapis.com/css?family=Raleway:400,300,100' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="/resources/stylesheets/foundation-icons/foundation-icons.css" />
+    <link href="/resources/stylesheets/box/animate.css" rel="stylesheet" />
+    <link href="/resources/stylesheets/box/owl.carousel.css" rel="stylesheet">
+    <link href="/resources/stylesheets/box/owl.theme.css" rel="stylesheet">
+    <link href="/resources/stylesheets/box/style.css" rel="stylesheet">
+    <script type="text/javascript" src="/resources/javascripts/jquery-plugins/jquery.simple-text-rotator.js"></script>
+    <script src="/resources/javascripts/vendor/waypoints.min.js"></script>
+    <script src="/resources/javascripts/vendor/owl.carousel.min.js"></script>
+   <!-- End Theme Related -->

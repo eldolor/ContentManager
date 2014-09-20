@@ -19,7 +19,7 @@ function setSelectedApplication(id) {
 						$('#content_errors')
 								.html(
 										'Unable to process the request. Please try again later');
-						$('#content_errors').show();
+						$('#cm_errors_container').show();
 					}
 				});
 	} catch (err) {
@@ -47,7 +47,7 @@ function setSelectedContentGroup(id) {
 							$('#content_errors')
 									.html(
 											'Unable to process the request. Please try again later');
-							$('#content_errors').show();
+							$('#cm_errors_container').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
@@ -55,7 +55,7 @@ function setSelectedContentGroup(id) {
 						$('#content_errors')
 								.html(
 										'Unable to process the request. Please try again later');
-						$('#content_errors').show();
+						$('#cm_errors_container').show();
 					}
 				});
 	} catch (err) {
@@ -83,7 +83,7 @@ function setAvailableStorageQuota(id, isAsync) {
 						503 : function() {
 							$('#content_errors').html(
 									'Unable to get available storage quota');
-							$('#content_errors').show();
+							$('#cm_errors_container').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
@@ -91,7 +91,7 @@ function setAvailableStorageQuota(id, isAsync) {
 						$('#content_errors')
 								.html(
 										'Unable to process the request. Please try again later');
-						$('#content_errors').show();
+						$('#cm_errors_container').show();
 					}
 				});
 	} catch (err) {
@@ -119,7 +119,7 @@ function setAllAvailableStorageQuota(isAsync) {
 						503 : function() {
 							$('#content_errors').html(
 									'Unable to get available storage quota');
-							$('#content_errors').show();
+							$('#cm_errors_container').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
@@ -127,7 +127,7 @@ function setAllAvailableStorageQuota(isAsync) {
 						$('#content_errors')
 								.html(
 										'Unable to process the request. Please try again later');
-						$('#content_errors').show();
+						$('#cm_errors_container').show();
 					}
 				});
 	} catch (err) {
@@ -164,7 +164,7 @@ function getContent(pApplicationId, pContentGroupId) {
 							$('#content_errors')
 									.html(
 											'Unable to process the request. Please try again later');
-							$('#content_errors').show();
+							$('#cm_errors_container').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
@@ -172,7 +172,7 @@ function getContent(pApplicationId, pContentGroupId) {
 						$('#content_errors')
 								.html(
 										'Unable to process the request. Please try again later');
-						$('#content_errors').show();
+						$('#cm_errors_container').show();
 					}
 				});
 
@@ -191,21 +191,70 @@ function handleDisplayContent_Callback(pContent) {
 		var lInnerHtml = '';
 		for (var int = 0; int < pContent.length; int++) {
 			var lContent = pContent[int];
-			lInnerHtml += "<div class=\"row\"> <div class=\"large-6 columns\">";
-			lInnerHtml += "<p><span data-tooltip class=\"has-tip\" title=\"Click here to view the content in this Content\"><a href=\"javascript:void(0)\" onclick=\"viewContent("
-					+ lContent.id + ")\"><strong>";
-			lInnerHtml += lContent.name;
-			lInnerHtml += "</strong></a></span></p>";
+			// lInnerHtml += "<div class=\"row\"> <div class=\"large-6
+			// columns\">";
+			// lInnerHtml += "<p><span data-tooltip class=\"has-tip\"
+			// title=\"Click here to view the content in this Content\"><a
+			// href=\"javascript:void(0)\" onclick=\"viewContent("
+			// + lContent.id + ")\"><strong>";
+			// lInnerHtml += lContent.name;
+			// lInnerHtml += "</strong></a></span></p>";
+			//
+			// lInnerHtml += "<ul class=\"inline-list\"> <li><a class=\"small\"
+			// href=\"javascript:void(0)\" onclick=\"viewContent("
+			// + lContent.id
+			// + ")\">view</a></li> <li><a class=\"small\"
+			// href=\"javascript:void(0)\" onclick=\"editContent("
+			// + lContent.id
+			// + ")\">edit</a></li> <li><a class=\"small\"
+			// href=\"javascript:void(0)\" onclick=\"deleteContent("
+			// + lContent.id + ")\">delete</a></li></ul>";
+			// lInnerHtml += "<span id=\"content_id\" class=\"secondary radius
+			// label\">Content Id: "
+			// + lContent.id + "</span>";
+			// lInnerHtml += "</div></div><hr>";
 
-			lInnerHtml += "<ul class=\"inline-list\"> <li><a class=\"small\" href=\"javascript:void(0)\" onclick=\"viewContent("
+			lInnerHtml += "<div class=\"blog_content\"> ";
+			lInnerHtml += " <h3 class=\"gray\">";
+			lInnerHtml += lContent.name;
+			lInnerHtml += "</h3>";
+			lInnerHtml += "<div class=\"blog_content_details float_left\">";
+			lInnerHtml += "<ul> <li class=\"green\">Content Id: "
 					+ lContent.id
-					+ ")\">view</a></li> <li><a class=\"small\" href=\"javascript:void(0)\" onclick=\"editContent("
+					+ " </li><li>|</li><li class=\"light_gray\"><a class=\"small green\" href=\"javascript:void(0)\" onclick=\"viewContent("
+			lInnerHtml += lContent.id;
+			lInnerHtml += ")\"><i class=\"fi-page light_gray\"></i>&nbsp;view</a></li> <li>|</li><li class=\"light_gray\"><a class=\"small\" href=\"javascript:void(0)\" onclick=\"editContent("
 					+ lContent.id
-					+ ")\">edit</a></li> <li><a class=\"small\" href=\"javascript:void(0)\" onclick=\"deleteContent("
-					+ lContent.id + ")\">delete</a></li></ul>";
-			lInnerHtml += "<span id=\"content_id\" class=\"secondary radius label\">Content Id: "
-					+ lContent.id + "</span>";
-			lInnerHtml += "</div></div><hr>";
+					+ ")\"><i class=\"fi-page-edit light_gray\"></i>&nbsp;edit</a></li><li>|</li> <li class=\"light_gray\"><a class=\"small\" href=\"javascript:void(0)\" onclick=\"deleteContent("
+					+ lContent.id
+					+ ")\"><i class=\"fi-page-delete light_gray\"></i>&nbsp;delete</a></li>";
+			lInnerHtml += "</ul>";
+			lInnerHtml += "</div>";
+			var lEpochDate = (lContent.timeUpdatedMs == null) ? lContent.timeCreatedMs
+					: lContent.timeUpdatedMs;
+			var lDisplayDate = getFormattedDisplayDate(lEpochDate, "ll");
+			var lSplit = lDisplayDate.split(",");
+			var lYear = lSplit[1];
+			var lSplitM = lSplit[0].split(" ");
+			var lMonth = lSplitM[0];
+			var lDate = lSplitM[1];
+
+			lInnerHtml += "<div class=\"blog_date green text_center\"> <span>";
+			lInnerHtml += lDate;
+			lInnerHtml += "</span>";
+			lInnerHtml += "<div>";
+			lInnerHtml += lMonth + "</div>";
+			lInnerHtml += "</div>";
+
+			lInnerHtml += "<div class=\"blog_comments text_center green\">";
+			lInnerHtml += lYear;
+			lInnerHtml += "</div>";
+			lInnerHtml += "<div class=\"blog_content_details float_left\"><p class=\"light_gray\">"
+					+ lContent.description + "</p>";
+			lInnerHtml += "</div>";
+			lInnerHtml += "<div class=\"clearfix\"></div><div class=\"separator\"></div>";
+			lInnerHtml += "</div>";
+
 		}
 
 		$('#content_list').empty().html(lInnerHtml);
@@ -259,7 +308,7 @@ function updateContentEnabled(pContentId, pContentEnabled, pElementName) {
 							$('#content_errors')
 									.html(
 											'Unable to process the request. Please try again later');
-							$('#content_errors').show();
+							$('#cm_errors_container').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
@@ -267,7 +316,7 @@ function updateContentEnabled(pContentId, pContentEnabled, pElementName) {
 						$('#content_errors')
 								.html(
 										'Unable to process the request. Please try again later');
-						$('#content_errors').show();
+						$('#cm_errors_container').show();
 					}
 				});
 		jqxhr.always(function() {
@@ -311,7 +360,7 @@ function displayContentStats(id, name) {
 						$('#content_errors')
 								.html(
 										'Unable to process the request. Please try again later');
-						$('#content_errors').show();
+						$('#cm_errors_container').show();
 					}
 				});
 		jqxhr.always(function() {
@@ -334,7 +383,7 @@ function editContent(id) {
 		// reset the form contents
 		$('#contentForm').trigger("reset");
 
-		$('#content_errors').hide();
+		$('#cm_errors_container').hide();
 
 		$('#content_cancel_button').unbind();
 		$('#content_cancel_button').click(function() {
@@ -449,7 +498,7 @@ function editContent(id) {
 							$('#content_errors')
 									.html(
 											'Unable to process the request. Please try again later');
-							$('#content_errors').show();
+							$('#cm_errors_container').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
@@ -457,7 +506,7 @@ function editContent(id) {
 						$('#content_errors')
 								.html(
 										'Unable to process the request. Please try again later');
-						$('#content_errors').show();
+						$('#cm_errors_container').show();
 					},
 					complete : function(xhr, textStatus) {
 						$('#progress_bar_top, #progress_bar_bottom').css(
@@ -546,7 +595,7 @@ function selectedContent(id) {
 							$('#content_errors')
 									.html(
 											'Unable to process the request. Please try again later');
-							$('#content_errors').show();
+							$('#cm_errors_container').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
@@ -554,7 +603,7 @@ function selectedContent(id) {
 						$('#content_errors')
 								.html(
 										'Unable to process the request. Please try again later');
-						$('#content_errors').show();
+						$('#cm_errors_container').show();
 					}
 				});
 	} catch (err) {
@@ -642,7 +691,7 @@ function viewContent(pContentId) {
 							$('#content_errors')
 									.html(
 											'Unable to process the request. Please try again later');
-							$('#content_errors').show();
+							$('#cm_errors_container').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
@@ -650,7 +699,7 @@ function viewContent(pContentId) {
 						$('#content_errors')
 								.html(
 										'Unable to process the request. Please try again later');
-						$('#content_errors').show();
+						$('#cm_errors_container').show();
 					}
 				});
 	} catch (err) {
@@ -672,7 +721,7 @@ function newContent() {
 		// set the content group id
 		$('#contentgroup_id').val(mSelectedContentGroup.id);
 		$('#content_id').val('');
-		$('#content_errors').hide();
+		$('#cm_errors_container').hide();
 
 		$('#content_name').val('');
 		$('#content_description').val('');
@@ -803,7 +852,7 @@ function createContent() {
 							try {
 								$('#content_errors').html(
 										getErrorMessages(text));
-								$('#content_errors').show();
+								$('#cm_errors_container').show();
 							} catch (err) {
 								handleError("createContent", err);
 							}
@@ -812,7 +861,7 @@ function createContent() {
 							$('#content_errors')
 									.html(
 											'Unable to process the request. Please try again later');
-							$('#content_errors').show();
+							$('#cm_errors_container').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
@@ -820,7 +869,7 @@ function createContent() {
 						$('#content_errors')
 								.html(
 										'Unable to process the request. Please try again later');
-						$('#content_errors').show();
+						$('#cm_errors_container').show();
 					},
 					complete : function(xhr, textStatus) {
 						$('#progress_bar_top, #progress_bar_bottom').css(
@@ -893,7 +942,7 @@ function updateContent() {
 							try {
 								$('#content_errors').html(
 										getErrorMessages(text));
-								$('#content_errors').show();
+								$('#cm_errors_container').show();
 							} catch (err) {
 								handleError("updateContent", err);
 							}
@@ -902,7 +951,7 @@ function updateContent() {
 							$('#content_errors')
 									.html(
 											'Unable to process the request. Please try again later');
-							$('#content_errors').show();
+							$('#cm_errors_container').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
@@ -910,7 +959,7 @@ function updateContent() {
 						$('#content_errors')
 								.html(
 										'Unable to process the request. Please try again later');
-						$('#content_errors').show();
+						$('#cm_errors_container').show();
 					},
 					complete : function(xhr, textStatus) {
 						$('#progress_bar_top, #progress_bar_bottom').css(
@@ -961,7 +1010,7 @@ function deleteContent(id) {
 										$('#content_errors')
 												.html(
 														'Unable to process the request. Please try again later');
-										$('#content_errors').show();
+										$('#cm_errors_container').show();
 									}
 								},
 								error : function(xhr, textStatus, errorThrown) {
@@ -969,7 +1018,7 @@ function deleteContent(id) {
 									$('#content_errors')
 											.html(
 													'Unable to process the request. Please try again later');
-									$('#content_errors').show();
+									$('#cm_errors_container').show();
 								}
 							});
 					jqxhr.always(function(msg) {

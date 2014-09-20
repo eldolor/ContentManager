@@ -39,7 +39,7 @@ function setupContentDropBox(pUrl, pAvailableStorageQuotaInBytes,
 			case 'FileTooLarge':
 				// insufficient quota
 				displayUpgrade(pDisplayUpgradeMessage, function() {
-					window.location.href = '/account';
+					window.location.href = '/account/plans';
 				});
 				break;
 			default:
@@ -93,13 +93,13 @@ function setupContentDropBox(pUrl, pAvailableStorageQuotaInBytes,
 		reader.onload = function(e) {
 
 			if (file.type.match(/^video\//)) {
-				image.attr('src', '/resources/images/video_icon.png');
+				image.attr('src', '/resources/images/cm/video_icon.png');
 			} else {
 				// e.target.result holds the DataURL which
 				// can be used as a source of the image:
 
 				// image.attr('src', e.target.result);
-				image.attr('src', '/resources/images/image_icon.png');
+				image.attr('src', '/resources/images/cm/image_icon.png');
 			}
 
 		};

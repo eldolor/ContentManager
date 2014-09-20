@@ -106,7 +106,7 @@ function getApplications() {
 							$('#application_errors')
 									.html(
 											'Unable to process the request. Please try again later');
-							$('#application_errors').show();
+							$('#cm_errors_container').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
@@ -114,7 +114,7 @@ function getApplications() {
 						$('#application_errors')
 								.html(
 										'Unable to process the request. Please try again later');
-						$('#application_errors').show();
+						$('#cm_errors_container').show();
 					}
 				});
 
@@ -134,35 +134,52 @@ function handleDisplayApplications_Callback(pApplications) {
 		var lInnerHtml = '';
 		for (var int = 0; int < pApplications.length; int++) {
 			var lApplication = pApplications[int];
-			lInnerHtml += "<div class=\"row\"> <div class=\"large-6 columns\">";
-			if (lApplication.deletedOnPlanDowngrade == false) {
-				lInnerHtml += "<p><span data-tooltip class=\"has-tip\" title=\"Click here to view this Application\"><a href=\"javascript:void(0)\" onclick=\"displayContentGroups("
-						+ lApplication.id + ")\"><strong>";
-				lInnerHtml += lApplication.name;
-				lInnerHtml += "</strong></a></span></p>";
-				lInnerHtml += "<ul class=\"inline-list\"> <li><a class=\"small\" href=\"javascript:void(0)\" onclick=\"editApplication("
-						+ lApplication.id
-						+ ")\">edit</a></li> <li><a class=\"small\" href=\"javascript:void(0)\" onclick=\"deleteApplication("
-						+ lApplication.id + ")\">delete</a></li></ul>";
-				lInnerHtml += "<p><span id=\"application_trackingid\" class=\"secondary radius label\">Application Id: "
-						+ lApplication.trackingId + "</span></p>";
-				// log(JSON.stringify(lApplication));
-				if (lApplication.changesStaged) {
-					lInnerHtml += "<p><a href=\"javascript:void(0);\" onclick=\"pushChangestoHandsets('"
-							+ lApplication.id
-							+ "')\" class=\"button tiny alert\">Push Changes to Handsets</a></p>";
-				}
-			} else {
-				lInnerHtml += "<p>";
-				lInnerHtml += lApplication.name;
-				lInnerHtml += "</p>";
-				lInnerHtml += "<ul class=\"inline-list\"><li>edit</li> <li>delete</li></ul>";
-				lInnerHtml += "<p><span id=\"application_trackingid\" class=\"secondary radius label\">Application Id: "
-						+ lApplication.trackingId + "</span></p>";
-				lInnerHtml += "<p><a href=\"/account\" class=\"button tiny success\">Upgrade to Access</a></p>";
+			lInnerHtml += "<div class=\"blog_content\"> ";
+			lInnerHtml += " <h3 class=\"gray\">";
+			lInnerHtml += lApplication.name;
+			lInnerHtml += "</h3>";
+			lInnerHtml += "<div class=\"blog_content_details float_left\">";
+			lInnerHtml += "<ul> <li class=\"green\">Application Id: "
+					+ lApplication.trackingId
+					+ " </li><li>|</li><li class=\"light_gray\"><a class=\"small green\" href=\"javascript:void(0)\" onclick=\"displayContentGroups("
+					+ lApplication.id
+					+ ")\"><i class=\"fi-list-number light_gray\"></i>&nbsp;content groups</a></li> <li>|</li><li class=\"light_gray\"><a class=\"small\" href=\"javascript:void(0)\" onclick=\"editApplication("
+					+ lApplication.id
+					+ ")\"><i class=\"fi-page-edit light_gray\"></i>&nbsp;edit</a></li><li>|</li> <li class=\"light_gray\"><a class=\"small\" href=\"javascript:void(0)\" onclick=\"deleteApplication("
+					+ lApplication.id
+					+ ")\"><i class=\"fi-page-delete light_gray\"></i>&nbsp;delete</a></li>";
+			lInnerHtml += "</ul>";
+			lInnerHtml += "</div>";
+			var lEpochDate = (lApplication.timeUpdatedMs == null) ? lApplication.timeCreatedMs
+					: lApplication.timeUpdatedMs;
+			var lDisplayDate = getFormattedDisplayDate(lEpochDate, "ll");
+			var lSplit = lDisplayDate.split(",");
+			var lYear = lSplit[1];
+			var lSplitM = lSplit[0].split(" ");
+			var lMonth = lSplitM[0];
+			var lDate = lSplitM[1];
 
+			lInnerHtml += "<div class=\"blog_date green text_center\"> <span>";
+			lInnerHtml += lDate;
+			lInnerHtml += "</span>";
+			lInnerHtml += "<div>";
+			lInnerHtml += lMonth + "</div>";
+			lInnerHtml += "</div>";
+
+			lInnerHtml += "<div class=\"blog_comments text_center green\">";
+			lInnerHtml += lYear;
+			lInnerHtml += "</div>";
+			lInnerHtml += "<div class=\"blog_content_details float_left\"><p class=\"light_gray\">"
+					+ lApplication.description + "</p>";
+			if (lApplication.changesStaged) {
+				lInnerHtml += "<a href=\"javascript:void(0);\" onclick=\"pushChangestoHandsets('"
+						+ lApplication.id
+						+ "')\" class=\"button tiny radius btn-default\">Push Changes to Handsets</a>";
 			}
-			lInnerHtml += "</div></div><hr>";
+			lInnerHtml += "</div>";
+			lInnerHtml += "<div class=\"clearfix\"></div><div class=\"separator\"></div>";
+			lInnerHtml += "</div>";
+
 		}
 
 		$('#applications_list').empty().html(lInnerHtml);
@@ -204,7 +221,7 @@ function pushChangestoHandsets(pApplicationId) {
 							$('#application_errors')
 									.html(
 											'Unable to process the request. Please try again later');
-							$('#application_errors').show();
+							$('#cm_errors_container').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
@@ -281,7 +298,7 @@ function updateApplicationEnabled(pApplicationId, pApplicationEnabled,
 							$('#application_errors')
 									.html(
 											'Unable to process the request. Please try again later');
-							$('#application_errors').show();
+							$('#cm_errors_container').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
@@ -289,7 +306,7 @@ function updateApplicationEnabled(pApplicationId, pApplicationEnabled,
 						$('#application_errors')
 								.html(
 										'Unable to process the request. Please try again later');
-						$('#application_errors').show();
+						$('#cm_errors_container').show();
 					}
 				});
 
@@ -329,7 +346,7 @@ function displayApplicationStats(id, name) {
 							$('#application_errors')
 									.html(
 											'Unable to process the request. Please try again later');
-							$('#application_errors').show();
+							$('#cm_errors_container').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
@@ -337,7 +354,7 @@ function displayApplicationStats(id, name) {
 						$('#application_errors')
 								.html(
 										'Unable to process the request. Please try again later');
-						$('#application_errors').show();
+						$('#cm_errors_container').show();
 					}
 				});
 		jqxhr.always(function() {
@@ -360,7 +377,7 @@ function editApplication(id) {
 		$('#progress_bar_top, #progress_bar_bottom').show();
 		$('.button').addClass('disabled');
 
-		$('#application_errors').hide();
+		$('#cm_errors_container').hide();
 
 		$('#application_cancel_button').unbind();
 		$('#application_cancel_button').click(function() {
@@ -448,7 +465,7 @@ function editApplication(id) {
 							$('#application_errors')
 									.html(
 											'Unable to process the request. Please try again later');
-							$('#application_errors').show();
+							$('#cm_errors_container').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
@@ -456,7 +473,7 @@ function editApplication(id) {
 						$('#application_errors')
 								.html(
 										'Unable to process the request. Please try again later');
-						$('#application_errors').show();
+						$('#cm_errors_container').show();
 					},
 					complete : function(xhr, textStatus) {
 						$('#progress_bar_top, #progress_bar_bottom').css(
@@ -495,7 +512,7 @@ function newApplication() {
 							$('#applications_list').hide();
 							$('#application_create').show();
 
-							$('#application_errors').hide();
+							$('#cm_errors_container').hide();
 
 							$('#application_save_button').html('create');
 							// not using valid.fndtn.abide & invalid.fndtn.abide
@@ -545,14 +562,14 @@ function newApplication() {
 							displayUpgrade(
 									"Please upgrade your Plan to create more applications",
 									function() {
-										window.location.href = '/account';
+										window.location.href = '/account/plans';
 									});
 						},
 						503 : function() {
 							$('#application_errors')
 									.html(
 											'Unable to process the request. Please try again later');
-							$('#application_errors').show();
+							$('#cm_errors_container').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
@@ -560,7 +577,7 @@ function newApplication() {
 						$('#application_errors')
 								.html(
 										'Unable to process the request. Please try again later');
-						$('#application_errors').show();
+						$('#cm_errors_container').show();
 					}
 				});
 
@@ -630,7 +647,7 @@ function createApplication() {
 							try {
 								$('#application_errors').html(
 										getErrorMessages(text));
-								$('#application_errors').show();
+								$('#cm_errors_container').show();
 							} catch (err) {
 								handleError("submitApplication", err);
 							}
@@ -639,7 +656,7 @@ function createApplication() {
 							$('#application_errors')
 									.html(
 											'Unable to process the request. Please try again later');
-							$('#application_errors').show();
+							$('#cm_errors_container').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
@@ -647,7 +664,7 @@ function createApplication() {
 						$('#application_errors')
 								.html(
 										'Unable to process the request. Please try again later');
-						$('#application_errors').show();
+						$('#cm_errors_container').show();
 					},
 					complete : function(xhr, textStatus) {
 						$('#progress_bar_top, #progress_bar_bottom').css(
@@ -717,7 +734,7 @@ function updateApplication() {
 							try {
 								$('#application_errors').html(
 										getErrorMessages(text));
-								$('#application_errors').show();
+								$('#cm_errors_container').show();
 							} catch (err) {
 								handleError("updateApplication", err);
 							}
@@ -726,7 +743,7 @@ function updateApplication() {
 							$('#application_errors')
 									.html(
 											'Unable to process the request. Please try again later');
-							$('#application_errors').show();
+							$('#cm_errors_container').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
@@ -734,7 +751,7 @@ function updateApplication() {
 						$('#application_errors')
 								.html(
 										'Unable to process the request. Please try again later');
-						$('#application_errors').show();
+						$('#cm_errors_container').show();
 					},
 					complete : function(xhr, textStatus) {
 						$('#progress_bar_top, #progress_bar_bottom').css(
@@ -784,7 +801,7 @@ function deleteApplication(id) {
 										$('#application_errors')
 												.html(
 														'Unable to process the request. Please try again later');
-										$('#application_errors').show();
+										$('#cm_errors_container').show();
 									}
 								},
 								error : function(xhr, textStatus, errorThrown) {
@@ -792,7 +809,7 @@ function deleteApplication(id) {
 									$('#application_errors')
 											.html(
 													'Unable to process the request. Please try again later');
-									$('#application_errors').show();
+									$('#cm_errors_container').show();
 								}
 							});
 				});

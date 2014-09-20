@@ -7,9 +7,10 @@
 <%@page
 	import="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"%><html>
 
-
-<div class="container va-align">
-	<a href="/site/terms">Terms</a>&nbsp;|&nbsp;<a href="/site/privacy">Privacy</a>
-	<p>&#169; Copyright Coconut Martini Inc.</p>
-	<img src="/resources/images/box/cube_footer.png" alt="cube" /> Box
+<div class="row">
+	<div class="large-12 columns">
+		<ul class="breadcrumbs radius" id="breadcrumbs">
+			<li><a href="/">Home</a></li>
+		</ul>
+	</div>
 </div>

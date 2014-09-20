@@ -20,7 +20,7 @@ function setup() {
 		doc.setAttribute('data-useragent', navigator.userAgent);
 		// enable abide form validation
 		$(document).foundation('abide', 'events');
-		setupLeftNavBar();
+		setupContextNavBar();
 		setupBreadcrumbs();
 
 		$("#content_start_date").datepicker({
@@ -63,6 +63,7 @@ function setup() {
 
 		// set the available storage quota per plan
 		setAvailableStorageQuota(mSelectedApplication.id, true);
+		$("#cm_errors_container").addClass("fadeInUp animated");
 	} catch (err) {
 		handleError("setup", err);
 	} finally {
@@ -70,24 +71,20 @@ function setup() {
 	}
 }
 
-function setupLeftNavBar() {
-	log("setupLeftNavBar", "Entering");
+function setupContextNavBar() {
+	log("setupContextNavBar", "Entering");
 	try {
-		$('#left_nav_bar')
-				.empty()
-				.html(
-						'<li><a id=\"left_nav_bar_link_1\" href=\"javascript:void(0);\" >Create Content</a></li>');
-		$('#left_nav_bar_link_1').unbind();
-		$('#left_nav_bar_link_1').click(function() {
+		$('#create_content').unbind();
+		$('#create_content').click(function() {
 			$('#contents_list').hide();
 			$('#content_create').show();
 			newContent();
 		});
 
 	} catch (err) {
-		handleError("setupLeftNavBar", err);
+		handleError("setupContextNavBar", err);
 	} finally {
-		log("setupLeftNavBar", "Exiting");
+		log("setupContextNavBar", "Exiting");
 	}
 }
 

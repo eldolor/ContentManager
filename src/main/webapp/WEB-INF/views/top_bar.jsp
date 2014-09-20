@@ -11,11 +11,17 @@
 	jQuery(function($) {
 		try {
 			log("function($)", "Entering");
-			$('#search_button').unbind();
-			$('#search_button').click(function() {
+			$('#searchForm').unbind();
+			$('#searchForm').submit(function() {
 				var lSearchTerm = $('#search_term').val();
 				if (lSearchTerm != null && lSearchTerm != '')
 					window.location.href = '/search/' + lSearchTerm;
+				//always
+				return false;
+			});
+			$('#sign_up_button').unbind();
+			$('#sign_up_button').click(function() {
+				window.location.href = '/signup';
 			});
 
 		} catch (err) {
@@ -30,54 +36,54 @@
 		<!-- Title Area -->
 		<li class="name">
 			<h1>
-				<a href="#"> <img src="/resources/images/box/Cube.png" alt="big logo" />
+				<a href="#"> <img src="/resources/images/box/Cube.png"
+					alt="big logo" />
 				</a>
 			</h1>
 		</li>
 		<li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
 	</ul>
 	<section class="top-bar-section">
+		<!-- Left Nav Section -->
+		<sec:authorize ifAnyGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">
+			<div class="error_search left">
+				<div class="row">
+					<form role="form" id="searchForm">
+						<div class="form-group">
+							<input id="search_term" name="search_term" type="text"
+								class="form-control input-lg" placeholder="search" />
+						</div>
+					</form>
+				</div>
+			</div>
+		</sec:authorize>
+		<sec:authorize ifNotGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">
+			<div class="left">
+				<button id="sign_up_button" class="button radius btn-default">Sign
+					Up</button>
+			</div>
+		</sec:authorize>
+
 		<!-- Right Nav Section -->
-		<ul class="left">
+		<ul class="right">
+			<li><a href="/">Home</a></li>
 			<sec:authorize ifAnyGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">
-				<li class="has-form">
-					<div class="row collapse">
-						<div class="large-8 small-9 columns">
-							<input type="text" id="search_term" name="search_term"
-								placeholder="...">
-						</div>
-						<div class="large-4 small-3 columns">
-							<a href="javascript:void(0);" id="search_button"
-								class="button expand">Search</a>
-						</div>
-					</div>
-				</li>
+				<li class="has-dropdown"><a href="#">Account Settings</a>
+					<ul class="dropdown">
+						<li><a href="/account/billing">Billing</a></li>
+						<li><a href="/account/plans">Plans & Pricing</a></li>
+						<li><a href="/account/usage">Usage</a></li>
+						<li><a href="/account/changepassword">Change Password</a></li>
+					</ul></li>
 			</sec:authorize>
+			<li><a href="#">Documents</a></li>
 			<sec:authorize ifAnyGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">
-				<li class="divider"></li>
-				<li class="active"><a id="myAccount" href="/account">Account
-						Settings</a></li>
-				<li class="divider"></li>
 				<li><a href="<c:url value="/j_spring_security_logout"/>">Sign
 						out </a></li>
 			</sec:authorize>
 			<sec:authorize ifNotGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">
 				<li><a href="<c:url value="/login"/>">Sign In </a></li>
 			</sec:authorize>
-		</ul>
-		<ul class="right">
-			<li><a href="index.html">Home</a></li>
-			<!-- 			<li><a href="about.html">About</a></li>
-			<li><a href="blog.html">Blog</a></li>
- -->
-			<!-- 			<li class="has-dropdown"><a href="#">Pages</a>
-				<ul class="dropdown">
-					<li><a href="404.html">404 Error</a></li>
-					<li><a href="portfolio.html">Portfolio</a></li>
-					<li><a href="blogdetail.html">Blog Detail</a></li>
-					<li><a href="pricing.html">Pricing</a></li>
-				</ul></li> -->
-			<li><a href="contact.html">Contact</a></li>
 		</ul>
 	</section>
 </nav>

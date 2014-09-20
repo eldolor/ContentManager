@@ -20,7 +20,7 @@ function setup() {
 		doc.setAttribute('data-useragent', navigator.userAgent);
 		// enable abide form validation
 		$(document).foundation('abide', 'events');
-		setupLeftNavBar();
+		setupContextNavBar();
 		setupBreadcrumbs();
 
 		$("#contentgroup_start_date").datepicker({
@@ -37,6 +37,7 @@ function setup() {
 
 		// $('#cm_action').bind('click', alert('clicked'));
 		getContentGroups(mSelectedApplication.id);
+		$("#cm_errors_container").addClass("fadeInUp animated");
 	} catch (err) {
 		handleError("setup", err);
 	} finally {
@@ -44,15 +45,11 @@ function setup() {
 	}
 }
 
-function setupLeftNavBar() {
-	log("setupLeftNavBar", "Entering");
+function setupContextNavBar() {
+	log("setupContextNavBar", "Entering");
 	try {
-		$('#left_nav_bar')
-				.empty()
-				.html(
-						'<li><a id=\"left_nav_bar_link_1\" href=\"javascript:void(0);\" >Create Content Group</a></li>');
-		$('#left_nav_bar_link_1').unbind();
-		$('#left_nav_bar_link_1').click(function() {
+		$('#create_contentgroup').unbind();
+		$('#create_contentgroup').click(function() {
 			// $('#content_group_create_modal').foundation('reveal', 'open');
 			$('#content_groups_list').hide();
 			$('#content_group_create').show();
@@ -60,9 +57,9 @@ function setupLeftNavBar() {
 		});
 
 	} catch (err) {
-		handleError("setupLeftNavBar", err);
+		handleError("setupContextNavBar", err);
 	} finally {
-		log("setupLeftNavBar", "Exiting");
+		log("setupContextNavBar", "Exiting");
 	}
 }
 

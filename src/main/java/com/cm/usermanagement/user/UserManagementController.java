@@ -341,8 +341,7 @@ public class UserManagementController {
 				// check to see if the user's CC is expiring or has expired
 				if (Utils.isCCExpired(lStripeCustomer.getCardExpYear(),
 						lStripeCustomer.getCardExpMonth())
-						|| Utils.isCCExpiring(
-								lStripeCustomer.getCardExpYear(),
+						|| Utils.isCCExpiring(lStripeCustomer.getCardExpYear(),
 								lStripeCustomer.getCardExpMonth())) {
 					lIsUpdateCCInfo = true;
 				}
@@ -356,6 +355,214 @@ public class UserManagementController {
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting displayAccountSettings");
+		}
+	}
+
+	/**
+	 * Secured uri
+	 * 
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/account/billing", method = RequestMethod.GET)
+	public ModelAndView displayBilling(ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering");
+		try {
+			model.addAttribute("canonicalPlanNameFree",
+					CanonicalPlanName.FREE.getValue());
+			model.addAttribute("canonicalPlanNameMicro",
+					CanonicalPlanName.MICRO.getValue());
+			model.addAttribute("canonicalPlanNameSmall",
+					CanonicalPlanName.SMALL.getValue());
+			model.addAttribute("canonicalPlanNameMedium",
+					CanonicalPlanName.MEDIUM.getValue());
+			model.addAttribute("canonicalPlanNameLarge",
+					CanonicalPlanName.LARGE.getValue());
+			User lUser = userService.getLoggedInUser();
+			StripeCustomer lStripeCustomer = stripeCustomerService.get(lUser
+					.getAccountId());
+			boolean lIsUpdateCCInfo = false;
+
+			if (lStripeCustomer == null) {
+				model.addAttribute("isSubscribed", false);
+				// default to free
+				model.addAttribute("subscribedCanonicalPlanName",
+						CanonicalPlanName.FREE.getValue());
+			} else {
+				// check to see if the user's CC is expiring or has expired
+				if (Utils.isCCExpired(lStripeCustomer.getCardExpYear(),
+						lStripeCustomer.getCardExpMonth())
+						|| Utils.isCCExpiring(lStripeCustomer.getCardExpYear(),
+								lStripeCustomer.getCardExpMonth())) {
+					lIsUpdateCCInfo = true;
+				}
+				model.addAttribute("isSubscribed", true);
+				model.addAttribute("subscribedCanonicalPlanName",
+						lStripeCustomer.getCanonicalPlanName());
+			}
+			model.addAttribute("isUpdateCCInfo", lIsUpdateCCInfo);
+			model.addAttribute("isError", false);
+			return new ModelAndView("settings_billing", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	/**
+	 * Secured uri
+	 * 
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/account/usage", method = RequestMethod.GET)
+	public ModelAndView displayAccountUsage(ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering");
+		try {
+			model.addAttribute("canonicalPlanNameFree",
+					CanonicalPlanName.FREE.getValue());
+			model.addAttribute("canonicalPlanNameMicro",
+					CanonicalPlanName.MICRO.getValue());
+			model.addAttribute("canonicalPlanNameSmall",
+					CanonicalPlanName.SMALL.getValue());
+			model.addAttribute("canonicalPlanNameMedium",
+					CanonicalPlanName.MEDIUM.getValue());
+			model.addAttribute("canonicalPlanNameLarge",
+					CanonicalPlanName.LARGE.getValue());
+			User lUser = userService.getLoggedInUser();
+			StripeCustomer lStripeCustomer = stripeCustomerService.get(lUser
+					.getAccountId());
+			boolean lIsUpdateCCInfo = false;
+
+			if (lStripeCustomer == null) {
+				model.addAttribute("isSubscribed", false);
+				// default to free
+				model.addAttribute("subscribedCanonicalPlanName",
+						CanonicalPlanName.FREE.getValue());
+			} else {
+				// check to see if the user's CC is expiring or has expired
+				if (Utils.isCCExpired(lStripeCustomer.getCardExpYear(),
+						lStripeCustomer.getCardExpMonth())
+						|| Utils.isCCExpiring(lStripeCustomer.getCardExpYear(),
+								lStripeCustomer.getCardExpMonth())) {
+					lIsUpdateCCInfo = true;
+				}
+				model.addAttribute("isSubscribed", true);
+				model.addAttribute("subscribedCanonicalPlanName",
+						lStripeCustomer.getCanonicalPlanName());
+			}
+			model.addAttribute("isUpdateCCInfo", lIsUpdateCCInfo);
+			model.addAttribute("isError", false);
+			return new ModelAndView("settings_account_usage", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	/**
+	 * Secured uri
+	 * 
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/account/plans", method = RequestMethod.GET)
+	public ModelAndView displayPlansAndPricing(ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering");
+		try {
+			model.addAttribute("canonicalPlanNameFree",
+					CanonicalPlanName.FREE.getValue());
+			model.addAttribute("canonicalPlanNameMicro",
+					CanonicalPlanName.MICRO.getValue());
+			model.addAttribute("canonicalPlanNameSmall",
+					CanonicalPlanName.SMALL.getValue());
+			model.addAttribute("canonicalPlanNameMedium",
+					CanonicalPlanName.MEDIUM.getValue());
+			model.addAttribute("canonicalPlanNameLarge",
+					CanonicalPlanName.LARGE.getValue());
+			User lUser = userService.getLoggedInUser();
+			StripeCustomer lStripeCustomer = stripeCustomerService.get(lUser
+					.getAccountId());
+			boolean lIsUpdateCCInfo = false;
+
+			if (lStripeCustomer == null) {
+				model.addAttribute("isSubscribed", false);
+				// default to free
+				model.addAttribute("subscribedCanonicalPlanName",
+						CanonicalPlanName.FREE.getValue());
+			} else {
+				// check to see if the user's CC is expiring or has expired
+				if (Utils.isCCExpired(lStripeCustomer.getCardExpYear(),
+						lStripeCustomer.getCardExpMonth())
+						|| Utils.isCCExpiring(lStripeCustomer.getCardExpYear(),
+								lStripeCustomer.getCardExpMonth())) {
+					lIsUpdateCCInfo = true;
+				}
+				model.addAttribute("isSubscribed", true);
+				model.addAttribute("subscribedCanonicalPlanName",
+						lStripeCustomer.getCanonicalPlanName());
+			}
+			model.addAttribute("isUpdateCCInfo", lIsUpdateCCInfo);
+			model.addAttribute("isError", false);
+			return new ModelAndView("settings_plans_and_pricing", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	/**
+	 * Secured uri
+	 * 
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/account/changepassword", method = RequestMethod.GET)
+	public ModelAndView displayChangePassword(ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering");
+		try {
+			model.addAttribute("canonicalPlanNameFree",
+					CanonicalPlanName.FREE.getValue());
+			model.addAttribute("canonicalPlanNameMicro",
+					CanonicalPlanName.MICRO.getValue());
+			model.addAttribute("canonicalPlanNameSmall",
+					CanonicalPlanName.SMALL.getValue());
+			model.addAttribute("canonicalPlanNameMedium",
+					CanonicalPlanName.MEDIUM.getValue());
+			model.addAttribute("canonicalPlanNameLarge",
+					CanonicalPlanName.LARGE.getValue());
+			User lUser = userService.getLoggedInUser();
+			StripeCustomer lStripeCustomer = stripeCustomerService.get(lUser
+					.getAccountId());
+			boolean lIsUpdateCCInfo = false;
+
+			if (lStripeCustomer == null) {
+				model.addAttribute("isSubscribed", false);
+				// default to free
+				model.addAttribute("subscribedCanonicalPlanName",
+						CanonicalPlanName.FREE.getValue());
+			} else {
+				// check to see if the user's CC is expiring or has expired
+				if (Utils.isCCExpired(lStripeCustomer.getCardExpYear(),
+						lStripeCustomer.getCardExpMonth())
+						|| Utils.isCCExpiring(lStripeCustomer.getCardExpYear(),
+								lStripeCustomer.getCardExpMonth())) {
+					lIsUpdateCCInfo = true;
+				}
+				model.addAttribute("isSubscribed", true);
+				model.addAttribute("subscribedCanonicalPlanName",
+						lStripeCustomer.getCanonicalPlanName());
+			}
+			model.addAttribute("isUpdateCCInfo", lIsUpdateCCInfo);
+			model.addAttribute("isError", false);
+			return new ModelAndView("settings_change_password", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
 		}
 	}
 

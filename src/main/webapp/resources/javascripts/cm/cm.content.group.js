@@ -19,7 +19,7 @@ function setSelectedApplication(id) {
 						$('#contentgroup_errors')
 								.html(
 										'Unable to process the request. Please try again later');
-						$('#contentgroup_errors').show();
+						$('#cm_errors_container').show();
 					}
 				});
 	} catch (err) {
@@ -56,7 +56,7 @@ function getContentGroups(pApplicationId) {
 							$('#contentgroup_errors')
 									.html(
 											'Unable to process the request. Please try again later');
-							$('#contentgroup_errors').show();
+							$('#cm_errors_container').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
@@ -64,7 +64,7 @@ function getContentGroups(pApplicationId) {
 						$('#contentgroup_errors')
 								.html(
 										'Unable to process the request. Please try again later');
-						$('#contentgroup_errors').show();
+						$('#cm_errors_container').show();
 					}
 				});
 
@@ -83,22 +83,72 @@ function handleDisplayContentGroups_Callback(pContentGroups) {
 		var lInnerHtml = '';
 		for (var int = 0; int < pContentGroups.length; int++) {
 			var lContentGroup = pContentGroups[int];
-			lInnerHtml += "<div class=\"row\"> <div class=\"large-6 columns\">";
-			lInnerHtml += "<p><span data-tooltip class=\"has-tip\" title=\"Click here to view the content in this Content Group\"><a href=\"javascript:void(0)\" onclick=\"displayContent(";
+			// lInnerHtml += "<div class=\"row\"> <div class=\"large-6
+			// columns\">";
+			// lInnerHtml += "<p><span data-tooltip class=\"has-tip\"
+			// title=\"Click here to view the content in this Content Group\"><a
+			// href=\"javascript:void(0)\" onclick=\"displayContent(";
+			// lInnerHtml += lContentGroup.applicationId;
+			// lInnerHtml += ", ";
+			// lInnerHtml += lContentGroup.id;
+			// lInnerHtml += ")\"><strong>";
+			// lInnerHtml += lContentGroup.name;
+			// lInnerHtml += "</strong></a></span></p>";
+			//
+			// lInnerHtml += "<ul class=\"inline-list\"> <li><a class=\"small\"
+			// href=\"javascript:void(0)\" onclick=\"editContentGroup("
+			// + lContentGroup.id
+			// + ")\">edit</a></li> <li><a class=\"small\"
+			// href=\"javascript:void(0)\" onclick=\"deleteContentGroup("
+			// + lContentGroup.id + ")\">delete</a></li></ul>";
+			// lInnerHtml += "<span id=\"content_group_id\" class=\"secondary
+			// radius label\">Content Group Id: "
+			// + lContentGroup.id + "</span>";
+			// lInnerHtml += "</div></div><hr>";
+			//			
+
+			lInnerHtml += "<div class=\"blog_content\"> ";
+			lInnerHtml += " <h3 class=\"gray\">";
+			lInnerHtml += lContentGroup.name;
+			lInnerHtml += "</h3>";
+			lInnerHtml += "<div class=\"blog_content_details float_left\">";
+			lInnerHtml += "<ul> <li class=\"green\">Content Group Id: "
+					+ lContentGroup.id
+					+ " </li><li>|</li><li class=\"light_gray\"><a class=\"small green\" href=\"javascript:void(0)\" onclick=\"displayContent("
 			lInnerHtml += lContentGroup.applicationId;
 			lInnerHtml += ", ";
 			lInnerHtml += lContentGroup.id;
-			lInnerHtml += ")\"><strong>";
-			lInnerHtml += lContentGroup.name;
-			lInnerHtml += "</strong></a></span></p>";
-
-			lInnerHtml += "<ul class=\"inline-list\"> <li><a class=\"small\" href=\"javascript:void(0)\" onclick=\"editContentGroup("
+			lInnerHtml += ")\"><i class=\"fi-list-number light_gray\"></i>&nbsp;content</a></li> <li>|</li><li class=\"light_gray\"><a class=\"small\" href=\"javascript:void(0)\" onclick=\"editContentGroup("
 					+ lContentGroup.id
-					+ ")\">edit</a></li> <li><a class=\"small\" href=\"javascript:void(0)\" onclick=\"deleteContentGroup("
-					+ lContentGroup.id + ")\">delete</a></li></ul>";
-			lInnerHtml += "<span id=\"content_group_id\" class=\"secondary radius label\">Content Group Id: "
-					+ lContentGroup.id + "</span>";
-			lInnerHtml += "</div></div><hr>";
+					+ ")\"><i class=\"fi-page-edit light_gray\"></i>&nbsp;edit</a></li><li>|</li> <li class=\"light_gray\"><a class=\"small\" href=\"javascript:void(0)\" onclick=\"deleteContentGroup("
+					+ lContentGroup.id
+					+ ")\"><i class=\"fi-page-delete light_gray\"></i>&nbsp;delete</a></li>";
+			lInnerHtml += "</ul>";
+			lInnerHtml += "</div>";
+			var lEpochDate = (lContentGroup.timeUpdatedMs == null) ? lContentGroup.timeCreatedMs
+					: lContentGroup.timeUpdatedMs;
+			var lDisplayDate = getFormattedDisplayDate(lEpochDate, "ll");
+			var lSplit = lDisplayDate.split(",");
+			var lYear = lSplit[1];
+			var lSplitM = lSplit[0].split(" ");
+			var lMonth = lSplitM[0];
+			var lDate = lSplitM[1];
+
+			lInnerHtml += "<div class=\"blog_date green text_center\"> <span>";
+			lInnerHtml += lDate;
+			lInnerHtml += "</span>";
+			lInnerHtml += "<div>";
+			lInnerHtml += lMonth + "</div>";
+			lInnerHtml += "</div>";
+
+			lInnerHtml += "<div class=\"blog_comments text_center green\">";
+			lInnerHtml += lYear;
+			lInnerHtml += "</div>";
+			lInnerHtml += "<div class=\"blog_content_details float_left\"><p class=\"light_gray\">"
+					+ lContentGroup.description + "</p>";
+			lInnerHtml += "</div>";
+			lInnerHtml += "<div class=\"clearfix\"></div><div class=\"separator\"></div>";
+			lInnerHtml += "</div>";
 		}
 
 		$('#content_groups_list').empty().html(lInnerHtml);
@@ -170,7 +220,7 @@ function updateContentGroupEnabled(pContentGroupId, pContentGroupEnabled,
 							$('#contentgroup_errors')
 									.html(
 											'Unable to process the request. Please try again later');
-							$('#contentgroup_errors').show();
+							$('#cm_errors_container').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
@@ -178,7 +228,7 @@ function updateContentGroupEnabled(pContentGroupId, pContentGroupEnabled,
 						$('#contentgroup_errors')
 								.html(
 										'Unable to process the request. Please try again later');
-						$('#contentgroup_errors').show();
+						$('#cm_errors_container').show();
 					}
 				});
 		jqxhr.always(function() {
@@ -224,7 +274,7 @@ function displayContentGroupStats(id, name) {
 							$('#contentgroup_errors')
 									.html(
 											'Unable to process the request. Please try again later');
-							$('#contentgroup_errors').show();
+							$('#cm_errors_container').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
@@ -232,7 +282,7 @@ function displayContentGroupStats(id, name) {
 						$('#contentgroup_errors')
 								.html(
 										'Unable to process the request. Please try again later');
-						$('#contentgroup_errors').show();
+						$('#cm_errors_container').show();
 					}
 				});
 		jqxhr.always(function() {
@@ -252,9 +302,9 @@ function editContentGroup(id) {
 	try {
 		$('#progress_bar_top, #progress_bar_bottom').show();
 		$('.button').addClass('disabled');
-		//reset the form contents
+		// reset the form contents
 		$('#contentGroupForm').trigger("reset");
-		$('#contentgroup_errors').hide();
+		$('#cm_errors_container').hide();
 
 		$('#contentgroup_cancel_button').unbind();
 		$('#contentgroup_cancel_button').click(function() {
@@ -329,7 +379,7 @@ function editContentGroup(id) {
 							$('#contentgroup_errors')
 									.html(
 											'Unable to process the request. Please try again later');
-							$('#contentgroup_errors').show();
+							$('#cm_errors_container').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
@@ -337,10 +387,11 @@ function editContentGroup(id) {
 						$('#contentgroup_errors')
 								.html(
 										'Unable to process the request. Please try again later');
-						$('#contentgroup_errors').show();
+						$('#cm_errors_container').show();
 					},
 					complete : function(xhr, textStatus) {
-						$('#progress_bar_top, #progress_bar_bottom').css("width", "100%");
+						$('#progress_bar_top, #progress_bar_bottom').css(
+								"width", "100%");
 						$('#progress_bar_top, #progress_bar_bottom').hide();
 						$('.button').removeClass('disabled');
 						log(xhr.status);
@@ -361,10 +412,10 @@ function editContentGroup(id) {
 function newContentGroup() {
 	log("newContentGroup", "Entering");
 	try {
-		//reset the form contents
+		// reset the form contents
 		$('#contentGroupForm').trigger("reset");
 
-		$('#contentgroup_errors').hide();
+		$('#cm_errors_container').hide();
 
 		$('#contentgroup_save_button').html('create');
 		// not using valid.fndtn.abide & invalid.fndtn.abide as it
@@ -456,7 +507,7 @@ function createContentGroup() {
 							try {
 								$('#contentgroup_errors').html(
 										getErrorMessages(text));
-								$('#contentgroup_errors').show();
+								$('#cm_errors_container').show();
 							} catch (err) {
 								handleError("submitContentGroup", err);
 							}
@@ -465,7 +516,7 @@ function createContentGroup() {
 							$('#contentgroup_errors')
 									.html(
 											'Unable to process the request. Please try again later');
-							$('#contentgroup_errors').show();
+							$('#cm_errors_container').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
@@ -473,10 +524,11 @@ function createContentGroup() {
 						$('#contentgroup_errors')
 								.html(
 										'Unable to process the request. Please try again later');
-						$('#contentgroup_errors').show();
+						$('#cm_errors_container').show();
 					},
 					complete : function(xhr, textStatus) {
-						$('#progress_bar_top, #progress_bar_bottom').css("width", "100%");
+						$('#progress_bar_top, #progress_bar_bottom').css(
+								"width", "100%");
 						$('#progress_bar_top, #progress_bar_bottom').hide();
 						$('.button').removeClass('disabled');
 						log(xhr.status);
@@ -540,7 +592,7 @@ function updateContentGroup() {
 							try {
 								$('#contentgroup_errors').html(
 										getErrorMessages(text));
-								$('#contentgroup_errors').show();
+								$('#cm_errors_container').show();
 							} catch (err) {
 								handleError("updateContentGroup", err);
 							}
@@ -549,7 +601,7 @@ function updateContentGroup() {
 							$('#contentgroup_errors')
 									.html(
 											'Unable to process the request. Please try again later');
-							$('#contentgroup_errors').show();
+							$('#cm_errors_container').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
@@ -557,10 +609,11 @@ function updateContentGroup() {
 						$('#contentgroup_errors')
 								.html(
 										'Unable to process the request. Please try again later');
-						$('#contentgroup_errors').show();
+						$('#cm_errors_container').show();
 					},
 					complete : function(xhr, textStatus) {
-						$('#progress_bar_top, #progress_bar_bottom').css("width", "100%");
+						$('#progress_bar_top, #progress_bar_bottom').css(
+								"width", "100%");
 						$('.button').removeClass('disabled');
 						log(xhr.status);
 					}
@@ -603,7 +656,7 @@ function deleteContentGroup(id) {
 										$('#contentgroup_errors')
 												.html(
 														'Unable to process the request. Please try again later');
-										$('#contentgroup_errors').show();
+										$('#cm_errors_container').show();
 									}
 								},
 								error : function(xhr, textStatus, errorThrown) {
@@ -611,7 +664,7 @@ function deleteContentGroup(id) {
 									$('#contentgroup_errors')
 											.html(
 													'Unable to process the request. Please try again later');
-									$('#contentgroup_errors').show();
+									$('#cm_errors_container').show();
 								}
 							});
 					jqxhr.always(function(msg) {

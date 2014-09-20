@@ -19,7 +19,7 @@ function setup() {
 		doc.setAttribute('data-useragent', navigator.userAgent);
 		// enable abide form validation
 		$(document).foundation('abide', 'events');
-		$('#signup_errors').hide();
+		$('#cm_errors_container').hide();
 		// not using valid.fndtn.abide & invalid.fndtn.abide as it
 		// causes the form to be submitted twice. Instead use the
 		// deprecated valid & invalid
@@ -35,6 +35,8 @@ function setup() {
 			$('#user_sign_up_submit_button').unbind();
 			window.location.href = '/';
 		});
+
+		$("#cm_errors_container").addClass("fadeInUp animated");
 	} catch (err) {
 		handleError("setup", err);
 	} finally {
@@ -42,7 +44,6 @@ function setup() {
 	}
 
 }
-
 
 function signup() {
 	log("signup", "Entering");
@@ -93,7 +94,7 @@ function signup() {
 								// login
 								$('#signup_errors')
 										.html(getErrorMessages(text));
-								$('#signup_errors').show();
+								$('#cm_errors_container').show();
 							} catch (err) {
 								handleError("signup", err);
 							}
@@ -102,7 +103,7 @@ function signup() {
 							$('#signup_errors')
 									.html(
 											'Unable to process the request. Please try again later');
-							$('#signup_errors').show();
+							$('#cm_errors_container').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
@@ -110,11 +111,12 @@ function signup() {
 						$('#signup_errors')
 								.html(
 										'Unable to process the request. Please try again later');
-						$('#signup_errors').show();
+						$('#cm_errors_container').show();
 
 					},
 					complete : function(xhr, textStatus) {
 						$('.meter').css("width", "100%");
+						$('#progress_bar').hide();
 						$('.button').removeClass('disabled');
 						log(xhr.status);
 					}

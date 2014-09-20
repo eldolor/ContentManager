@@ -6,10 +6,10 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@page
 	import="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"%><html>
-
-
-<div class="container va-align">
-	<a href="/site/terms">Terms</a>&nbsp;|&nbsp;<a href="/site/privacy">Privacy</a>
-	<p>&#169; Copyright Coconut Martini Inc.</p>
-	<img src="/resources/images/box/cube_footer.png" alt="cube" /> Box
+<div class="row" id="content_progress_bar">
+	<div class="large-12 columns">
+		<div class="progress radius">
+			<span class="meter" style="width: 40%; background-color: #5cb85c;">Loading...</span>
+		</div>
+	</div>
 </div>

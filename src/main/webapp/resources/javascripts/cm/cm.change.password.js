@@ -30,7 +30,7 @@ function setup() {
 			log('changePasswordForm: valid!');
 			changePassword();
 		});
-		$('#user_errors').hide();
+		$('#cm_errors_container').hide();
 
 		if (lIsRequestExpired == true) {
 			$('#user_change_password').hide();
@@ -44,6 +44,7 @@ function setup() {
 			$('#user_change_password').show();
 
 		}
+		$("#cm_errors_container").addClass("fadeInUp animated");
 
 	} catch (err) {
 		handleError("setup", err);
@@ -77,14 +78,14 @@ function changePassword() {
 					statusCode : {
 						200 : function() {
 							$('#user_message').show();
-							$('#user_errors').hide();
+							$('#cm_errors_container').hide();
 						},
 						503 : function() {
 							$('#user_message').hide();
 							$('#user_errors')
 									.html(
 											'Unable to process the request. Please try again later');
-							$('#user_errors').show();
+							$('#cm_errors_container').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
@@ -93,7 +94,7 @@ function changePassword() {
 						$('#user_errors')
 								.html(
 										'Unable to process the request. Please try again later');
-						$('#user_errors').show();
+						$('#cm_errors_container').show();
 					},
 					complete : function(xhr, textStatus) {
 						$('.meter').css("width", "100%");

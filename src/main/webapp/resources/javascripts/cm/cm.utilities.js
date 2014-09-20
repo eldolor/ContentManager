@@ -126,7 +126,23 @@ function getCurrentDisplayDate() {
 	}
 	log("getCurrentDisplayDate", "Exiting")
 }
-
+function getFormattedDisplayDate(transferDate, format) {
+	log("getDisplayDate", "Entering")
+	try {
+		if ((transferDate != null) && (transferDate != "")) {
+			var _date = moment(transferDate);
+			if (_date != null) {
+				return _date.format("\+" + format);
+			} else {
+				log("Unable to parse " + transferDate);
+				return transferDate;
+			}
+		}
+	} catch (err) {
+		handleError("getDisplayDate", err);
+	}
+	log("getDisplayDate", "Exiting")
+}
 function getDisplayDate(transferDate) {
 	log("getDisplayDate", "Entering")
 	try {

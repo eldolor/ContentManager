@@ -8,8 +8,8 @@
 	import="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"%><html>
 
 
-<link rel="stylesheet" href="/resources/stylesheets/foundation/foundation.css"
-	type="text/css" />
+<link rel="stylesheet"
+	href="/resources/stylesheets/foundation/foundation.css" type="text/css" />
 
 <!-- Begin Foundation Related -->
 <script type="text/javascript"
@@ -47,28 +47,32 @@
 	src="/resources/javascripts/jquery-plugins/jquery.dataTables.min.js"></script>
 <link href="/resources/stylesheets/demo_table.css" rel="stylesheet"
 	type="text/css" />
- --><!-- JTable -->
+ -->
+<!-- JTable -->
 
 <!-- Time Picker -->
 <script type="text/javascript"
 	src="/resources/javascripts/jquery-plugins/jquery-ui-sliderAccess.js"></script>
 <script type="text/javascript"
 	src="/resources/javascripts/jquery-plugins/jquery-ui-timepicker-addon.js"></script>
-<link href="/resources/stylesheets/jquery-plugins/jquery-ui-timepicker-addon.css"
+<link
+	href="/resources/stylesheets/jquery-plugins/jquery-ui-timepicker-addon.css"
 	rel="stylesheet" type="text/css" />
 <!-- Time Picker -->
 
 <!-- JPlayer -->
 <script type="text/javascript"
 	src="/resources/javascripts/jquery-plugins/jquery.jplayer.2.2.0.min.js"></script>
-<link href="/resources/stylesheets/jplayer/skin/blue.monday/jplayer.blue.monday.css"
+<link
+	href="/resources/stylesheets/jplayer/skin/blue.monday/jplayer.blue.monday.css"
 	rel="stylesheet" type="text/css" />
 <!-- JPlayer -->
 
 <!-- Scroll To  -->
 <!-- <script type="text/javascript"
 	src="/resources/javascripts/jquery-plugins/jquery.scrollto-1.4.5.min.js"></script>
- --><!-- Scroll To  -->
+ -->
+<!-- Scroll To  -->
 
 
 
@@ -79,13 +83,16 @@
 	src="/resources/javascripts/cm/cm.content.file.upload.js"></script>
 <script type="text/javascript"
 	src="/resources/javascripts/jquery-plugins/jquery.filedrop.js"></script>
-<link href="/resources/stylesheets/cm/content.dropbox.css" media="screen"
-	rel="stylesheet" type="text/css" />
+<link href="/resources/stylesheets/cm/content.dropbox.css"
+	media="screen" rel="stylesheet" type="text/css" />
 <!-- Jquery File drop-->
 
 <!-- Custom Scripts -->
-<script type="text/javascript" src="/resources/javascripts/cm/cm.utilities.js"></script>
-<script type="text/javascript" src="/resources/javascripts/cm/cm.globals.js"></script>
+<script type="text/javascript"
+	src="/resources/javascripts/cm/cm.utilities.js"></script>
+<script type="text/javascript"
+	src="/resources/javascripts/cm/cm.globals.js"></script>
+<link href="/resources/stylesheets/cm/style.css" rel="stylesheet">
 <!-- Custom Scripts -->
 
 <!-- Google Analytics -->
@@ -150,13 +157,22 @@
 
 
 <!-- Theme Related -->
-    <link href='http://fonts.googleapis.com/css?family=Raleway:400,300,100' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="/resources/stylesheets/foundation-icons/foundation-icons.css" />
-    <link href="/resources/stylesheets/box/animate.css" rel="stylesheet" />
-    <link href="/resources/stylesheets/box/owl.carousel.css" rel="stylesheet">
-    <link href="/resources/stylesheets/box/owl.theme.css" rel="stylesheet">
-    <link href="/resources/stylesheets/box/style.css" rel="stylesheet">
-    <script type="text/javascript" src="/resources/javascripts/jquery-plugins/jquery.simple-text-rotator.js"></script>
-    <script src="/resources/javascripts/vendor/waypoints.min.js"></script>
-    <script src="/resources/javascripts/vendor/owl.carousel.min.js"></script>
-   <!-- End Theme Related -->
+<link href='https://fonts.googleapis.com/css?family=Raleway:400,300,100'
+	rel='stylesheet' type='text/css'>
+<link rel="stylesheet"
+	href="/resources/stylesheets/foundation-icons/foundation-icons.css" />
+<link href="/resources/stylesheets/box/animate.css" rel="stylesheet" />
+<link href="/resources/stylesheets/box/owl.carousel.css"
+	rel="stylesheet">
+<link href="/resources/stylesheets/box/owl.theme.css" rel="stylesheet">
+<link href="/resources/stylesheets/box/style.css" rel="stylesheet">
+<script type="text/javascript"
+	src="/resources/javascripts/jquery-plugins/jquery.simple-text-rotator.js"></script>
+<script src="/resources/javascripts/vendor/waypoints.min.js"></script>
+<script src="/resources/javascripts/vendor/owl.carousel.min.js"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+<script type="text/javascript"
+	src="/resources/javascripts/jquery-plugins/jquery.mixitup.min.js"></script>
+
+<!-- End Theme Related -->

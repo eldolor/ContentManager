@@ -19,13 +19,10 @@ function setup() {
 		doc.setAttribute('data-useragent', navigator.userAgent);
 		// enable abide form validation
 		$(document).foundation('abide', 'events');
-		setupLeftNavBar();
-		setupBreadcrumbs();
-		$('#login_errors').hide();
 
 		if (mErrors != null) {
 			$('#login_errors').html(getErrorMessage("login_failure", mErrors));
-			$('#login_errors').show();
+			$('#cm_errors_container').show();
 		}
 		$('#user_sign_in_cancel_button').unbind();
 		$('#user_sign_in_cancel_button').bind('click', function() {
@@ -56,6 +53,10 @@ function setup() {
 		}).on('valid', function() {
 			submitForgotPasswordRequest();
 		});
+
+		$("#cm_errors_container").addClass("fadeInUp animated");
+		$("#user_forgot_password_errors_container").addClass(
+				"fadeInUp animated");
 	} catch (err) {
 		handleError("setup", err);
 	} finally {
@@ -64,33 +65,6 @@ function setup() {
 
 }
 
-function setupLeftNavBar() {
-	log("setupLeftNavBar", "Entering");
-	try {
-		$('#left_nav_bar')
-				.empty()
-				.html(
-						'<li><a id=\"left_nav_bar_link_1\" href=\"javascript:void(0);\" >Sign In</a></li>');
-
-	} catch (err) {
-		handleError("setupLeftNavBar", err);
-	} finally {
-		log("setupLeftNavBar", "Exiting");
-	}
-}
-
-function setupBreadcrumbs() {
-	log("setupBreadcrumbs", "Entering");
-	try {
-		var lHtml = $('#breadcrumbs').html();
-		$('#breadcrumbs').html(lHtml + "<a href=\"#\">Sign In</a>");
-
-	} catch (err) {
-		handleError("setupBreadcrumbs", err);
-	} finally {
-		log("setupBreadcrumbs", "Exiting");
-	}
-}
 function login() {
 	log("login", "Entering");
 	try {
@@ -134,7 +108,7 @@ function loginAsync() {
 						400 : function(text) {
 							try {
 								$('#login_errors').html(getErrorMessages(text));
-								$('#login_errors').show();
+								$('#cm_errors_container').show();
 							} catch (err) {
 								handleError("login", err);
 							}
@@ -143,7 +117,7 @@ function loginAsync() {
 							$('#login_errors')
 									.html(
 											'Unable to process the request. Please try again later');
-							$('#login_errors').show();
+							$('#cm_errors_container').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
@@ -151,7 +125,7 @@ function loginAsync() {
 						$('#login_errors')
 								.html(
 										'Unable to process the request. Please try again later');
-						$('#login_errors').show();
+						$('#cm_errors_container').show();
 					},
 					complete : function(xhr, textStatus) {
 						log(xhr.status);
@@ -196,7 +170,7 @@ function submitForgotPasswordRequest() {
 							$('#forgot_password_errors')
 									.html(
 											'Unable to process the request. Please try again later');
-							$('#forgot_password_errors').show();
+							$('#user_forgot_password_errors_container').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
@@ -204,7 +178,7 @@ function submitForgotPasswordRequest() {
 						$('#forgot_password_errors')
 								.html(
 										'Unable to process the request. Please try again later');
-						$('#forgot_password_errors').show();
+						$('#user_forgot_password_errors_container').show();
 					}
 				});
 

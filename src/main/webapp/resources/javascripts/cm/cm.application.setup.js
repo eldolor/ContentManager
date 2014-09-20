@@ -22,10 +22,11 @@ function setup() {
 		$(document).foundation('abide', 'events');
 		$(document).foundation('alert', 'events');
 
-		setupLeftNavBar();
+		setupContextNavBar();
 		setupBreadcrumbs();
 		displayAnyMessage();
 		getApplications();
+		$("#cm_errors_container").addClass("fadeInUp animated");
 	} catch (err) {
 		handleError("setup", err);
 	} finally {
@@ -33,15 +34,11 @@ function setup() {
 	}
 }
 
-function setupLeftNavBar() {
-	log("setupLeftNavBar", "Entering");
+function setupContextNavBar() {
+	log("setupContextNavBar", "Entering");
 	try {
-		$('#left_nav_bar')
-				.empty()
-				.html(
-						'<li><a id=\"left_nav_bar_link_1\" href=\"javascript:void(0);\" >Create Application</a></li>');
-		$('#left_nav_bar_link_1').unbind();
-		$('#left_nav_bar_link_1').click(function() {
+		$('#create_application').unbind();
+		$('#create_application').click(function() {
 			// $('#application_create_modal').foundation('reveal',
 			// 'open');
 			newApplication();
@@ -51,9 +48,9 @@ function setupLeftNavBar() {
 		});
 
 	} catch (err) {
-		handleError("setupLeftNavBar", err);
+		handleError("setupContextNavBar", err);
 	} finally {
-		log("setupLeftNavBar", "Exiting");
+		log("setupContextNavBar", "Exiting");
 	}
 }
 
@@ -72,6 +69,5 @@ function setupBreadcrumbs() {
 		log("setupBreadcrumbs", "Exiting");
 	}
 }
-
 
 /** *End Application***************************************** */

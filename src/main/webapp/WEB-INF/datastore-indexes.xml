@@ -163,5 +163,11 @@
 		<property name="type" direction="asc" />
 		<property name="timeCreatedMs" direction="desc" />
 	</datastore-index>
+	<datastore-index kind="Message" ancestor="false"
+		source="manual">
+		<property name="deleted" direction="asc" />
+		<property name="type" direction="asc" />
+		<property name="timeCreatedMs" direction="desc" />
+	</datastore-index>
 
 </datastore-indexes>

@@ -1,0 +1,57 @@
+.switch-default {
+    background-color: #1fad9d;
+    border-color: #1fad9d;
+    border-bottom: 4px solid #0A776B;
+    padding: 15px;
+    margin: 10px auto;
+    color: #fff;
+}
+
+    .switch-default:hover, .switch-default:focus, .switch-default:active, .switch-default.active, .open .dropdown-toggle.switch-default {
+        color: #fff;
+        background-color: #333d46;
+        border-color: #222A31;
+        -webkit-transition: all 0.35s ease-in-out;
+        -moz-transition: all 0.35s ease-in-out;
+        -o-transition: all 0.35s ease-in-out;
+        transition: all 0.35s ease-in-out;
+    }
+
+.switch:hover, .switch:focus {
+    color: #fff;
+    text-decoration: none;
+}
+
+#free {
+    background: #1fad9d;
+    width: 100%;
+    height: 150px;
+    padding: 10px;
+}
+
+#micro {
+    background: #12A796;
+    width: 100%;
+    height: 150px;
+    padding: 10px;
+}
+
+#small {
+    background: #12A796;
+    width: 100%;
+    height: 150px;
+    padding: 10px;
+}
+
+#medium {
+    background: #1fad9d;
+    width: 100%;
+    height: 150px;
+    padding: 10px;
+}
+#large {
+    background: #1fad9d;
+    width: 100%;
+    height: 150px;
+    padding: 10px;
+}

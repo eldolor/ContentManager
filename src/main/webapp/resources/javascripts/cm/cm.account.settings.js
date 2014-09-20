@@ -53,7 +53,7 @@ function setup() {
 			log('changePasswordForm: valid!');
 			changePassword();
 		});
-		$('#change_password_errors').hide();
+		$('#cm_errors_container').hide();
 
 		// forgot password
 		$('#user_forgot_password_errors').hide();
@@ -90,6 +90,9 @@ function setup() {
 		$('#payment_info_update_errors').hide();
 
 		Stripe.setPublishableKey('pk_test_4aEi34FWLvjmVHc14fQoUQPZ');
+		$("#cm_errors_container").addClass("fadeInUp animated");
+		$("#user_forgot_password_errors_container").addClass(
+				"fadeInUp animated");
 
 	} catch (err) {
 		handleError("setup", err);
@@ -297,13 +300,14 @@ function changePassword() {
 					statusCode : {
 						200 : function() {
 							$('#user_message').show();
-							$('#change_password_errors').hide();
+							$('#cm_errors_container').hide();
 						},
 						400 : function(text) {
 							try {
-								$('#user_message').error();
+								$('#user_message').hide();
 								$('#change_password_errors').html(
 										getErrorMessages(text));
+								$('#cm_errors_container').show();
 							} catch (err) {
 								handleError("updateContentEnabled", err);
 							}
@@ -313,7 +317,7 @@ function changePassword() {
 							$('#change_password_errors')
 									.html(
 											'Unable to process the request. Please try again later');
-							$('#change_password_errors').show();
+							$('#cm_errors_container').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
@@ -322,13 +326,13 @@ function changePassword() {
 						$('#change_password_errors')
 								.html(
 										'Unable to process the request. Please try again later');
-						$('#change_password_errors').show();
+						$('#cm_errors_container').show();
 					},
 					complete : function(xhr, textStatus) {
 						$('.meter').css("width", "100%");
 						$('.button').removeClass('disabled');
 						$('#changePasswordForm').trigger("reset");
-
+						$('#progress_bar').hide();
 						log(xhr.status);
 					}
 
@@ -375,7 +379,7 @@ function submitForgotPasswordRequest() {
 							$('#forgot_password_errors')
 									.html(
 											'Unable to process the request. Please try again later');
-							$('#forgot_password_errors').show();
+							$('#user_forgot_password_errors_container').show();
 						}
 					},
 					error : function(xhr, textStatus, errorThrown) {
@@ -383,7 +387,7 @@ function submitForgotPasswordRequest() {
 						$('#forgot_password_errors')
 								.html(
 										'Unable to process the request. Please try again later');
-						$('#forgot_password_errors').show();
+						$('#user_forgot_password_errors_container').show();
 					}
 				});
 
@@ -412,7 +416,7 @@ function planUpdate(pPlanName, pProgressBarName, pPlanCharge) {
 			async : true,
 			statusCode : {
 				200 : function() {
-					location.reload('/account');
+					location.reload('/account/plans');
 				},
 				409 : function(errors) {
 					log(errors);
@@ -452,8 +456,8 @@ function getStripeCustomer() {
 						200 : function(pStripeCustomer) {
 							// save it as a global for use elsewhere
 							mStripeCustomer = pStripeCustomer;
-							log("Stripe Customer "
-									+ JSON.stringify(pStripeCustomer, null, 2));
+							// log("Stripe Customer "
+							// + JSON.stringify(pStripeCustomer, null, 2));
 							var lCardInfoHtml = pStripeCustomer.cardBrand
 									+ ' card ending in '
 									+ pStripeCustomer.cardLast4;

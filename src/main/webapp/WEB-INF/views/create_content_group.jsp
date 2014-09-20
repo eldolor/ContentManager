@@ -9,111 +9,88 @@
 
 <!-- Begin Content Group -->
 <div id="content_group_create" style="display: none">
-	<form id="contentGroupForm" name="contentGroupForm" data-abide="ajax">
-		<fieldset>
-			<legend>Content Group Setup</legend>
+	<div class="large-12 columns">
+		<h3 class="gray">Content Group Setup</h3>
+		<form role="form" id="contentGroupForm" name="contentGroupForm"
+			data-abide="ajax">
 			<input type="hidden" id="application_id" name="application_id" /> <input
 				type="hidden" id="contentgroup_id" name="contentgroup_id" /> <input
 				type="hidden" />
 
-			<div class="row" id="progress_bar_top" style="display: none">
-				<div class="large-12 columns">
-					<div class="progress radius">
-						<span class="meter" style="width: 40%"></span>
-					</div>
+			<div id="progress_bar_top" style="display: none">
+				<div class="progress radius">
+					<span class="meter" style="width: 40%; background-color: #5cb85c;">creating/updating...</span>
 				</div>
 			</div>
-			<div class="row">
-				<div class="large-12 columns">
-					<div class="name-field">
-						<label>Name <small>required</small><input type="text"
-							id="contentgroup_name" name="contentgroup_name"
-							required="required" placeholder="My First Content Group" />
-						</label> 
-					</div>
-				</div>
+			<div>
+				<label>Name <small>required</small><input type="text"
+					class="form-control" id="contentgroup_name"
+					name="contentgroup_name" required="required"
+					placeholder="name of the content group" />
+				</label>
 			</div>
-			<div class="row">
-				<div class="large-12 columns">
-					<div class="input-wrapper">
-						<label>Description <textarea rows="5"
-								id="contentgroup_description" name="contentgroup_description"
-								placeholder="A short description of the content group"></textarea>
-						</label>
-					</div>
-				</div>
+			<div>
+				<label>Description <textarea rows="5" class="form-control"
+						id="contentgroup_description" name="contentgroup_description"
+						placeholder="short description of the content group"></textarea>
+				</label>
 			</div>
-			<div class="row">
-				<div class="large-12 columns">
-					<div class="input-wrapper">
-						<label>Start Date <small>required</small>
-							<div id="contentgroup_start_datepicker">
-								<input type="text" id="contentgroup_start_date"
-									name="contentgroup_start_date" required="required"
-									pattern="month_day_year" /> <br /> <small class="error">Please
-									enter a valid start date MM/DD/YYYY</small>
-							</div>
-						</label>
+			<div>
+				<label>Start Date <small>required</small>
+					<div id="contentgroup_start_datepicker">
+						<input type="text" id="contentgroup_start_date"
+							class="form-control" name="contentgroup_start_date"
+							required="required" pattern="month_day_year" /> <br /> <small
+							class="error">Please enter a valid start date MM/DD/YYYY</small>
 					</div>
-				</div>
+				</label>
 			</div>
 
-			<div class="row">
-				<div class="large-12 columns">
-					<div class="input-wrapper">
-						<label>End Date<span data-tooltip class="has-tip"
-							title="Specify an End Date only if you want the content to expire after a certain date, or else leave it empty."><img
-								alt="question_mark" src="/resources/images/question_mark.png"></span>
-							<div id="contentgroup_end_datepicker">
-								<input type="text" id="contentgroup_end_date"
-									name="contentgroup_end_date" pattern="month_day_year" /> <br />
-								<small class="error">Please enter a valid end date
-									MM/DD/YYYY</small>
-							</div>
-						</label>
+			<div>
+				<label>End Date<span data-tooltip class="has-tip"
+					title="Specify an End Date only if you want the content to expire after a certain date, or else leave it empty.">&nbsp;<i
+						class="fi-info light_gray"></i></span>
+					<div id="contentgroup_end_datepicker">
+						<input type="text" id="contentgroup_end_date" class="form-control"
+							name="contentgroup_end_date" pattern="month_day_year" /> <br />
+						<small class="error">Please enter a valid end date
+							MM/DD/YYYY</small>
 					</div>
-				</div>
+				</label>
 			</div>
 
-			<div class="row">
-				<div class="large-12 columns">
-					<label>Enabled<span data-tooltip class="has-tip"
-						title="Specify if the content group is enabled. This content group is enabled by default."><img
-							alt="question_mark" src="/resources/images/question_mark.png"></span></label>
+			<div>
+				<label><span data-tooltip class="has-tip"
+					title="Specify if the application is enabled. This content group is enabled by default.">Enabled&nbsp;<i
+						class="fi-info light_gray"></i></span></label>
+			</div>
+			<div>
+				<!-- <input id="contentgroup_enabled" type="checkbox"> -->
+				<div class="switch radius">
+					<input id="contentgroup_enabled" class="form-control"
+						type="checkbox" checked="checked"> <label
+						for="contentgroup_enabled">Enabled</label>
 				</div>
 			</div>
-			<div class="row">
-				<div class="large-12 columns">
-					<!-- <input id="contentgroup_enabled" type="checkbox"> -->
-					<div class="switch radius">
-						<input id="contentgroup_enabled" type="checkbox" checked="checked">
-						<label for="contentgroup_enabled">Enabled</label>
-					</div>
+			<div id="cm_errors_container" style="display: none">
+				<ul id="vision">
+					<li><div>
+							<i class="fi-alert"></i>
+						</div> <span id="contentgroup_errors"></span>
+						<p class="clearfix"></p></li>
+				</ul>
+			</div>
+			<div>
+				<button id="contentgroup_save_button"
+					class="button radius btn-default">create</button>
+				<a href="javascript:void(0);" id="contentgroup_cancel_button">cancel</a>
+			</div>
+			<div id="progress_bar_bottom" style="display: none">
+				<div class="progress radius">
+					<span class="meter" style="width: 40%; background-color: #5cb85c;">creating/updating...</span>
 				</div>
 			</div>
-			<div>&nbsp;</div>
-			<div class="row">
-				<div class="large-12 columns">
-					<span id="contentgroup_errors" class="alert radius label"
-						style="display: none"></span>
-				</div>
-			</div>
-			<div>&nbsp;</div>
-			<div class="row">
-				<div class="large-12 columns">
-					<button id="contentgroup_save_button" class="button radius">create</button>
-					<a href="javascript:void(0);" id="contentgroup_cancel_button">cancel</a>
-				</div>
-			</div>
-			<div class="row" id="progress_bar_bottom" style="display: none">
-				<div class="large-12 columns">
-					<label>Loading...</label><br>
-					<div class="progress radius">
-						<span class="meter" style="width: 40%"></span>
-					</div>
-				</div>
-			</div>
-		</fieldset>
-	</form>
+		</form>
+	</div>
 </div>
 <!-- End Content Group -->

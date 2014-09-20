@@ -1,15 +1,62 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-	pageEncoding="ISO-8859-1"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+
+<!doctype html>
+<!--[if IE 9]><html class="lt-ie10" lang="en" > <![endif]-->
+<html class="no-js" lang="en"
+	data-useragent="Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)">
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@ taglib prefix="sec"
+	uri="http://www.springframework.org/security/tags"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@page
+	import="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"%>
+
 <head>
-<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-<meta http-equiv="CACHE-CONTROL" content="NO-CACHE" />
-<link href="resources/css/main.css" media="screen" rel="stylesheet"
-	type="text/css" />
-<title>Uh-oh!</title>
+<jsp:include page="meta_tags.jsp"></jsp:include>
+
+<title>Content Manager</title>
+<jsp:include page="resources.jsp" flush="true"></jsp:include>
+<script>
+	$(document).foundation();
+	$(function() {
+		$("#error .visible").css('visibility', 'visible');
+		$("#error .visible").addClass("fadeInDown animated");
+		$("#error .btn").addClass("fadeInUp animated");
+	});
+</script>
 </head>
 <body>
-	<img id="error" alt="uh-oh" src="/resources/images/website-error.jpg">
+
+
+	<jsp:include page="common.jsp"></jsp:include>
+	<jsp:include page="top_bar.jsp"></jsp:include>
+	<section id="error">
+		<div class="overlay display-table" style="height: 536px;">
+			<div class="row text-center va-align visible">
+				<br> <i class="fa fa-chain-broken green"
+					style="font-size: 145px;"></i>
+				<h1 class="green">Uh-Oh!</h1>
+
+				<div style="width: 50%; margin: auto;">
+					<h5 class="white" style="line-height: 30px;">Something&apos;s
+						not right!</h5>
+					<a href="/" class="link">Go Home</a>
+				</div>
+
+			</div>
+		</div>
+		<br> <br>
+	</section>
+
+	<br>
+	<section id="footer">
+
+		<jsp:include page="footer.jsp"></jsp:include>
+	</section>
+
+
 </body>
 </html>
+
+

@@ -239,7 +239,7 @@ public class StripeController {
 				model.addAttribute("errors", lSb.toString());
 				return new ModelAndView("account_settings", model);
 			} else {
-				return new ModelAndView("redirect:/account");
+				return new ModelAndView("redirect:/account/plans");
 			}
 
 		} finally {
@@ -340,7 +340,7 @@ public class StripeController {
 				model.addAttribute("errors", lSb.toString());
 				return new ModelAndView("account_settings", model);
 			} else {
-				return new ModelAndView("redirect:/account");
+				return new ModelAndView("redirect:/account/plans");
 			}
 
 		} finally {

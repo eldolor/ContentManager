@@ -202,7 +202,7 @@ public class MessageController {
 						+ pStripeCustomer.getCardBrand()
 						+ " card ending in "
 						+ pStripeCustomer.getCardLast4()
-						+ " is expiring soon. Please click <a href=\"/account\">here</a> to update your credit card information.");
+						+ " is expiring soon. Please click <a href=\"/account/billing\">here</a> to update your credit card information.");
 				lMessage.setAccountId(pLoggedInUser.getAccountId());
 				lMessage.setUserId(pLoggedInUser.getId());
 				lMessage.setUserName(pLoggedInUser.getUsername());
@@ -242,7 +242,7 @@ public class MessageController {
 						+ pStripeCustomer.getCardBrand()
 						+ " card ending in "
 						+ pStripeCustomer.getCardLast4()
-						+ " has expired. Please click <a href=\"/account\">here</a> to update your credit card information.");
+						+ " has expired. Please click <a href=\"/account/billing\">here</a> to update your credit card information.");
 				lMessage.setAccountId(pLoggedInUser.getAccountId());
 				lMessage.setUserId(pLoggedInUser.getId());
 				lMessage.setUserName(pLoggedInUser.getUsername());

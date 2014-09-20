@@ -1,0 +1,124 @@
+/*-------------------------
+	Dropbox Element
+--------------------------*/
+
+
+
+#reminder_ad_dropbox{
+	background:url('resources/images/background_tile_3.jpg');
+	
+	border-radius:3px;
+	position: relative;
+	margin:10px auto 20px;
+	min-height: 150px;
+	overflow: hidden;
+	padding-bottom: 40px;
+    width: 200px;
+	
+	box-shadow:0 0 4px rgba(0,0,0,0.3) inset,0 -3px 2px rgba(0,0,0,0.1);
+}
+
+
+#reminder_ad_dropbox .message{
+	font-size: 11px;
+    text-align: center;
+    padding-top:60px;
+    display: block;
+}
+
+#reminder_ad_dropbox .message i{
+	color:#ccc;
+	font-size:10px;
+}
+
+#reminder_ad_dropbox:before{
+	border-radius:3px 3px 0 0;
+}
+
+
+
+/*-------------------------
+	Image Previews
+--------------------------*/
+
+
+
+#reminder_ad_dropbox .preview{
+	width:125px;
+	height: 115px;
+	float:left;
+	margin: 25px 0 0 30px;
+	position: relative;
+	text-align: center;
+}
+
+#reminder_ad_dropbox .preview img{
+	max-width: 120px;
+	max-height:90px;
+	border:3px solid #fff;
+	display: block;
+	
+	box-shadow:0 0 2px #000;
+	-webkit-box-shadow:0 0 2px #000;
+	-moz-box-shadow:0 0 2px #000;
+}
+
+#reminder_ad_dropbox .imageHolder{
+	display: inline-block;
+	position:relative;
+}
+
+#reminder_ad_dropbox .uploaded{
+	position: absolute;
+	top:0;
+	left:0;
+	height:100%;
+	width:100%;
+	background: url('../images/done.png') no-repeat center center rgba(255,255,255,0.5);
+	display: none;
+}
+
+#reminder_ad_dropbox .preview.done .uploaded{
+	display: block;
+}
+
+
+
+/*-------------------------
+	Progress Bars
+--------------------------*/
+
+#reminder_ad_dropbox .progressHolder{
+	position: absolute;
+	background-color:#252f38;
+	height:12px;
+	width:100%;
+	left:0;
+	bottom: 0;
+	
+	box-shadow:0 0 2px #000;
+	-webkit-box-shadow:0 0 2px #000;
+	-moz-box-shadow:0 0 2px #000;
+}
+
+#reminder_ad_dropbox .progress{
+	background-color:#2586d0;
+	position: absolute;
+	height:100%;
+	left:0;
+	width:0;
+	
+	box-shadow: 0 0 1px rgba(255, 255, 255, 0.4) inset;
+	-webkit-box-shadow: 0 0 1px rgba(255, 255, 255, 0.4) inset;
+	-moz-box-shadow: 0 0 1px rgba(255, 255, 255, 0.4) inset;
+	
+	-moz-transition:0.25s;
+	-webkit-transition:0.25s;
+	-o-transition:0.25s;
+	transition:0.25s;
+}
+
+#reminder_ad_dropbox .preview.done .progress{
+	width:100% !important;
+}
+

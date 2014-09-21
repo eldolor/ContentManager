@@ -1,7 +1,7 @@
 package com.cm.config;
 
 public enum CanonicalApplicationQuota {
-	LARGE(20), MEDIUM(15), SMALL(10), MICRO(5), FREE(1);
+	LARGE(Integer.MAX_VALUE), MEDIUM(Integer.MAX_VALUE), SMALL(Integer.MAX_VALUE), MICRO(Integer.MAX_VALUE), FREE(Integer.MAX_VALUE);
 
 	private int value;
 

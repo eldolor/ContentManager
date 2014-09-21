@@ -612,6 +612,10 @@ public class UserManagementController {
 			}
 			// always
 			response.setStatus(HttpServletResponse.SC_ACCEPTED);
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting processForgotPasswordRequest");
@@ -762,6 +766,11 @@ public class UserManagementController {
 				return null;
 
 			}
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting processForgotPassword");

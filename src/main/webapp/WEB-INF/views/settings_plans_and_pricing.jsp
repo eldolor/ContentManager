@@ -79,7 +79,7 @@
 				<div class="package_details">
 					<div class="package_feature">
 						<span>Bandwidth</span>
-						<div>1GB per month</div>
+						<div>100GB per month</div>
 					</div>
 					<br />
 					<div class="package_feature">
@@ -87,10 +87,6 @@
 						<div>20GB</div>
 					</div>
 					<br />
-					<div class="package_feature">
-						<span>Flag</span>
-						<div>20GB</div>
-					</div>
 					<c:choose>
 						<c:when
 							test="${isSubscribed == false || subscribedCanonicalPlanName == canonicalPlanNameFree}">
@@ -124,18 +120,14 @@
 				<div class="package_details">
 					<div class="package_feature">
 						<span>Bandwidth</span>
-						<div>2GB per month</div>
+						<div>500GB per month</div>
 					</div>
 					<br>
 					<div class="package_feature">
 						<span>Storage</span> <i class="fa fa-cloud green"></i>
-						<div>20GB</div>
+						<div>40GB</div>
 					</div>
 					<br>
-					<div class="package_feature">
-						<span>Flag</span>
-						<div>20GB</div>
-					</div>
 					<c:choose>
 						<c:when test="${isUpdateCCInfo == true || isSubscribed == false}">
 							<form id="subscribePlanForm" name="subscribePlanForm"
@@ -192,18 +184,14 @@
 				<div class="package_details">
 					<div class="package_feature">
 						<span>Bandwidth</span>
-						<div>20GB</div>
+						<div>1TB per month</div>
 					</div>
 					<br>
 					<div class="package_feature">
 						<span>Storage</span> <i class="fa fa-cloud"></i>
-						<div>20GB</div>
+						<div>80GB</div>
 					</div>
 					<br>
-					<div class="package_feature">
-						<span>Flag</span> <i class="fa fa-flag"></i>
-						<div>20GB</div>
-					</div>
 					<c:choose>
 						<c:when test="${isUpdateCCInfo == true||isSubscribed == false}">
 							<form id="subscribePlanForm" name="subscribePlanForm"
@@ -259,18 +247,14 @@
 				<div class="package_details">
 					<div class="package_feature">
 						<span>Bandwidth</span>
-						<div>20GB</div>
+						<div>1.5TB per month</div>
 					</div>
 					<br>
 					<div class="package_feature">
 						<span>Storage</span>
-						<div>20GB</div>
+						<div>160GB</div>
 					</div>
 					<br>
-					<div class="package_feature">
-						<span>Flag</span>
-						<div>20GB</div>
-					</div>
 					<c:choose>
 						<c:when test="${isUpdateCCInfo == true || isSubscribed == false}">
 							<form id="subscribePlanForm" name="subscribePlanForm"
@@ -326,18 +310,14 @@
 				<div class="package_details">
 					<div class="package_feature">
 						<span>Bandwidth</span>
-						<div>20GB</div>
+						<div>2TB per month</div>
 					</div>
 					<br>
 					<div class="package_feature">
 						<span>Storage</span>
-						<div>20GB</div>
+						<div>320GB</div>
 					</div>
 					<br>
-					<div class="package_feature">
-						<span>Flag</span>
-						<div>20GB</div>
-					</div>
 					<c:choose>
 						<c:when test="${isUpdateCCInfo == true || isSubscribed == false}">
 							<form id="subscribePlanForm" name="subscribePlanForm"

@@ -411,4 +411,27 @@ function validateEmail(pEmail) {
 		return false;
 	}
 }
+
+function convertBytes(pBytes) {
+	var lResponse = '';
+	var lInKB = (pBytes / 1024);
+	var lInMB = ((pBytes / 1024) / 1024);
+	var lInGB = (((pBytes / 1024) / 1024) / 1024);
+	var lInTB = ((((pBytes / 1024) / 1024) / 1024) / 1024);
+
+	// calculate
+	if (lInKB < 1) {
+		lResponse = '< 1KB';
+	} else if ((lInKB >= 1) && (lInMB < 1)) {
+		lResponse = Math.round(lInKB) + 'KB';
+	} else if ((lInMB >= 1) && (lInGB < 1)) {
+		lResponse = lInMB.toFixed(2) + 'MB';
+	} else if ((lInGB >= 1) && (lInTB < 1)) {
+		lResponse = lInGB.toFixed(2) + 'GB';
+	} else if (lInTB >= 1) {
+		lResponse = lInTB.toFixed(2) + 'TB';
+	}
+
+	return lResponse;
+}
 /** End Utilities ******************************** */

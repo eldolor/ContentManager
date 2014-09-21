@@ -6,6 +6,7 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import com.cm.config.CanonicalApplicationQuota;
+import com.cm.config.CanonicalBandwidthQuota;
 import com.cm.config.CanonicalPlanName;
 import com.cm.config.CanonicalStorageQuota;
 
@@ -25,6 +26,8 @@ public class Quota {
 	// default to free
 	@Persistent
 	private Long storageLimitInBytes = CanonicalStorageQuota.FREE.getValue();
+	@Persistent
+	private Long bandwidthLimitInBytes = CanonicalBandwidthQuota.FREE.getValue();
 
 	@Persistent
 	private Integer applicationLimit = CanonicalApplicationQuota.FREE
@@ -113,6 +116,14 @@ public class Quota {
 
 	public void setStorageLimitInBytes(Long storageLimitInBytes) {
 		this.storageLimitInBytes = storageLimitInBytes;
+	}
+
+	public Long getBandwidthLimitInBytes() {
+		return bandwidthLimitInBytes;
+	}
+
+	public void setBandwidthLimitInBytes(Long bandwidthLimitInBytes) {
+		this.bandwidthLimitInBytes = bandwidthLimitInBytes;
 	}
 
 }

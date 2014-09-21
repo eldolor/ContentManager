@@ -527,45 +527,50 @@ function editContent(id) {
 	}
 }
 function getDisplayUpgradeMessage(pStorageQuota) {
-	var lAvailableStorageQuotaMessage = '';
-	var lAvailableStorageQuotaInKB = ((pStorageQuota.storageLimitInBytes - pStorageQuota.storageUsedInBytes) / 1024);
-	var lAvailableStorageQuotaInMB = (((pStorageQuota.storageLimitInBytes - pStorageQuota.storageUsedInBytes) / 1024) / 1024);
-	var lAvailableStorageQuotaInGB = ((((pStorageQuota.storageLimitInBytes - pStorageQuota.storageUsedInBytes) / 1024) / 1024) / 1024);
-
-	// calculate
-	if (lAvailableStorageQuotaInKB < 1) {
-		lAvailableStorageQuotaMessage = '< 1KB';
-	} else if ((lAvailableStorageQuotaInKB >= 1)
-			&& (lAvailableStorageQuotaInMB < 1)) {
-		lAvailableStorageQuotaMessage = Math.round(lAvailableStorageQuotaInKB)
-				+ 'KB';
-	} else if ((lAvailableStorageQuotaInMB >= 1)
-			&& (lAvailableStorageQuotaInGB < 1)) {
-		lAvailableStorageQuotaMessage = lAvailableStorageQuotaInMB.toFixed(2)
-				+ 'MB';
-	} else if (lAvailableStorageQuotaInGB >= 1) {
-		lAvailableStorageQuotaMessage = lAvailableStorageQuotaInGB.toFixed(2)
-				+ 'GB';
-	}
-	var lPlanStorageQuotaMessage = '';
-	var lPlanStorageQuotaInKB = ((pStorageQuota.storageLimitInBytes) / 1024);
-	var lPlanStorageQuotaInMB = (((pStorageQuota.storageLimitInBytes) / 1024) / 1024);
-	var lPlanStorageQuotaInGB = ((((pStorageQuota.storageLimitInBytes) / 1024) / 1024) / 1024);
-
-	// calculate
-	if (lPlanStorageQuotaInKB < 1) {
-		lPlanStorageQuotaMessage = '< 1KB';
-	} else if ((lPlanStorageQuotaInKB >= 1) && (lPlanStorageQuotaInMB < 1)) {
-		lPlanStorageQuotaMessage = Math.round(lPlanStorageQuotaInKB) + 'KB';
-	} else if ((lPlanStorageQuotaInMB >= 1) && (lPlanStorageQuotaInGB < 1)) {
-		lPlanStorageQuotaMessage = lPlanStorageQuotaInMB.toFixed(2) + 'MB';
-	} else if (lPlanStorageQuotaInGB >= 1) {
-		lPlanStorageQuotaMessage = lPlanStorageQuotaInGB.toFixed(2) + 'GB';
-	}
-	var lPlanStorageQuotaInMB = Math
-			.round(((pStorageQuota.storageLimitInBytes) / 1024) / 1024);
-	lPlanStorageQuotaInMB = (lPlanStorageQuotaInMB < 1) ? 1
-			: lPlanStorageQuotaInMB;
+	var lAvailableStorageQuotaMessage = convertBytes((pStorageQuota.storageLimitInBytes - pStorageQuota.storageUsedInBytes));
+	// var lAvailableStorageQuotaInKB = ((pStorageQuota.storageLimitInBytes -
+	// pStorageQuota.storageUsedInBytes) / 1024);
+	// var lAvailableStorageQuotaInMB = (((pStorageQuota.storageLimitInBytes -
+	// pStorageQuota.storageUsedInBytes) / 1024) / 1024);
+	// var lAvailableStorageQuotaInGB = ((((pStorageQuota.storageLimitInBytes -
+	// pStorageQuota.storageUsedInBytes) / 1024) / 1024) / 1024);
+	//
+	// // calculate
+	// if (lAvailableStorageQuotaInKB < 1) {
+	// lAvailableStorageQuotaMessage = '< 1KB';
+	// } else if ((lAvailableStorageQuotaInKB >= 1)
+	// && (lAvailableStorageQuotaInMB < 1)) {
+	// lAvailableStorageQuotaMessage = Math.round(lAvailableStorageQuotaInKB)
+	// + 'KB';
+	// } else if ((lAvailableStorageQuotaInMB >= 1)
+	// && (lAvailableStorageQuotaInGB < 1)) {
+	// lAvailableStorageQuotaMessage = lAvailableStorageQuotaInMB.toFixed(2)
+	// + 'MB';
+	// } else if (lAvailableStorageQuotaInGB >= 1) {
+	// lAvailableStorageQuotaMessage = lAvailableStorageQuotaInGB.toFixed(2)
+	// + 'GB';
+	// }
+	var lPlanStorageQuotaMessage = convertBytes(pStorageQuota.storageLimitInBytes);
+	// var lPlanStorageQuotaInKB = ((pStorageQuota.storageLimitInBytes) / 1024);
+	// var lPlanStorageQuotaInMB = (((pStorageQuota.storageLimitInBytes) / 1024)
+	// / 1024);
+	// var lPlanStorageQuotaInGB = ((((pStorageQuota.storageLimitInBytes) /
+	// 1024) / 1024) / 1024);
+	//
+	// // calculate
+	// if (lPlanStorageQuotaInKB < 1) {
+	// lPlanStorageQuotaMessage = '< 1KB';
+	// } else if ((lPlanStorageQuotaInKB >= 1) && (lPlanStorageQuotaInMB < 1)) {
+	// lPlanStorageQuotaMessage = Math.round(lPlanStorageQuotaInKB) + 'KB';
+	// } else if ((lPlanStorageQuotaInMB >= 1) && (lPlanStorageQuotaInGB < 1)) {
+	// lPlanStorageQuotaMessage = lPlanStorageQuotaInMB.toFixed(2) + 'MB';
+	// } else if (lPlanStorageQuotaInGB >= 1) {
+	// lPlanStorageQuotaMessage = lPlanStorageQuotaInGB.toFixed(2) + 'GB';
+	// }
+	// var lPlanStorageQuotaInMB = Math
+	// .round(((pStorageQuota.storageLimitInBytes) / 1024) / 1024);
+	// lPlanStorageQuotaInMB = (lPlanStorageQuotaInMB < 1) ? 1
+	// : lPlanStorageQuotaInMB;
 
 	var lDisplayUpgradeMessage = ' The selected file is too large! Your plan allows for '
 			+ lPlanStorageQuotaMessage
@@ -630,60 +635,73 @@ function viewContent(pContentId) {
 								var _url = "/contentserver/dropbox/"
 										+ content.uri;
 								log("viewImage", _url);
-								$("#image_widget").attr("src", _url);
-								// close wait div
+								if (content.uri != null) {
+									$("#image_widget").attr("src", _url);
+									// close wait div
 
-								$('#view_image_label').html(content.name);
-								$('#view_image_done_button').unbind();
-								$('#view_image_done_button').one(
-										'click',
-										function() {
-											try {
-												$('#view_image_container')
-														.foundation('reveal',
-																'close');
-											} catch (err) {
-												handleError("viewVideo", err);
-											}
-										});
+									$('#view_image_label').html(content.name);
+									$('#view_image_done_button').unbind();
+									$('#view_image_done_button').one(
+											'click',
+											function() {
+												try {
+													$('#view_image_container')
+															.foundation(
+																	'reveal',
+																	'close');
+												} catch (err) {
+													handleError("viewVideo",
+															err);
+												}
+											});
 
-								$('#view_image_container').foundation('reveal',
-										'open');
+									$('#view_image_container').foundation(
+											'reveal', 'open');
+								} else {
+									displayMessage('The content has no image or video attached');
+								}
 							} else if (content.type == 'video') {
 								var _url = "/contentserver/dropbox/"
 										+ content.uri;
 								log("viewVideo", _url);
-								// reset
-								$("#jquery_jplayer_1").jPlayer("clearMedia");
-								$("#jquery_jplayer_1")
-										.jPlayer(
-												"setMedia",
-												{
-													m4v : _url,
-													ogv : _url,
-													webmv : _url,
-													poster : "/resources/images/mavin_logo_orange_on_white_480x271.jpg"
-												});
+								if (content.uri != null) {
+									// reset
+									$("#jquery_jplayer_1")
+											.jPlayer("clearMedia");
+									$("#jquery_jplayer_1")
+											.jPlayer(
+													"setMedia",
+													{
+														m4v : _url,
+														ogv : _url,
+														webmv : _url,
+														poster : "/resources/images/mavin_logo_orange_on_white_480x271.jpg"
+													});
 
-								$('#view_video_title').html(content.name);
-								$('#view_video_label').html(content.name);
+									$('#view_video_title').html(content.name);
+									$('#view_video_label').html(content.name);
 
-								$('#view_video_done_button').unbind();
-								$('#view_video_done_button').one(
-										'click',
-										function() {
-											try {
-												$("#jquery_jplayer_1").jPlayer(
-														"stop");
-												$('#jp_container_1')
-														.foundation('reveal',
-																'close');
-											} catch (err) {
-												handleError("viewVideo", err);
-											}
-										});
-								$('#jp_container_1').foundation('reveal',
-										'open');
+									$('#view_video_done_button').unbind();
+									$('#view_video_done_button').one(
+											'click',
+											function() {
+												try {
+													$("#jquery_jplayer_1")
+															.jPlayer("stop");
+													$('#jp_container_1')
+															.foundation(
+																	'reveal',
+																	'close');
+												} catch (err) {
+													handleError("viewVideo",
+															err);
+												}
+											});
+									$('#jp_container_1').foundation('reveal',
+											'open');
+								} else {
+									displayMessage('The content has no image or video attached');
+								}
 							}
 
 						},

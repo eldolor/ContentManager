@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cm.config.CanonicalApplicationQuota;
+import com.cm.config.CanonicalBandwidthQuota;
 import com.cm.config.CanonicalPlanName;
 import com.cm.config.CanonicalStorageQuota;
 import com.cm.contentmanager.application.Application;
@@ -56,6 +57,50 @@ public class QuotaService {
 				LOGGER.info("Account Id: " + accountId);
 			return quotaDao.getApplicationQuotaUsed(accountId);
 
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+
+		}
+
+	}
+
+	public BandwidthQuotaUsed getBandwidthQuotaUsed(Long accountId) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Account Id: " + accountId);
+			return quotaDao.getBandwidthQuotaUsed(accountId);
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+
+		}
+
+	}
+
+	public boolean hasSufficientStorageQuota(Long accountId) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			List<StorageQuotaUsed> lList = quotaDao
+					.getStorageQuotaUsed(accountId);
+			long lStorageQuotaUsed = 0L;
+			// collect
+			for (StorageQuotaUsed storageQuotaUsed : lList) {
+				lStorageQuotaUsed += storageQuotaUsed.getStorageUsedInBytes();
+			}
+
+			Quota lQuota = quotaDao.get(accountId);
+
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Storage used: " + lStorageQuotaUsed
+						+ " Storage Limit: " + lQuota.getStorageLimitInBytes());
+			if (lStorageQuotaUsed < lQuota.getStorageLimitInBytes())
+				return true;
+			return false;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting");
@@ -116,14 +161,32 @@ public class QuotaService {
 
 	}
 
-	public void updatePlan(Long accountId, CanonicalPlanName canonicalPlanName,
-			CanonicalStorageQuota canonicalStorageQuota,
-			CanonicalApplicationQuota canonicalApplicationQuota) {
+	public boolean hasSufficientBandwidthQuota(Long accountId) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
-			quotaDao.updatePlan(accountId, canonicalPlanName,
-					canonicalStorageQuota, canonicalApplicationQuota);
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Account Id: " + accountId);
+			BandwidthQuotaUsed lQuotaUsed = quotaDao
+					.getBandwidthQuotaUsed(accountId);
+
+			Quota lQuota = quotaDao.get(accountId);
+			if (lQuotaUsed == null) {
+				LOGGER.info("Bandwidth quota used not found");
+				// assuming that the user has sufficient quota
+				return true;
+			}
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Bandwidth used: "
+						+ lQuotaUsed.getBandwidthUsedInBytes()
+						+ " Bandwidth Limit: "
+						+ lQuota.getBandwidthLimitInBytes());
+
+			if (lQuotaUsed.getBandwidthUsedInBytes() < lQuota
+					.getBandwidthLimitInBytes()) {
+				return true;
+			}
+			return false;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting");
@@ -131,6 +194,25 @@ public class QuotaService {
 		}
 
 	}
+
+	public void updatePlan(Long accountId, CanonicalPlanName canonicalPlanName,
+			CanonicalBandwidthQuota canonicalBandwidthQuota,
+			CanonicalStorageQuota canonicalStorageQuota,
+			CanonicalApplicationQuota canonicalApplicationQuota) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			quotaDao.updatePlan(accountId, canonicalPlanName,
+					canonicalBandwidthQuota, canonicalStorageQuota,
+					canonicalApplicationQuota);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+
+		}
+
+	}
+
 	public void upsertBandwidthUtilization(Application pApplication,
 			Long bandwidthUsedInBytes) {
 		try {
@@ -152,8 +234,7 @@ public class QuotaService {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
-			quotaDao.upsertStorageUtilization(pApplication,
-					storageUsedInBytes);
+			quotaDao.upsertStorageUtilization(pApplication, storageUsedInBytes);
 
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -203,6 +284,5 @@ public class QuotaService {
 		}
 
 	}
-
 
 }

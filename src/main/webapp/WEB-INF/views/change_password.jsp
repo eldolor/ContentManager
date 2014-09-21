@@ -37,8 +37,7 @@
 	<section>
 		<div class="row full-width">
 			<h3 class="gray">Change Password</h3>
-			<div class="large-12 columns" id="change_password"
-				style="display: none">
+			<div id="change_password">
 
 				<form role="form" id="changePasswordForm" name="changePasswordForm"
 					data-abide="ajax">
@@ -56,8 +55,8 @@
 
 					<div>
 						<label>Password <small>required</small><input
-							type="password" id="user_new_password" name="user_new_password"
-							required="required" required
+							class="form-control" type="password" id="user_new_password"
+							name="user_new_password" required="required" required
 							pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" />
 						</label><small class="error">Your password must match the
 							requirements: Must include upper-case, lower-case, number/special
@@ -66,8 +65,8 @@
 					<div>
 						<label>Confirm Password <small>required</small><input
 							type="password" id="user_confirm_new_password"
-							name="user_confirm_new_password" data-equalto="user_new_password"
-							required="required" required
+							class="form-control" name="user_confirm_new_password"
+							data-equalto="user_new_password" required="required" required
 							pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" />
 						</label> <small class="error">The password did not match</small>
 					</div>
@@ -81,8 +80,8 @@
 						</ul>
 					</div>
 					<div>
-						<button id="user_password_change_button" class="button radius">update
-							password</button>
+						<button id="user_password_change_button"
+							class="button radius btn-default">update password</button>
 					</div>
 					<div id="progress_bar" style="display: none">
 						<div class="progress radius">

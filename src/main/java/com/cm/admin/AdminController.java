@@ -22,6 +22,7 @@ import com.cm.accountmanagement.account.Account;
 import com.cm.admin.plan.Plan;
 import com.cm.common.entity.Result;
 import com.cm.config.CanonicalApplicationQuota;
+import com.cm.config.CanonicalBandwidthQuota;
 import com.cm.config.CanonicalPlanName;
 import com.cm.config.CanonicalStorageQuota;
 import com.cm.contentmanager.application.Application;
@@ -321,6 +322,78 @@ public class AdminController {
 			} finally {
 				if (LOGGER.isLoggable(Level.INFO))
 					LOGGER.info("Exiting getGcmRegistrationRequests");
+			}
+
+			Result result = new Result();
+			result.setResult(Result.SUCCESS);
+			return result;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting updateGcmRegistrationRequests");
+		}
+	}
+
+	@RequestMapping(value = "/admin/reset/quota", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody
+	Result resetQuotaLimits(HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(Quota.class);
+				List<Quota> lList = (List<Quota>) q.execute();
+				for (Quota lQuota : lList) {
+
+					String lPlanName = lQuota.getCanonicalPlanName();
+					if (lPlanName.equals(CanonicalPlanName.FREE.getValue())) {
+						lQuota.setBandwidthLimitInBytes(CanonicalBandwidthQuota.FREE
+								.getValue());
+						lQuota.setStorageLimitInBytes(CanonicalStorageQuota.FREE
+								.getValue());
+						lQuota.setApplicationLimit(CanonicalApplicationQuota.FREE
+								.getValue());
+					} else if (lPlanName.equals(CanonicalPlanName.LARGE.getValue())) {
+						lQuota.setBandwidthLimitInBytes(CanonicalBandwidthQuota.LARGE
+								.getValue());
+						lQuota.setStorageLimitInBytes(CanonicalStorageQuota.LARGE
+								.getValue());
+						lQuota.setApplicationLimit(CanonicalApplicationQuota.LARGE
+								.getValue());
+					} else if (lPlanName.equals(CanonicalPlanName.MEDIUM.getValue())) {
+						lQuota.setBandwidthLimitInBytes(CanonicalBandwidthQuota.MEDIUM
+								.getValue());
+						lQuota.setStorageLimitInBytes(CanonicalStorageQuota.MEDIUM
+								.getValue());
+						lQuota.setApplicationLimit(CanonicalApplicationQuota.MEDIUM
+								.getValue());
+					} else if (lPlanName.equals(CanonicalPlanName.MICRO.getValue())) {
+						lQuota.setBandwidthLimitInBytes(CanonicalBandwidthQuota.MICRO
+								.getValue());
+						lQuota.setStorageLimitInBytes(CanonicalStorageQuota.MICRO
+								.getValue());
+						lQuota.setApplicationLimit(CanonicalApplicationQuota.MICRO
+								.getValue());
+					} else if (lPlanName.equals(CanonicalPlanName.SMALL.getValue())) {
+						lQuota.setBandwidthLimitInBytes(CanonicalBandwidthQuota.SMALL
+								.getValue());
+						lQuota.setStorageLimitInBytes(CanonicalStorageQuota.SMALL
+								.getValue());
+						lQuota.setApplicationLimit(CanonicalApplicationQuota.SMALL
+								.getValue());
+					}
+
+					lQuota.setTimeCreatedMs(System.currentTimeMillis());
+					lQuota.setTimeCreatedTimeZoneOffsetMs((long) TimeZone
+							.getDefault().getRawOffset());
+
+				}
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
 			}
 
 			Result result = new Result();

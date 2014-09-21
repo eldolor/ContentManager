@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cm.config.CanonicalApplicationQuota;
+import com.cm.config.CanonicalBandwidthQuota;
 import com.cm.config.CanonicalPlanName;
 import com.cm.config.CanonicalStorageQuota;
 import com.cm.contentmanager.application.Application;
@@ -81,7 +82,8 @@ public class QuotaController {
 			com.cm.quota.transfer.Quota lQuota = convert(
 					quotaService.get(lUser.getAccountId()),
 					quotaService.getApplicationQuotaUsed(lUser.getAccountId()),
-					quotaService.getStorageQuotaUsed(lUser.getAccountId()));
+					quotaService.getStorageQuotaUsed(lUser.getAccountId()),
+					quotaService.getBandwidthQuotaUsed(lUser.getAccountId()));
 			response.setStatus(HttpServletResponse.SC_OK);
 			return lQuota;
 		} catch (Throwable e) {
@@ -115,7 +117,8 @@ public class QuotaController {
 					.getAccountId()),
 					quotaService.getApplicationQuotaUsed(lUser.getAccountId()),
 					quotaService.getStorageQuotaUsed(lUser.getAccountId(),
-							applicationId));
+							applicationId),
+					quotaService.getBandwidthQuotaUsed(lUser.getAccountId()));
 			response.setStatus(HttpServletResponse.SC_OK);
 			return lQuota;
 
@@ -140,6 +143,29 @@ public class QuotaController {
 
 			if (quotaService
 					.hasSufficientApplicationQuota(lUser.getAccountId())) {
+				response.setStatus(HttpServletResponse.SC_OK);
+			} else {
+				response.setStatus(HttpServletResponse.SC_CONFLICT);
+			}
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting ");
+		}
+	}
+
+	@RequestMapping(value = "/secured/quota/bandwidth/validate", method = RequestMethod.GET, produces = "application/json")
+	public void validateBandwidthQuota(HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering ");
+			response.setStatus(HttpServletResponse.SC_OK);
+			User lUser = userService.getLoggedInUser();
+
+			if (quotaService.hasSufficientBandwidthQuota(lUser.getAccountId())) {
 				response.setStatus(HttpServletResponse.SC_OK);
 			} else {
 				response.setStatus(HttpServletResponse.SC_CONFLICT);
@@ -191,6 +217,7 @@ public class QuotaController {
 			// appropriately
 			if (lNewCanonicalPlanName.equals(CanonicalPlanName.FREE.getValue())) {
 				quotaService.updatePlan(accountId, CanonicalPlanName.FREE,
+						CanonicalBandwidthQuota.FREE,
 						CanonicalStorageQuota.FREE,
 						CanonicalApplicationQuota.FREE);
 				if (lIsDowngrade)
@@ -202,6 +229,7 @@ public class QuotaController {
 			} else if (lNewCanonicalPlanName.equals(CanonicalPlanName.LARGE
 					.getValue())) {
 				quotaService.updatePlan(accountId, CanonicalPlanName.LARGE,
+						CanonicalBandwidthQuota.LARGE,
 						CanonicalStorageQuota.LARGE,
 						CanonicalApplicationQuota.LARGE);
 				if (lIsDowngrade)
@@ -213,6 +241,7 @@ public class QuotaController {
 			} else if (lNewCanonicalPlanName.equals(CanonicalPlanName.MEDIUM
 					.getValue())) {
 				quotaService.updatePlan(accountId, CanonicalPlanName.MEDIUM,
+						CanonicalBandwidthQuota.MEDIUM,
 						CanonicalStorageQuota.MEDIUM,
 						CanonicalApplicationQuota.MEDIUM);
 				if (lIsDowngrade)
@@ -224,6 +253,7 @@ public class QuotaController {
 			} else if (lNewCanonicalPlanName.equals(CanonicalPlanName.MICRO
 					.getValue())) {
 				quotaService.updatePlan(accountId, CanonicalPlanName.MICRO,
+						CanonicalBandwidthQuota.MICRO,
 						CanonicalStorageQuota.MICRO,
 						CanonicalApplicationQuota.MICRO);
 				if (lIsDowngrade)
@@ -235,6 +265,7 @@ public class QuotaController {
 			} else if (lNewCanonicalPlanName.equals(CanonicalPlanName.SMALL
 					.getValue())) {
 				quotaService.updatePlan(accountId, CanonicalPlanName.SMALL,
+						CanonicalBandwidthQuota.SMALL,
 						CanonicalStorageQuota.SMALL,
 						CanonicalApplicationQuota.SMALL);
 				if (lIsDowngrade)
@@ -402,7 +433,8 @@ public class QuotaController {
 
 	private com.cm.quota.transfer.Quota convert(Quota pQuota,
 			ApplicationQuotaUsed pApplicationQuotaUsed,
-			List<StorageQuotaUsed> pStorageQuotas) {
+			List<StorageQuotaUsed> pStorageQuotas,
+			BandwidthQuotaUsed pBandwidthQuotaUsed) {
 		List<com.cm.quota.transfer.StorageQuota> lList = new ArrayList<com.cm.quota.transfer.StorageQuota>();
 		com.cm.quota.transfer.Quota lQuota = new com.cm.quota.transfer.Quota();
 		lQuota.setCanonicalPlanName(pQuota.getCanonicalPlanName());
@@ -415,17 +447,46 @@ public class QuotaController {
 		if (LOGGER.isLoggable(Level.INFO))
 			LOGGER.info("setPercentageApplicationUsed: "
 					+ lPercentageApplicationUtilized);
+
+		long lStorageUsed = 0L;
 		for (StorageQuotaUsed lStorageQuotaUsed : pStorageQuotas) {
+			lStorageUsed += lStorageQuotaUsed.getStorageUsedInBytes();
 			lList.add(convertStorageQuota(pQuota, pApplicationQuotaUsed,
 					lStorageQuotaUsed));
 		}
 		lQuota.setStorageQuota(lList);
+		lQuota.setStorageUsed(lStorageUsed);
+		lQuota.setStorageLimit(pQuota.getStorageLimitInBytes());
+
+		int lPercentageStorageUtilized = ((int) ((lStorageUsed * 100) / pQuota
+				.getStorageLimitInBytes()));
+		lQuota.setPercentageStorageUsed(lPercentageStorageUtilized);
+
+		if (pBandwidthQuotaUsed != null) {
+			lQuota.setBandwidthUsed(pBandwidthQuotaUsed
+					.getBandwidthUsedInBytes());
+			int lPercentageBandwidthUtilized = ((int) ((pBandwidthQuotaUsed
+					.getBandwidthUsedInBytes() * 100) / pQuota
+					.getBandwidthLimitInBytes()));
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("setPercentageBandwidthUsed: "
+						+ lPercentageBandwidthUtilized);
+
+			lQuota.setPercentageBandwidthUsed(lPercentageBandwidthUtilized);
+			lQuota.setBandwidthLimit(pQuota.getBandwidthLimitInBytes());
+		} else {
+			lQuota.setBandwidthUsed(0L);
+			lQuota.setPercentageBandwidthUsed(0);
+			lQuota.setBandwidthLimit(pQuota.getBandwidthLimitInBytes());
+		}
+
 		return lQuota;
 	}
 
 	private com.cm.quota.transfer.Quota convert(Quota pQuota,
 			ApplicationQuotaUsed pApplicationQuotaUsed,
-			StorageQuotaUsed pStorageQuotaUsed) {
+			StorageQuotaUsed pStorageQuotaUsed,
+			BandwidthQuotaUsed pBandwidthQuotaUsed) {
 		com.cm.quota.transfer.Quota lQuota = new com.cm.quota.transfer.Quota();
 		lQuota.setCanonicalPlanName(pQuota.getCanonicalPlanName());
 
@@ -438,10 +499,26 @@ public class QuotaController {
 		if (LOGGER.isLoggable(Level.INFO))
 			LOGGER.info("setPercentageApplicationUsed: "
 					+ lPercentageApplicationUtilized);
-
 		lQuota.addStorageQuota(convertStorageQuota(pQuota,
 				pApplicationQuotaUsed, pStorageQuotaUsed));
 
+		if (pBandwidthQuotaUsed != null) {
+			lQuota.setBandwidthUsed(pBandwidthQuotaUsed
+					.getBandwidthUsedInBytes());
+			int lPercentageBandwidthUtilized = ((int) ((pBandwidthQuotaUsed
+					.getBandwidthUsedInBytes() * 100) / pQuota
+					.getBandwidthLimitInBytes()));
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("setPercentageBandwidthUsed: "
+						+ lPercentageBandwidthUtilized);
+
+			lQuota.setPercentageBandwidthUsed(lPercentageBandwidthUtilized);
+			lQuota.setBandwidthLimit(pQuota.getBandwidthLimitInBytes());
+		} else {
+			lQuota.setBandwidthUsed(0L);
+			lQuota.setPercentageBandwidthUsed(0);
+			lQuota.setBandwidthLimit(pQuota.getBandwidthLimitInBytes());
+		}
 		return lQuota;
 
 	}
@@ -456,25 +533,25 @@ public class QuotaController {
 		com.cm.quota.transfer.StorageQuota lStorageQuota = new com.cm.quota.transfer.StorageQuota();
 		lStorageQuota.setApplicationId(pStorageQuotaUsed.getApplicationId());
 		lStorageQuota.setTrackingId(pStorageQuotaUsed.getTrackingId());
-		lStorageQuota.setStorageLimitInBytes(pQuota.getStorageLimitInBytes());
+		// lStorageQuota.setStorageLimitInBytes(pQuota.getStorageLimitInBytes());
 		lStorageQuota.setStorageUsedInBytes(pStorageQuotaUsed
 				.getStorageUsedInBytes());
 
-		try {
-			BigDecimal lBd1 = new BigDecimal(
-					pStorageQuotaUsed.getStorageUsedInBytes() * 100);
-			BigDecimal lBd2 = new BigDecimal(pQuota.getStorageLimitInBytes());
-
-			// divide bg1 with bg2 with 0 scale
-			int lPercentageStorageUtilized = (lBd1.divide(lBd2, 0,
-					RoundingMode.CEILING).intValue());
-			lStorageQuota.setPercentageStorageUsed(lPercentageStorageUtilized);
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("setPercentageStorageUsed: "
-						+ lPercentageStorageUtilized);
-		} catch (ArithmeticException e) {
-			LOGGER.log(Level.WARNING, e.getMessage(), e);
-		}
+		// try {
+		// BigDecimal lBd1 = new BigDecimal(
+		// pStorageQuotaUsed.getStorageUsedInBytes() * 100);
+		// BigDecimal lBd2 = new BigDecimal(pQuota.getStorageLimitInBytes());
+		//
+		// // divide bg1 with bg2 with 0 scale
+		// int lPercentageStorageUtilized = (lBd1.divide(lBd2, 0,
+		// RoundingMode.CEILING).intValue());
+		// lStorageQuota.setPercentageStorageUsed(lPercentageStorageUtilized);
+		// if (LOGGER.isLoggable(Level.INFO))
+		// LOGGER.info("setPercentageStorageUsed: "
+		// + lPercentageStorageUtilized);
+		// } catch (ArithmeticException e) {
+		// LOGGER.log(Level.WARNING, e.getMessage(), e);
+		// }
 		return lStorageQuota;
 
 	}

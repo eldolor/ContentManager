@@ -80,6 +80,15 @@ function changePassword() {
 							$('#user_message').show();
 							$('#cm_errors_container').hide();
 						},
+						400 : function(text) {
+							try {
+								$('#user_message').hide();
+								$('#user_errors').html(getErrorMessages(text));
+								$('#cm_errors_container').show();
+							} catch (err) {
+								handleError("updateContentGroup", err);
+							}
+						},
 						503 : function() {
 							$('#user_message').hide();
 							$('#user_errors')
@@ -100,7 +109,7 @@ function changePassword() {
 						$('.meter').css("width", "100%");
 						$('.button').removeClass('disabled');
 						$('#changePasswordForm').trigger("reset");
-
+						$('#progress_bar').hide();
 						log(xhr.status);
 					}
 

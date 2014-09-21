@@ -1,15 +1,16 @@
 package com.cm.config;
 
 public enum CanonicalBandwidthQuota {
-	LARGE(20), MEDIUM(15), SMALL(10), MICRO(5), FREE(1);
+	LARGE(2199023255552L), MEDIUM(1649267441664L), SMALL(1099511627776L), MICRO(
+			536870912000L), FREE(107374182400L);
 
-	private int value;
+	private long value;
 
-	private CanonicalBandwidthQuota(int value) {
+	private CanonicalBandwidthQuota(long value) {
 		this.value = value;
 	}
 
-	public int getValue() {
+	public long getValue() {
 		return this.value;
 	}
 

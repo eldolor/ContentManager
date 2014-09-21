@@ -29,6 +29,7 @@ import com.cm.contentmanager.contentgroup.ContentGroup;
 import com.cm.contentmanager.contentgroup.ContentGroupService;
 import com.cm.gcm.GcmRegistrationRequest;
 import com.cm.gcm.GcmService;
+import com.cm.quota.QuotaService;
 import com.cm.util.Utils;
 import com.cm.util.ValidationError;
 import com.google.appengine.api.blobstore.BlobInfo;
@@ -52,6 +53,8 @@ public class ContentServerController {
 	private ContentService contentService;
 	@Autowired
 	private GcmService gcmService;
+	@Autowired
+	private QuotaService quotaService;
 
 	private final BlobInfoFactory mBlobInfoFactory = new BlobInfoFactory();
 
@@ -90,9 +93,19 @@ public class ContentServerController {
 				return null;
 			}
 			ContentRequest lContentRequest = convertToDomainFormat(pContentRequest);
-			List<com.cm.contentserver.transfer.Content> lContentList = Utils
-					.convertToTransferFormat(contentServerService
-							.getContent(lContentRequest));
+			List<com.cm.contentserver.transfer.Content> lContentList = null;
+
+			Long lAccountId = applicationService.getApplicationByTrackingId(
+					pContentRequest.getTrackingId(), false).getAccountId();
+
+			if (quotaService.hasSufficientBandwidthQuota(lAccountId)) {
+				lContentList = Utils
+						.convertToTransferFormat(contentServerService
+								.getContent(lContentRequest));
+			} else {
+				LOGGER.warning("Bandwidth Quota Exceeded for Tracking Id: "
+						+ pContentRequest.getTrackingId());
+			}
 			if (lContentList != null) {
 				if (LOGGER.isLoggable(Level.INFO))
 					LOGGER.info(lContentList.size() + " Content found");

@@ -156,73 +156,98 @@ function setupAccountUsage() {
 					statusCode : {
 						200 : function(quota) {
 							mQuota = quota;
-							// displayMessage(JSON.stringify(mQuota, null, 2));
-							// var lAppsUsedMessage = 'Using '
-							// + mQuota.applicationLimit + ' of '
-							// + mQuota.applicationLimit + ' applications';
-							// $('applications_used_message').html(
-							// lAppsUsedMessage);
-							// if (mQuota.percentageApplicationUsed == 100) {
-							// $('#applications_progress_bar').removeClass(
-							// 'success');
-							// $('#applications_progress_bar').addClass(
-							// 'alert');
-							// }
-							// $('#applications_progress_bar').css("width",
-							// (mQuota.percentageApplicationUsed + "%"));
+
 							var lAccountUsageDetailsHtml = '';
-							lAccountUsageDetailsHtml += '<div class="row"><div class=\"large-12 columns\"><label>'
-									+ 'Using '
-									+ mQuota.applicationsUsed
+							lAccountUsageDetailsHtml += '<div class="row full-width">';
+
+							// BANDWIDTH
+							lAccountUsageDetailsHtml += '<h2 class="gray">Bandwidth</h2>';
+							lAccountUsageDetailsHtml += '<h3>'
+									+ mQuota.percentageBandwidthUsed + '% OR '
+									+ convertBytes(mQuota.bandwidthUsed)
 									+ ' of '
-									+ mQuota.applicationLimit
-									+ ' applications</label><br>';
-							lAccountUsageDetailsHtml += '<div class=\"progress radius ';
-							if (mQuota.applicationsUsed >= mQuota.applicationLimit) {
-								lAccountUsageDetailsHtml += ' alert\" style=\" width: 100%\">';
-							} else if (mQuota.applicationsUsed == 0) {
-								lAccountUsageDetailsHtml += ' success\" style=\" width: 2%\">';
+									+ convertBytes(mQuota.bandwidthLimit)
+									+ ' used';
+							lAccountUsageDetailsHtml += '</h3>';
+
+							lAccountUsageDetailsHtml += '<div class="progress radius" >';
+
+							lAccountUsageDetailsHtml += '<span class="meter" ';
+							lAccountUsageDetailsHtml += ' style=" width: ';
+
+							if (mQuota.percentageBandwidthUsed < 100) {
+								lAccountUsageDetailsHtml += mQuota.percentageBandwidthUsed
+										+ '%;';
 							} else {
-								lAccountUsageDetailsHtml += ' success';
-								lAccountUsageDetailsHtml += '\" style=\" width: '
-										+ mQuota.percentageApplicationUsed
-										+ '%\">';
+								lAccountUsageDetailsHtml += '100%;';
 							}
+							lAccountUsageDetailsHtml += ' background-color: #5cb85c;">';
 
-							lAccountUsageDetailsHtml += '<span class="meter"></span></div></div></div>';
+							lAccountUsageDetailsHtml += '</span></div>';
 
+							lAccountUsageDetailsHtml += '<p class="clearfix"></p>';
+
+							// TOTAL STORAGE
+							lAccountUsageDetailsHtml += '<h2 class="gray">Storage</h2>';
+							lAccountUsageDetailsHtml += '<h3>'
+									+ mQuota.percentageStorageUsed + '% OR '
+									+ convertBytes(mQuota.storageUsed) + ' of '
+									+ convertBytes(mQuota.storageLimit)
+									+ ' used';
+							lAccountUsageDetailsHtml += '</h3>';
+
+							lAccountUsageDetailsHtml += '<div class="progress radius" >';
+
+							lAccountUsageDetailsHtml += '<span class="meter" ';
+							lAccountUsageDetailsHtml += ' style=" width: ';
+
+							if (mQuota.percentageBandwidthUsed < 100) {
+								lAccountUsageDetailsHtml += mQuota.percentageBandwidthUsed
+										+ '%;';
+							} else {
+								lAccountUsageDetailsHtml += '100%;';
+							}
+							lAccountUsageDetailsHtml += ' background-color: #5cb85c;">';
+
+							lAccountUsageDetailsHtml += '</span></div>';
+
+							lAccountUsageDetailsHtml += '<p class="clearfix"></p>';
+
+							// STORAGE Per Application
+							var lTable = '<table>';
+							lTable += '<thead>';
+							lTable += '<tr>';
+							lTable += '<th>Application</th>';
+							lTable += '<th>Storage</th>';
+							lTable += ' </tr>';
+							lTable += '</thead>';
+							lTable += '<tbody>';
 							var lStorageQuota = null;
 							for (var int = 0; int < mQuota.storageQuota.length; int++) {
 								lStorageQuota = mQuota.storageQuota[int];
-
-								lAccountUsageDetailsHtml += '<div class="row"><div class=\"large-12 columns\"> <span id=\"application_trackingid\" class=\"secondary radius label\">Application '
-										+ lStorageQuota.trackingId
-										+ ':    <b>'
-										+ lStorageQuota.percentageStorageUsed
-										+ '%</b> storage used</span>';
-								lAccountUsageDetailsHtml += '<div class=\"progress radius ';
-								if (lStorageQuota.storageUsedInBytes >= lStorageQuota.storageLimitInBytes) {
-									lAccountUsageDetailsHtml += ' alert\" style=\"width: 100%\">';
-								} else if (lStorageQuota.storageUsedInBytes == 0) {
-									lAccountUsageDetailsHtml += ' success\" style=\"width: 2%\">';// show
-									// 1%
-									// to
-									// display
-									// the
-									// progress
-									// bar
-								} else {
-									lAccountUsageDetailsHtml += ' success';
-									lAccountUsageDetailsHtml += '\" style=\"width: '
-											+ lStorageQuota.percentageStorageUsed
-											+ '%\">';
-								}
-								lAccountUsageDetailsHtml += '<span class="meter"></span></div></div></div>';
+								// lAccountUsageDetailsHtml += '<h4
+								// class="gray">';
+								// lAccountUsageDetailsHtml +=
+								// lStorageQuota.trackingId;
+								// lAccountUsageDetailsHtml += ': '
+								// +
+								// convertBytes(lStorageQuota.storageUsedInBytes);
+								// lAccountUsageDetailsHtml += '</h4>';
+								lTable += '<tr>';
+								lTable += '<td>' + lStorageQuota.trackingId
+										+ '</td>';
+								lTable += '<td>'
+										+ convertBytes(lStorageQuota.storageUsedInBytes)
+										+ '</td>';
+								lTable += '</tr>';
 							}
+							lTable += ' </tbody>';
+							lTable += '</table>';
+							lAccountUsageDetailsHtml += lTable;
+							lAccountUsageDetailsHtml += '</div>';
 							$('#account_usage_details').html(
 									lAccountUsageDetailsHtml);
-							// log("setupAccountUsage",
-							// lAccountUsageDetailsHtml);
+							log("setupAccountUsage", lAccountUsageDetailsHtml);
 
 						},
 						503 : function() {
@@ -741,4 +766,5 @@ function processStripeResponse(status, response) {
 		log("processStripeResponse", "Exiting");
 	}
 }
+
 /** *End***************************************** */

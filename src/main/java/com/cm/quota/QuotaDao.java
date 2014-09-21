@@ -11,6 +11,7 @@ import javax.jdo.Query;
 import org.springframework.stereotype.Component;
 
 import com.cm.config.CanonicalApplicationQuota;
+import com.cm.config.CanonicalBandwidthQuota;
 import com.cm.config.CanonicalPlanName;
 import com.cm.config.CanonicalStorageQuota;
 import com.cm.contentmanager.application.Application;
@@ -58,6 +59,30 @@ class QuotaDao {
 			List<ApplicationQuotaUsed> lQuotas = (List<ApplicationQuotaUsed>) q
 					.execute(accountId);
 			ApplicationQuotaUsed lQuota = null;
+			if (lQuotas != null && (lQuotas.size() > 0)) {
+				lQuota = lQuotas.get(0);
+			}
+			return lQuota;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+
+		}
+
+	}
+
+	BandwidthQuotaUsed getBandwidthQuotaUsed(Long accountId) {
+		PersistenceManager pm = null;
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			pm = PMF.get().getPersistenceManager();
+			Query q = pm.newQuery(BandwidthQuotaUsed.class);
+			q.setFilter("accountId == accountIdParam");
+			q.declareParameters("Long accountIdParam");
+			List<BandwidthQuotaUsed> lQuotas = (List<BandwidthQuotaUsed>) q
+					.execute(accountId);
+			BandwidthQuotaUsed lQuota = null;
 			if (lQuotas != null && (lQuotas.size() > 0)) {
 				lQuota = lQuotas.get(0);
 			}
@@ -164,6 +189,7 @@ class QuotaDao {
 	}
 
 	void updatePlan(Long accountId, CanonicalPlanName canonicalPlanName,
+			CanonicalBandwidthQuota canonicalBandwidthQuota,
 			CanonicalStorageQuota canonicalStorageQuota,
 			CanonicalApplicationQuota canonicalApplicationQuota) {
 		PersistenceManager pm = null;
@@ -179,6 +205,8 @@ class QuotaDao {
 			if (lQuotas != null && (lQuotas.size() > 0)) {
 				lQuota = lQuotas.get(0);
 				lQuota.setCanonicalPlanName(canonicalPlanName.getValue());
+				lQuota.setBandwidthLimitInBytes(canonicalBandwidthQuota
+						.getValue());
 				lQuota.setStorageLimitInBytes(canonicalStorageQuota.getValue());
 				lQuota.setApplicationLimit(canonicalApplicationQuota.getValue());
 				lQuota.setTimeUpdatedMs(System.currentTimeMillis());

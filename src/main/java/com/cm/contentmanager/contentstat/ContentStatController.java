@@ -9,17 +9,31 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.cm.accountmanagement.account.Account;
+import com.cm.accountmanagement.account.AccountService;
 import com.cm.common.entity.Result;
+import com.cm.contentmanager.application.Application;
+import com.cm.contentmanager.application.ApplicationService;
+import com.cm.usermanagement.user.User;
+import com.cm.usermanagement.user.UserService;
+import com.cm.util.Utils;
 
 @Controller
 public class ContentStatController {
 	@Autowired
 	private ContentStatService contentStatService;
+	@Autowired
+	private UserService userService;
+	@Autowired
+	private ApplicationService applicationService;
+	@Autowired
+	private AccountService accountService;
 
 	private static final Logger LOGGER = Logger
 			.getLogger(ContentStatController.class.getName());
@@ -55,14 +69,42 @@ public class ContentStatController {
 		}
 	}
 
-	@RequestMapping(value = "/contentstats", method = RequestMethod.GET)
-	public void doCreateContentStat(HttpServletResponse response) {
+	@RequestMapping(value = "/contentstats/daily", method = RequestMethod.GET)
+	public List<ContentStatDailySummary> get(HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering doCreateContentStat");
+				LOGGER.info("Entering");
+			User user = userService.getLoggedInUser();
+			List<ContentStatDailySummary> lContentStats = new ArrayList<ContentStatDailySummary>();
 
+			response.setStatus(HttpServletResponse.SC_OK);
+			return lContentStats;
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
 
-			response.setStatus(HttpServletResponse.SC_CREATED);
+	@RequestMapping(value = "/tasks/rollup/daily", method = RequestMethod.POST)
+	public void rollupDailySummary(HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			List<Account> lAccounts = accountService.getAccounts();
+			// for each account
+			for (Account account : lAccounts) {
+				List<Application> lApplications = applicationService
+						.getApplicationsByAccountId(account.getId(), false);
+				// for each application in the account
+				for (Application application : lApplications) {
+					Utils.triggerDailyRollupMessage(application.getId(), 0);
+				}
+			}
 
 		} catch (Throwable e) {
 			// handled by GcmManager
@@ -70,7 +112,26 @@ public class ContentStatController {
 			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting doCreateContentStat");
+				LOGGER.info("Exiting");
+		}
+	}
+
+	@RequestMapping(value = "/tasks/rollup/daily/update/{id}", method = RequestMethod.POST)
+	public void rollupDailySummaryByApplication(@PathVariable Long id,
+			HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+
+			contentStatService.rollupDailySummary(id);
+
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
 		}
 	}
 
@@ -78,7 +139,7 @@ public class ContentStatController {
 			List<com.cm.contentmanager.contentstat.transfer.ContentStat> pContentStats) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering convertToDomailObject");
+				LOGGER.info("Entering convertToDomainObject");
 			List<ContentStat> lContentStats = new ArrayList<ContentStat>();
 			for (com.cm.contentmanager.contentstat.transfer.ContentStat lContentStat : pContentStats) {
 				lContentStats.add(convertToDomainObject(lContentStat));
@@ -86,7 +147,7 @@ public class ContentStatController {
 			return lContentStats;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting convertToDomailObject");
+				LOGGER.info("Exiting convertToDomainObject");
 		}
 
 	}

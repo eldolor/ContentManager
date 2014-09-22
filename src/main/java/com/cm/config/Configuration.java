@@ -12,6 +12,7 @@ public class Configuration {
 	public static final String STRIPE_API_KEY = "sk_test_4aEiOFaIp1sl35p1Gqjco3Is";
 	public static final String GOOGLE_API_PROJECT_NUMBER = "468566067831";
 
+	public static final String CONTENT_STATS_QUEUE_NAME = "contentstatsqueue";
 	public static final String CONTENT_QUEUE_NAME = "contentqueue";
 	public static final String GCM_QUEUE_NAME = "gcmqueue";
 	public static final String EMAIL_QUEUE_NAME = "emailqueue";

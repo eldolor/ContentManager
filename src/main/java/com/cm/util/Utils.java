@@ -36,6 +36,25 @@ public class Utils {
 	private static final Logger LOGGER = Logger
 			.getLogger(Utils.class.getName());
 
+	public static void triggerDailyRollupMessage(Long pApplicationId,
+			long delay) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			Queue queue = QueueFactory
+					.getQueue(Configuration.CONTENT_STATS_QUEUE_NAME);
+			TaskOptions taskOptions = TaskOptions.Builder
+					.withUrl("/tasks/rollup/daily/update/" + String.valueOf(pApplicationId))
+					.param("id", String.valueOf(pApplicationId)).method(Method.POST)
+					.countdownMillis(delay);
+			queue.add(taskOptions);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+
+	}
+
 	public static void triggerUpdateBandwidthUtilizationMessage(String pUri,
 			long delay) {
 		try {

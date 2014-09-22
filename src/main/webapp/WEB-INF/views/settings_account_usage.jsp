@@ -25,9 +25,18 @@
 	src="/resources/javascripts/cm/cm.account.settings.js"></script>
 <!-- End Custom -->
 <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
-
 </head>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
+<script type="text/javascript">
+	google.load("visualization", "1", {
+		packages : [ "gauge" ]
+	});
+	//setupAccountUsageGoogCharts() is defined in cm.account.settings.js
+	google.setOnLoadCallback(setupAccountUsageGoogCharts);
+</script>
 <body>
+
 
 
 	<jsp:include page="common.jsp"></jsp:include>

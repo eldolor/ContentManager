@@ -74,7 +74,8 @@ function setup() {
 		// default behaviour
 		// $('#user_billing').show();
 
-		setupAccountUsage();
+		// setupAccountUsage();
+		// setupAccountUsageGoogCharts();
 		getStripeCustomer();
 		$('#updateBillingForm').on('invalid', function() {
 			var invalid_fields = $(this).find('[data-invalid]');
@@ -271,6 +272,134 @@ function setupAccountUsage() {
 	}
 }
 
+function setupAccountUsageGoogCharts() {
+	log("setupAccountUsageGoogCharts", "Entering");
+	try {
+		var url = "/secured/quota";
+		var jqxhr = $
+				.ajax({
+					url : url,
+					type : "GET",
+					contentType : "application/json",
+					async : true,
+					statusCode : {
+						200 : function(quota) {
+							mQuota = quota;
+
+							var lAccountUsageDetailsHtml = '';
+							lAccountUsageDetailsHtml += '<div class="row full-width">';
+
+							// BANDWIDTH
+							lAccountUsageDetailsHtml += '<div id="bandwidth_chart"></div>'
+							lAccountUsageDetailsHtml += '<h2 class="gray">Bandwidth</h2>';
+							lAccountUsageDetailsHtml += '<h3>'
+									+ mQuota.percentageBandwidthUsed + '% OR '
+									+ convertBytes(mQuota.bandwidthUsed)
+									+ ' of '
+									+ convertBytes(mQuota.bandwidthLimit)
+									+ ' used';
+							lAccountUsageDetailsHtml += '</h3>';
+							lAccountUsageDetailsHtml += '<p class="clearfix"></p>';
+							lAccountUsageDetailsHtml += '<p class="clearfix"></p>';
+							lAccountUsageDetailsHtml += '<p class="clearfix"></p>';
+
+
+							// TOTAL STORAGE
+							lAccountUsageDetailsHtml += '<div id="storage_chart"></div>'
+							lAccountUsageDetailsHtml += '<h2 class="gray">Storage</h2>';
+							lAccountUsageDetailsHtml += '<h3>'
+									+ mQuota.percentageStorageUsed + '% OR '
+									+ convertBytes(mQuota.storageUsed) + ' of '
+									+ convertBytes(mQuota.storageLimit)
+									+ ' used';
+							lAccountUsageDetailsHtml += '</h3>';
+
+							lAccountUsageDetailsHtml += '<p class="clearfix"></p>';
+
+							// STORAGE Per Application
+							var lTable = '<table>';
+							lTable += '<thead>';
+							lTable += '<tr>';
+							lTable += '<th>Application</th>';
+							lTable += '<th>Storage</th>';
+							lTable += ' </tr>';
+							lTable += '</thead>';
+							lTable += '<tbody>';
+							var lStorageQuota = null;
+							for (var int = 0; int < mQuota.storageQuota.length; int++) {
+								lStorageQuota = mQuota.storageQuota[int];
+								// lAccountUsageDetailsHtml += '<h4
+								// class="gray">';
+								// lAccountUsageDetailsHtml +=
+								// lStorageQuota.trackingId;
+								// lAccountUsageDetailsHtml += ': '
+								// +
+								// convertBytes(lStorageQuota.storageUsedInBytes);
+								// lAccountUsageDetailsHtml += '</h4>';
+								lTable += '<tr>';
+								lTable += '<td>' + lStorageQuota.trackingId
+										+ '</td>';
+								lTable += '<td>'
+										+ convertBytes(lStorageQuota.storageUsedInBytes)
+										+ '</td>';
+								lTable += '</tr>';
+							}
+							lTable += ' </tbody>';
+							lTable += '</table>';
+							lAccountUsageDetailsHtml += lTable;
+							lAccountUsageDetailsHtml += '</div>';
+							$('#account_usage_details').html(
+									lAccountUsageDetailsHtml);
+							log("setupAccountUsage", lAccountUsageDetailsHtml);
+							
+							//GOOG Charts
+							var lBandwidthData = google.visualization
+									.arrayToDataTable([
+											[ 'Label', 'Value' ],
+											[
+													'Bandwidth',
+													mQuota.percentageBandwidthUsed ] ]);
+
+							var lStorageData = google.visualization
+									.arrayToDataTable([ [ 'Label', 'Value' ],
+
+									[ 'Storage', mQuota.percentageStorageUsed ] ]);
+							var options = {
+								redFrom : 90,
+								redTo : 100,
+								yellowFrom : 75,
+								yellowTo : 90,
+								minorTicks : 5
+							};
+
+							var lBandwidthChart = new google.visualization.Gauge(
+									document.getElementById('bandwidth_chart'));
+							var lStorageChart = new google.visualization.Gauge(
+									document.getElementById('storage_chart'));
+
+							lBandwidthChart.draw(lBandwidthData, options);
+							lStorageChart.draw(lStorageData, options);
+						},
+						503 : function() {
+							$('#content_errors').html(
+									'Unable to get available storage quota');
+							$('#content_errors').show();
+						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						log(errorThrown);
+						$('#content_errors')
+								.html(
+										'Unable to process the request. Please try again later');
+						$('#content_errors').show();
+					}
+				});
+	} catch (err) {
+		handleError("setupAccountUsageGoogCharts", err);
+	} finally {
+		log("setupAccountUsageGoogCharts", "Exiting");
+	}
+}
 function getLoggedInUser() {
 	log("getLoggedInUser", "Entering");
 	try {

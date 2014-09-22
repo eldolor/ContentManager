@@ -1355,3 +1355,25 @@
 20:43:56,073 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/usermanagement/user/PasswordChangeRequest.class" with enhanced definition
 20:43:56,080 (main) INFO  [DataNucleus.Enhancer] - Writing class file "/Users/anshugaind/Documents/workspace/ContentManager/target/classes/com/cm/usermanagement/user/User.class" with enhanced definition
 20:43:56,080 (main) INFO  [DataNucleus.Enhancer] - DataNucleus Enhancer completed with success for 19 classes. Timings : input=584 ms, enhance=211 ms, total=795 ms. Consult the log for full details
+21:19:25,376 (main) INFO  [DataNucleus.Enhancer] - DataNucleus Enhancer for API "JDO"
+21:19:25,645 (main) INFO  [DataNucleus.Enhancer] - DataNucleus Enhancer (version 3.1.1) : Enhancement of classes
+21:19:26,391 (main) INFO  [DataNucleus.Enhancer] - Class "com.cm.accountmanagement.account.Account" is already enhanced.
+21:19:26,392 (main) INFO  [DataNucleus.Enhancer] - Class "com.cm.admin.message.Message" is already enhanced.
+21:19:26,393 (main) INFO  [DataNucleus.Enhancer] - Class "com.cm.admin.plan.Plan" is already enhanced.
+21:19:26,394 (main) INFO  [DataNucleus.Enhancer] - Class "com.cm.common.entity.EventLocation" is already enhanced.
+21:19:26,395 (main) INFO  [DataNucleus.Enhancer] - Class "com.cm.contentmanager.application.Application" is already enhanced.
+21:19:26,396 (main) INFO  [DataNucleus.Enhancer] - Class "com.cm.contentmanager.content.Content" is already enhanced.
+21:19:26,398 (main) INFO  [DataNucleus.Enhancer] - Class "com.cm.contentmanager.contentgroup.ContentGroup" is already enhanced.
+21:19:26,399 (main) INFO  [DataNucleus.Enhancer] - Class "com.cm.contentmanager.contentstat.ContentStat" is already enhanced.
+21:19:26,400 (main) INFO  [DataNucleus.Enhancer] - Class "com.cm.contentserver.ContentRequest" is already enhanced.
+21:19:26,401 (main) INFO  [DataNucleus.Enhancer] - Class "com.cm.contentserver.Handshake" is already enhanced.
+21:19:26,403 (main) INFO  [DataNucleus.Enhancer] - Class "com.cm.gcm.GcmRegistrationRequest" is already enhanced.
+21:19:26,404 (main) INFO  [DataNucleus.Enhancer] - Class "com.cm.quota.ApplicationQuotaUsed" is already enhanced.
+21:19:26,405 (main) INFO  [DataNucleus.Enhancer] - Class "com.cm.quota.BandwidthQuotaUsed" is already enhanced.
+21:19:26,407 (main) INFO  [DataNucleus.Enhancer] - Class "com.cm.quota.Quota" is already enhanced.
+21:19:26,409 (main) INFO  [DataNucleus.Enhancer] - Class "com.cm.quota.StorageQuotaUsed" is already enhanced.
+21:19:26,411 (main) INFO  [DataNucleus.Enhancer] - Class "com.cm.stripe.StripeCustomer" is already enhanced.
+21:19:26,412 (main) INFO  [DataNucleus.Enhancer] - Class "com.cm.usermanagement.user.ForgotPasswordRequest" is already enhanced.
+21:19:26,413 (main) INFO  [DataNucleus.Enhancer] - Class "com.cm.usermanagement.user.PasswordChangeRequest" is already enhanced.
+21:19:26,415 (main) INFO  [DataNucleus.Enhancer] - Class "com.cm.usermanagement.user.User" is already enhanced.
+21:19:26,415 (main) INFO  [DataNucleus.Enhancer] - DataNucleus Enhancer completed with success for 19 classes. Timings : input=720 ms, enhance=48 ms, total=768 ms. Consult the log for full details

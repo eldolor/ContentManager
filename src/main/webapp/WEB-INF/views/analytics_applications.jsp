@@ -22,19 +22,16 @@
 
 <!-- Begin Custom -->
 <script type="text/javascript"
-	src="/resources/javascripts/cm/cm.account.settings.js"></script>
+	src="/resources/javascripts/cm/cm.analytics.js"></script>
 <!-- End Custom -->
 <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
 </head>
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 
 <script type="text/javascript">
-	google.load("visualization", "1", {
-		packages : [ "gauge" ]
+	google.load("visualization", "1.1", {
+		packages : [ "calendar" ]
 	});
-	google.load("visualization", "1", {packages:["corechart"]});
-	//setupAccountUsageGoogCharts() is defined in cm.account.settings.js
-	google.setOnLoadCallback(setupAccountUsageGoogCharts);
 </script>
 <body>
 
@@ -44,12 +41,12 @@
 	<jsp:include page="top_bar.jsp"></jsp:include>
 	<section>
 		<div class="row full-width">
-			<h2 class="text-center gray">Account Usage</h2>
+			<h2 class="text-center gray">Analytics</h2>
 			<div class="line">
 				<img src="/resources/images/box/line.png" alt="line" />
 			</div>
-			<div class="content" id="account_usage">
-				<div id="account_usage_details"></div>
+			<div class="content" id="analytics_applications">
+				<div id="analytics_applications_details"></div>
 			</div>
 
 		</div>

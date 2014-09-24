@@ -275,7 +275,7 @@ class QuotaDao {
 
 				TimeZone timeZone = TimeZone.getTimeZone("UTC");
 
-				lQuotaUsed.setSubscriptionPeriodStartMs(Utils.getStartOfDay(
+				lQuotaUsed.setSubscriptionPeriodStartMs(Utils.getStartOfDayToday(
 						timeZone).getTimeInMillis());
 				lQuotaUsed.setSubscriptionPeriodEndMs(Utils
 						.getOneMonthFromToday(timeZone).getTimeInMillis());

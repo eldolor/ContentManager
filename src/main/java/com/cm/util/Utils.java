@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.Random;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,17 +37,23 @@ public class Utils {
 	private static final Logger LOGGER = Logger
 			.getLogger(Utils.class.getName());
 
-	public static void triggerDailyRollupMessage(Long pApplicationId,
-			long delay) {
+	public static void triggerRollupMessage(Long pApplicationId,
+			Long eventStartTimeMs, Long eventEndTimeMs, long delay) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
 			Queue queue = QueueFactory
 					.getQueue(Configuration.CONTENT_STATS_QUEUE_NAME);
 			TaskOptions taskOptions = TaskOptions.Builder
-					.withUrl("/tasks/rollup/daily/update/" + String.valueOf(pApplicationId))
-					.param("id", String.valueOf(pApplicationId)).method(Method.POST)
-					.countdownMillis(delay);
+					.withUrl(
+							"/tasks/rollup/contentstats/"
+									+ String.valueOf(pApplicationId) + "/"
+									+ String.valueOf(eventStartTimeMs) + "/"
+									+ String.valueOf(eventEndTimeMs))
+					.param("id", String.valueOf(pApplicationId))
+					.param("eventStartTimeMs", String.valueOf(eventStartTimeMs))
+					.param("eventEndTimeMs", String.valueOf(eventEndTimeMs))
+					.method(Method.POST).countdownMillis(delay);
 			queue.add(taskOptions);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -437,28 +444,69 @@ public class Utils {
 
 	}
 
-	public static Calendar getStartOfDay(TimeZone timeZone) {
+	public static Calendar getStartOfDay(long timeInMs, TimeZone timeZone) {
+		Calendar calendar = Calendar.getInstance(timeZone);
+		calendar.setTimeInMillis(timeInMs);
+		int year = calendar.get(Calendar.YEAR);
+		int month = calendar.get(Calendar.MONTH);
+		int day = calendar.get(Calendar.DATE);
+		calendar.set(year, month, day, 0, 0, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+		return calendar;
+	}
+
+	public static Calendar getEndOfDay(long timeInMs, TimeZone timeZone) {
+		Calendar calendar = Calendar.getInstance(timeZone);
+		calendar.setTimeInMillis(timeInMs);
+		int year = calendar.get(Calendar.YEAR);
+		int month = calendar.get(Calendar.MONTH);
+		int day = calendar.get(Calendar.DATE);
+		calendar.set(year, month, day, 23, 59, 59);
+		calendar.set(Calendar.MILLISECOND, 999);
+		return calendar;
+	}
+
+	public static Calendar getStartOfDayToday(TimeZone timeZone) {
 		Calendar calendar = Calendar.getInstance(timeZone);
 		int year = calendar.get(Calendar.YEAR);
 		int month = calendar.get(Calendar.MONTH);
 		int day = calendar.get(Calendar.DATE);
 		calendar.set(year, month, day, 0, 0, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
 		return calendar;
 	}
 
-	public static Calendar getEndOfDay(TimeZone timeZone) {
+	public static Calendar getEndOfDayToday(TimeZone timeZone) {
 		Calendar calendar = Calendar.getInstance(timeZone);
-		calendar.set(Calendar.MILLISECOND, 999);
 		int year = calendar.get(Calendar.YEAR);
 		int month = calendar.get(Calendar.MONTH);
 		int day = calendar.get(Calendar.DATE);
 		calendar.set(year, month, day, 23, 59, 59);
+		calendar.set(Calendar.MILLISECOND, 999);
+		return calendar;
+	}
+
+	public static Calendar getStartOfDayYesterday(TimeZone timeZone) {
+		Calendar calendar = getStartOfDayToday(timeZone);
+		calendar.add(Calendar.DATE, -1);
+		return calendar;
+	}
+
+	public static Calendar getEndOfDayYesterday(TimeZone timeZone) {
+		Calendar calendar = getEndOfDayToday(timeZone);
+		calendar.add(Calendar.DATE, -1);
 		return calendar;
 	}
 
 	public static Calendar getOneMonthFromToday(TimeZone timeZone) {
-		Calendar calendar = getEndOfDay(timeZone);
+		Calendar calendar = getEndOfDayToday(timeZone);
 		calendar.add(Calendar.MONTH, 1);
 		return calendar;
 	}
+
+	public static int getRandomNumber(int rangeBegin, int rangeEnd) {
+		Random r = new Random();
+		return r.nextInt(rangeEnd - rangeBegin) + rangeBegin;
+	}
+
 }

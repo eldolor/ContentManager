@@ -13,9 +13,9 @@ public class Quota implements Serializable {
 	private long bandwidthLimit;
 	private long storageUsed;
 	private long storageLimit;
-	private int percentageApplicationUsed;
-	private int percentageBandwidthUsed;
-	private int percentageStorageUsed;
+	private String percentageApplicationUsed;
+	private String percentageBandwidthUsed;
+	private String percentageStorageUsed;
 	
 	private List<StorageQuota> storageQuota;
 
@@ -36,13 +36,7 @@ public class Quota implements Serializable {
 		this.applicationLimit = applicationLimit;
 	}
 
-	public int getPercentageApplicationUsed() {
-		return percentageApplicationUsed;
-	}
 
-	public void setPercentageApplicationUsed(int percentageApplicationUsed) {
-		this.percentageApplicationUsed = percentageApplicationUsed;
-	}
 
 	public int getApplicationsUsed() {
 		return applicationsUsed;
@@ -67,13 +61,7 @@ public class Quota implements Serializable {
 		this.storageQuota.add(storageQuota);
 	}
 
-	public int getPercentageBandwidthUsed() {
-		return percentageBandwidthUsed;
-	}
 
-	public void setPercentageBandwidthUsed(int percentageBandwidthUsed) {
-		this.percentageBandwidthUsed = percentageBandwidthUsed;
-	}
 
 	public long getBandwidthUsed() {
 		return bandwidthUsed;
@@ -91,13 +79,7 @@ public class Quota implements Serializable {
 		this.storageUsed = storageUsed;
 	}
 
-	public int getPercentageStorageUsed() {
-		return percentageStorageUsed;
-	}
 
-	public void setPercentageStorageUsed(int percentageStorageUsed) {
-		this.percentageStorageUsed = percentageStorageUsed;
-	}
 
 	public long getBandwidthLimit() {
 		return bandwidthLimit;
@@ -114,5 +96,30 @@ public class Quota implements Serializable {
 	public void setStorageLimit(long storageLimit) {
 		this.storageLimit = storageLimit;
 	}
+
+	public String getPercentageApplicationUsed() {
+		return percentageApplicationUsed;
+	}
+
+	public void setPercentageApplicationUsed(String percentageApplicationUsed) {
+		this.percentageApplicationUsed = percentageApplicationUsed;
+	}
+
+	public String getPercentageBandwidthUsed() {
+		return percentageBandwidthUsed;
+	}
+
+	public void setPercentageBandwidthUsed(String percentageBandwidthUsed) {
+		this.percentageBandwidthUsed = percentageBandwidthUsed;
+	}
+
+	public String getPercentageStorageUsed() {
+		return percentageStorageUsed;
+	}
+
+	public void setPercentageStorageUsed(String percentageStorageUsed) {
+		this.percentageStorageUsed = percentageStorageUsed;
+	}
+
 
 }

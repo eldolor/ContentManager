@@ -151,6 +151,12 @@
 		<property name="deleted" direction="asc" />
 		<property name="timeUpdatedMs" direction="desc" />
 	</datastore-index>
+	<datastore-index kind="Content" ancestor="false"
+		source="manual">
+		<property name="contentGroupId" direction="asc" />
+		<property name="deleted" direction="asc" />
+		<property name="timeUpdatedMs" direction="desc" />
+	</datastore-index>
 	<!-- End: Content -->
 	<datastore-index kind="BandwidthQuotaUsed" ancestor="false"
 		source="manual">
@@ -169,5 +175,44 @@
 		<property name="type" direction="asc" />
 		<property name="timeCreatedMs" direction="desc" />
 	</datastore-index>
-
+	<datastore-index kind="ContentStat" ancestor="false"
+		source="manual">
+		<property name="applicationId" direction="asc" />
+		<property name="eventTimeMs" direction="desc" />
+	</datastore-index>
+	<datastore-index kind="ContentStat" ancestor="false"
+		source="manual">
+		<property name="applicationId" direction="asc" />
+		<property name="eventTimeMs" direction="desc" />
+	</datastore-index>
+	<datastore-index kind="ContentStatByApplicationSummary"
+		ancestor="false" source="manual">
+		<property name="applicationId" direction="asc" />
+		<property name="eventEndTimeMs" direction="desc" />
+	</datastore-index>
+	<datastore-index kind="ContentStatByApplicationSummary"
+		ancestor="false" source="manual">
+		<property name="applicationId" direction="asc" />
+		<property name="eventEndTimeMs" direction="desc" />
+	</datastore-index>
+	<datastore-index kind="ContentStatByContentGroupSummary"
+		ancestor="false" source="manual">
+		<property name="contentGroupId" direction="asc" />
+		<property name="eventEndTimeMs" direction="desc" />
+	</datastore-index>
+	<datastore-index kind="ContentStatByContentGroupSummary"
+		ancestor="false" source="manual">
+		<property name="contentGroupId" direction="asc" />
+		<property name="eventEndTimeMs" direction="desc" />
+	</datastore-index>
+	<datastore-index kind="ContentStatByContentSummary"
+		ancestor="false" source="manual">
+		<property name="contentId" direction="asc" />
+		<property name="eventEndTimeMs" direction="desc" />
+	</datastore-index>
+	<datastore-index kind="ContentStatByContentSummary"
+		ancestor="false" source="manual">
+		<property name="contentId" direction="asc" />
+		<property name="eventEndTimeMs" direction="desc" />
+	</datastore-index>
 </datastore-indexes>

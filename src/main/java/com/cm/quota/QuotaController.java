@@ -308,6 +308,23 @@ public class QuotaController {
 		}
 	}
 
+	@RequestMapping(value = "/tasks/bandwidth/utilization/update/{applicationId}/{sizeInBytes}", method = RequestMethod.POST)
+	public void updateBandwidthUtilizaton2(@PathVariable Long applicationId,
+			@PathVariable Long sizeInBytes, HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			Application lApplication = applicationService
+					.getApplication(applicationId);
+			quotaService.upsertBandwidthUtilization(lApplication, sizeInBytes);
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+
+		}
+	}
+
 	private void updateQuotaUtilizaton(Long accountId) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -441,13 +458,31 @@ public class QuotaController {
 
 		lQuota.setApplicationLimit(pQuota.getApplicationLimit());
 		lQuota.setApplicationsUsed(pApplicationQuotaUsed.getApplicationsUsed());
-		int lPercentageApplicationUtilized = ((int) ((pApplicationQuotaUsed
-				.getApplicationsUsed() * 100) / pQuota.getApplicationLimit()));
-		lQuota.setPercentageApplicationUsed(lPercentageApplicationUtilized);
-		if (LOGGER.isLoggable(Level.INFO))
-			LOGGER.info("setPercentageApplicationUsed: "
-					+ lPercentageApplicationUtilized);
 
+		try {
+			// float lPercentageApplicationUtilized = (((pApplicationQuotaUsed
+			// .getApplicationsUsed() * 100) / pQuota.getApplicationLimit()));
+			// lQuota.setPercentageApplicationUsed(String
+			// .valueOf(lPercentageApplicationUtilized));
+			// if (LOGGER.isLoggable(Level.INFO))
+			// LOGGER.info("setPercentageApplicationUsed: "
+			// + lPercentageApplicationUtilized);
+
+			BigDecimal lBd1 = new BigDecimal(
+					pApplicationQuotaUsed.getApplicationsUsed() * 100);
+			BigDecimal lBd2 = new BigDecimal(pQuota.getApplicationLimit());
+
+			// divide bg1 with bg2 with 0 scale
+			float lPercentageApplicationUtilized = (lBd1.divide(lBd2, 2,
+					RoundingMode.CEILING).intValue());
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("setPercentageApplicationUsed: "
+						+ lPercentageApplicationUtilized);
+			lQuota.setPercentageApplicationUsed(String
+					.valueOf(lPercentageApplicationUtilized));
+		} catch (ArithmeticException e) {
+			LOGGER.log(Level.WARNING, e.getMessage(), e);
+		}
 		long lStorageUsed = 0L;
 		for (StorageQuotaUsed lStorageQuotaUsed : pStorageQuotas) {
 			lStorageUsed += lStorageQuotaUsed.getStorageUsedInBytes();
@@ -458,25 +493,69 @@ public class QuotaController {
 		lQuota.setStorageUsed(lStorageUsed);
 		lQuota.setStorageLimit(pQuota.getStorageLimitInBytes());
 
-		int lPercentageStorageUtilized = ((int) ((lStorageUsed * 100) / pQuota
-				.getStorageLimitInBytes()));
-		lQuota.setPercentageStorageUsed(lPercentageStorageUtilized);
+		try {
+			// float lPercentageStorageUtilized = (((lStorageUsed * 100) /
+			// pQuota
+			// .getStorageLimitInBytes()));
+			// lQuota.setPercentageStorageUsed(String
+			// .valueOf(lPercentageStorageUtilized));
+			// if (LOGGER.isLoggable(Level.INFO))
+			// LOGGER.info("setPercentageStorageUsed: "
+			// + lPercentageStorageUtilized);
+
+			BigDecimal lBd1 = new BigDecimal(lStorageUsed * 100);
+			BigDecimal lBd2 = new BigDecimal(pQuota.getStorageLimitInBytes());
+
+			// divide bg1 with bg2 with 2 scale
+			float lPercentageStorageUtilized = (lBd1.divide(lBd2, 2,
+					RoundingMode.CEILING).intValue());
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("setPercentageStorageUsed: "
+						+ lPercentageStorageUtilized);
+			lQuota.setPercentageStorageUsed(String
+					.valueOf(lPercentageStorageUtilized));
+		} catch (ArithmeticException e) {
+			LOGGER.log(Level.WARNING, e.getMessage(), e);
+		}
 
 		if (pBandwidthQuotaUsed != null) {
-			lQuota.setBandwidthUsed(pBandwidthQuotaUsed
-					.getBandwidthUsedInBytes());
-			int lPercentageBandwidthUtilized = ((int) ((pBandwidthQuotaUsed
-					.getBandwidthUsedInBytes() * 100) / pQuota
-					.getBandwidthLimitInBytes()));
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("setPercentageBandwidthUsed: "
-						+ lPercentageBandwidthUtilized);
+			// lQuota.setBandwidthUsed(pBandwidthQuotaUsed
+			// .getBandwidthUsedInBytes());
+			// float lPercentageBandwidthUtilized = (((pBandwidthQuotaUsed
+			// .getBandwidthUsedInBytes() * 100) / pQuota
+			// .getBandwidthLimitInBytes()));
+			// if (LOGGER.isLoggable(Level.INFO))
+			// LOGGER.info("setPercentageBandwidthUsed: "
+			// + lPercentageBandwidthUtilized);
+			//
+			// lQuota.setPercentageBandwidthUsed(String
+			// .valueOf(lPercentageBandwidthUtilized));
+			// lQuota.setBandwidthLimit(pQuota.getBandwidthLimitInBytes());
 
-			lQuota.setPercentageBandwidthUsed(lPercentageBandwidthUtilized);
-			lQuota.setBandwidthLimit(pQuota.getBandwidthLimitInBytes());
+			try {
+				lQuota.setBandwidthUsed(pBandwidthQuotaUsed
+						.getBandwidthUsedInBytes());
+				lQuota.setBandwidthLimit(pQuota.getBandwidthLimitInBytes());
+				BigDecimal lBd1 = new BigDecimal(
+						pBandwidthQuotaUsed.getBandwidthUsedInBytes() * 100);
+				BigDecimal lBd2 = new BigDecimal(
+						pQuota.getBandwidthLimitInBytes());
+
+				// divide bg1 with bg2 with 0 scale
+				float lPercentageBandwidthUtilized = (lBd1.divide(lBd2, 2,
+						RoundingMode.CEILING).intValue());
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("setPercentageBandwidthUsed: "
+							+ lPercentageBandwidthUtilized);
+				lQuota.setPercentageBandwidthUsed(String
+						.valueOf(lPercentageBandwidthUtilized));
+			} catch (ArithmeticException e) {
+				LOGGER.log(Level.WARNING, e.getMessage(), e);
+			}
+
 		} else {
 			lQuota.setBandwidthUsed(0L);
-			lQuota.setPercentageBandwidthUsed(0);
+			lQuota.setPercentageBandwidthUsed(String.valueOf(0.0));
 			lQuota.setBandwidthLimit(pQuota.getBandwidthLimitInBytes());
 		}
 
@@ -492,31 +571,52 @@ public class QuotaController {
 
 		lQuota.setApplicationLimit(pQuota.getApplicationLimit());
 		lQuota.setApplicationsUsed(pApplicationQuotaUsed.getApplicationsUsed());
-		int lPercentageApplicationUtilized = ((int) ((pApplicationQuotaUsed
-				.getApplicationsUsed() * 100) / pQuota.getApplicationLimit()));
+		try {
 
-		lQuota.setPercentageApplicationUsed(lPercentageApplicationUtilized);
-		if (LOGGER.isLoggable(Level.INFO))
-			LOGGER.info("setPercentageApplicationUsed: "
-					+ lPercentageApplicationUtilized);
+			BigDecimal lBd1 = new BigDecimal(
+					pApplicationQuotaUsed.getApplicationsUsed() * 100);
+			BigDecimal lBd2 = new BigDecimal(pQuota.getApplicationLimit());
+
+			// divide bg1 with bg2 with 0 scale
+			float lPercentageApplicationUtilized = (lBd1.divide(lBd2, 2,
+					RoundingMode.CEILING).intValue());
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("setPercentageApplicationUsed: "
+						+ lPercentageApplicationUtilized);
+			lQuota.setPercentageApplicationUsed(String
+					.valueOf(lPercentageApplicationUtilized));
+		} catch (ArithmeticException e) {
+			LOGGER.log(Level.WARNING, e.getMessage(), e);
+		}
+
 		lQuota.addStorageQuota(convertStorageQuota(pQuota,
 				pApplicationQuotaUsed, pStorageQuotaUsed));
 
 		if (pBandwidthQuotaUsed != null) {
-			lQuota.setBandwidthUsed(pBandwidthQuotaUsed
-					.getBandwidthUsedInBytes());
-			int lPercentageBandwidthUtilized = ((int) ((pBandwidthQuotaUsed
-					.getBandwidthUsedInBytes() * 100) / pQuota
-					.getBandwidthLimitInBytes()));
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("setPercentageBandwidthUsed: "
-						+ lPercentageBandwidthUtilized);
+			try {
+				lQuota.setBandwidthUsed(pBandwidthQuotaUsed
+						.getBandwidthUsedInBytes());
+				lQuota.setBandwidthLimit(pQuota.getBandwidthLimitInBytes());
+				BigDecimal lBd1 = new BigDecimal(
+						pBandwidthQuotaUsed.getBandwidthUsedInBytes() * 100);
+				BigDecimal lBd2 = new BigDecimal(
+						pQuota.getBandwidthLimitInBytes());
 
-			lQuota.setPercentageBandwidthUsed(lPercentageBandwidthUtilized);
-			lQuota.setBandwidthLimit(pQuota.getBandwidthLimitInBytes());
+				// divide bg1 with bg2 with 0 scale
+				float lPercentageBandwidthUtilized = (lBd1.divide(lBd2, 2,
+						RoundingMode.CEILING).intValue());
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("setPercentageBandwidthUsed: "
+							+ lPercentageBandwidthUtilized);
+				lQuota.setPercentageBandwidthUsed(String
+						.valueOf(lPercentageBandwidthUtilized));
+			} catch (ArithmeticException e) {
+				LOGGER.log(Level.WARNING, e.getMessage(), e);
+			}
+
 		} else {
 			lQuota.setBandwidthUsed(0L);
-			lQuota.setPercentageBandwidthUsed(0);
+			lQuota.setPercentageBandwidthUsed(String.valueOf(0.0));
 			lQuota.setBandwidthLimit(pQuota.getBandwidthLimitInBytes());
 		}
 		return lQuota;

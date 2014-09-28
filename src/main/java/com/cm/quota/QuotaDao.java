@@ -254,8 +254,13 @@ class QuotaDao {
 
 					bandwidthQuotaUsed.setTrackingId(pApplication
 							.getTrackingId());
+					long lExistingBandwidthUsed = bandwidthQuotaUsed
+							.getBandwidthUsedInBytes();
+					if (LOGGER.isLoggable(Level.INFO))
+						LOGGER.info("Updating bandwidth used to " + 
+								 (lExistingBandwidthUsed + bandwidthUsedInBytes));
 					bandwidthQuotaUsed
-							.setBandwidthUsedInBytes(bandwidthUsedInBytes);
+							.setBandwidthUsedInBytes(lExistingBandwidthUsed + bandwidthUsedInBytes);
 					bandwidthQuotaUsed.setTimeUpdatedMs(System
 							.currentTimeMillis());
 					bandwidthQuotaUsed
@@ -275,8 +280,8 @@ class QuotaDao {
 
 				TimeZone timeZone = TimeZone.getTimeZone("UTC");
 
-				lQuotaUsed.setSubscriptionPeriodStartMs(Utils.getStartOfDayToday(
-						timeZone).getTimeInMillis());
+				lQuotaUsed.setSubscriptionPeriodStartMs(Utils
+						.getStartOfDayToday(timeZone).getTimeInMillis());
 				lQuotaUsed.setSubscriptionPeriodEndMs(Utils
 						.getOneMonthFromToday(timeZone).getTimeInMillis());
 

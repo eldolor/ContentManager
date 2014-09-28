@@ -302,6 +302,39 @@ class ContentDao {
 		}
 	}
 
+	List<Content> getByContentGroupId(Long contentGroupId, boolean includeDeleted) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(Content.class);
+				if (includeDeleted) {
+					q.setFilter("contentGroupId == contentGroupIdParam");
+					q.declareParameters("Long contentGroupIdParam");
+					q.setOrdering("timeUpdatedMs desc");
+					return (List<Content>) q.execute(contentGroupId);
+
+				} else {
+					q.setFilter("contentGroupId == contentGroupIdParam && deleted == deletedParam");
+					q.declareParameters("Long contentGroupIdParam, Boolean deletedParam");
+					q.setOrdering("timeUpdatedMs desc");
+					return (List<Content>) q.execute(contentGroupId,
+							Boolean.valueOf(false));
+				}
+
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting get");
+		}
+	}
 	List<Content> get(Long applicationId, boolean includeDeleted) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))

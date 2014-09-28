@@ -157,7 +157,7 @@ function setupAccountUsage() {
 					statusCode : {
 						200 : function(quota) {
 							mQuota = quota;
-
+							// displayMessage(JSON.stringify(mQuota, null, 2));
 							var lAccountUsageDetailsHtml = '';
 							lAccountUsageDetailsHtml += '<div class="row full-width">';
 
@@ -275,6 +275,7 @@ function setupAccountUsage() {
 function setupAccountUsageGoogCharts() {
 	log("setupAccountUsageGoogCharts", "Entering");
 	try {
+		$('#progress_bar').show();
 		var url = "/secured/quota";
 		var jqxhr = $
 				.ajax({
@@ -285,38 +286,46 @@ function setupAccountUsageGoogCharts() {
 					statusCode : {
 						200 : function(quota) {
 							mQuota = quota;
-
+							// displayMessage(JSON.stringify(mQuota, null, 2));
 							var lAccountUsageDetailsHtml = '';
-							lAccountUsageDetailsHtml += '<div class="row full-width"><div class="large-12 columns" >';
+							lAccountUsageDetailsHtml += '<div class="row full-width" data-equalizer><div class="large-12 columns" >';
 
 							// BANDWIDTH
-							lAccountUsageDetailsHtml += '<div class="large-4 columns"><div id="bandwidth_chart"></div>'
+							lAccountUsageDetailsHtml += '<div class="large-4 columns" data-equalizer-watch><div id="bandwidth_chart"></div>';
 							// lAccountUsageDetailsHtml += '<h2
 							// class="gray">Bandwidth</h2>';
-							lAccountUsageDetailsHtml += '<h3 class="gray">'
-									+ mQuota.percentageBandwidthUsed + '% OR '
+							var lPercentageBandwidthUsed = (mQuota.percentageBandwidthUsed == '0.0') ? '<1%'
+									: mQuota.percentageBandwidthUsed;
+							lAccountUsageDetailsHtml += '<h3 class="gray"><small>'
+									+ lPercentageBandwidthUsed
+									+ ' OR '
 									+ convertBytes(mQuota.bandwidthUsed)
 									+ ' of '
 									+ convertBytes(mQuota.bandwidthLimit)
 									+ ' used';
-							lAccountUsageDetailsHtml += '</h3>';
+							lAccountUsageDetailsHtml += '</small></h3>';
 							lAccountUsageDetailsHtml += '</div>';
 
 							// TOTAL STORAGE
-							lAccountUsageDetailsHtml += '<div class="large-4 columns"><div id="storage_chart"></div>'
+							lAccountUsageDetailsHtml += '<div class="large-4 columns" data-equalizer-watch><div id="storage_chart"></div>';
 							// lAccountUsageDetailsHtml += '<h2
 							// class="gray">Storage</h2>';
-							lAccountUsageDetailsHtml += '<h3 class="gray">'
-									+ mQuota.percentageStorageUsed + '% OR '
-									+ convertBytes(mQuota.storageUsed) + ' of '
+							var lPercentageStorageUsed = (mQuota.percentageStorageUsed == '0.0') ? '<1%'
+									: mQuota.percentageStorageUsed;
+							lAccountUsageDetailsHtml += '<h3 class="gray"><small>'
+									+ lPercentageStorageUsed
+									+ ' OR '
+									+ convertBytes(mQuota.storageUsed)
+									+ ' of '
 									+ convertBytes(mQuota.storageLimit)
 									+ ' used';
-							lAccountUsageDetailsHtml += '</h3>';
+							lAccountUsageDetailsHtml += '</small></h3>';
 							lAccountUsageDetailsHtml += '</div>';
 
 							// STORAGE per application
-							lAccountUsageDetailsHtml += '<div class="large-4 columns"><div id="storage_per_application_chart" ></div>'
-							lAccountUsageDetailsHtml += '<h3 class="gray">Storage Per Application</h3>';
+							lAccountUsageDetailsHtml += '<div class="large-4 columns" data-equalizer-watch><div id="storage_per_application_chart" ></div>';
+
+							lAccountUsageDetailsHtml += '<h3 class="gray"><small>Storage Per Application</small></h3>';
 							lAccountUsageDetailsHtml += '</div>';
 
 							lAccountUsageDetailsHtml += '</div>';
@@ -324,7 +333,8 @@ function setupAccountUsageGoogCharts() {
 
 							$('#account_usage_details').html(
 									lAccountUsageDetailsHtml);
-							log("setupAccountUsage", lAccountUsageDetailsHtml);
+							// log("setupAccountUsage",
+							// lAccountUsageDetailsHtml);
 
 							// GOOG Charts
 							var lBandwidthData = google.visualization
@@ -332,12 +342,17 @@ function setupAccountUsageGoogCharts() {
 											[ 'Label', 'Value' ],
 											[
 													'Bandwidth',
-													mQuota.percentageBandwidthUsed ] ]);
+													Math
+															.ceil(mQuota.percentageBandwidthUsed) ] ]);
 
 							var lStorageData = google.visualization
-									.arrayToDataTable([ [ 'Label', 'Value' ],
+									.arrayToDataTable([
+											[ 'Label', 'Value' ],
 
-									[ 'Storage', mQuota.percentageStorageUsed ] ]);
+											[
+													'Storage',
+													Math
+															.ceil(mQuota.percentageStorageUsed) ] ]);
 							var options = {
 								redFrom : 90,
 								redTo : 100,
@@ -377,6 +392,9 @@ function setupAccountUsageGoogCharts() {
 								is3D : true,
 								legend : {
 									position : 'right'
+								},
+								tooltip : {
+									showColorCode : true
 								}
 							};
 
@@ -400,6 +418,11 @@ function setupAccountUsageGoogCharts() {
 								.html(
 										'Unable to process the request. Please try again later');
 						$('#content_errors').show();
+					},
+					complete : function(xhr, textStatus) {
+						$('#progress_bar').css("width", "100%");
+						$('#progress_bar').hide();
+						log(xhr.status);
 					}
 				});
 	} catch (err) {

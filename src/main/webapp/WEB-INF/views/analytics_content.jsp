@@ -22,7 +22,7 @@
 
 <!-- Begin Custom -->
 <script type="text/javascript"
-	src="/resources/javascripts/cm/cm.analytics.application.js"></script>
+	src="/resources/javascripts/cm/cm.analytics.content.js"></script>
 <!-- End Custom -->
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 
@@ -30,6 +30,9 @@
 	google.load("visualization", "1.1", {
 		packages : [ "calendar" ]
 	});
+</script>
+<script type="text/javascript">
+var mContentGroupId = ${contentGroupId};
 </script>
 </head>
 <body>
@@ -42,8 +45,8 @@
 		<div class="row full-width">
 			<h2 class="text-center gray">Content Usage</h2>
 			<p class="text-center page_sub_heading">These charts show the
-				cumulative number of daily content impressions on mobile devices, for the
-				applications.</p>
+				number of daily content impressions on mobile devices, for the
+				content</p>
 			<div class="line">
 				<img src="/resources/images/box/line.png" alt="line" />
 			</div>

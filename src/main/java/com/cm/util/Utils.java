@@ -81,6 +81,28 @@ public class Utils {
 
 	}
 
+	public static void triggerUpdateBandwidthUtilizationMessage(
+			Long applicationId, Long sizeInBytes, long delay) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			Queue queue = QueueFactory
+					.getQueue(Configuration.CONTENT_QUEUE_NAME);
+			TaskOptions taskOptions = TaskOptions.Builder
+					.withUrl(
+							"/tasks/bandwidth/utilization/update/"
+									+ applicationId + "/" + sizeInBytes)
+					.param("applicationId", String.valueOf(applicationId))
+					.param("sizeInBytes", String.valueOf(sizeInBytes))
+					.method(Method.POST).countdownMillis(delay);
+			queue.add(taskOptions);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+
+	}
+
 	public static void triggerForgotPasswordEmailMessage(String pGuid,
 			long delay) {
 		try {

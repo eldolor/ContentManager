@@ -120,6 +120,20 @@ public class ContentService {
 				LOGGER.info("Exiting get");
 		}
 	}
+	public List<Content> getByContentGroupId(Long contentGroupId, boolean includeDeleted) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			List<Content> contents = contentDao.getByContentGroupId(contentGroupId,
+					includeDeleted);
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Returning " + contents.size() + " contents");
+			return contents;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
 
 	public List<Content> get(boolean deleted, boolean enabled) {
 		try {

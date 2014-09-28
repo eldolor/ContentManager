@@ -49,6 +49,11 @@
 				<img src="/resources/images/box/line.png" alt="line" />
 			</div>
 			<div class="content" id="account_usage">
+				<div id="progress_bar" style="display: none">
+					<div class="progress radius">
+						<span class="meter" style="width: 40%; background-color: #5cb85c;">Loading...</span>
+					</div>
+				</div>
 				<div id="account_usage_details"></div>
 			</div>
 

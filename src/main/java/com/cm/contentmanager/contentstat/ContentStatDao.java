@@ -40,6 +40,26 @@ class ContentStatDao {
 		}
 	}
 
+	void saveContentDownloadStat(ContentDownloadStat contentDownloadStat) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			PersistenceManager pm = null;
+			try {
+				pm = PMF.get().getPersistenceManager();
+				pm.makePersistent(contentDownloadStat);
+
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
 	List<ContentStatByApplicationSummary> getSummaryByApplication(
 			Long applicationId, Long eventStartTimeMs, Long eventEndTimeMs) {
 		try {
@@ -77,8 +97,59 @@ class ContentStatDao {
 				Query q = pm.newQuery(ContentStatByApplicationSummary.class);
 				q.setFilter("applicationId == applicationIdParam");
 				q.declareParameters("Long applicationIdParam");
-				return (List<ContentStatByApplicationSummary>) q.execute(
-						applicationId);
+				q.setOrdering("eventEndTimeMs desc");
+				return (List<ContentStatByApplicationSummary>) q
+						.execute(applicationId);
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	List<ContentStatByContentGroupSummary> getSummaryByContentGroup(
+			Long contentGroupId) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(ContentStatByContentGroupSummary.class);
+				q.setFilter("contentGroupId == contentGroupIdParam");
+				q.declareParameters("Long contentGroupIdParam");
+				q.setOrdering("eventEndTimeMs desc");
+				return (List<ContentStatByContentGroupSummary>) q
+						.execute(contentGroupId);
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	List<ContentStatByContentSummary> getSummaryByContent(Long contentId) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(ContentStatByContentSummary.class);
+				q.setFilter("contentId == contentIdParam");
+				q.declareParameters("Long contentIdParam");
+				q.setOrdering("eventEndTimeMs desc");
+				return (List<ContentStatByContentSummary>) q.execute(contentId);
 			} finally {
 				if (pm != null) {
 					pm.close();
@@ -97,8 +168,10 @@ class ContentStatDao {
 				LOGGER.info("Entering");
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Looking up application id: " + applicationId
-						+ " start time: " + new Date(eventStartTimeMs).toGMTString()
-						+ " end time: " + new Date(eventEndTimeMs).toGMTString());
+						+ " start time: "
+						+ new Date(eventStartTimeMs).toGMTString()
+						+ " end time: "
+						+ new Date(eventEndTimeMs).toGMTString());
 			PersistenceManager pm = null;
 			long lApplicationIdCount = 0L;
 			Map<Long, Long> lContentGroupCounts = new HashMap<Long, Long>();

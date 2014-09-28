@@ -340,20 +340,27 @@ public class ContentServerController {
 			HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering doServeGet");
+				LOGGER.info("Entering");
 			BlobKey blobKey = new BlobKey(key);
 			final BlobInfo blobInfo = mBlobInfoFactory.loadBlobInfo(blobKey);
 			if (blobInfo != null) {
 				String lRangeRequestedHeader = request.getHeader("Range");
 				LOGGER.info("Range requested is " + lRangeRequestedHeader);
+				/****
+				 * Anshu: Commented out. Bandwidth is now measured by
+				 * /contentdownloadstats, provided by the devices. This provides
+				 * a more accurate measure of the bandwidth utilized, and works
+				 * well with the CDN use
+				 ***/
 				// not a partial request. Done so that bandwidth utilization is
 				// not counted multiple times
-				if ((lRangeRequestedHeader != null)
-						&& lRangeRequestedHeader.contains("0-")) {
-					Utils.triggerUpdateBandwidthUtilizationMessage(key, 0);
-				}
+				// if ((lRangeRequestedHeader != null)
+				// && lRangeRequestedHeader.contains("0-")) {
+				// Utils.triggerUpdateBandwidthUtilizationMessage(key, 0);
+				// }
 				response.setHeader("Content-Disposition",
 						"attachment; filename=" + blobInfo.getFilename());
+				response.setHeader("Cache-Control", "max-age=86400");
 				BlobstoreServiceFactory.getBlobstoreService().serve(blobKey,
 						response);
 			} else {
@@ -370,31 +377,43 @@ public class ContentServerController {
 		return null;
 	}
 
-	@RequestMapping(value = "/contentserver/dropbox", method = RequestMethod.POST)
+	/**
+	 * keyWithExtension is required for the CDN to cache the creative. This
+	 * value is ignored
+	 * 
+	 * @param key
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/contentserver/dropbox/{key}/{keyWithExtension}", method = RequestMethod.GET)
 	public @ResponseBody
-	String doServePost(@RequestParam String key, HttpServletRequest request,
+	String doServeGetWithExtension(@PathVariable String key,
+			@PathVariable String keyWithExtension, HttpServletRequest request,
 			HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering doServePost");
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Key: " + key);
-
+				LOGGER.info("Entering");
 			BlobKey blobKey = new BlobKey(key);
 			final BlobInfo blobInfo = mBlobInfoFactory.loadBlobInfo(blobKey);
 			if (blobInfo != null) {
 				String lRangeRequestedHeader = request.getHeader("Range");
 				LOGGER.info("Range requested is " + lRangeRequestedHeader);
+				/****
+				 * Anshu: Commented out. Bandwidth is now measured by
+				 * /contentdownloadstats, provided by the devices. This provides
+				 * a more accurate measure of the bandwidth utilized, and works
+				 * well with the CDN use
+				 ***/
 				// not a partial request. Done so that bandwidth utilization is
 				// not counted multiple times
-				if ((lRangeRequestedHeader != null)
-						&& lRangeRequestedHeader.contains("0-")) {
-					Utils.triggerUpdateBandwidthUtilizationMessage(key, 0);
-				}
-				if (LOGGER.isLoggable(Level.INFO))
-					LOGGER.info("Returning content for key " + key);
+				// if ((lRangeRequestedHeader != null)
+				// && lRangeRequestedHeader.contains("0-")) {
+				// Utils.triggerUpdateBandwidthUtilizationMessage(key, 0);
+				// }
 				response.setHeader("Content-Disposition",
 						"attachment; filename=" + blobInfo.getFilename());
+				response.setHeader("Cache-Control", "max-age=86400");
 				BlobstoreServiceFactory.getBlobstoreService().serve(blobKey,
 						response);
 			} else {
@@ -402,12 +421,11 @@ public class ContentServerController {
 				response.setStatus(HttpServletResponse.SC_NO_CONTENT);
 			}
 		} catch (Throwable e) {
-			// handled by GcmManager
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting doServePost");
+				LOGGER.info("Exiting");
 		}
 		return null;
 	}

@@ -68,12 +68,7 @@
 		<ul class="right">
 			<li><a href="/">Home</a></li>
 			<sec:authorize ifAnyGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">
-				<li class="has-dropdown"><a href="#">Analytics</a>
-					<ul class="dropdown">
-						<li><a href="/analytics/applications">Applications</a></li>
-						<li><a href="#">Content Groups</a></li>
-						<li><a href="#">Content</a></li>
-					</ul></li>
+				<li><a href="/analytics/applications">Usage Reports</a></li>
 				<li class="has-dropdown"><a href="#">Account Settings</a>
 					<ul class="dropdown">
 						<li><a href="/account/billing">Billing</a></li>

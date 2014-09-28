@@ -15,15 +15,26 @@ public class ContentStatService {
 	private static final Logger LOGGER = Logger
 			.getLogger(ContentStatService.class.getName());
 
-	public void saveContentStat(ContentStat ContentStat) {
+	public void saveContentStat(ContentStat contentStat) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering saveContentStat");
 
-			contentStatDao.saveContentStat(ContentStat);
+			contentStatDao.saveContentStat(contentStat);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting saveContent");
+		}
+	}
+	public void saveContentDownloadStat(ContentDownloadStat contentDownloadStat) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+
+			contentStatDao.saveContentDownloadStat(contentDownloadStat);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting ");
 		}
 	}
 
@@ -49,7 +60,29 @@ public class ContentStatService {
 				LOGGER.info("Exiting");
 		}
 	}
-	
+	public List<ContentStatByContentGroupSummary> getSummaryByContentGroup(Long contentGroupId) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+
+			return contentStatDao.getSummaryByContentGroup(contentGroupId);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+	public List<ContentStatByContentSummary> getSummaryByContent(Long contentId) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+
+			return contentStatDao.getSummaryByContent(contentId);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+		
 	public void rollupSummary(Long applicationId, Long eventStartTimeMs, Long eventEndTimeMs){
 		try {
 			if (LOGGER.isLoggable(Level.INFO))

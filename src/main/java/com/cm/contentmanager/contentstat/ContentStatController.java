@@ -2,9 +2,7 @@ package com.cm.contentmanager.contentstat;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,6 +26,7 @@ import com.cm.contentmanager.application.Application;
 import com.cm.contentmanager.application.ApplicationService;
 import com.cm.contentmanager.content.Content;
 import com.cm.contentmanager.content.ContentService;
+import com.cm.contentmanager.contentgroup.ContentGroup;
 import com.cm.contentmanager.contentgroup.ContentGroupService;
 import com.cm.usermanagement.user.User;
 import com.cm.usermanagement.user.UserService;
@@ -67,6 +66,34 @@ public class ContentStatController {
 		}
 	}
 
+	@RequestMapping(value = "/analytics/{applicationId}/contentgroups", method = RequestMethod.GET)
+	public ModelAndView displayContentGroups(@PathVariable Long applicationId,
+			ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering");
+		try {
+			model.addAttribute("applicationId", applicationId);
+			return new ModelAndView("analytics_content_groups", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	@RequestMapping(value = "/analytics/{contentGroupId}/content", method = RequestMethod.GET)
+	public ModelAndView displayContent(@PathVariable Long contentGroupId,
+			ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering");
+		try {
+			model.addAttribute("contentGroupId", contentGroupId);
+			return new ModelAndView("analytics_content", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
 	@RequestMapping(value = "/contentstats", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	public @ResponseBody
 	Result doCreateContentStat(
@@ -98,28 +125,59 @@ public class ContentStatController {
 		}
 	}
 
+	@RequestMapping(value = "/contentdownloadstats", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	public @ResponseBody
+	Result doCreateContentDownloadStat(
+			@RequestBody List<com.cm.contentmanager.contentstat.transfer.ContentDownloadStat> contentDownloadStats,
+			HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+
+			List<ContentDownloadStat> lContentDownloadStats = convertToContentDownloadStatDomainObject(contentDownloadStats);
+			long lTotalSizeInBytes = 0L;
+			long lApplicationId = 0L;
+			for (ContentDownloadStat lContentDownloadStat : lContentDownloadStats) {
+				contentStatService
+						.saveContentDownloadStat(lContentDownloadStat);
+				if (lApplicationId == 0L) {
+					lApplicationId = lContentDownloadStat.getApplicationId();
+				}
+				lTotalSizeInBytes += lContentDownloadStat.getSizeInBytes();
+			}
+			Utils.triggerUpdateBandwidthUtilizationMessage(lApplicationId,
+					lTotalSizeInBytes, 0);
+			response.setStatus(HttpServletResponse.SC_CREATED);
+
+			Result lResult = new Result();
+			lResult.setResult(Result.SUCCESS);
+			response.setStatus(HttpServletResponse.SC_CREATED);
+			return lResult;
+
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
 	@RequestMapping(value = "/contentstats/application/daily", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody
-	List<List<com.cm.contentmanager.contentstat.transfer.ContentStatByApplicationSummary>> get(
+	List<List<com.cm.contentmanager.contentstat.transfer.ContentStatByApplicationSummary>> getApplicationSummary(
 			HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
 			User lUser = userService.getLoggedInUser();
 			List<List<com.cm.contentmanager.contentstat.transfer.ContentStatByApplicationSummary>> lContentStats = new ArrayList<List<com.cm.contentmanager.contentstat.transfer.ContentStatByApplicationSummary>>();
-
-			// Calendar lEod =
-			// Utils.getEndOfDayToday(TimeZone.getTimeZone("UTC"));
-			// Calendar lSod = Utils.getStartOfDayToday(TimeZone
-			// .getTimeZone("UTC"));
 			List<Application> lApplications = applicationService
 					.getApplicationsByAccountId(lUser.getAccountId(), false);
 			// for each application in the account
 			for (Application application : lApplications) {
-				// List<ContentStatByApplicationSummary> lList =
-				// contentStatService
-				// .getSummaryByApplication(application.getId(),
-				// lSod.getTimeInMillis(), lEod.getTimeInMillis());
 				List<ContentStatByApplicationSummary> lList = contentStatService
 						.getSummaryByApplication(application.getId());
 				if (lList != null && (!lList.isEmpty())) {
@@ -134,7 +192,6 @@ public class ContentStatController {
 			response.setStatus(HttpServletResponse.SC_OK);
 			return lContentStats;
 		} catch (Throwable e) {
-			// handled by GcmManager
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 			return null;
@@ -142,6 +199,131 @@ public class ContentStatController {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting");
 		}
+	}
+
+	@RequestMapping(value = "/contentstats/{applicationId}/contentgroups/daily", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody
+	List<List<com.cm.contentmanager.contentstat.transfer.ContentStatByContentGroupSummary>> getContentGroupSummary(
+			@PathVariable Long applicationId, HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			List<List<com.cm.contentmanager.contentstat.transfer.ContentStatByContentGroupSummary>> lContentStats = new ArrayList<List<com.cm.contentmanager.contentstat.transfer.ContentStatByContentGroupSummary>>();
+
+			List<ContentGroup> lContentGroups = contentGroupService.get(
+					applicationId, false);
+			for (ContentGroup contentGroup : lContentGroups) {
+				List<ContentStatByContentGroupSummary> lList = contentStatService
+						.getSummaryByContentGroup(contentGroup.getId());
+				if (lList != null && (!lList.isEmpty())) {
+					if (LOGGER.isLoggable(Level.INFO))
+						LOGGER.info("Retrieved " + lList.size()
+								+ " rows for content group id "
+								+ contentGroup.getId());
+					lContentStats.add(convert(contentGroup, lList));
+				}
+			}
+
+			response.setStatus(HttpServletResponse.SC_OK);
+			return lContentStats;
+		} catch (Throwable e) {
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	@RequestMapping(value = "/contentstats/{contentGroupId}/content/daily", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody
+	List<List<com.cm.contentmanager.contentstat.transfer.ContentStatByContentSummary>> getContentSummary(
+			@PathVariable Long contentGroupId, HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			List<List<com.cm.contentmanager.contentstat.transfer.ContentStatByContentSummary>> lContentStats = new ArrayList<List<com.cm.contentmanager.contentstat.transfer.ContentStatByContentSummary>>();
+
+			List<Content> lContents = contentService.getByContentGroupId(
+					contentGroupId, false);
+			for (Content content : lContents) {
+				List<ContentStatByContentSummary> lList = contentStatService
+						.getSummaryByContent(content.getId());
+				if (lList != null && (!lList.isEmpty())) {
+					if (LOGGER.isLoggable(Level.INFO))
+						LOGGER.info("Retrieved " + lList.size()
+								+ " rows for content id " + content.getId());
+					lContentStats.add(convert(content, lList));
+				}
+			}
+
+			response.setStatus(HttpServletResponse.SC_OK);
+			return lContentStats;
+		} catch (Throwable e) {
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	private List<com.cm.contentmanager.contentstat.transfer.ContentStatByContentSummary> convert(
+			Content content, List<ContentStatByContentSummary> lList) {
+		List<com.cm.contentmanager.contentstat.transfer.ContentStatByContentSummary> lRtnList = new ArrayList<com.cm.contentmanager.contentstat.transfer.ContentStatByContentSummary>();
+		for (ContentStatByContentSummary contentStatByContentSummary : lList) {
+			lRtnList.add(convert(content, contentStatByContentSummary));
+		}
+		return lRtnList;
+	}
+
+	private com.cm.contentmanager.contentstat.transfer.ContentStatByContentSummary convert(
+			Content content,
+			ContentStatByContentSummary contentStatByContentSummary) {
+		com.cm.contentmanager.contentstat.transfer.ContentStatByContentSummary lSummary = new com.cm.contentmanager.contentstat.transfer.ContentStatByContentSummary();
+		lSummary.setContentId(contentStatByContentSummary.getContentId());
+		lSummary.setCount(contentStatByContentSummary.getCount());
+		lSummary.setEventStartTimeMs(contentStatByContentSummary
+				.getEventStartTimeMs());
+		lSummary.setEventEndTimeMs(contentStatByContentSummary
+				.getEventEndTimeMs());
+		lSummary.setEventTimeZoneOffsetMs(contentStatByContentSummary
+				.getEventTimeZoneOffsetMs());
+		//
+		lSummary.setName(content.getName());
+
+		return lSummary;
+	}
+
+	private List<com.cm.contentmanager.contentstat.transfer.ContentStatByContentGroupSummary> convert(
+			ContentGroup contentGroup,
+			List<ContentStatByContentGroupSummary> lList) {
+		List<com.cm.contentmanager.contentstat.transfer.ContentStatByContentGroupSummary> lRtnList = new ArrayList<com.cm.contentmanager.contentstat.transfer.ContentStatByContentGroupSummary>();
+		for (ContentStatByContentGroupSummary contentStatByContentGroupSummary : lList) {
+			lRtnList.add(convert(contentGroup, contentStatByContentGroupSummary));
+		}
+		return lRtnList;
+	}
+
+	private com.cm.contentmanager.contentstat.transfer.ContentStatByContentGroupSummary convert(
+			ContentGroup contentGroup,
+			ContentStatByContentGroupSummary contentStatByContentGroupSummary) {
+		com.cm.contentmanager.contentstat.transfer.ContentStatByContentGroupSummary lSummary = new com.cm.contentmanager.contentstat.transfer.ContentStatByContentGroupSummary();
+		lSummary.setContentGroupId(contentStatByContentGroupSummary
+				.getContentGroupId());
+		lSummary.setCount(contentStatByContentGroupSummary.getCount());
+		lSummary.setEventStartTimeMs(contentStatByContentGroupSummary
+				.getEventStartTimeMs());
+		lSummary.setEventEndTimeMs(contentStatByContentGroupSummary
+				.getEventEndTimeMs());
+		lSummary.setEventTimeZoneOffsetMs(contentStatByContentGroupSummary
+				.getEventTimeZoneOffsetMs());
+		//
+		lSummary.setName(contentGroup.getName());
+
+		return lSummary;
 	}
 
 	private List<com.cm.contentmanager.contentstat.transfer.ContentStatByApplicationSummary> convert(
@@ -208,7 +390,6 @@ public class ContentStatController {
 		}
 	}
 
-
 	// TODO: delete later
 	@RequestMapping(value = "/test/contentstats/create/{eventTimeMs}", method = RequestMethod.GET)
 	public void createTestContentStats(@PathVariable Long eventTimeMs,
@@ -261,7 +442,8 @@ public class ContentStatController {
 						.getApplicationsByAccountId(account.getId(), false);
 				// for each application in the account
 				for (Application application : lApplications) {
-					Calendar lEod = Utils.getEndOfDayToday(TimeZone.getTimeZone("UTC"));
+					Calendar lEod = Utils.getEndOfDayToday(TimeZone
+							.getTimeZone("UTC"));
 					List<Content> lContents = contentService.get(
 							application.getId(), false);
 					for (int i = 0; i < lastNDays; i++) {
@@ -292,8 +474,7 @@ public class ContentStatController {
 				LOGGER.info("Exiting");
 		}
 	}
-	
-	
+
 	@RequestMapping(value = "/admin/rollup/contentstats/period/{lastNDays}", method = RequestMethod.GET)
 	public void rollupDailySummaryN(@PathVariable Long lastNDays,
 			HttpServletResponse response) {
@@ -308,7 +489,8 @@ public class ContentStatController {
 						.getApplicationsByAccountId(account.getId(), false);
 				// for each application in the account
 				for (Application application : lApplications) {
-					Calendar lEod = Utils.getEndOfDayToday(TimeZone.getTimeZone("UTC"));
+					Calendar lEod = Utils.getEndOfDayToday(TimeZone
+							.getTimeZone("UTC"));
 					Calendar lSod = Utils.getStartOfDayToday(TimeZone
 							.getTimeZone("UTC"));
 					for (int i = 0; i < lastNDays; i++) {
@@ -330,14 +512,14 @@ public class ContentStatController {
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 		} finally {
-			if (LOGGER.isLoggable(Level.INFO)){
+			if (LOGGER.isLoggable(Level.INFO)) {
 				LOGGER.info(lMessagesEnqueued + " messages enqueued");
 				LOGGER.info("Exiting");
 			}
 		}
 	}
 
-	@RequestMapping(value = "/tasks/rollup/contentstats/daily", method = RequestMethod.POST)
+	@RequestMapping(value = "/cron/rollup/contentstats/daily", method = RequestMethod.POST)
 	public void rollupDailySummary(HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -392,7 +574,7 @@ public class ContentStatController {
 			List<com.cm.contentmanager.contentstat.transfer.ContentStat> pContentStats) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering convertToDomainObject");
+				LOGGER.info("Entering");
 			List<ContentStat> lContentStats = new ArrayList<ContentStat>();
 			for (com.cm.contentmanager.contentstat.transfer.ContentStat lContentStat : pContentStats) {
 				lContentStats.add(convertToDomainObject(lContentStat));
@@ -400,7 +582,7 @@ public class ContentStatController {
 			return lContentStats;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting convertToDomainObject");
+				LOGGER.info("Exiting");
 		}
 
 	}
@@ -409,7 +591,7 @@ public class ContentStatController {
 			com.cm.contentmanager.contentstat.transfer.ContentStat pContentStat) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering convertToDomailObject");
+				LOGGER.info("Entering");
 			ContentStat lContentStat = new ContentStat();
 			lContentStat.setApplicationId(pContentStat.getApplicationId());
 			lContentStat.setContentGroupId(pContentStat.getContentGroupId());
@@ -421,7 +603,51 @@ public class ContentStatController {
 			return lContentStat;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting convertToDomailObject");
+				LOGGER.info("Exiting");
+		}
+
+	}
+
+	private List<ContentDownloadStat> convertToContentDownloadStatDomainObject(
+			List<com.cm.contentmanager.contentstat.transfer.ContentDownloadStat> pContentDownloadStats) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			List<ContentDownloadStat> lContentDownloadStats = new ArrayList<ContentDownloadStat>();
+			for (com.cm.contentmanager.contentstat.transfer.ContentDownloadStat lContentDownloadStat : pContentDownloadStats) {
+				lContentDownloadStats
+						.add(convertToContentDownloadStatDomainObject(lContentDownloadStat));
+			}
+			return lContentDownloadStats;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+
+	}
+
+	private ContentDownloadStat convertToContentDownloadStatDomainObject(
+			com.cm.contentmanager.contentstat.transfer.ContentDownloadStat pContentDownloadStat) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			ContentDownloadStat lContentDownloadStat = new ContentDownloadStat();
+			lContentDownloadStat.setApplicationId(pContentDownloadStat
+					.getApplicationId());
+			lContentDownloadStat.setContentGroupId(pContentDownloadStat
+					.getContentGroupId());
+			lContentDownloadStat.setContentId(pContentDownloadStat
+					.getContentId());
+			lContentDownloadStat.setEventTimeMs(pContentDownloadStat
+					.getEventTimeMs());
+			lContentDownloadStat.setEventTimeZoneOffsetMs(pContentDownloadStat
+					.getEventTimeZoneOffsetMs());
+			lContentDownloadStat.setSizeInBytes(pContentDownloadStat
+					.getSizeInBytes());
+			return lContentDownloadStat;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
 		}
 
 	}

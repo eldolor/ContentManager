@@ -519,7 +519,7 @@ public class ContentStatController {
 		}
 	}
 
-	@RequestMapping(value = "/cron/rollup/contentstats/daily", method = RequestMethod.POST)
+	@RequestMapping(value = "/cron/rollup/contentstats/daily", method = RequestMethod.GET)
 	public void rollupDailySummary(HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))

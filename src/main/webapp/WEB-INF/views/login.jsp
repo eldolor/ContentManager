@@ -66,7 +66,7 @@
 							class="form-control" type="password" id="j_password"
 							name="j_password" placeholder="password" required="required" /></label>
 					</div>
-					<input type="hidden" value="on" id="_spring_security_remember_me"
+					<input type="hidden" value="off" id="_spring_security_remember_me"
 						name="_spring_security_remember_me" style="display: none" />
 					<div id="cm_errors_container" style="display: none">
 						<ul id="vision">

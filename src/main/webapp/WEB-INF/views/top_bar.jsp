@@ -73,7 +73,7 @@
 					<ul class="dropdown">
 						<li><a href="/account/billing">Billing</a></li>
 						<li><a href="/account/plans">Plans & Pricing</a></li>
-						<li><a href="/account/usage">Usage</a></li>
+						<li><a href="/account/usage">Account Usage</a></li>
 						<li><a href="/account/changepassword">Change Password</a></li>
 					</ul></li>
 			</sec:authorize>

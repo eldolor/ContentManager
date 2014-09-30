@@ -10,6 +10,7 @@
 		secured-annotations="enabled" />
 	<security:http pattern="/resources/**" security="none" />
 	<security:http pattern="/login**" security="none" />
+	<security:http pattern="/docs" security="none" />
 	
 	<!-- Begin: utilized by the SDK -->
 	<security:http pattern="/contentserver**" security="none" />

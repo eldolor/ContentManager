@@ -77,7 +77,7 @@
 						<li><a href="/account/changepassword">Change Password</a></li>
 					</ul></li>
 			</sec:authorize>
-			<li><a href="#">Documents</a></li>
+			<li><a href="/docs">Documents</a></li>
 			<sec:authorize ifAnyGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">
 				<li><a href="<c:url value="/j_spring_security_logout"/>">Sign
 						out </a></li>

@@ -85,7 +85,7 @@ public class SearchController {
 	Map<String, List<Searchable>> getSearchResults(
 			@PathVariable String searchTerm, HttpServletResponse response) {
 		try {
-			 String lSearchTerm = URLDecoder.decode(searchTerm, "UTF-8");
+			String lSearchTerm = URLDecoder.decode(searchTerm, "UTF-8");
 			if (LOGGER.isLoggable(Level.INFO)) {
 				LOGGER.info("Entering getSearchResults");
 				LOGGER.info("Search Term: " + lSearchTerm);
@@ -150,6 +150,18 @@ public class SearchController {
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting getSearchResults");
+		}
+	}
+
+	@RequestMapping(value = "/docs", method = RequestMethod.GET)
+	public ModelAndView displayDocumentation(ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering");
+		try {
+			return new ModelAndView("docs", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
 		}
 	}
 

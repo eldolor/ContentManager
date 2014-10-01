@@ -1,5 +1,6 @@
 
-<!doctype html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
 <!--[if IE 9]><html class="lt-ie10" lang="en" > <![endif]-->
 <html class="no-js" lang="en"
 	data-useragent="Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)">
@@ -21,10 +22,21 @@
 <jsp:include page="resources.jsp" flush="true"></jsp:include>
 
 <!-- Begin Custom -->
-<script type="text/javascript"
-	src="/resources/javascripts/cm/cm.application.setup.js"></script>
-<script type="text/javascript"
-	src="/resources/javascripts/cm/cm.application.js"></script>
+<script type="text/javascript">
+	jQuery(function($) {
+		try {
+			log("function($)", "Entering");
+			$(document).foundation();
+
+			var doc = document.documentElement;
+			doc.setAttribute('data-useragent', navigator.userAgent);
+		} catch (err) {
+			handleError("function($)", err);
+		} finally {
+			log("function($)", "Exiting");
+		}
+	});
+</script>
 <!-- End Custom -->
 
 
@@ -34,93 +46,299 @@
 	<jsp:include page="top_bar.jsp"></jsp:include>
 
 	<section id="blog">
-		<div class="row full-width">
+	<div class="row full-width">
 
-			<h2 class="text-center gray">Documentation</h2>
+		<h2 class="text-center gray">Documentation</h2>
 
-			<!-- <p class="text-center page_sub_heading">Create an application to
+		<!-- <p class="text-center page_sub_heading">Create an application to
 				manage its associated rich media content (images &amp; videos)</p> -->
-			<div class="line">
-				<img src="/resources/images/box/line.png" alt="line" />
-			</div>
-			<br />
-			<div class="row">
-				<div class="large-12 columns">
-					<div data-magellan-expedition="fixed">
-						<dl class="sub-nav">
-							<dd data-magellan-arrival="overview">
-								<a href="#overview">Overview</a>
-							</dd>
-							<dd data-magellan-arrival="getting_started">
-								<a href="#getting_started">Getting Started</a>
-							</dd>
-							<dd data-magellan-arrival="project_setup">
-								<a href="#project_setup">Project Setup</a>
-							</dd>
-							<dd data-magellan-arrival="initialize">
-								<a href="#initialize">Initialize</a>
-							</dd>
-							<dd data-magellan-arrival="access_contents">
-								<a href="#access_contents">Access Contents</a>
-							</dd>
-							<dd data-magellan-arrival="advanced">
-								<a href="#advanced">Advanced Topics</a>
-							</dd>
-						</dl>
-					</div>
-					<div class="clearfix"></div>
-					<a name="overview"></a>
-					<h3 data-magellan-destination="overview" class="text-left gray">Overview</h3>
-					<p class="text-left">The Content Manager API synchronizes your
-						content on mobile devices. Any content updates can be pushed down
-						to mobile devices, almost instantaneously.</p>
-					<p class="text-left">
-						The API also collects <a href="/analytics/applications">Usage
-							Statistics</a> of your content, which can be viewed online.
+		<div class="line">
+			<img src="/resources/images/box/line.png" alt="line" />
+		</div>
+		<br />
+		<div class="row">
+			<div class="large-12 columns">
+				<div data-magellan-expedition="fixed">
+					<dl class="sub-nav">
+						<dd data-magellan-arrival="overview">
+							<a href="#overview">Overview</a>
+						</dd>
+						<dd data-magellan-arrival="getting_started">
+							<a href="#getting_started">Getting Started</a>
+						</dd>
+						<dd data-magellan-arrival="project_setup">
+							<a href="#project_setup">Project Setup</a>
+						</dd>
+						<dd data-magellan-arrival="android_manifest">
+							<a href="#android_manifest">Android Manifest</a>
+						</dd>
+						<dd data-magellan-arrival="downloader_service">
+							<a href="#downloader_service">Downloader Service</a>
+						</dd>
+						<dd data-magellan-arrival="initialize">
+							<a href="#initialize">Initialize</a>
+						</dd>
+						<dd data-magellan-arrival="access_contents">
+							<a href="#access_contents">Access Contents</a>
+						</dd>
+					</dl>
+				</div>
+				<div class="clearfix"></div>
+				<a name="overview"></a>
+				<h3 data-magellan-destination="overview" class="text-left gray">Overview</h3>
+				<p class="text-left">The Content Manager API synchronizes your
+					content to mobile devices. Content updates can be pushed down to
+					mobile devices, almost instantaneously.</p>
+				<p class="text-left">
+					The API also collects <a href="/analytics/applications">Usage
+						Statistics</a> of your content, which can be viewed online.
+				</p>
+				<div class="clearfix"></div>
+				<div class="clearfix"></div>
+				<a name="getting_started"></a>
+				<h3 data-magellan-destination="getting_started"
+					class="text-left gray">Getting Started</h3>
+				<p class="text-left">You need the following to get started with
+					a new Android project.</p>
+				<ol>
+					<li>Java Development Kit (JDK) 1.6 or higher.</li>
+					<li>Android SDK: Android 3.2 Honeycomb (API level 13) or
+						higher.</li>
+					<li>Java IDE such as Eclipse or Android Studio, with ADT
+						installed.</li>
+					<li>Google account configured on the mobile device.</li>
+					<li>Google Play Store installed on the mobile device.</li>
+				</ol>
+				<div class="clearfix"></div>
+				<div class="clearfix"></div>
+				<a name="project_setup"></a>
+				<h3 data-magellan-destination="project_setup" class="text-left gray">Eclipse
+					Project Setup</h3>
+				<ol>
+					<li>Download the latest <a href="#">Content Manager API</a>
+						library.
+					</li>
+					<li>Copy the <b>API library</b> to the <b>libs</b> folder of
+						your project.
+					</li>
+					<li>Check your project properties to ensure that the <b>API
+							library</b> is included in your project&quot;s <b>Android Private
+							Libraries.</b></li>
+				</ol>
+				<div class="clearfix"></div>
+				<div class="clearfix"></div>
+				<a name="android_manifest"></a>
+				<h3 data-magellan-destination="android_manifest"
+					class="text-left gray">Android Manifest</h3>
+				<div class="panel radius">
+					<h4>Add Permissions</h4>
+					<p>Add the following permissions to your project&quot;s
+						AndroidManifest.xml</p>
+					<pre>
+						<code>
+    &lt;!-- Begin: SDK related --&gt;
+    &lt;!-- Required to download files --&gt;
+    &lt;uses-permission android:name="android.permission.INTERNET" /&gt;
+    &lt;!-- Content synchronization is performed over Google Cloud Messaging, which requires a Google account --&gt;
+    &lt;uses-permission android:name="android.permission.GET_ACCOUNTS" /&gt;
+    &lt;!-- Required to keep CPU alive while downloading files (NOT to keep screen awake) --&gt;
+    &lt;uses-permission android:name="android.permission.WAKE_LOCK" /&gt;
+    &lt;uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" /&gt;
+
+    &lt;!-- An applicationPackage + ".permission.C2D_MESSAGE" permission to prevent other Android applications 
+        from registering and receiving the Android application's messages. The permission name must exactly match 
+        this pattern otherwise the Android application will not receive the messages. --&gt;
+    &lt;permission
+        android:name="com.cm.contentmanagerdemo.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" /&gt;
+
+    &lt;uses-permission android:name="com.cm.contentmanagerdemo.permission.C2D_MESSAGE" /&gt;
+
+    &lt;!-- Required to read and write the content on shared storage --&gt;
+    &lt;uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /&gt;
+    &lt;!-- Required to capture the usage statistics of the content --&gt;
+    &lt;uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /&gt;
+    &lt;uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /&gt;
+    &lt;uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /&gt;
+
+    &lt;!-- Required to poll the state of the network connection  and respond to changes --&gt;
+    &lt;uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /&gt;
+
+    &lt;!-- Required to check whether Wi-Fi is enabled --&gt;
+    &lt;uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /&gt;
+    &lt;!-- End: SDK related --&gt;
+						</code>
+					</pre>
+				</div>
+				<div class="panel radius">
+					<h4>Configure the Downloader Service</h4>
+					<p>Add the following to the &lt;application/&gt; node of your
+						project&quot;s AndroidManifest.xml</p>
+					<p>
+						<b>Note: </b> The &quot;category&quot; name of <b>com.google.android.c2dm.intent.RECEIVE</b>
+						action must match the value in the &quot;package&quot; attribute,
+						defined in the &lt;manifest/&gt; element
 					</p>
-					<div class="clearfix"></div>
-					<div class="clearfix"></div>
-					<a name="getting_started"></a>
-					<h3 data-magellan-destination="getting_started"
-						class="text-left gray">Getting Started</h3>
-					<p class="text-left">You need the following to get started with
-						a new Android project.</p>
-					<ul>
-						<li>Java Development Kit (JDK) 1.6 or higher.</li>
-						<li>Android SDK: Android 3.2 Honeycomb (API level 13) or
-							higher.</li>
-						<li>Java IDE such as Eclipse or Android Studio, with ADT
-							installed.</li>
-					</ul>
-					<div class="clearfix"></div>
-					<div class="clearfix"></div>
-					<a name="project_setup"></a>
-					<h3 data-magellan-destination="project_setup"
-						class="text-left gray">Eclipse Project Setup</h3>
+					<pre>
+						<code>
+    &lt;!-- Begin: SDK related --&gt;
+    &lt;meta-data android:name="com.google.android.gms.version"
+	android:value="@integer/google_play_services_version" /&gt;
+    &lt;!-- A receiver with the category set as applicationPackage.  The receiver should 
+        require  the com.google.android.c2dm.SEND permission --&gt;
+    &lt;receiver android:name="com.cm.contentmanager.android.api.download.DownloaderBroadcastReceiver"
+	android:permission="com.google.android.c2dm.permission.SEND"&gt;
+        &lt;intent-filter&gt;
+            &lt;action android:name="com.google.android.c2dm.intent.RECEIVE" /&gt;
+            &lt;!-- The following value must match the value in the &quot;package&quot; attribute, defined in the &lt;manifest/&gt; element --&gt;
+            &lt;category android:name="com.cm.contentmanagerdemo" /&gt;
+        &lt;/intent-filter&gt;
+        &lt;intent-filter&gt;
+            &lt;action android:name="android.net.conn.CONNECTIVITY_CHANGE" /&gt;
+        &lt;/intent-filter&gt;
+    &lt;/receiver&gt;
+
+    &lt;!-- Handles downloading of content --&gt;
+    &lt;service android:name="com.cm.contentmanager.android.api.download.DownloaderService" android:exported="true" /&gt;
+    &lt;!-- End: SDK related --&gt;
+							</code>
+					</pre>
+				</div>
+				<div class="clearfix"></div>
+				<div class="clearfix"></div>
+				<a name="downloader_service"></a>
+				<h3 data-magellan-destination="downloader_service"
+					class="text-left gray">Downloader Service</h3>
+				<div class="panel radius">
+					<h4>Notifications</h4>
+					<p>The Downloader Service will display any of the following
+						Notifications</p>
+					<p>
+						<b>Note: </b>If the mobile device does not have either Network or
+						Wi-Fi connectivity, the download process will pause and resume
+						automatically, once the device regains connectivity.
+					</p>
 					<ol>
-						<li>Download the latest <a href="#">Content Manager API</a>
-							library.
-						</li>
-						<li>Copy the <b>API library</b> to the <b>libs</b> folder of
-							your project.
-						</li>
-						<li>Check your project properties to ensure that the <b>API
-								library</b> is included in your project&quot;s <b>Android
-								Private Libraries.</b></li>
+						<li>SD card is not accessible</li>
+						<li>The device does not have enough storage</li>
+						<li>The device is not connected to the Internet</li>
+						<li>Waiting for a network connection</li>
+						<li>The device is not connected to a Wi-Fi Network</li>
+						<li>Waiting for a Wi-Fi connection</li>
+						<li>Google Play Store is not installed</li>
+						<li>Unable to validate the credentials of the Google Account
+							on the device</li>
+						<li>Download in progress</li>
+						<li>Download complete</li>
+						<li>Only some of the files were downloaded</li>
+						<li>Unable to download</li>
+						<li>Unable to download even after several retries</li>
 					</ol>
-					<div class="clearfix"></div>
-					<div class="clearfix"></div>
-					<a name="initialize"></a>
-					<h3 data-magellan-destination="initialize" class="text-left gray">Initialize
-						the Content Manager Factory</h3>
-					<p class="text-left"></p>
-					<div class="panel radius">
-						<h4></h4>
-						<p>Initialize the Content Manager factory in the onCreate()
-							method of your Android View or Fragment. This will automatically
-							register the Content Manager Client, and start downloading the
-							contents.</p>
-						<pre>
+				</div>
+				<div class="panel radius">
+					<h4>Status Codes</h4>
+					<p>The Downloader Service broadcasts the result of download
+						process. You can configure a Broadcast Receiver, to receive, and
+						to process the result.</p>
+					<p>For instance, if the Downloader Service is unable to
+						download the contents on account of Wi-Fi being disabled, it will
+						respond with the appropriate status code. In this case, you might
+						want to prompt the user to enable Wi-Fi.</p>
+					<p>The Downloader Service will broadcast any of the following
+						status codes.</p>
+					<ol>
+						<li>DOWNLOAD_FAILED_REASON_UNKNOWN</li>
+						<li>FAILED</li>
+						<li>PARTIAL_SUCCESS</li>
+						<li>SUCCESS</li>
+						<li>BAD_REQUEST</li>
+						<li>NETWORK_DISCONNECTED</li>
+						<li>WIFI_DISCONNECTED</li>
+						<li>INSUFFICIENT_STORAGE</li>
+						<li>REQUEST_FAILED_AFTER_RETRIES</li>
+						<li>EXTERNAL_STORAGE_NOT_READY</li>
+					</ol>
+					<p>Configure your Broadcast Receiver with the following intent
+						filter, to receive the Status Codes from the Downloader Service.</p>
+					<pre>
+						<code>
+        &lt;receiver android:name="com.cm.contentmanagerdemo.DemoBroadcastReceiver"&gt;
+            &lt;intent-filter&gt;
+                &lt;action android:name="com.cm.contentmanager.android.api.download.DownloaderService.RESULT" /&gt;
+            &lt;/intent-filter&gt;
+        &lt;/receiver&gt;
+					</code>
+					</pre>
+				</div>
+
+				<div class="panel radius">
+					<h4>Status Codes</h4>
+					<p>Configure your Broadcast Receiver to process the results</p>
+					<pre>
+						<code>
+	public class DemoBroadcastReceiver extends WakefulBroadcastReceiver {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			try {
+				if (Logger.isLogEnabled())
+					Logger.log("Entering");
+	
+				if (intent.getAction().equalsIgnoreCase(DownloaderService.RESULT)) {
+					// Depending on the result code, you can trigger application
+					// specific actions.
+					int lStatusCode = intent.getIntExtra(
+							DownloaderService.STATUS_CODE, 0);
+					switch (lStatusCode) {
+					case StatusCode.SUCCESS:
+						//do something
+					case StatusCode.ABORTED:
+						//do something
+					case StatusCode.BAD_REQUEST:
+						//do something
+					case StatusCode.CANCELLED:
+						//do something
+					case StatusCode.DOWNLOAD_FAILED_REASON_UNKNOWN:
+						//do something
+					case StatusCode.EXTERNAL_STORAGE_NOT_READY:
+						//do something
+					case StatusCode.FAILED:
+						//do something
+					case StatusCode.INSUFFICIENT_STORAGE:
+						//do something
+					case StatusCode.NETWORK_DISCONNECTED:
+						//do something
+					case StatusCode.PARTIAL_SUCCESS:
+						//do something
+					case StatusCode.REQUEST_FAILED_AFTER_RETRIES:
+						//do something
+					case StatusCode.WIFI_DISCONNECTED:
+						//do something
+					}
+				}
+			} finally {
+				if (Logger.isLogEnabled())
+					Logger.log("Exiting");
+			}
+	
+		}
+	}
+					</code>
+					</pre>
+				</div>
+				<div class="clearfix"></div>
+				<div class="clearfix"></div>
+				<a name="initialize"></a>
+				<h3 data-magellan-destination="initialize" class="text-left gray">Initialize
+					the Content Manager Factory</h3>
+				<p class="text-left"></p>
+				<div class="panel radius">
+					<h4></h4>
+					<p>Initialize the Content Manager factory in the onCreate()
+						method of your Android View or Fragment. If this the first time,
+						this will automatically register the Content Manager Client, and
+						start downloading the contents, in the background.</p>
+					<pre>
+						<code>
 	Private ContentManager mContentManager;
 	...
 	@Override
@@ -135,24 +353,29 @@
 			Logger.error(e.getMessage());
 		}
 	}
-</pre>
-					</div>
+</code>
+					</pre>
+				</div>
 
 
-					<div class="clearfix"></div>
-					<div class="clearfix"></div>
-					<a name="access_contents"></a>
-					<h3 data-magellan-destination="access_contents"
-						class="text-left gray">Access Contents</h3>
-					<p class="text-left"></p>
-					<div class="panel radius">
-						<h4>ContentManager</h4>
-						<p>The ContentManager class provides several different methods
-							to access your contents.</p>
-						<p>
-							<b>getAllContents()</b> - to access all of your contents
-						</p>
-						<pre>
+				<div class="clearfix"></div>
+				<div class="clearfix"></div>
+				<a name="access_contents"></a>
+				<h3 data-magellan-destination="access_contents"
+					class="text-left gray">Access Contents</h3>
+				<p class="text-left"></p>
+				<div class="panel radius">
+					<h4>ContentManager</h4>
+					<p>The ContentManager class provides several different methods
+						to access your contents.</p>
+				</div>
+				<div class="panel radius">
+					<h4>getAllContents()</h4>
+					<p>To get a list of all your contents. This is for instances
+						where you would want to display all of the contents in a list or
+						grid.</p>
+					<pre>
+						<code>
 	Private ContentManager mContentManager;
 	private List<Content> mContentList;
 	...
@@ -160,20 +383,113 @@
 		Logger.log("Entering");
 
 		mContentList = mContentManager.getAllContents();
+		
+		//display the contents in a list or grid
 
 		Logger.log("Exiting");
 	}
+						
+						</code>
+					</pre>
+				</div>
 
-						
-						
-						
-						</pre>
+				<div class="panel radius">
+					<h4>getAllContentsByType(ContentType contentType)</h4>
+					<p>To get a list of all your contents by type. This is for
+						instances where you would want to display all of the contents in a
+						list or grid.</p>
+					<pre>
+						<code>
+	Private ContentManager mContentManager;
+	private List<Content> mContentList;
+	...
+	private void loadContent() {
+		Logger.log("Entering");
 
-						<p>
-							<b>getImage(contentId) or getVideo(contentId)</b> - to access a
-							specific image or video content
-						</p>
-						<pre>
+		mContentList = mContentManager.getAllContentsByType(ContentType.IMAGE);
+		
+		//display the contents in a list or grid
+
+		Logger.log("Exiting");
+	}
+						
+						</code>
+					</pre>
+				</div>
+
+
+				<div class="panel radius">
+					<h4>getAllContentsFromContentGroup(long contentGroupId)</h4>
+					<p>To get a list of all your contents from a content group.
+						This is for instances where you would want to display all of the
+						contents in a list or grid.</p>
+					<pre>
+						<code>
+	Private ContentManager mContentManager;
+	private List<Content> mContentList;
+	...
+	private void loadContent() {
+		Logger.log("Entering");
+
+		mContentList = mContentManager.getAllContentsFromContentGroup(lContentGroupId);
+		
+		//display the contents in a list or grid
+
+		Logger.log("Exiting");
+	}
+						
+						</code>
+					</pre>
+				</div>
+				<div class="panel radius">
+					<h4>getAllContentsFromContentGroupByType( long contentGroupId,
+						ContentType contentType)</h4>
+					<p>To get a list of all your contents from a content group.
+						This is for instances where you would want to display all of the
+						contents in a list or grid.</p>
+					<pre>
+						<code>
+	Private ContentManager mContentManager;
+	private List<Content> mContentList;
+	...
+	private void loadContent() {
+		Logger.log("Entering");
+
+		mContentList = mContentManager.getAllContentsFromContentGroupByType(lContentGroupId,
+								ContentType.IMAGE);
+		
+		//display the contents in a list or grid
+
+		Logger.log("Exiting");
+	}
+						
+						</code>
+					</pre>
+				</div>
+				<div class="panel radius">
+					<h4>getContent(long contentId)</h4>
+					<p>To access a specific content</p>
+					<pre>
+						<code>
+	Private ContentManager mContentManager;
+	...
+	private void loadContent() {
+		Logger.log("Entering");
+
+		Content lContent = getContent(lContentId);
+
+		Logger.log("Exiting");
+	}
+</code>
+					</pre>
+				</div>
+
+				<div class="panel radius">
+					<h4>getImage(long contentId)</h4>
+					<h4>getVideo(long contentId)</h4>
+					<p>To access a specific image or video content</p>
+					<pre>
+						<code>
 	Private ContentManager mContentManager;
 	...
 	private void loadContent() {
@@ -185,14 +501,15 @@
 
 		Logger.log("Exiting");
 	}
-	
-	
-</pre>
-						<p>
-							<b>Random Access: getAnyImage() or getAnyVideo()</b> - to access
-							any random image or video content
-						</p>
-						<pre>
+</code>
+					</pre>
+				</div>
+				<div class="panel radius">
+					<h4>getAnyImage()</h4>
+					<h4>getAnyVideo()</h4>
+					<p>To access any random image or video content</p>
+					<pre>
+						<code>
 	Private ContentManager mContentManager;
 	...
 	private void loadContent() {
@@ -204,16 +521,16 @@
 
 		Logger.log("Exiting");
 	}
-	
-	
-</pre>
-						<p>
-							<b>Random Access: getAnyImageFromContentGroup(contentGroupId)
-								or getAnyVideoFromContentGroup(contentGroupId)</b> - to access any
-							random image or video content, from within a specific Content
-							Group
-						</p>
-						<pre>
+</code>
+					</pre>
+				</div>
+				<div class="panel radius">
+					<h4>getAnyImageFromContentGroup(long contentGroupId)</h4>
+					<h4>getAnyVideoFromContentGroup(long contentGroupId)</h4>
+					<p>To access any random image or video content, from within a
+						specific Content Group</p>
+					<pre>
+						<code>
 	Private ContentManager mContentManager;
 	...
 	private void loadContent() {
@@ -225,16 +542,18 @@
 
 		Logger.log("Exiting");
 	}
-	
-	
-</pre>
-						<p>
-							<b>Utility Methods: getScaledImage(contentId, newWidth) or
-								getAnyScaledImageFromContentGroup(contentGroupId, newWidth) or
-								getAnyScaledImage(newWidth)</b> - to access any random image that
-							has been scaled to the new size
-						</p>
-						<pre>
+</code>
+					</pre>
+				</div>
+				<div class="panel radius">
+					<h4>getScaledImage(long contentId, int newWidth)</h4>
+					<h4>getAnyScaledImageFromContentGroup(long contentGroupId,
+						int newWidth)</h4>
+					<h4>getAnyScaledImage(newWidth)</h4>
+					<p>Utility methods to access any random image that has been
+						scaled to the new size</p>
+					<pre>
+						<code>
 	Private ContentManager mContentManager;
 	...
 	private void loadContent() {
@@ -248,16 +567,21 @@
 
 		Logger.log("Exiting");
 	}
-	
-	
-</pre>
-						<p>
-							<b>Utility Methods to create Thumbnails: createThumbnail(long
-								contentId, ThumbnailTypeVideo thumbnailTypeVideo) or
-								createThumbnail(long contentId, ThumbnailTypeImage
-								thumbnailTypeImage) 
-						</p>
-						<pre>
+</code>
+					</pre>
+				</div>
+				<div class="panel radius">
+					<h4>createThumbnail(long contentId, ThumbnailTypeVideo
+						thumbnailTypeVideo)</h4>
+					<h4>createThumbnail(long contentId, ThumbnailTypeImage
+						thumbnailTypeImage)</h4>
+					<h4>createThumbnail(String filePath, ThumbnailTypeVideo
+						thumbnailTypeVideo)</h4>
+					<h4>createThumbnail(String filePath, ThumbnailTypeImage
+						thumbnailTypeImage)</h4>
+					<p>Utility Methods to create Thumbnails for images and videos</p>
+					<pre>
+						<code>
 	Private ContentManager mContentManager;
 	...
 	private void loadContent() {
@@ -271,29 +595,18 @@
 
 		Logger.log("Exiting");
 	}
-	
-	
-</pre>
-					</div>
-					<a name="advanced"></a>
-					<h3 data-magellan-destination="overview" class="text-left gray">Advanced
-						Topics</h3>
-					<div class="panel radius">
-						<h4>Notifications</h4>
-						<p></p>
-						<pre>
-							</pre>
-					</div>
-
+</code>
+					</pre>
 				</div>
-				<!-- end 12 columns -->
+
 			</div>
+			<!-- end 12 columns -->
+		</div>
+	</div>
 	</section>
 	<br>
 	<br>
-	<section id="footer">
-
-		<jsp:include page="footer.jsp"></jsp:include>
+	<section id="footer"> <jsp:include page="footer.jsp"></jsp:include>
 	</section>
 
 </body>

@@ -16,6 +16,8 @@ public class GcmRegistrationRequest {
 	@Persistent
 	private String trackingId;
 	@Persistent
+	private String clientKey;
+	@Persistent
 	private String deviceId;
 	@Persistent
 	private String latitude;
@@ -53,6 +55,14 @@ public class GcmRegistrationRequest {
 	private Long timeUpdatedMs;
 	@Persistent
 	private Long timeUpdatedTimeZoneOffsetMs;
+
+	public String getClientKey() {
+		return clientKey;
+	}
+
+	public void setClientKey(String clientKey) {
+		this.clientKey = clientKey;
+	}
 
 	public String getTrackingId() {
 		return trackingId;

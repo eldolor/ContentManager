@@ -42,26 +42,4 @@ public class AccountService {
 		return account;
 	}
 
-	public boolean generateClientKey(Long id) {
-		try {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering");
-			Account account = getAccount(id);
-			if (account != null) {
-				// generate an api key
-				account.setClientKey(UUID.randomUUID().toString());
-				accountDao.updateClientKey(account);
-				return true;
-			} else {
-				if (LOGGER.isLoggable(Level.INFO))
-					LOGGER.info("No Account Found!");
-				return false;
-			}
-		} finally {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting");
-
-		}
-	}
-
 }

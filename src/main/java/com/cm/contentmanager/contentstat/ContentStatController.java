@@ -659,8 +659,8 @@ public class ContentStatController {
 		lContentStat.setContentGroupId(contentGroupId);
 		lContentStat.setContentId(contentId);
 		lContentStat.setEventTimeMs(eventTime);
-		lContentStat.setEventTimeZoneOffsetMs((long) TimeZone.getDefault()
-				.getRawOffset());
+		lContentStat.setEventTimeZoneOffsetMs((long)TimeZone
+				.getTimeZone("UTC").getRawOffset());
 		lContentStat.setEventType("impression");
 		return lContentStat;
 	}

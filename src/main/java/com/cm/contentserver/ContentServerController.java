@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.cm.accountmanagement.account.Account;
-import com.cm.accountmanagement.account.AccountService;
+import com.cm.accountmanagement.client.key.ClientKeyService;
+import com.cm.config.CanonicalErrorCodes;
 import com.cm.contentmanager.application.Application;
 import com.cm.contentmanager.application.ApplicationService;
 import com.cm.contentmanager.content.Content;
@@ -58,7 +58,7 @@ public class ContentServerController {
 	@Autowired
 	private QuotaService quotaService;
 	@Autowired
-	private AccountService accountService;
+	private ClientKeyService clientKeyService;
 
 	private final BlobInfoFactory mBlobInfoFactory = new BlobInfoFactory();
 
@@ -78,7 +78,6 @@ public class ContentServerController {
 		}
 	}
 
-	
 	/**
 	 * @param adGroupUuid
 	 * @param response
@@ -97,11 +96,12 @@ public class ContentServerController {
 				LOGGER.warning("No Content Request Found!");
 				return null;
 			}
-			if (!validateClientKey(pContentRequest.getClientKey(),
+			if (!clientKeyService.validateClientKey(pContentRequest.getClientKey(),
 					pContentRequest.getTrackingId())) {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				LOGGER.log(Level.SEVERE,
-						"Invalid API Key " + pContentRequest.getClientKey());
+						CanonicalErrorCodes.INVALID_CLIENT_KEY.getValue()
+								+ pContentRequest.getClientKey());
 				return null;
 			}
 
@@ -159,15 +159,17 @@ public class ContentServerController {
 			Handshake lHandshake = convertToDomainFormat(pHandshake);
 			contentServerService.upsert(lHandshake);
 
-			if (!validateClientKey(lHandshake.getClientKey(),
+			if (!clientKeyService.validateClientKey(lHandshake.getClientKey(),
 					lHandshake.getTrackingId())) {
 				List<ValidationError> lErrors = new ArrayList<ValidationError>();
 				ValidationError lError = new ValidationError();
-				lError.setDescription("API Key is invalid");
+				lError.setDescription(CanonicalErrorCodes.INVALID_CLIENT_KEY
+						.getValue());
 				lErrors.add(lError);
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				LOGGER.log(Level.SEVERE,
-						"Invalid API Key " + lHandshake.getClientKey());
+						CanonicalErrorCodes.INVALID_CLIENT_KEY.getValue()
+								+ lHandshake.getClientKey());
 				return lErrors;
 			}
 			{
@@ -497,14 +499,4 @@ public class ContentServerController {
 		return lHandshake;
 	}
 
-	private boolean validateClientKey(String pClientKey, String pTrackingId) {
-		Application pApplication = applicationService
-				.getApplicationByTrackingId(pTrackingId, false);
-		Account pAccount = accountService.getAccount(pApplication
-				.getAccountId());
-		if (pAccount.getClientKey().equals(pClientKey)) {
-			return true;
-		}
-		return false;
-	}
 }

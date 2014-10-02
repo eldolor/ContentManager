@@ -1,4 +1,4 @@
-package com.cm.accountmanagement.account;
+package com.cm.accountmanagement.client.key;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
@@ -8,22 +8,21 @@ import javax.jdo.annotations.PrimaryKey;
 import com.cm.config.CanonicalPlanName;
 
 @PersistenceCapable
-public class Account {
+public class ClientKey {
 
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Long id;
 
-	// default to free
 	@Persistent
-	private String canonicalPlanName = CanonicalPlanName.FREE.getValue();
+	private Long accountId;
+
+	/** Required attribute for API access **/
+	@Persistent
+	private String key;
 
 	@Persistent
-	private String name;
-	@Persistent
-	private String description;
-	@Persistent
-	private Boolean enabled = true;
+	private Boolean deleted = false;
 
 	@Persistent
 	private Long timeCreatedMs;
@@ -34,7 +33,7 @@ public class Account {
 	@Persistent
 	private Long timeUpdatedTimeZoneOffsetMs;
 
-	public Account() {
+	public ClientKey() {
 		super();
 	}
 
@@ -78,36 +77,29 @@ public class Account {
 		this.timeUpdatedTimeZoneOffsetMs = timeUpdatedTimeZoneOffsetMs;
 	}
 
-	public String getName() {
-		return name;
+	public Boolean isDeleted() {
+		return (deleted != null) ? deleted : false;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted;
 	}
 
-	public String getDescription() {
-		return description;
+
+	public String getKey() {
+		return key;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
+	public void setKey(String key) {
+		this.key = key;
 	}
 
-	public Boolean isEnabled() {
-		return (enabled != null) ? enabled : false;
+	public Long getAccountId() {
+		return accountId;
 	}
 
-	public void setEnabled(Boolean enabled) {
-		this.enabled = enabled;
-	}
-
-	public String getCanonicalPlanName() {
-		return canonicalPlanName;
-	}
-
-	public void setCanonicalPlanName(String canonicalPlanName) {
-		this.canonicalPlanName = canonicalPlanName;
+	public void setAccountId(Long accountId) {
+		this.accountId = accountId;
 	}
 
 }

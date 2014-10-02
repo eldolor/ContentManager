@@ -253,8 +253,8 @@ public class AdminController {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering createPlans");
 			long lTime = System.currentTimeMillis();
-			long lTimezoneOffset = (long) TimeZone.getDefault()
-					.getOffset(lTime);
+			long lTimezoneOffset = (long) TimeZone.getTimeZone("UTC")
+					.getRawOffset();
 			CanonicalPlanName[] lCanonicalPlanNames = CanonicalPlanName
 					.values();
 			for (int i = 0; i < lCanonicalPlanNames.length; i++) {
@@ -355,28 +355,32 @@ public class AdminController {
 								.getValue());
 						lQuota.setApplicationLimit(CanonicalApplicationQuota.FREE
 								.getValue());
-					} else if (lPlanName.equals(CanonicalPlanName.LARGE.getValue())) {
+					} else if (lPlanName.equals(CanonicalPlanName.LARGE
+							.getValue())) {
 						lQuota.setBandwidthLimitInBytes(CanonicalBandwidthQuota.LARGE
 								.getValue());
 						lQuota.setStorageLimitInBytes(CanonicalStorageQuota.LARGE
 								.getValue());
 						lQuota.setApplicationLimit(CanonicalApplicationQuota.LARGE
 								.getValue());
-					} else if (lPlanName.equals(CanonicalPlanName.MEDIUM.getValue())) {
+					} else if (lPlanName.equals(CanonicalPlanName.MEDIUM
+							.getValue())) {
 						lQuota.setBandwidthLimitInBytes(CanonicalBandwidthQuota.MEDIUM
 								.getValue());
 						lQuota.setStorageLimitInBytes(CanonicalStorageQuota.MEDIUM
 								.getValue());
 						lQuota.setApplicationLimit(CanonicalApplicationQuota.MEDIUM
 								.getValue());
-					} else if (lPlanName.equals(CanonicalPlanName.MICRO.getValue())) {
+					} else if (lPlanName.equals(CanonicalPlanName.MICRO
+							.getValue())) {
 						lQuota.setBandwidthLimitInBytes(CanonicalBandwidthQuota.MICRO
 								.getValue());
 						lQuota.setStorageLimitInBytes(CanonicalStorageQuota.MICRO
 								.getValue());
 						lQuota.setApplicationLimit(CanonicalApplicationQuota.MICRO
 								.getValue());
-					} else if (lPlanName.equals(CanonicalPlanName.SMALL.getValue())) {
+					} else if (lPlanName.equals(CanonicalPlanName.SMALL
+							.getValue())) {
 						lQuota.setBandwidthLimitInBytes(CanonicalBandwidthQuota.SMALL
 								.getValue());
 						lQuota.setStorageLimitInBytes(CanonicalStorageQuota.SMALL

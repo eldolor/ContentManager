@@ -16,6 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.cm.accountmanagement.account.Account;
+import com.cm.accountmanagement.account.AccountService;
+import com.cm.accountmanagement.client.key.ClientKeyService;
+import com.cm.config.CanonicalErrorCodes;
+import com.cm.contentmanager.application.Application;
 import com.cm.contentmanager.application.ApplicationService;
 import com.cm.contentmanager.content.ContentHelper;
 import com.cm.contentserver.ContentRequest;
@@ -40,6 +45,8 @@ public class GcmController {
 	private UserService userService;
 	@Autowired
 	private ContentHelper contentHelper;
+	@Autowired
+	private ClientKeyService clientKeyService;
 
 	@RequestMapping(value = "/gcm/register", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	public @ResponseBody
@@ -50,10 +57,28 @@ public class GcmController {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering register");
 			// validate registration request
-			List<ValidationError> lErrors = validate(gcmRegistrationRequest);
-			if (!lErrors.isEmpty()) {
-				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-				return lErrors;
+			{
+				List<ValidationError> lErrors = validate(gcmRegistrationRequest);
+				if (!lErrors.isEmpty()) {
+					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+					return lErrors;
+				}
+			}
+			{
+				if (!clientKeyService.validateClientKey(
+						gcmRegistrationRequest.getClientKey(),
+						gcmRegistrationRequest.getTrackingId())) {
+					List<ValidationError> lErrors = new ArrayList<ValidationError>();
+					ValidationError lError = new ValidationError();
+					lError.setDescription(CanonicalErrorCodes.INVALID_CLIENT_KEY
+							.getValue());
+					lErrors.add(lError);
+					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+					LOGGER.log(Level.SEVERE,
+							CanonicalErrorCodes.INVALID_CLIENT_KEY.getValue()
+									+ gcmRegistrationRequest.getClientKey());
+					return lErrors;
+				}
 			}
 
 			if (LOGGER.isLoggable(Level.INFO))
@@ -79,7 +104,8 @@ public class GcmController {
 			List<ValidationError> errors = new ArrayList<ValidationError>();
 			ValidationError error = new ValidationError();
 			// The exception contains the GCM error code
-			error.setCode(GcmService.DEVICE_HAS_MULTIPLE_REGISTRATIONS_ERROR_CODE);
+			error.setCode(CanonicalErrorCodes.DEVICE_HAS_MULTIPLE_REGISTRATIONS
+					.getValue());
 			error.setDescription(e.getCanonicalRegistrationId());
 			errors.add(error);
 			LOGGER.log(Level.WARNING,
@@ -92,7 +118,7 @@ public class GcmController {
 			List<ValidationError> errors = new ArrayList<ValidationError>();
 			ValidationError error = new ValidationError();
 			// The exception contains the GCM error code
-			error.setCode(GcmService.DEVICE_NOT_REGISTERED_ERROR_CODE);
+			error.setCode(CanonicalErrorCodes.DEVICE_NOT_REGISTERED.getValue());
 			error.setDescription("Device not registered with GCM Servers");
 			errors.add(error);
 			LOGGER.log(Level.WARNING, "Device not registered with GCM Servers");
@@ -123,10 +149,28 @@ public class GcmController {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering registerCanonical");
 			// validate registration request
-			List<ValidationError> lErrors = validateCanonical(gcmRegistrationRequest);
-			if (!lErrors.isEmpty()) {
-				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-				return lErrors;
+			{
+				List<ValidationError> lErrors = validateCanonical(gcmRegistrationRequest);
+				if (!lErrors.isEmpty()) {
+					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+					return lErrors;
+				}
+			}
+			{
+				if (!clientKeyService.validateClientKey(
+						gcmRegistrationRequest.getClientKey(),
+						gcmRegistrationRequest.getTrackingId())) {
+					List<ValidationError> lErrors = new ArrayList<ValidationError>();
+					ValidationError lError = new ValidationError();
+					lError.setDescription(CanonicalErrorCodes.INVALID_CLIENT_KEY
+							.getValue());
+					lErrors.add(lError);
+					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+					LOGGER.log(Level.SEVERE,
+							CanonicalErrorCodes.INVALID_CLIENT_KEY.getValue()
+									+ gcmRegistrationRequest.getClientKey());
+					return lErrors;
+				}
 			}
 			com.cm.gcm.GcmRegistrationRequest lGcmReqistrationRequestDomainObject = convertToDomainObject(gcmRegistrationRequest);
 
@@ -264,6 +308,8 @@ public class GcmController {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering convertToDomainObject");
 			com.cm.gcm.GcmRegistrationRequest lGcmRegistrationRequest = new com.cm.gcm.GcmRegistrationRequest();
+			lGcmRegistrationRequest.setClientKey(pGcmRegistrationRequest
+					.getClientKey());
 			lGcmRegistrationRequest.setTrackingId(pGcmRegistrationRequest
 					.getTrackingId());
 			lGcmRegistrationRequest.setDeviceId(pGcmRegistrationRequest
@@ -304,10 +350,19 @@ public class GcmController {
 			GcmRegistrationRequest gcmRegistrationRequest) {
 		try {
 			List<ValidationError> errors = new ArrayList<ValidationError>();
+			if (Utils.isEmpty(gcmRegistrationRequest.getClientKey())) {
+				ValidationError error = new ValidationError();
+				// The exception contains the GCM error code
+				error.setCode(CanonicalErrorCodes.MISSING_CLIENT_KEY.getValue());
+				error.setDescription("The client key is missing");
+				errors.add(error);
+				LOGGER.log(Level.WARNING, "The client key is missing");
+			}
 			if (Utils.isEmpty(gcmRegistrationRequest.getTrackingId())) {
 				ValidationError error = new ValidationError();
 				// The exception contains the GCM error code
-				error.setCode(GcmService.MISSING_TRACKING_ID_ERROR_CODE);
+				error.setCode(CanonicalErrorCodes.MISSING_TRACKING_ID
+						.getValue());
 				error.setDescription("The tracking id is missing");
 				errors.add(error);
 				LOGGER.log(Level.WARNING, "The tracking id is missing");
@@ -315,7 +370,7 @@ public class GcmController {
 			if (Utils.isEmpty(gcmRegistrationRequest.getGcmId())) {
 				ValidationError error = new ValidationError();
 				// The exception contains the GCM error code
-				error.setCode(GcmService.MISSING_GCM_ID_ERROR_CODE);
+				error.setCode(CanonicalErrorCodes.MISSING_GCM_ID.getValue());
 				error.setDescription("The gcm id is missing");
 				errors.add(error);
 				LOGGER.log(Level.WARNING, "The gcm id is missing");
@@ -335,7 +390,8 @@ public class GcmController {
 			if (Utils.isEmpty(gcmRegistrationRequest.getDeprecatedGcmId())) {
 				ValidationError error = new ValidationError();
 				// The exception contains the GCM error code
-				error.setCode(GcmService.MISSING_DEPRECATED_GCM_ID_ERROR_CODE);
+				error.setCode(CanonicalErrorCodes.MISSING_DEPRECATED_GCM_ID
+						.getValue());
 				error.setDescription("The deprecated gcm id is missing");
 				errors.add(error);
 				LOGGER.log(Level.WARNING, "The deprecated gcm id is missing");

@@ -115,9 +115,10 @@
 				<h3 data-magellan-destination="project_setup" class="text-left gray">Eclipse
 					Project Setup</h3>
 				<ol>
-					<li>Download the latest <a href="#">Content Manager API</a>
-						library.
+					<li>Download the latest Android <a href="/resources/api/content_manager_sdk_1_1.jar">Content
+							Manager API</a> library.
 					</li>
+					<li><a href="/resources/api/current/javadoc/index.html">Android API Reference</a></li>
 					<li>Copy the <b>API library</b> to the <b>libs</b> folder of
 						your project.
 					</li>
@@ -389,6 +390,7 @@
 		Logger.log("Exiting");
 	}
 						
+						
 						</code>
 					</pre>
 				</div>
@@ -412,6 +414,7 @@
 
 		Logger.log("Exiting");
 	}
+						
 						
 						</code>
 					</pre>
@@ -438,6 +441,7 @@
 		Logger.log("Exiting");
 	}
 						
+						
 						</code>
 					</pre>
 				</div>
@@ -462,6 +466,7 @@
 
 		Logger.log("Exiting");
 	}
+						
 						
 						</code>
 					</pre>
@@ -547,8 +552,8 @@
 				</div>
 				<div class="panel radius">
 					<h4>getScaledImage(long contentId, int newWidth)</h4>
-					<h4>getAnyScaledImageFromContentGroup(long contentGroupId,
-						int newWidth)</h4>
+					<h4>getAnyScaledImageFromContentGroup(long contentGroupId, int
+						newWidth)</h4>
 					<h4>getAnyScaledImage(newWidth)</h4>
 					<p>Utility methods to access any random image that has been
 						scaled to the new size</p>

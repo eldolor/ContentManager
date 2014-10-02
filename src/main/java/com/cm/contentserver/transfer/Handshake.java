@@ -5,6 +5,7 @@ import java.io.Serializable;
 
 public class Handshake implements Serializable {
 	private String trackingId;
+	private String apiKey;
 	private String gcmRegistrationId;
 	private Long lastKnownTimestamp;
 	private String deviceId;
@@ -22,6 +23,13 @@ public class Handshake implements Serializable {
 	}
 	public void setTrackingId(String trackingId) {
 		this.trackingId = trackingId;
+	}
+	
+	public String getApiKey() {
+		return apiKey;
+	}
+	public void setApiKey(String apiKey) {
+		this.apiKey = apiKey;
 	}
 	public String getGcmRegistrationId() {
 		return gcmRegistrationId;

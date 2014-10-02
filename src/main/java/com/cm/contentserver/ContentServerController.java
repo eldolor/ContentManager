@@ -1,5 +1,6 @@
 package com.cm.contentserver;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
@@ -18,9 +19,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.cm.accountmanagement.account.Account;
+import com.cm.accountmanagement.account.AccountService;
 import com.cm.contentmanager.application.Application;
 import com.cm.contentmanager.application.ApplicationService;
 import com.cm.contentmanager.content.Content;
@@ -55,6 +57,8 @@ public class ContentServerController {
 	private GcmService gcmService;
 	@Autowired
 	private QuotaService quotaService;
+	@Autowired
+	private AccountService accountService;
 
 	private final BlobInfoFactory mBlobInfoFactory = new BlobInfoFactory();
 
@@ -74,6 +78,7 @@ public class ContentServerController {
 		}
 	}
 
+	
 	/**
 	 * @param adGroupUuid
 	 * @param response
@@ -92,6 +97,14 @@ public class ContentServerController {
 				LOGGER.warning("No Content Request Found!");
 				return null;
 			}
+			if (!validateApiKey(pContentRequest.getApiKey(),
+					pContentRequest.getTrackingId())) {
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				LOGGER.log(Level.SEVERE,
+						"Invalid API Key " + pContentRequest.getApiKey());
+				return null;
+			}
+
 			ContentRequest lContentRequest = convertToDomainFormat(pContentRequest);
 			List<com.cm.contentserver.transfer.Content> lContentList = null;
 
@@ -146,6 +159,17 @@ public class ContentServerController {
 			Handshake lHandshake = convertToDomainFormat(pHandshake);
 			contentServerService.upsert(lHandshake);
 
+			if (!validateApiKey(lHandshake.getApiKey(),
+					lHandshake.getTrackingId())) {
+				List<ValidationError> lErrors = new ArrayList<ValidationError>();
+				ValidationError lError = new ValidationError();
+				lError.setDescription("API Key is invalid");
+				lErrors.add(lError);
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				LOGGER.log(Level.SEVERE,
+						"Invalid API Key " + lHandshake.getApiKey());
+				return lErrors;
+			}
 			{
 				// device sends its stored gcm id
 				GcmRegistrationRequest lGcmRegistrationRequest = gcmService
@@ -436,6 +460,7 @@ public class ContentServerController {
 		lContentRequest.setAccuracy(pContentRequest.getAccuracy());
 		lContentRequest.setAltitude(pContentRequest.getAltitude());
 		lContentRequest.setTrackingId(pContentRequest.getTrackingId());
+		lContentRequest.setApiKey(pContentRequest.getApiKey());
 		lContentRequest.setBearing(pContentRequest.getBearing());
 		lContentRequest.setDeviceId(pContentRequest.getDeviceId());
 		lContentRequest.setLatitude(pContentRequest.getLatitude());
@@ -453,6 +478,7 @@ public class ContentServerController {
 			com.cm.contentserver.transfer.Handshake pHandshake) {
 		Handshake lHandshake = new Handshake();
 		lHandshake.setTrackingId(pHandshake.getTrackingId());
+		lHandshake.setApiKey(pHandshake.getApiKey());
 		lHandshake.setGcmRegistrationId(pHandshake.getGcmRegistrationId());
 		lHandshake.setLastKnownTimestamp(pHandshake.getLastKnownTimestamp());
 		lHandshake.setAccuracy(pHandshake.getAccuracy());
@@ -471,4 +497,14 @@ public class ContentServerController {
 		return lHandshake;
 	}
 
+	private boolean validateApiKey(String pApiKey, String pTrackingId) {
+		Application pApplication = applicationService
+				.getApplicationByTrackingId(pTrackingId, false);
+		Account pAccount = accountService.getAccount(pApplication
+				.getAccountId());
+		if (pAccount.getApiKey().equals(pApiKey)) {
+			return true;
+		}
+		return false;
+	}
 }

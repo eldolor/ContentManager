@@ -3,7 +3,7 @@ package com.cm.contentserver.transfer;
 import java.io.Serializable;
 
 public class ContentRequest implements Serializable {
-	private String apiKey;
+	private String clientKey;
 	private String trackingId;
 	private String deviceId;
 	private String latitude;
@@ -16,12 +16,12 @@ public class ContentRequest implements Serializable {
 	private Long timeCreatedMs;
 	private Long timeCreatedTimeZoneOffsetMs;
 
-	public String getApiKey() {
-		return apiKey;
+	public String getClientKey() {
+		return clientKey;
 	}
 
-	public void setApiKey(String apiKey) {
-		this.apiKey = apiKey;
+	public void setClientKey(String clientKey) {
+		this.clientKey = clientKey;
 	}
 
 	public String getTrackingId() {

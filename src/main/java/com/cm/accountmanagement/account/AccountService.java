@@ -42,15 +42,15 @@ public class AccountService {
 		return account;
 	}
 
-	public boolean generateApiKey(Long id) {
+	public boolean generateClientKey(Long id) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
 			Account account = getAccount(id);
 			if (account != null) {
 				// generate an api key
-				account.setApiKey(UUID.randomUUID().toString());
-				accountDao.updateApiKey(account);
+				account.setClientKey(UUID.randomUUID().toString());
+				accountDao.updateClientKey(account);
 				return true;
 			} else {
 				if (LOGGER.isLoggable(Level.INFO))

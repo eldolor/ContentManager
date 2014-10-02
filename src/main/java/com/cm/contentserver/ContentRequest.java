@@ -11,7 +11,7 @@ public class ContentRequest {
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Long id;
 	@Persistent
-	private String apiKey;
+	private String clientKey;
 	@Persistent
 	private String trackingId;
 	@Persistent
@@ -40,12 +40,12 @@ public class ContentRequest {
 	private Long timeUpdatedTimeZoneOffsetMs;
 
 	
-	public String getApiKey() {
-		return apiKey;
+	public String getClientKey() {
+		return clientKey;
 	}
 
-	public void setApiKey(String apiKey) {
-		this.apiKey = apiKey;
+	public void setClientKey(String clientKey) {
+		this.clientKey = clientKey;
 	}
 
 	public String getTrackingId() {

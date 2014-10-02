@@ -16,7 +16,7 @@ public class Account {
 
 	/** Required attribute for API access **/
 	@Persistent
-	private String apiKey;
+	private String clientKey;
 	// default to free
 	@Persistent
 	private String canonicalPlanName = CanonicalPlanName.FREE.getValue();
@@ -105,12 +105,12 @@ public class Account {
 		this.enabled = enabled;
 	}
 
-	public String getApiKey() {
-		return apiKey;
+	public String getClientKey() {
+		return clientKey;
 	}
 
-	public void setApiKey(String apiKey) {
-		this.apiKey = apiKey;
+	public void setClientKey(String clientKey) {
+		this.clientKey = clientKey;
 	}
 
 	public String getCanonicalPlanName() {

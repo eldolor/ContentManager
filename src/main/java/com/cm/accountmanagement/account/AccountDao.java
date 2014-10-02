@@ -126,14 +126,14 @@ import com.cm.util.PMF;
 		}
 	}
 
-	 void updateApiKey(Account account) {
+	 void updateClientKey(Account account) {
 		PersistenceManager pm = null;
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
 			pm = PMF.get().getPersistenceManager();
 			Account _account = pm.getObjectById(Account.class, account.getId());
-			_account.setApiKey(account.getApiKey());
+			_account.setClientKey(account.getClientKey());
 			_account.setTimeUpdatedMs(account.getTimeUpdatedMs());
 			_account.setTimeUpdatedTimeZoneOffsetMs(account
 					.getTimeUpdatedTimeZoneOffsetMs());

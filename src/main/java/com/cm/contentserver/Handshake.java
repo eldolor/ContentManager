@@ -13,7 +13,7 @@ public class Handshake {
 	@Persistent
 	private String trackingId;
 	@Persistent
-	private String apiKey;
+	private String clientKey;
 	@Persistent
 	private String gcmRegistrationId;
 	@Persistent
@@ -52,12 +52,12 @@ public class Handshake {
 		this.trackingId = trackingId;
 	}
 
-	public String getApiKey() {
-		return apiKey;
+	public String getClientKey() {
+		return clientKey;
 	}
 
-	public void setApiKey(String apiKey) {
-		this.apiKey = apiKey;
+	public void setClientKey(String clientKey) {
+		this.clientKey = clientKey;
 	}
 
 	public String getGcmRegistrationId() {

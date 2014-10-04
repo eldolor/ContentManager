@@ -10,16 +10,17 @@
 		secured-annotations="enabled" />
 	<security:http pattern="/resources/**" security="none" />
 	<security:http pattern="/login**" security="none" />
-	<security:http pattern="/docs" security="none" />
-	
+	<!-- <security:http pattern="/docs" security="none" /> -->
+
 	<!-- Begin: utilized by the SDK -->
 	<security:http pattern="/contentserver**" security="none" />
 	<security:http pattern="/gcm**" security="none" />
 	<security:http pattern="/contentstats**" security="none" />
-	<security:http pattern="/contentdownloadstats**" security="none" />
+	<security:http pattern="/contentdownloadstats**"
+		security="none" />
 	<!-- End: utilized by the SDK -->
-	
-	
+
+
 	<!-- Begin: utilized by Stripe -->
 	<security:http pattern="/webhook/stripe/**" security="none" />
 	<!-- End: utilized by the SDK -->
@@ -64,8 +65,8 @@
 		<security:intercept-url pattern="/analytics"
 			access="ROLE_SUPER_ADMIN, 
 			ROLE_ADMIN, ROLE_USER" />
-								<!-- <security:intercept-url pattern="/**" access="IS_AUTHENTICATED_ANONYMOUSLY" 
-			/> -->
+		<security:intercept-url pattern="/docs"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<security:anonymous granted-authority="IS_AUTHENTICATED_ANONYMOUSLY" />
 
 		<!-- Override default login and logout pages -->

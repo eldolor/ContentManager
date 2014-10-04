@@ -364,6 +364,8 @@ public class Utils {
 		lContent.setType(pContent.getType());
 		lContent.setUri(pContent.getUri());
 		lContent.setSizeInBytes(pContent.getSizeInBytes());
+		lContent.setTags(pContent.getTags());
+		
 		return lContent;
 
 	}

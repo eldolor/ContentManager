@@ -28,6 +28,8 @@ public class Content implements Searchable {
 	@Persistent
 	private String description;
 	@Persistent
+	private String[] tags;	
+	@Persistent
 	private String startDateIso8601;
 	@Persistent
 	private Long startDateMs;
@@ -93,6 +95,14 @@ public class Content implements Searchable {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public String[] getTags() {
+		return tags;
+	}
+
+	public void setTags(String[] tags) {
+		this.tags = tags;
 	}
 
 	public String getStartDateIso8601() {

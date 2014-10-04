@@ -21,32 +21,65 @@
 <jsp:include page="resources.jsp" flush="true"></jsp:include>
 
 <!-- Begin Custom -->
-<script type="text/javascript">
-
-</script>
+<script type="text/javascript"
+	src="/resources/javascripts/cm/cm.client.keys.js"></script>
 <!-- End Custom -->
-
+</head>
 <body>
 
 
 
 	<jsp:include page="common.jsp"></jsp:include>
 	<jsp:include page="top_bar.jsp"></jsp:include>
-	<section>
+	<section id="blog">
 		<div class="row full-width">
+
 			<h2 class="text-center gray">Client Keys in Use</h2>
+
+			<p class="text-center page_sub_heading"></p>
 			<div class="line">
 				<img src="/resources/images/box/line.png" alt="line" />
 			</div>
-			<div class="content" id="client_key_usage">
-				<div id="progress_bar" style="display: none">
-					<div class="progress radius">
-						<span class="meter" style="width: 40%; background-color: #5cb85c;">Loading...</span>
-					</div>
+			<br />
+			<div class="row">
+				<div class="large-7 columns">
+					<jsp:include page="progress_bar.jsp"></jsp:include>
+					<div id="client_keys_list"></div>
 				</div>
-				<div id="client_key_usage_details"></div>
-			</div>
+				<div class="large-4 columns col-md-offset-1">
+					<div id="category">
+						<h3>Options</h3>
+						<ul>
+							<li><i class="fi-arrow-right"></i><a id="create_client_key"
+								href="javascript:void(0);">&nbsp;Create New Client Key</a></li>
+						</ul>
+					</div>
+					<br> <br />
+					<dl class="tabs" data-tab>
+						<dd class="active">
+							<a href="#panel2-1">Client Key</a>
+						</dd>
+					</dl>
+					<div class="tabs-content">
+						<div class="content active" id="panel2-1">
+							<div class="blog_snippet">
+								<div class="blog_details float_left">
+									<span class="title green">Creation</span> <span class="date"></span>
+								</div>
+								<div class="clearfix"></div>
+							</div>
+							<div class="blog_snippet">
+								<div class="blog_details float_left">
+									<span class="title green">Deletion</span> <span class="date"></span>
+								</div>
+								<div class="clearfix"></div>
+							</div>
+						</div>
 
+					</div>
+
+				</div>
+			</div>
 		</div>
 	</section>
 

@@ -48,7 +48,7 @@
 	<section id="blog">
 	<div class="row full-width">
 
-		<h2 class="text-center gray">Documentation</h2>
+		<h2 class="text-center gray">SDK Guide</h2>
 
 		<!-- <p class="text-center page_sub_heading">Create an application to
 				manage its associated rich media content (images &amp; videos)</p> -->
@@ -84,8 +84,8 @@
 					</dl>
 				</div>
 				<div class="clearfix"></div>
-				<a name="overview"></a>
 				<h3 data-magellan-destination="overview" class="text-left gray">Overview</h3>
+				<a name="overview"></a>
 				<p class="text-left">The Content Manager API synchronizes your
 					content to mobile devices. Content updates can be pushed down to
 					mobile devices, almost instantaneously.</p>
@@ -95,9 +95,9 @@
 				</p>
 				<div class="clearfix"></div>
 				<div class="clearfix"></div>
-				<a name="getting_started"></a>
 				<h3 data-magellan-destination="getting_started"
 					class="text-left gray">Getting Started</h3>
+				<a name="getting_started"></a>
 				<p class="text-left">You need the following to get started with
 					a new Android project.</p>
 				<ol>
@@ -111,9 +111,9 @@
 				</ol>
 				<div class="clearfix"></div>
 				<div class="clearfix"></div>
-				<a name="project_setup"></a>
 				<h3 data-magellan-destination="project_setup" class="text-left gray">Eclipse
 					Project Setup</h3>
+				<a name="project_setup"></a>
 				<ol>
 					<li>Download the latest Android <a href="/resources/api/content_manager_sdk_1_1.jar">Content
 							Manager API</a> library.
@@ -128,10 +128,10 @@
 				</ol>
 				<div class="clearfix"></div>
 				<div class="clearfix"></div>
-				<a name="android_manifest"></a>
 				<h3 data-magellan-destination="android_manifest"
 					class="text-left gray">Android Manifest</h3>
 				<div class="panel radius">
+				<a name="android_manifest"></a>
 					<h4>Add Permissions</h4>
 					<p>Add the following permissions to your project&quot;s
 						AndroidManifest.xml</p>
@@ -207,9 +207,9 @@
 				</div>
 				<div class="clearfix"></div>
 				<div class="clearfix"></div>
-				<a name="downloader_service"></a>
 				<h3 data-magellan-destination="downloader_service"
 					class="text-left gray">Downloader Service</h3>
+				<a name="downloader_service"></a>
 				<div class="panel radius">
 					<h4>Notifications</h4>
 					<p>The Downloader Service will display any of the following
@@ -328,9 +328,9 @@
 				</div>
 				<div class="clearfix"></div>
 				<div class="clearfix"></div>
-				<a name="initialize"></a>
 				<h3 data-magellan-destination="initialize" class="text-left gray">Initialize
 					the Content Manager Factory</h3>
+				<a name="initialize"></a>
 				<p class="text-left"></p>
 				<div class="panel radius">
 					<h4></h4>
@@ -361,9 +361,9 @@
 
 				<div class="clearfix"></div>
 				<div class="clearfix"></div>
-				<a name="access_contents"></a>
 				<h3 data-magellan-destination="access_contents"
 					class="text-left gray">Access Contents</h3>
+				<a name="access_contents"></a>
 				<p class="text-left"></p>
 				<div class="panel radius">
 					<h4>ContentManager</h4>

@@ -64,6 +64,16 @@ public class ContentService {
 				LOGGER.info("Exiting");
 		}
 	}
+	public List<Content> getAll() {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			return contentDao.getAll();
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
 
 	public List<Content> get(Long applicationId, Long contentGroupId,
 			boolean deleted, boolean enabled) {

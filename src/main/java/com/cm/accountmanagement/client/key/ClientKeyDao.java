@@ -10,7 +10,6 @@ import javax.persistence.NoResultException;
 
 import org.springframework.stereotype.Component;
 
-import com.cm.contentmanager.application.Application;
 import com.cm.util.PMF;
 
 @Component
@@ -26,9 +25,11 @@ class ClientKeyDao {
 				LOGGER.info("Entering");
 			pm = PMF.get().getPersistenceManager();
 			Query q = pm.newQuery(ClientKey.class);
-			q.setFilter("accountId == accountIdParam");
-			q.declareParameters("String accountIdParam");
-			return (List<ClientKey>) q.execute(accountId);
+			q.setFilter("accountId == accountIdParam && deleted == deletedParam");
+			q.declareParameters("String accountIdParam, Boolean deletedParam");
+			q.setOrdering("timeCreatedMs desc");
+			return (List<ClientKey>) q.execute(accountId,
+					Boolean.valueOf(false));
 		} finally {
 			if (pm != null) {
 				pm.close();

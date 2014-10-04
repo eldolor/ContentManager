@@ -71,6 +71,7 @@
 				<li><a href="/analytics/applications">Usage Reports</a></li>
 				<li class="has-dropdown"><a href="#">Account Settings</a>
 					<ul class="dropdown">
+						<li><a href="/account/clientkeys">Client Keys</a></li>
 						<li><a href="/account/billing">Billing</a></li>
 						<li><a href="/account/plans">Plans & Pricing</a></li>
 						<li><a href="/account/usage">Account Usage</a></li>

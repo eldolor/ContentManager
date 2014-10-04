@@ -64,6 +64,10 @@ function setup() {
 		// set the available storage quota per plan
 		setAvailableStorageQuota(mSelectedApplication.id, true);
 		$("#cm_errors_container").addClass("fadeInUp animated");
+
+		// tags init
+		$('#content_tags').tagsInput();
+
 	} catch (err) {
 		handleError("setup", err);
 	} finally {

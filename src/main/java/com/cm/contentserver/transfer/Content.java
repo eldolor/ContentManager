@@ -7,6 +7,7 @@ public class Content implements Serializable {
 	private Long contentGroupId;
 	private Long applicationId;
 	private String name;
+	private String[] tags;	
 	private String type;
 	private String uri;
 	private boolean updateOverWifiOnly;
@@ -92,6 +93,14 @@ public class Content implements Serializable {
 
 	public void setSizeInBytes(Long sizeInBytes) {
 		this.sizeInBytes = sizeInBytes;
+	}
+
+	public String[] getTags() {
+		return tags;
+	}
+
+	public void setTags(String[] tags) {
+		this.tags = tags;
 	}
 
 }

@@ -64,6 +64,8 @@ public class ContentHelper {
 							content.isUpdateOverWifiOnly());
 					lJsonObject.put("sizeInBytes",
 							content.getSizeInBytes());
+					lJsonObject.put("tags", content.getTags());
+					
 					lJsonArray.put(lJsonObject);
 				} catch (JSONException e) {
 					LOGGER.log(Level.WARNING,

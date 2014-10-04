@@ -483,7 +483,8 @@ class ContentDao {
 				_content.setName(content.getName());
 				_content.setNameIdx(content.getName().toLowerCase());
 				_content.setDescription(content.getDescription());
-
+				_content.setTags(content.getTags());
+				
 				// for existing contents
 				if (_content.getTimeCreatedMs() == null) {
 					// default it to the start date
@@ -530,6 +531,27 @@ class ContentDao {
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting updateContentSize");
+		}
+	}
+
+	List<Content> getAll() {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(Content.class);
+				return (List<Content>) q.execute();
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
 		}
 	}
 

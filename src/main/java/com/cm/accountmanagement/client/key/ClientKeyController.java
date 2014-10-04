@@ -21,8 +21,6 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.jsr107cache.Cache;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -54,7 +52,7 @@ public class ClientKeyController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value = "/clientkeys", method = RequestMethod.GET)
+	@RequestMapping(value = "/account/clientkeys", method = RequestMethod.GET)
 	public ModelAndView displayApplications(ModelMap model) {
 		if (LOGGER.isLoggable(Level.INFO))
 			LOGGER.info("Entering");
@@ -129,7 +127,7 @@ public class ClientKeyController {
 	 * 
 	 * @return
 	 */
-	@RequestMapping(value = "/secured/clientkey", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/secured/clientkey", method = RequestMethod.POST)
 	public void generateClientKey(HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))

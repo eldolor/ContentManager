@@ -25,7 +25,15 @@
 <script type="text/javascript"
 	src="/resources/javascripts/cm/cm.login.js"></script>
 
-
+<script type="text/javascript">
+	function setRememberMe() {
+		if ($('#remember_me').attr('checked')) {
+			$('#_spring_security_remember_me').val('on');
+		} else {
+			$('#_spring_security_remember_me').val('off');
+		}
+	}
+</script>
 <!-- End Custom -->
 
 
@@ -66,7 +74,11 @@
 							class="form-control" type="password" id="j_password"
 							name="j_password" placeholder="password" required="required" /></label>
 					</div>
-					<input type="hidden" value="off" id="_spring_security_remember_me"
+					<div>
+						<label>Remember me</label> <input id="remember_me" type="checkbox"
+							checked="checked" onclick="javascript: setRememberMe();">
+					</div>
+					<input type="hidden" value="on" id="_spring_security_remember_me"
 						name="_spring_security_remember_me" style="display: none" />
 					<div id="cm_errors_container" style="display: none">
 						<ul id="vision">
@@ -101,19 +113,19 @@
 		<jsp:include page="footer.jsp"></jsp:include>
 	</section>
 
-<script type="text/javascript">
-	try {
-		var lErrorText = '${error}';
-		var lError = JSON.parse(lErrorText);
-		if(typeof lError === 'undefined'){
-		} else {
-			log('init', lError.description);
-			$('#login_errors').html(lError.description);
-			$('#cm_errors_container').show();
+	<script type="text/javascript">
+		try {
+			var lErrorText = '${error}';
+			var lError = JSON.parse(lErrorText);
+			if (typeof lError === 'undefined') {
+			} else {
+				log('init', lError.description);
+				$('#login_errors').html(lError.description);
+				$('#cm_errors_container').show();
+			}
+		} catch (e) {
+			//do nothing
 		}
-	} catch (e) {
-		//do nothing
-	}
-</script>
+	</script>
 </body>
 </html>

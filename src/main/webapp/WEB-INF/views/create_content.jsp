@@ -39,6 +39,12 @@
 			</div>
 			<div>
 				<fieldset>
+					<legend>Tags</legend>
+					<input name="content_tags" id="content_tags" />
+				</fieldset>
+			</div>
+			<div>
+				<fieldset>
 					<legend>Content Type</legend>
 					<ul class="inline-list">
 						<!-- Using radio buttons each switch turns off the other -->

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cm.accountmanagement.account.Account;
+import com.cm.accountmanagement.client.key.ClientKeyService;
 import com.cm.admin.plan.Plan;
 import com.cm.common.entity.Result;
 import com.cm.config.CanonicalApplicationQuota;
@@ -61,6 +62,8 @@ public class AdminController {
 	private ContentService contentService;
 	@Autowired
 	private ApplicationService applicationService;
+	@Autowired
+	private ClientKeyService clientKeyService;
 
 	@RequestMapping(value = "/admin/delete/users", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody
@@ -460,6 +463,99 @@ public class AdminController {
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting updateGcmRegistrationRequests");
+		}
+	}
+
+	@RequestMapping(value = "/admin/assign/default/tags", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody
+	Result assignDefaultTags(HttpServletResponse response) {
+		PersistenceManager pm = null;
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			String[] lDefaultImageTag = { "image" };
+			String[] lDefaultVideoTag = { "video" };
+			pm = PMF.get().getPersistenceManager();
+
+			List<Content> lContentList = contentService.getAll();
+			for (Content lContent : lContentList) {
+
+				Content _content = pm.getObjectById(Content.class,
+						lContent.getId());
+				if (_content.getTags() == null) {
+					if (_content.getType().equals("image")) {
+						_content.setTags(lDefaultImageTag);
+					} else if (_content.getType().equals("video")) {
+						_content.setTags(lDefaultVideoTag);
+					}
+				} else {
+					String[] lTags = _content.getTags();
+					boolean lContainsImageTag = false;
+					boolean lContainsVideoTag = false;
+					for (int i = 0; i < lTags.length; i++) {
+						if (lTags[i].equals("image"))
+							lContainsImageTag = true;
+						else if (lTags[i].equals("video"))
+							lContainsVideoTag = true;
+					}
+					if (_content.getType().equals("image")
+							&& (!lContainsImageTag)) {
+						_content.setTags(lDefaultImageTag);
+					} else if (_content.getType().equals("video")
+							&& (!lContainsVideoTag)) {
+						_content.setTags(lDefaultVideoTag);
+					}
+				}
+
+			}
+			Result result = new Result();
+			result.setResult(Result.SUCCESS);
+			return result;
+		} finally {
+			if (pm != null) {
+				pm.close();
+			}
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	@RequestMapping(value = "/admin/assign/clientkeys", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody
+	Result assignClientKeys(HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			try {
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("Entering");
+
+				PersistenceManager pm = null;
+
+				try {
+					pm = PMF.get().getPersistenceManager();
+					Query q = pm.newQuery(Account.class);
+					List<Account> lList = (List<Account>) q.execute();
+					for (Account lAccount : lList) {
+						// assign
+						clientKeyService.generateClientKey(lAccount.getId());
+					}
+				} finally {
+					if (pm != null) {
+						pm.close();
+					}
+				}
+			} finally {
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("Exiting");
+			}
+
+			Result result = new Result();
+			result.setResult(Result.SUCCESS);
+			return result;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
 		}
 	}
 

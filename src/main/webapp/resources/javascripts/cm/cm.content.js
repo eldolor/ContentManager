@@ -191,28 +191,6 @@ function handleDisplayContent_Callback(pContent) {
 		var lInnerHtml = '';
 		for (var int = 0; int < pContent.length; int++) {
 			var lContent = pContent[int];
-			// lInnerHtml += "<div class=\"row\"> <div class=\"large-6
-			// columns\">";
-			// lInnerHtml += "<p><span data-tooltip class=\"has-tip\"
-			// title=\"Click here to view the content in this Content\"><a
-			// href=\"javascript:void(0)\" onclick=\"viewContent("
-			// + lContent.id + ")\"><strong>";
-			// lInnerHtml += lContent.name;
-			// lInnerHtml += "</strong></a></span></p>";
-			//
-			// lInnerHtml += "<ul class=\"inline-list\"> <li><a class=\"small\"
-			// href=\"javascript:void(0)\" onclick=\"viewContent("
-			// + lContent.id
-			// + ")\">view</a></li> <li><a class=\"small\"
-			// href=\"javascript:void(0)\" onclick=\"editContent("
-			// + lContent.id
-			// + ")\">edit</a></li> <li><a class=\"small\"
-			// href=\"javascript:void(0)\" onclick=\"deleteContent("
-			// + lContent.id + ")\">delete</a></li></ul>";
-			// lInnerHtml += "<span id=\"content_id\" class=\"secondary radius
-			// label\">Content Id: "
-			// + lContent.id + "</span>";
-			// lInnerHtml += "</div></div><hr>";
 
 			lInnerHtml += "<div class=\"blog_content\"> ";
 			lInnerHtml += " <h3 class=\"gray\">";
@@ -411,6 +389,16 @@ function editContent(id) {
 
 							$('#content_name').val(content.name);
 							$('#content_description').val(content.description);
+
+							// tags
+							if (content.tags != null) {
+								for (var int = 0; int < content.tags.length; int++) {
+									$('#content_tags')
+											.addTag(content.tags[int]);
+								}
+							}
+							// end tags
+
 							$('#content_start_date').val(
 									getDisplayDate(content.startDateIso8601));
 							$('#content_end_date').val(
@@ -431,6 +419,16 @@ function editContent(id) {
 								// $('#content_type_image').attr('checked',
 								// 'checked');
 							}
+							$('#content_type_image').unbind();
+							$('#content_type_image').bind('click', function() {
+								$('#content_tags').addTag('image');
+								$('#content_tags').removeTag('video');
+							});
+							$('#content_type_video').unbind();
+							$('#content_type_video').bind('click', function() {
+								$('#content_tags').addTag('video');
+								$('#content_tags').removeTag('image');
+							});
 
 							var dropBoxUrl = getDropboxUrl();
 							var lStorageQuota = null;
@@ -528,49 +526,8 @@ function editContent(id) {
 }
 function getDisplayUpgradeMessage(pStorageQuota) {
 	var lAvailableStorageQuotaMessage = convertBytes((pStorageQuota.storageLimitInBytes - pStorageQuota.storageUsedInBytes));
-	// var lAvailableStorageQuotaInKB = ((pStorageQuota.storageLimitInBytes -
-	// pStorageQuota.storageUsedInBytes) / 1024);
-	// var lAvailableStorageQuotaInMB = (((pStorageQuota.storageLimitInBytes -
-	// pStorageQuota.storageUsedInBytes) / 1024) / 1024);
-	// var lAvailableStorageQuotaInGB = ((((pStorageQuota.storageLimitInBytes -
-	// pStorageQuota.storageUsedInBytes) / 1024) / 1024) / 1024);
-	//
-	// // calculate
-	// if (lAvailableStorageQuotaInKB < 1) {
-	// lAvailableStorageQuotaMessage = '< 1KB';
-	// } else if ((lAvailableStorageQuotaInKB >= 1)
-	// && (lAvailableStorageQuotaInMB < 1)) {
-	// lAvailableStorageQuotaMessage = Math.round(lAvailableStorageQuotaInKB)
-	// + 'KB';
-	// } else if ((lAvailableStorageQuotaInMB >= 1)
-	// && (lAvailableStorageQuotaInGB < 1)) {
-	// lAvailableStorageQuotaMessage = lAvailableStorageQuotaInMB.toFixed(2)
-	// + 'MB';
-	// } else if (lAvailableStorageQuotaInGB >= 1) {
-	// lAvailableStorageQuotaMessage = lAvailableStorageQuotaInGB.toFixed(2)
-	// + 'GB';
-	// }
+
 	var lPlanStorageQuotaMessage = convertBytes(pStorageQuota.storageLimitInBytes);
-	// var lPlanStorageQuotaInKB = ((pStorageQuota.storageLimitInBytes) / 1024);
-	// var lPlanStorageQuotaInMB = (((pStorageQuota.storageLimitInBytes) / 1024)
-	// / 1024);
-	// var lPlanStorageQuotaInGB = ((((pStorageQuota.storageLimitInBytes) /
-	// 1024) / 1024) / 1024);
-	//
-	// // calculate
-	// if (lPlanStorageQuotaInKB < 1) {
-	// lPlanStorageQuotaMessage = '< 1KB';
-	// } else if ((lPlanStorageQuotaInKB >= 1) && (lPlanStorageQuotaInMB < 1)) {
-	// lPlanStorageQuotaMessage = Math.round(lPlanStorageQuotaInKB) + 'KB';
-	// } else if ((lPlanStorageQuotaInMB >= 1) && (lPlanStorageQuotaInGB < 1)) {
-	// lPlanStorageQuotaMessage = lPlanStorageQuotaInMB.toFixed(2) + 'MB';
-	// } else if (lPlanStorageQuotaInGB >= 1) {
-	// lPlanStorageQuotaMessage = lPlanStorageQuotaInGB.toFixed(2) + 'GB';
-	// }
-	// var lPlanStorageQuotaInMB = Math
-	// .round(((pStorageQuota.storageLimitInBytes) / 1024) / 1024);
-	// lPlanStorageQuotaInMB = (lPlanStorageQuotaInMB < 1) ? 1
-	// : lPlanStorageQuotaInMB;
 
 	var lDisplayUpgradeMessage = ' The selected file is too large! Your plan allows for '
 			+ lPlanStorageQuotaMessage
@@ -743,6 +700,26 @@ function newContent() {
 
 		$('#content_name').val('');
 		$('#content_description').val('');
+		// reset tags
+		var toSplit = $('#content_tags').val().split(",");
+		for (var i = 0; i < toSplit.length; i++) {
+			$('#content_tags').removeTag(toSplit[i]);
+		}
+		// default for image
+		$('#content_tags').addTag('image');
+
+		$('#content_type_image').unbind();
+		$('#content_type_image').bind('click', function() {
+			$('#content_tags').addTag('image');
+			$('#content_tags').removeTag('video');
+		});
+		$('#content_type_video').unbind();
+		$('#content_type_video').bind('click', function() {
+			$('#content_tags').addTag('video');
+			$('#content_tags').removeTag('image');
+		});
+
+		// end tags
 
 		// $('#content_start_date').val(getCurrentDisplayDate());
 		// $('#content_end_date').val('');
@@ -828,6 +805,11 @@ function createContent() {
 
 		var lDate = new Date();
 		var lTimeCreated = lDate.getTime();
+		var jsonArrayTags = [];
+		var toSplit = $('#content_tags').val().split(",");
+		for (var i = 0; i < toSplit.length; i++) {
+			jsonArrayTags.push(toSplit[i]);
+		}
 
 		var contentObj = {
 			id : $('#content_id').val(),
@@ -835,6 +817,7 @@ function createContent() {
 			contentGroupId : $('#contentgroup_id').val(),
 			name : $('#content_name').val(),
 			description : $('#content_description').val(),
+			tags : jsonArrayTags,
 			startDateIso8601 : getTransferDate($('#content_start_date').val()),
 			endDateIso8601 : getTransferDate($('#content_end_date').val()),
 			enabled : lEnabled,
@@ -907,6 +890,7 @@ function createContent() {
 
 function updateContent() {
 	log("updateContent", "Entering");
+
 	$('#progress_bar_top, #progress_bar_bottom').show();
 	$('.button').addClass('disabled');
 	var lEnabled;
@@ -921,7 +905,12 @@ function updateContent() {
 	} else if ($('#content_type_video').is(':checked')) {
 		$('#content_type').val('video');
 	}
-
+	var jsonArrayTags = [];
+	var toSplit = $('#content_tags').val().split(",");
+	for (var i = 0; i < toSplit.length; i++) {
+		jsonArrayTags.push(toSplit[i]);
+	}
+	// alert(JSON.stringify(jsonArrayTags, null, 2));
 	var lDate = new Date();
 	try {
 		var contentObj = {
@@ -930,6 +919,7 @@ function updateContent() {
 			contentGroupId : $('#contentgroup_id').val(),
 			name : $('#content_name').val(),
 			description : $('#content_description').val(),
+			tags : jsonArrayTags,
 			startDateIso8601 : getTransferDate($('#content_start_date').val()),
 			endDateIso8601 : getTransferDate($('#content_end_date').val()),
 			enabled : lEnabled,

@@ -39,7 +39,7 @@
 			<h2 class="text-center gray">Applications</h2>
 
 			<p class="text-center page_sub_heading">Create an application to
-				manage its associated rich media content (images &amp; videos)</p>
+				manage your rich media content (images &amp; videos)</p>
 			<div class="line">
 				<img src="/resources/images/box/line.png" alt="line" />
 			</div>

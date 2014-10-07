@@ -67,13 +67,13 @@
 		<!-- Right Nav Section -->
 		<ul class="right">
 			<li><a href="/">Home</a></li>
+			<li><a href="/account/plans">Plans &amp; Pricing</a></li>
 			<sec:authorize ifAnyGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">
 				<li><a href="/analytics/applications">Usage Reports</a></li>
 				<li class="has-dropdown"><a href="#">Account Settings</a>
 					<ul class="dropdown">
 						<li><a href="/account/clientkeys">Client Keys</a></li>
 						<li><a href="/account/billing">Billing</a></li>
-						<li><a href="/account/plans">Plans & Pricing</a></li>
 						<li><a href="/account/usage">Account Usage</a></li>
 						<li><a href="/account/changepassword">Change Password</a></li>
 					</ul></li>
@@ -81,8 +81,8 @@
 			<li class="has-dropdown"><a href="#">Documents</a>
 				<ul class="dropdown">
 					<li><a href="/docs">Overview</a></li>
-					<li><a href="/docs/android">Getting Started
-							with Android SDK</a></li>
+					<li><a href="/docs/android">Getting Started with Android
+							SDK</a></li>
 					<li><a href="/resources/api/current/javadoc/index.html">Android
 							SDK API Reference</a></li>
 				</ul></li>

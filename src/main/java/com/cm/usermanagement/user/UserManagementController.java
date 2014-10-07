@@ -484,10 +484,16 @@ public class UserManagementController {
 			model.addAttribute("canonicalPlanNameLarge",
 					CanonicalPlanName.LARGE.getValue());
 			User lUser = userService.getLoggedInUser();
+			//no user logged in
+			if(lUser == null) {
+				model.addAttribute("isLoggedIn", false);
+				return new ModelAndView("settings_plans_and_pricing", model);
+			}
 			StripeCustomer lStripeCustomer = stripeCustomerService.get(lUser
 					.getAccountId());
 			boolean lIsUpdateCCInfo = false;
 
+			//user logged in but not yet subscribed to any other plans
 			if (lStripeCustomer == null) {
 				model.addAttribute("isSubscribed", false);
 				// default to free
@@ -507,6 +513,7 @@ public class UserManagementController {
 			}
 			model.addAttribute("isUpdateCCInfo", lIsUpdateCCInfo);
 			model.addAttribute("isError", false);
+			
 			return new ModelAndView("settings_plans_and_pricing", model);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))

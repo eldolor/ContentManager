@@ -89,6 +89,10 @@
 					<br />
 					<c:choose>
 						<c:when
+							test="${isLoggedIn == false}">
+							<a href="<c:url value="/signup"/>" class="button radius btn-default">Sign Up </a>
+						</c:when>
+						<c:when
 							test="${isSubscribed == false || subscribedCanonicalPlanName == canonicalPlanNameFree}">
 							<img alt="free" src="/resources/images/cm/done.png" />
 						</c:when>
@@ -129,6 +133,10 @@
 					</div>
 					<br>
 					<c:choose>
+						<c:when
+							test="${isLoggedIn == false}">
+							<a href="<c:url value="/signup"/>" class="button radius btn-default">Sign Up </a>
+						</c:when>
 						<c:when test="${isUpdateCCInfo == true || isSubscribed == false}">
 							<form id="subscribePlanForm" name="subscribePlanForm"
 								action="/stripe/subscribe" method="POST"
@@ -193,6 +201,10 @@
 					</div>
 					<br>
 					<c:choose>
+						<c:when
+							test="${isLoggedIn == false}">
+							<a href="<c:url value="/signup"/>" class="button radius btn-default">Sign Up </a>
+						</c:when>
 						<c:when test="${isUpdateCCInfo == true||isSubscribed == false}">
 							<form id="subscribePlanForm" name="subscribePlanForm"
 								action="/stripe/subscribe" method="POST"
@@ -256,6 +268,10 @@
 					</div>
 					<br>
 					<c:choose>
+						<c:when
+							test="${isLoggedIn == false}">
+							<a href="<c:url value="/signup"/>" class="button radius btn-default">Sign Up </a>
+						</c:when>
 						<c:when test="${isUpdateCCInfo == true || isSubscribed == false}">
 							<form id="subscribePlanForm" name="subscribePlanForm"
 								action="/stripe/subscribe" method="POST"
@@ -319,6 +335,10 @@
 					</div>
 					<br>
 					<c:choose>
+						<c:when
+							test="${isLoggedIn == false}">
+							<a href="<c:url value="/signup"/>" class="button radius btn-default">Sign Up </a>
+						</c:when>
 						<c:when test="${isUpdateCCInfo == true || isSubscribed == false}">
 							<form id="subscribePlanForm" name="subscribePlanForm"
 								action="/stripe/subscribe" method="POST"

@@ -78,7 +78,19 @@
 						<li><a href="/account/changepassword">Change Password</a></li>
 					</ul></li>
 			</sec:authorize>
-			<li><a href="/docs">Documents</a></li>
+			<li class="has-dropdown"><a href="#">Documents</a>
+				<ul class="dropdown">
+					<li><a href="/docs">Overview</a></li>
+					<li><a href="/docs/android">Getting Started
+							with Android SDK</a></li>
+					<li><a href="/resources/api/current/javadoc/index.html">Android
+							SDK API Reference</a></li>
+				</ul></li>
+			<li class="has-dropdown"><a href="#">Downloads</a>
+				<ul class="dropdown">
+					<li><a href="/resources/api/content_manager_sdk_1_1.jar">Android
+							SDK</a></li>
+				</ul></li>
 			<sec:authorize ifAnyGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">
 				<li><a href="<c:url value="/j_spring_security_logout"/>">Sign
 						out </a></li>

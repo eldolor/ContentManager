@@ -60,9 +60,6 @@
 			<div class="large-12 columns">
 				<div data-magellan-expedition="fixed">
 					<dl class="sub-nav">
-						<dd data-magellan-arrival="overview">
-							<a href="#overview">Overview</a>
-						</dd>
 						<dd data-magellan-arrival="getting_started">
 							<a href="#getting_started">Getting Started</a>
 						</dd>
@@ -84,17 +81,6 @@
 					</dl>
 				</div>
 				<div class="clearfix"></div>
-				<h3 data-magellan-destination="overview" class="text-left gray">Overview</h3>
-				<a name="overview"></a>
-				<p class="text-left">The Content Manager API synchronizes your
-					content to mobile devices. Content updates can be pushed down to
-					mobile devices, almost instantaneously.</p>
-				<p class="text-left">
-					The API also collects <a href="/analytics/applications">Usage
-						Statistics</a> of your content, which can be viewed online.
-				</p>
-				<div class="clearfix"></div>
-				<div class="clearfix"></div>
 				<h3 data-magellan-destination="getting_started"
 					class="text-left gray">Getting Started</h3>
 				<a name="getting_started"></a>
@@ -115,10 +101,12 @@
 					Project Setup</h3>
 				<a name="project_setup"></a>
 				<ol>
-					<li>Download the latest Android <a href="/resources/api/content_manager_sdk_1_1.jar">Content
+					<li>Download the latest Android <a
+						href="/resources/api/content_manager_sdk_1_1.jar">Content
 							Manager API</a> library.
 					</li>
-					<li><a href="/resources/api/current/javadoc/index.html">Android API Reference</a></li>
+					<li><a href="/resources/api/current/javadoc/index.html">Android
+							API Reference</a></li>
 					<li>Copy the <b>API library</b> to the <b>libs</b> folder of
 						your project.
 					</li>
@@ -131,7 +119,7 @@
 				<h3 data-magellan-destination="android_manifest"
 					class="text-left gray">Android Manifest</h3>
 				<div class="panel radius">
-				<a name="android_manifest"></a>
+					<a name="android_manifest"></a>
 					<h4>Add Permissions</h4>
 					<p>Add the following permissions to your project&quot;s
 						AndroidManifest.xml</p>
@@ -371,10 +359,11 @@
 						to access your contents.</p>
 				</div>
 				<div class="panel radius">
-					<h4>getAllContents()</h4>
-					<p>To get a list of all your contents. This is for instances
-						where you would want to display all of the contents in a list or
-						grid.</p>
+					<h4>getAllContentsByTag(String tag)</h4>
+					<p>To get a list of all your contents that have a specific tag.
+					</p>
+					<p>Contents are tagged on the server. Tags allows for dynamic
+						access of content, instead of accessing content by content id.</p>
 					<pre>
 						<code>
 	Private ContentManager mContentManager;
@@ -389,6 +378,9 @@
 
 		Logger.log("Exiting");
 	}
+						
+						
+						
 						
 						
 						</code>
@@ -414,6 +406,64 @@
 
 		Logger.log("Exiting");
 	}
+						
+						
+						
+						
+						
+						</code>
+					</pre>
+				</div>
+				<div class="panel radius">
+					<h4>getAllContents()</h4>
+					<p>To get a list of all your contents. This is for instances
+						where you would want to display all of the contents in a list or
+						grid.</p>
+					<pre>
+						<code>
+	Private ContentManager mContentManager;
+	private List<Content> mContentList;
+	...
+	private void loadContent() {
+		Logger.log("Entering");
+
+		mContentList = mContentManager.getAllContents();
+		
+		//display the contents in a list or grid
+
+		Logger.log("Exiting");
+	}
+						
+						
+						
+						
+						
+						</code>
+					</pre>
+				</div>
+
+				<div class="panel radius">
+					<h4>getAllContentsByType(ContentType contentType)</h4>
+					<p>To get a list of all your contents by type. This is for
+						instances where you would want to display all of the contents in a
+						list or grid.</p>
+					<pre>
+						<code>
+	Private ContentManager mContentManager;
+	private List<Content> mContentList;
+	...
+	private void loadContent() {
+		Logger.log("Entering");
+
+		mContentList = mContentManager.getAllContentsByType(ContentType.IMAGE);
+		
+		//display the contents in a list or grid
+
+		Logger.log("Exiting");
+	}
+						
+						
+						
 						
 						
 						</code>
@@ -442,6 +492,9 @@
 	}
 						
 						
+						
+						
+						
 						</code>
 					</pre>
 				</div>
@@ -466,6 +519,9 @@
 
 		Logger.log("Exiting");
 	}
+						
+						
+						
 						
 						
 						</code>

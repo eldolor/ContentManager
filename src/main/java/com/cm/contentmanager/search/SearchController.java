@@ -154,11 +154,22 @@ public class SearchController {
 	}
 
 	@RequestMapping(value = "/docs", method = RequestMethod.GET)
-	public ModelAndView displayDocumentation(ModelMap model) {
+	public ModelAndView displayOverview(ModelMap model) {
 		if (LOGGER.isLoggable(Level.INFO))
 			LOGGER.info("Entering");
 		try {
 			return new ModelAndView("docs", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+	@RequestMapping(value = "/docs/android", method = RequestMethod.GET)
+	public ModelAndView displayAndroidGuide(ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering");
+		try {
+			return new ModelAndView("docs_android_guide", model);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting");

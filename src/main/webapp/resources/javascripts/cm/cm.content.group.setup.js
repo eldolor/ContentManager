@@ -3,7 +3,20 @@ jQuery(function($) {
 		log("function($)", "Entering");
 		setup();
 		// call this post setup
-		// $(document).foundation('joyride', 'start');
+		if (typeof (Storage) !== "undefined") {
+			// Code for localStorage/sessionStorage.
+			// Store
+			var lNoMoreProductTour = localStorage.noMoreProductTour;
+			if (lNoMoreProductTour == "undefined") {
+				lNoMoreProductTour = "N";
+			}
+			if (lNoMoreProductTour == "N") {
+				$(document).foundation('joyride', 'start');
+			}
+		} else {
+			// Sorry! No Web Storage support..
+			$(document).foundation('joyride', 'start');
+		}
 	} catch (err) {
 		handleError("function($)", err);
 	} finally {

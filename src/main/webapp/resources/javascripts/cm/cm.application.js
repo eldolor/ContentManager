@@ -134,20 +134,28 @@ function handleDisplayApplications_Callback(pApplications) {
 		var lInnerHtml = '';
 		for (var int = 0; int < pApplications.length; int++) {
 			var lApplication = pApplications[int];
-			lInnerHtml += "<div class=\"blog_content\"> ";
-			lInnerHtml += " <h3 class=\"gray\">";
+			lInnerHtml += "<div class='blog_content'> ";
+			lInnerHtml += " <h3 class='gray'>";
 			lInnerHtml += lApplication.name;
 			lInnerHtml += "</h3>";
-			lInnerHtml += "<div class=\"blog_content_details float_left\">";
-			lInnerHtml += "<ul> <li class=\"green\">Application Id: "
+			lInnerHtml += "<div class='blog_content_details float_left'>";
+			if (int == 0) {
+				lInnerHtml += "<ul> <li id='first_application_id' class='green'>Application Id: "
 					+ lApplication.trackingId
-					+ " </li><li>|</li><li class=\"light_gray\"><a class=\"small green\" href=\"javascript:void(0)\" onclick=\"displayContentGroups("
+					+ " </li><li>|</li><li class='light_gray'>";
+				lInnerHtml += "<a id='first_contentgroup' class='small green' href='javascript:void(0)' onclick='displayContentGroups(";
+			} else {
+				lInnerHtml += "<ul> <li class='green'>Application Id: "
+					+ lApplication.trackingId
+					+ " </li><li>|</li><li class='light_gray'>";
+				lInnerHtml += "<a class='small green' href='javascript:void(0)' onclick='displayContentGroups(";
+			}
+			lInnerHtml += lApplication.id
+					+ ")'><i class='fi-list-number light_gray'></i>&nbsp;content groups</a></li> <li>|</li><li class='light_gray'><a class='small' href='javascript:void(0)' onclick='editApplication("
 					+ lApplication.id
-					+ ")\"><i class=\"fi-list-number light_gray\"></i>&nbsp;content groups</a></li> <li>|</li><li class=\"light_gray\"><a class=\"small\" href=\"javascript:void(0)\" onclick=\"editApplication("
+					+ ")'><i class='fi-page-edit light_gray'></i>&nbsp;edit</a></li><li>|</li> <li class='light_gray'><a class='small' href='javascript:void(0)' onclick='deleteApplication("
 					+ lApplication.id
-					+ ")\"><i class=\"fi-page-edit light_gray\"></i>&nbsp;edit</a></li><li>|</li> <li class=\"light_gray\"><a class=\"small\" href=\"javascript:void(0)\" onclick=\"deleteApplication("
-					+ lApplication.id
-					+ ")\"><i class=\"fi-page-delete light_gray\"></i>&nbsp;delete</a></li>";
+					+ ")'><i class='fi-page-delete light_gray'></i>&nbsp;delete</a></li>";
 			lInnerHtml += "</ul>";
 			lInnerHtml += "</div>";
 			var lEpochDate = (lApplication.timeUpdatedMs == null) ? lApplication.timeCreatedMs
@@ -159,25 +167,25 @@ function handleDisplayApplications_Callback(pApplications) {
 			var lMonth = lSplitM[0];
 			var lDate = lSplitM[1];
 
-			lInnerHtml += "<div class=\"blog_date green text_center\"> <span>";
+			lInnerHtml += "<div class='blog_date green text_center'> <span>";
 			lInnerHtml += lDate;
 			lInnerHtml += "</span>";
 			lInnerHtml += "<div>";
 			lInnerHtml += lMonth + "</div>";
 			lInnerHtml += "</div>";
 
-			lInnerHtml += "<div class=\"blog_comments text_center green\">";
+			lInnerHtml += "<div class='blog_comments text_center green'>";
 			lInnerHtml += lYear;
 			lInnerHtml += "</div>";
-			lInnerHtml += "<div class=\"blog_content_details float_left\"><p class=\"light_gray\">"
+			lInnerHtml += "<div class='blog_content_details float_left'><p class='light_gray'>"
 					+ lApplication.description + "</p>";
 			if (lApplication.changesStaged) {
-				lInnerHtml += "<a href=\"javascript:void(0);\" onclick=\"pushChangestoHandsets('"
+				lInnerHtml += "<a href='javascript:void(0);' onclick='pushChangestoHandsets('"
 						+ lApplication.id
-						+ "')\" class=\"button tiny radius btn-default\">Push Changes to Handsets</a>";
+						+ "')' class='button tiny radius btn-default'>Push Changes to Handsets</a>";
 			}
 			lInnerHtml += "</div>";
-			lInnerHtml += "<div class=\"clearfix\"></div><div class=\"separator\"></div>";
+			lInnerHtml += "<div class='clearfix'></div><div class='separator'></div>";
 			lInnerHtml += "</div>";
 
 		}

@@ -121,9 +121,9 @@ public class UserManagementController {
 				User lDomainUser = userService.signUpUser(lUser);
 				// create the demo application
 				Application lApplication = createDemoApplication(lUser);
-				ContentGroup lContentGroup = createDemoContentGroup(
+				List<ContentGroup> lContentGroups = createDemoContentGroups(
 						lDomainUser, lApplication);
-				createDemoContent(lDomainUser, lApplication, lContentGroup);
+				createDemoContent(lDomainUser, lApplication, lContentGroups);
 
 				// assign them the free quota
 				Quota lQuota = new Quota();
@@ -162,7 +162,7 @@ public class UserManagementController {
 			Application lApplication = new Application();
 			lApplication.setAccountId(pUser.getAccountId());
 			lApplication
-					.setDescription("We've created a demo application for illustrative purposes only. The application contains a demo content group, and a few Image and Video type contents. The demo application is enabled by default, and is configured such that the users can only download the contents (images & videos) over a Wi-Fi network, and not over a Cellular Network. This helps conserve the cellular data usage.");
+					.setDescription("We've created a demo application for illustrative purposes only. The application contains 2 content groups, and a few Image and Video type contents. The demo application is enabled by default, and is configured such that the users can only download the contents (images & videos) over a Wi-Fi network, and not over a Cellular Network. This helps conserve the cellular data usage.");
 			lApplication.setEnabled(true);
 			lApplication.setName("Demo Application");
 			long lTime = System.currentTimeMillis();
@@ -183,35 +183,66 @@ public class UserManagementController {
 
 	}
 
-	private ContentGroup createDemoContentGroup(User pUser,
+	private List<ContentGroup> createDemoContentGroups(User pUser,
 			Application pApplication) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering createDemoContentGroup");
-			ContentGroup lContentGroup = new ContentGroup();
-			lContentGroup.setAccountId(pUser.getAccountId());
-			lContentGroup
-					.setDescription("We've created a demo application for illustrative purposes only. The application contains a demo content group, and a few Image and Video type contents. The demo application is enabled by default, and is configured such that the users can only download the contents (images & videos) over a Wi-Fi network, and not over a Cellular Network. This helps conserve the cellular data usage.");
-			lContentGroup.setEnabled(true);
-			lContentGroup.setName("Demo Content Group");
-			long lTime = System.currentTimeMillis();
-			lContentGroup.setTimeCreatedMs(lTime);
-			lContentGroup.setTimeCreatedTimeZoneOffsetMs((long) TimeZone
-					.getDefault().getOffset(lTime));
-			lContentGroup.setUserId(pUser.getId());
+			List<ContentGroup> lContentGroups = new ArrayList<ContentGroup>();
 
-			lContentGroup.setApplicationId(pApplication.getId());
+			{
+				ContentGroup lContentGroup = new ContentGroup();
+				lContentGroup.setAccountId(pUser.getAccountId());
+				lContentGroup
+						.setDescription("This content group is used to organize Image type content.");
+				lContentGroup.setEnabled(true);
+				lContentGroup.setName("Demo Image Content Group");
+				long lTime = System.currentTimeMillis();
+				lContentGroup.setTimeCreatedMs(lTime);
+				lContentGroup.setTimeCreatedTimeZoneOffsetMs((long) TimeZone
+						.getDefault().getOffset(lTime));
+				lContentGroup.setUserId(pUser.getId());
 
-			DateTime lDt = new DateTime();
-			DateTimeFormatter lFmt = ISODateTimeFormat.dateTime();
-			String lStartDateIso8601 = lFmt.print(lDt);
-			lContentGroup.setStartDateIso8601(lStartDateIso8601);
+				lContentGroup.setApplicationId(pApplication.getId());
 
-			// set high date
-			lContentGroup.setEndDateMs(Long.MAX_VALUE);
+				DateTime lDt = new DateTime();
+				DateTimeFormatter lFmt = ISODateTimeFormat.dateTime();
+				String lStartDateIso8601 = lFmt.print(lDt);
+				lContentGroup.setStartDateIso8601(lStartDateIso8601);
 
-			lContentGroup = contentGroupService.save(pUser, lContentGroup);
-			return lContentGroup;
+				// set high date
+				lContentGroup.setEndDateMs(Long.MAX_VALUE);
+
+				lContentGroup = contentGroupService.save(pUser, lContentGroup);
+				lContentGroups.add(lContentGroup);
+			}
+			{
+				ContentGroup lContentGroup = new ContentGroup();
+				lContentGroup.setAccountId(pUser.getAccountId());
+				lContentGroup
+						.setDescription("This content group is used to organize Video type content.");
+				lContentGroup.setEnabled(true);
+				lContentGroup.setName("Demo Video Content Group");
+				long lTime = System.currentTimeMillis();
+				lContentGroup.setTimeCreatedMs(lTime);
+				lContentGroup.setTimeCreatedTimeZoneOffsetMs((long) TimeZone
+						.getDefault().getOffset(lTime));
+				lContentGroup.setUserId(pUser.getId());
+
+				lContentGroup.setApplicationId(pApplication.getId());
+
+				DateTime lDt = new DateTime();
+				DateTimeFormatter lFmt = ISODateTimeFormat.dateTime();
+				String lStartDateIso8601 = lFmt.print(lDt);
+				lContentGroup.setStartDateIso8601(lStartDateIso8601);
+
+				// set high date
+				lContentGroup.setEndDateMs(Long.MAX_VALUE);
+
+				lContentGroup = contentGroupService.save(pUser, lContentGroup);
+				lContentGroups.add(lContentGroup);
+			}
+			return lContentGroups;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting createDemoContentGroup");
@@ -220,14 +251,14 @@ public class UserManagementController {
 	}
 
 	private void createDemoContent(User pUser, Application pApplication,
-			ContentGroup pContentGroup) {
+			List<ContentGroup> pContentGroups) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering createDemoContent");
 			{
 				Content lContent = new Content();
 				lContent.setAccountId(pUser.getAccountId());
-				lContent.setDescription("We've created a demo application for illustrative purposes only. The application contains a demo content group, and a few Image and Video type contents. The demo application is enabled by default, and is configured such that the users can only download the contents (images & videos) over a Wi-Fi network, and not over a Cellular Network. This helps conserve the cellular data usage. Please upload any image of your choice.");
+				lContent.setDescription("This is a demo Image type content.");
 				lContent.setEnabled(true);
 				lContent.setName("Demo Image - with no attached image");
 				long lTime = System.currentTimeMillis();
@@ -236,7 +267,7 @@ public class UserManagementController {
 						.getDefault().getOffset(lTime));
 				lContent.setUserId(pUser.getId());
 				lContent.setApplicationId(pApplication.getId());
-				lContent.setContentGroupId(pContentGroup.getId());
+				lContent.setContentGroupId(pContentGroups.get(0).getId());
 				lContent.setType(CanonicalContentType.IMAGE.getValue());
 
 				DateTime lDt = new DateTime();
@@ -253,7 +284,7 @@ public class UserManagementController {
 			{
 				Content lContent = new Content();
 				lContent.setAccountId(pUser.getAccountId());
-				lContent.setDescription("We've created a demo application for illustrative purposes only. The application contains a demo content group, and a few Image and Video type contents. The demo application is enabled by default, and is configured such that the users can only download the contents (images & videos) over a Wi-Fi network, and not over a Cellular Network. This helps conserve the cellular data usage. Please upload any video of your choice.");
+				lContent.setDescription("This is a demo Video type content.");
 				lContent.setEnabled(true);
 				lContent.setName("Demo Video - with no attached video");
 				long lTime = System.currentTimeMillis();
@@ -262,7 +293,7 @@ public class UserManagementController {
 						.getDefault().getOffset(lTime));
 				lContent.setUserId(pUser.getId());
 				lContent.setApplicationId(pApplication.getId());
-				lContent.setContentGroupId(pContentGroup.getId());
+				lContent.setContentGroupId(pContentGroups.get(1).getId());
 				lContent.setType(CanonicalContentType.VIDEO.getValue());
 
 				DateTime lDt = new DateTime();
@@ -474,9 +505,10 @@ public class UserManagementController {
 			LOGGER.info("Entering");
 		try {
 			User lUser = userService.getLoggedInUser();
-			//no user logged in
-			if(lUser == null) {
-				return new ModelAndView("settings_plans_and_pricing_no_login", model);
+			// no user logged in
+			if (lUser == null) {
+				return new ModelAndView("settings_plans_and_pricing_no_login",
+						model);
 			}
 			model.addAttribute("canonicalPlanNameFree",
 					CanonicalPlanName.FREE.getValue());
@@ -492,7 +524,7 @@ public class UserManagementController {
 					.getAccountId());
 			boolean lIsUpdateCCInfo = false;
 
-			//user logged in but not yet subscribed to any other plans
+			// user logged in but not yet subscribed to any other plans
 			if (lStripeCustomer == null) {
 				model.addAttribute("isSubscribed", false);
 				// default to free
@@ -512,8 +544,9 @@ public class UserManagementController {
 			}
 			model.addAttribute("isUpdateCCInfo", lIsUpdateCCInfo);
 			model.addAttribute("isError", false);
-			
-			return new ModelAndView("settings_plans_and_pricing_post_login", model);
+
+			return new ModelAndView("settings_plans_and_pricing_post_login",
+					model);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting");

@@ -3,7 +3,15 @@ jQuery(function($) {
 		log("function($)", "Entering");
 		setup();
 		// call this post setup
-		// $(document).foundation('joyride', 'start');
+		// Code for localStorage/sessionStorage.
+		// Store
+		var lNoMoreProductTour = localStorage.noMoreProductTour;
+		if (lNoMoreProductTour == "undefined") {
+			lNoMoreProductTour = "N";
+		}
+		if (lNoMoreProductTour == "N") {
+			$(document).foundation('joyride', 'start');
+		}
 	} catch (err) {
 		handleError("function($)", err);
 	} finally {
@@ -103,7 +111,7 @@ function setupBreadcrumbs() {
 								+ "<a id=\"breadcrumb_content_groups\" href=\"/"
 								+ mSelectedApplication.id
 								+ "/contentgroups\">Content Groups</a>"
-								+ "<a id=\"breadcrumb_content_groups\" href=\"/"
+								+ "<a id=\"breadcrumb_content\" href=\"/"
 								+ mSelectedApplication.id + "/"
 								+ mSelectedContentGroup.id
 								+ "/content\">Content</a>");

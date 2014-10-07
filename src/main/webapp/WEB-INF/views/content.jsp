@@ -64,7 +64,7 @@ setSelectedContentGroup(${contentGroupId});
 					<br> <br />
 					<dl class="tabs" data-tab>
 						<dd class="active">
-							<a href="#panel2-1">Content</a>
+							<a id="content_tips" href="#panel2-1">Content Tips</a>
 						</dd>
 					</dl>
 					<div class="tabs-content">
@@ -73,6 +73,19 @@ setSelectedContentGroup(${contentGroupId});
 								<div class="blog_details float_left">
 									<span class="title green">Content Types</span> <span
 										class="date">We currently support images and videos</span>
+								</div>
+								<div class="clearfix"></div>
+							</div>
+							<div class="blog_snippet">
+								<div class="blog_details float_left">
+									<span class="title green">Tags</span> <span class="date">You
+										can tag your content by creating custom tags. The tags are
+										used within the SDK, to access this content for display on
+										mobile devices. This allows for a lot of flexibility in
+										accessing your content. The content can be accessed
+										dynamically, instead of accessing it using individual content
+										id. Adding or removing tags affects what gets displayed on
+										mobile devices, without having to write any additional code.</span>
 								</div>
 								<div class="clearfix"></div>
 							</div>
@@ -119,5 +132,37 @@ setSelectedContentGroup(${contentGroupId});
 
 		<jsp:include page="footer.jsp"></jsp:include>
 	</section>
+	<!-- At the bottom of your page but inside of the body tag -->
+	<ol class="joyride-list" data-joyride>
+		<li data-id="breadcrumb_content" data-text="Next"
+			data-options="tip_location: top; prev_button: false">
+			<h4>Product Tour continued...</h4> <br>
+			<p>We currently support only images and videos</p>
+		</li>
+		<li data-id="create_content" data-class="custom so-awesome"
+			data-text="Next" data-prev-text="Prev">
+			<h4>Create a Content Group</h4> <br>
+			<p>Click here to create your rich media content.</p>
+		</li>
+		<li data-id="content_tips" data-text="Next" data-prev-text="Prev">
+			<h4>Tips</h4> <br>
+			<p>This section provides you information on any questions that
+				you might have, when creating a content group.</p>
+			<p>For instance, what it means by Enabling a content, or Start
+				and End dates.</p>
+		</li>
+		<li data-id="first_content_id" data-text="Next" data-prev-text="Prev">
+			<h4>Content Id</h4> <br>
+			<p>Use the content id with the SDK, to access this content for
+				display on mobile devices</p>
+		</li>
+		<li data-id="first_content" data-button="End" data-prev-text="Prev">
+			<h4>Access Content</h4> <br>
+			<p>You can click here to view this image or video</p>
+			<p>Please check out the documentation for more information.</p>
+		</li>
+	</ol>
+
+
 </body>
 </html>

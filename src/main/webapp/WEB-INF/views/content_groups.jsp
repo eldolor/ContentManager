@@ -67,7 +67,7 @@
 					<br> <br />
 					<dl class="tabs" data-tab>
 						<dd class="active">
-							<a href="#panel2-1">Content Group</a>
+							<a id="contentgroup_tips" href="#panel2-1">Content Group Tips</a>
 						</dd>
 					</dl>
 					<div class="tabs-content">
@@ -75,16 +75,16 @@
 							<div class="blog_snippet">
 								<div class="blog_details float_left">
 									<span class="title green">Start Date</span> <span class="date">A
-										future start date will allow you to make the content within the content group
-										effective, as of that date</span>
+										future start date will allow you to make the content within
+										the content group effective, as of that date</span>
 								</div>
 								<div class="clearfix"></div>
 							</div>
 							<div class="blog_snippet">
 								<div class="blog_details float_left">
 									<span class="title green">End Date</span> <span class="date">Specify
-										an End Date only if you want the content within the content group, to expire after a
-										certain date, or else leave it empty.</span>
+										an End Date only if you want the content within the content
+										group, to expire after a certain date, or else leave it empty.</span>
 								</div>
 								<div class="clearfix"></div>
 							</div>
@@ -109,5 +109,42 @@
 
 		<jsp:include page="footer.jsp"></jsp:include>
 	</section>
+
+	<!-- At the bottom of your page but inside of the body tag -->
+	<ol class="joyride-list" data-joyride>
+		<li data-id="breadcrumb_content_groups" data-text="Next"
+			data-options="tip_location: top; prev_button: false">
+			<h4>Product Tour continued...</h4>
+			<br>
+			<p>Content within an application is organized into Content Groups.</p>
+			<p>It is similar to organizing files into Folders, in Windows Explorer.</p>
+		</li>
+		<li data-id="create_contentgroup" data-class="custom so-awesome"
+			data-text="Next" data-prev-text="Prev">
+			<h4>Create a Content Group</h4>
+			<br>
+			<p>You have the flexibility to organize your contents into any
+				number of Content Groups.</p>
+		</li>
+		<li data-id="contentgroup_tips" data-text="Next" data-prev-text="Prev">
+			<h4>Tips</h4>
+			<br>
+			<p>This section provides you information on any questions that
+				you might have, when creating a content group.</p>
+			<p>For instance, what it means by Enabling a content group, or
+				Start and End dates.</p>
+		</li>
+		<li data-id="first_contentgroup_id" data-text="Next" data-prev-text="Prev">
+			<h4>Content Id</h4>
+			<br>
+			<p>Use the content group id within the SDK, to access all content within the content group for display on mobile devices</p>
+		</li>
+		<li data-id="first_content" data-text="Click on &apos;content&apos; to continue" data-prev-text="Prev">
+			<h4>Access Content</h4>
+			<br>
+			<p>You can access all the content within this content group here.</p>
+		</li>
+	</ol>
+
 </body>
 </html>

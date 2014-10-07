@@ -192,20 +192,26 @@ function handleDisplayContent_Callback(pContent) {
 		for (var int = 0; int < pContent.length; int++) {
 			var lContent = pContent[int];
 
-			lInnerHtml += "<div class=\"blog_content\"> ";
-			lInnerHtml += " <h3 class=\"gray\">";
+			lInnerHtml += "<div class='blog_content'> ";
+			lInnerHtml += " <h3 class='gray'>";
 			lInnerHtml += lContent.name;
 			lInnerHtml += "</h3>";
-			lInnerHtml += "<div class=\"blog_content_details float_left\">";
-			lInnerHtml += "<ul> <li class=\"green\">Content Id: "
-					+ lContent.id
-					+ " </li><li>|</li><li class=\"light_gray\"><a class=\"small green\" href=\"javascript:void(0)\" onclick=\"viewContent("
+			lInnerHtml += "<div class='blog_content_details float_left'>";
+			if (int == 0) {
+				lInnerHtml += "<ul> <li id='first_content_id' class='green'>Content Id: " + lContent.id
+				+ " </li><li>|</li><li class='light_gray'>";
+				lInnerHtml += "<a id='first_content' class='small green' href='javascript:void(0)' onclick='viewContent(";
+			} else {
+				lInnerHtml += "<ul> <li class='green'>Content Id: " + lContent.id
+				+ " </li><li>|</li><li class='light_gray'>";
+				lInnerHtml += "<a class='small green' href='javascript:void(0)' onclick='viewContent(";
+			}
 			lInnerHtml += lContent.id;
-			lInnerHtml += ")\"><i class=\"fi-page light_gray\"></i>&nbsp;view</a></li> <li>|</li><li class=\"light_gray\"><a class=\"small\" href=\"javascript:void(0)\" onclick=\"editContent("
+			lInnerHtml += ")'><i class='fi-page light_gray'></i>&nbsp;view</a></li> <li>|</li><li class='light_gray'><a class='small' href='javascript:void(0)' onclick='editContent("
 					+ lContent.id
-					+ ")\"><i class=\"fi-page-edit light_gray\"></i>&nbsp;edit</a></li><li>|</li> <li class=\"light_gray\"><a class=\"small\" href=\"javascript:void(0)\" onclick=\"deleteContent("
+					+ ")'><i class='fi-page-edit light_gray'></i>&nbsp;edit</a></li><li>|</li> <li class='light_gray'><a class='small' href='javascript:void(0)' onclick='deleteContent("
 					+ lContent.id
-					+ ")\"><i class=\"fi-page-delete light_gray\"></i>&nbsp;delete</a></li>";
+					+ ")'><i class='fi-page-delete light_gray'></i>&nbsp;delete</a></li>";
 			lInnerHtml += "</ul>";
 			lInnerHtml += "</div>";
 			var lEpochDate = (lContent.timeUpdatedMs == null) ? lContent.timeCreatedMs
@@ -217,20 +223,20 @@ function handleDisplayContent_Callback(pContent) {
 			var lMonth = lSplitM[0];
 			var lDate = lSplitM[1];
 
-			lInnerHtml += "<div class=\"blog_date green text_center\"> <span>";
+			lInnerHtml += "<div class='blog_date green text_center'> <span>";
 			lInnerHtml += lDate;
 			lInnerHtml += "</span>";
 			lInnerHtml += "<div>";
 			lInnerHtml += lMonth + "</div>";
 			lInnerHtml += "</div>";
 
-			lInnerHtml += "<div class=\"blog_comments text_center green\">";
+			lInnerHtml += "<div class='blog_comments text_center green'>";
 			lInnerHtml += lYear;
 			lInnerHtml += "</div>";
-			lInnerHtml += "<div class=\"blog_content_details float_left\"><p class=\"light_gray\">"
+			lInnerHtml += "<div class='blog_content_details float_left'><p class='light_gray'>"
 					+ lContent.description + "</p>";
 			lInnerHtml += "</div>";
-			lInnerHtml += "<div class=\"clearfix\"></div><div class=\"separator\"></div>";
+			lInnerHtml += "<div class='clearfix'></div><div class='separator'></div>";
 			lInnerHtml += "</div>";
 
 		}

@@ -83,46 +83,31 @@ function handleDisplayContentGroups_Callback(pContentGroups) {
 		var lInnerHtml = '';
 		for (var int = 0; int < pContentGroups.length; int++) {
 			var lContentGroup = pContentGroups[int];
-			// lInnerHtml += "<div class=\"row\"> <div class=\"large-6
-			// columns\">";
-			// lInnerHtml += "<p><span data-tooltip class=\"has-tip\"
-			// title=\"Click here to view the content in this Content Group\"><a
-			// href=\"javascript:void(0)\" onclick=\"displayContent(";
-			// lInnerHtml += lContentGroup.applicationId;
-			// lInnerHtml += ", ";
-			// lInnerHtml += lContentGroup.id;
-			// lInnerHtml += ")\"><strong>";
-			// lInnerHtml += lContentGroup.name;
-			// lInnerHtml += "</strong></a></span></p>";
-			//
-			// lInnerHtml += "<ul class=\"inline-list\"> <li><a class=\"small\"
-			// href=\"javascript:void(0)\" onclick=\"editContentGroup("
-			// + lContentGroup.id
-			// + ")\">edit</a></li> <li><a class=\"small\"
-			// href=\"javascript:void(0)\" onclick=\"deleteContentGroup("
-			// + lContentGroup.id + ")\">delete</a></li></ul>";
-			// lInnerHtml += "<span id=\"content_group_id\" class=\"secondary
-			// radius label\">Content Group Id: "
-			// + lContentGroup.id + "</span>";
-			// lInnerHtml += "</div></div><hr>";
-			//			
-
-			lInnerHtml += "<div class=\"blog_content\"> ";
-			lInnerHtml += " <h3 class=\"gray\">";
+			lInnerHtml += "<div class='blog_content'> ";
+			lInnerHtml += " <h3 class='gray'>";
 			lInnerHtml += lContentGroup.name;
 			lInnerHtml += "</h3>";
-			lInnerHtml += "<div class=\"blog_content_details float_left\">";
-			lInnerHtml += "<ul> <li class=\"green\">Content Group Id: "
+			lInnerHtml += "<div class='blog_content_details float_left'>";
+			if (int == 0) {
+				lInnerHtml += "<ul> <li id='first_contentgroup_id' class='green'>Content Group Id: "
 					+ lContentGroup.id
-					+ " </li><li>|</li><li class=\"light_gray\"><a class=\"small green\" href=\"javascript:void(0)\" onclick=\"displayContent("
+					+ " </li><li>|</li><li class='light_gray'>";
+				lInnerHtml += "<a id='first_content' class='small green' href='javascript:void(0)' onclick='displayContent(";
+			} else {
+				lInnerHtml += "<ul> <li class='green'>Content Group Id: "
+					+ lContentGroup.id
+					+ " </li><li>|</li><li class='light_gray'>";
+				lInnerHtml += "<a class='small green' href='javascript:void(0)' onclick='displayContent(";
+			}
+
 			lInnerHtml += lContentGroup.applicationId;
 			lInnerHtml += ", ";
 			lInnerHtml += lContentGroup.id;
-			lInnerHtml += ")\"><i class=\"fi-list-number light_gray\"></i>&nbsp;content</a></li> <li>|</li><li class=\"light_gray\"><a class=\"small\" href=\"javascript:void(0)\" onclick=\"editContentGroup("
+			lInnerHtml += ")'><i class='fi-list-number light_gray'></i>&nbsp;content</a></li> <li>|</li><li class='light_gray'><a class='small' href='javascript:void(0)' onclick='editContentGroup("
 					+ lContentGroup.id
-					+ ")\"><i class=\"fi-page-edit light_gray\"></i>&nbsp;edit</a></li><li>|</li> <li class=\"light_gray\"><a class=\"small\" href=\"javascript:void(0)\" onclick=\"deleteContentGroup("
+					+ ")'><i class='fi-page-edit light_gray'></i>&nbsp;edit</a></li><li>|</li> <li class='light_gray'><a class='small' href='javascript:void(0)' onclick='deleteContentGroup("
 					+ lContentGroup.id
-					+ ")\"><i class=\"fi-page-delete light_gray\"></i>&nbsp;delete</a></li>";
+					+ ")'><i class='fi-page-delete light_gray'></i>&nbsp;delete</a></li>";
 			lInnerHtml += "</ul>";
 			lInnerHtml += "</div>";
 			var lEpochDate = (lContentGroup.timeUpdatedMs == null) ? lContentGroup.timeCreatedMs
@@ -134,20 +119,20 @@ function handleDisplayContentGroups_Callback(pContentGroups) {
 			var lMonth = lSplitM[0];
 			var lDate = lSplitM[1];
 
-			lInnerHtml += "<div class=\"blog_date green text_center\"> <span>";
+			lInnerHtml += "<div class='blog_date green text_center'> <span>";
 			lInnerHtml += lDate;
 			lInnerHtml += "</span>";
 			lInnerHtml += "<div>";
 			lInnerHtml += lMonth + "</div>";
 			lInnerHtml += "</div>";
 
-			lInnerHtml += "<div class=\"blog_comments text_center green\">";
+			lInnerHtml += "<div class='blog_comments text_center green'>";
 			lInnerHtml += lYear;
 			lInnerHtml += "</div>";
-			lInnerHtml += "<div class=\"blog_content_details float_left\"><p class=\"light_gray\">"
+			lInnerHtml += "<div class='blog_content_details float_left'><p class='light_gray'>"
 					+ lContentGroup.description + "</p>";
 			lInnerHtml += "</div>";
-			lInnerHtml += "<div class=\"clearfix\"></div><div class=\"separator\"></div>";
+			lInnerHtml += "<div class='clearfix'></div><div class='separator'></div>";
 			lInnerHtml += "</div>";
 		}
 

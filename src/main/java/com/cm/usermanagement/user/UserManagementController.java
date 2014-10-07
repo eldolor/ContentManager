@@ -473,6 +473,11 @@ public class UserManagementController {
 		if (LOGGER.isLoggable(Level.INFO))
 			LOGGER.info("Entering");
 		try {
+			User lUser = userService.getLoggedInUser();
+			//no user logged in
+			if(lUser == null) {
+				return new ModelAndView("settings_plans_and_pricing_no_login", model);
+			}
 			model.addAttribute("canonicalPlanNameFree",
 					CanonicalPlanName.FREE.getValue());
 			model.addAttribute("canonicalPlanNameMicro",
@@ -483,12 +488,6 @@ public class UserManagementController {
 					CanonicalPlanName.MEDIUM.getValue());
 			model.addAttribute("canonicalPlanNameLarge",
 					CanonicalPlanName.LARGE.getValue());
-			User lUser = userService.getLoggedInUser();
-			//no user logged in
-			if(lUser == null) {
-				model.addAttribute("isLoggedIn", false);
-				return new ModelAndView("settings_plans_and_pricing", model);
-			}
 			StripeCustomer lStripeCustomer = stripeCustomerService.get(lUser
 					.getAccountId());
 			boolean lIsUpdateCCInfo = false;
@@ -514,7 +513,7 @@ public class UserManagementController {
 			model.addAttribute("isUpdateCCInfo", lIsUpdateCCInfo);
 			model.addAttribute("isError", false);
 			
-			return new ModelAndView("settings_plans_and_pricing", model);
+			return new ModelAndView("settings_plans_and_pricing_post_login", model);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting");

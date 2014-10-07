@@ -45,6 +45,11 @@
 
 	<section id="price">
 		<h2 class="text-center gray">Plans and Pricing</h2>
+		<p class="text-center page_sub_heading">
+			Please <a
+				href="mailto:anshu@coconutmartini.com?Subject=Plans%20and%20Pricing">Contact Us</a> if you need
+			additional Storage or Bandwidth
+		</p>
 		<div class="line">
 			<img src="/resources/images/box/line.png" alt="line" />
 		</div>
@@ -89,10 +94,6 @@
 					<br />
 					<c:choose>
 						<c:when
-							test="${isLoggedIn == false}">
-							<a href="<c:url value="/signup"/>" class="button radius btn-default">Sign Up </a>
-						</c:when>
-						<c:when
 							test="${isSubscribed == false || subscribedCanonicalPlanName == canonicalPlanNameFree}">
 							<img alt="free" src="/resources/images/cm/done.png" />
 						</c:when>
@@ -133,10 +134,6 @@
 					</div>
 					<br>
 					<c:choose>
-						<c:when
-							test="${isLoggedIn == false}">
-							<a href="<c:url value="/signup"/>" class="button radius btn-default">Sign Up </a>
-						</c:when>
 						<c:when test="${isUpdateCCInfo == true || isSubscribed == false}">
 							<form id="subscribePlanForm" name="subscribePlanForm"
 								action="/stripe/subscribe" method="POST"
@@ -201,10 +198,6 @@
 					</div>
 					<br>
 					<c:choose>
-						<c:when
-							test="${isLoggedIn == false}">
-							<a href="<c:url value="/signup"/>" class="button radius btn-default">Sign Up </a>
-						</c:when>
 						<c:when test="${isUpdateCCInfo == true||isSubscribed == false}">
 							<form id="subscribePlanForm" name="subscribePlanForm"
 								action="/stripe/subscribe" method="POST"
@@ -268,10 +261,6 @@
 					</div>
 					<br>
 					<c:choose>
-						<c:when
-							test="${isLoggedIn == false}">
-							<a href="<c:url value="/signup"/>" class="button radius btn-default">Sign Up </a>
-						</c:when>
 						<c:when test="${isUpdateCCInfo == true || isSubscribed == false}">
 							<form id="subscribePlanForm" name="subscribePlanForm"
 								action="/stripe/subscribe" method="POST"
@@ -335,10 +324,6 @@
 					</div>
 					<br>
 					<c:choose>
-						<c:when
-							test="${isLoggedIn == false}">
-							<a href="<c:url value="/signup"/>" class="button radius btn-default">Sign Up </a>
-						</c:when>
 						<c:when test="${isUpdateCCInfo == true || isSubscribed == false}">
 							<form id="subscribePlanForm" name="subscribePlanForm"
 								action="/stripe/subscribe" method="POST"

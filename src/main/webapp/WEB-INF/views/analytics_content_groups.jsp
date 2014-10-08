@@ -67,6 +67,14 @@ var mApplicationId = ${applicationId};
 
 		<jsp:include page="footer.jsp"></jsp:include>
 	</section>
+	<!-- At the bottom of your page but inside of the body tag -->
+	<ol class="joyride-list" data-joyride>
+		<li data-id="first_drill_down" data-button="End" data-options="prev_button: false">
+			<p>You can drill down to see content usage data for each content
+				 within the content group</p>
+		</li>
+	</ol>
+
 
 
 </body>

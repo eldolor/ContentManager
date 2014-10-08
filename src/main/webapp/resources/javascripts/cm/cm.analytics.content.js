@@ -2,6 +2,21 @@ jQuery(function($) {
 	try {
 		log("function($)", "Entering");
 		setup();
+		// call this post setup
+		// if (typeof (Storage) !== "undefined") {
+		// // Code for localStorage/sessionStorage.
+		// // Store
+		// var lReportsTour = localStorage.reportsProductTour;
+		// if ((typeof (lReportsTour) === "undefined")
+		// || (lReportsTour == "N")) {
+		// // set
+		// localStorage.setItem("reportsTour", "N");
+		// $(document).foundation('joyride', 'start');
+		// }
+		// } else {
+		// // Sorry! No Web Storage support..
+		// $(document).foundation('joyride', 'start');
+		// }
 	} catch (err) {
 		handleError("function($)", err);
 	} finally {

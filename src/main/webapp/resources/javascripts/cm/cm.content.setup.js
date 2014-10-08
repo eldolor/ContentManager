@@ -3,13 +3,18 @@ jQuery(function($) {
 		log("function($)", "Entering");
 		setup();
 		// call this post setup
-		// Code for localStorage/sessionStorage.
-		// Store
-		var lNoMoreProductTour = localStorage.noMoreProductTour;
-		if (lNoMoreProductTour == "undefined") {
-			lNoMoreProductTour = "N";
-		}
-		if (lNoMoreProductTour == "N") {
+		if (typeof (Storage) !== "undefined") {
+			// Code for localStorage/sessionStorage.
+			// Store
+			var lProductTour = localStorage.productTour;
+			if ((typeof (lProductTour) === "undefined")
+					|| (lProductTour == "N")) {
+				// set
+				localStorage.setItem("productTour", "N");
+				$(document).foundation('joyride', 'start');
+			}
+		} else {
+			// Sorry! No Web Storage support..
 			$(document).foundation('joyride', 'start');
 		}
 	} catch (err) {

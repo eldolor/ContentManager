@@ -6,16 +6,13 @@ jQuery(function($) {
 		if (typeof (Storage) !== "undefined") {
 			// Code for localStorage/sessionStorage.
 			// Store
-			var lNoMoreProductTour = localStorage.noMoreProductTour;
-			if (lNoMoreProductTour == "undefined") {
-				lNoMoreProductTour = "N";
-			}
-			if (lNoMoreProductTour == "N") {
+			var lProductTour = localStorage.productTour;
+			if ((typeof (lProductTour) === "undefined")
+					|| (lProductTour == "N")) {
+				// set
+				localStorage.setItem("productTour", "N");
 				$(document).foundation('joyride', 'start');
 			}
-			//delete later
-//			localStorage.setItem("noMoreProductTour",
-//					"N");
 		} else {
 			// Sorry! No Web Storage support..
 			$(document).foundation('joyride', 'start');
@@ -86,16 +83,15 @@ function setupBreadcrumbs() {
 	}
 }
 
-function setNoMoreProductTour() {
-	log("setNoMoreProductTour", "Entering");
+function setProductTour() {
+	log("setProductTour", "Entering");
 	try {
-		localStorage.setItem("noMoreProductTour",
-				"Y");
+		localStorage.setItem("productTour", "Y");
 
 	} catch (err) {
 		handleError("setNoMoreProductTour", err);
 	} finally {
-		log("setNoMoreProductTour", "Exiting");
+		log("setProductTour", "Exiting");
 	}
 
 }

@@ -108,7 +108,7 @@
 			<p>Content is organized by Applications.</p>
 			<p>
 				<input id="product_tour" type="checkbox"
-					onclick="javascript: setNoMoreProductTour();">&nbsp;Do not show
+					onclick="javascript: setProductTour();">&nbsp;Do not show
 				this to me again.
 			</p>
 		</li>

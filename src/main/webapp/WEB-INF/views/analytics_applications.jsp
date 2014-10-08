@@ -42,7 +42,8 @@
 		<div class="row full-width">
 			<h2 class="text-center gray">Content Usage</h2>
 			<p class="text-center page_sub_heading">These charts show the
-				aggregate daily content impressions on mobile devices, for each application.</p>
+				aggregate daily content impressions on mobile devices, for each
+				application.</p>
 			<div class="line">
 				<img src="/resources/images/box/line.png" alt="line" />
 			</div>
@@ -64,6 +65,18 @@
 		<jsp:include page="footer.jsp"></jsp:include>
 	</section>
 
+	<!-- At the bottom of your page but inside of the body tag -->
+	<ol class="joyride-list" data-joyride>
+		<li data-id="first_drill_down" data-button="End" data-options="prev_button: false">
+			<p>You can drill down to see content usage data for each content
+				group within the application</p>
+			<p>
+				<input id="product_tour" type="checkbox"
+					onclick="javascript: setReportsTour();">&nbsp;Do not show
+				this to me again.
+			</p>
+		</li>
+	</ol>
 
 </body>
 </html>

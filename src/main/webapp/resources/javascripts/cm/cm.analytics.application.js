@@ -59,9 +59,15 @@ function displayAnalytics() {
 											+ lContentStatArray[0].trackingId
 											+ '"></div>';
 									lAccountUsageDetailsHtml += '</div>';
-									lAccountUsageDetailsHtml += '<div  class="large-2 columns float_right"><div id="category"><h3>Drill Down</h3><ul><li><i class="fi-arrow-right"></i><a  href="/analytics/'
-											+ lContentStatArray[0].applicationId
-											+ '/contentgroups">&nbsp;Content Group Data</a></li></ul></div>';
+									if (i == 0) {
+										lAccountUsageDetailsHtml += '<div  class="large-2 columns float_right"><div id="category"><h3 id="first_drill_down" >Drill Down</h3><ul><li><i class="fi-arrow-right"></i><a   href="/analytics/'
+												+ lContentStatArray[0].applicationId
+												+ '/contentgroups">&nbsp;Content Group Data</a></li></ul></div>';
+									} else {
+										lAccountUsageDetailsHtml += '<div  class="large-2 columns float_right"><div id="category"><h3>Drill Down</h3><ul><li><i class="fi-arrow-right"></i><a  href="/analytics/'
+												+ lContentStatArray[0].applicationId
+												+ '/contentgroups">&nbsp;Content Group Data</a></li></ul></div>';
+									}
 									// end large 10
 									lAccountUsageDetailsHtml += '</div>';
 									// end row
@@ -125,6 +131,21 @@ function displayAnalytics() {
 								}
 
 							}
+							// call this post graph setup
+							if (typeof (Storage) !== "undefined") {
+								// Code for localStorage/sessionStorage.
+								// Store
+								var lReportsTour = localStorage.reportsProductTour;
+								if ((typeof (lReportsTour) === "undefined")
+										|| (lReportsTour == "N")) {
+									// set
+									localStorage.setItem("reportsTour", "N");
+									$(document).foundation('joyride', 'start');
+								}
+							} else {
+								// Sorry! No Web Storage support..
+								$(document).foundation('joyride', 'start');
+							}
 
 						},
 						503 : function() {
@@ -152,5 +173,16 @@ function displayAnalytics() {
 		log("displayAnalytics", "Exiting");
 	}
 }
+function setReportsTour() {
+	log("setReportsTour", "Entering");
+	try {
+		localStorage.setItem("reportsTour", "Y");
 
+	} catch (err) {
+		handleError("setReportsTour", err);
+	} finally {
+		log("setReportsTour", "Exiting");
+	}
+
+}
 /** *End***************************************** */

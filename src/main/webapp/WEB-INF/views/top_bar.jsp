@@ -67,6 +67,14 @@
 		<!-- Right Nav Section -->
 		<ul class="right">
 			<li><a href="/">Home</a></li>
+			<li><a href="/docs/overview">Overview</a></li>
+			<sec:authorize ifAnyGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">
+				<li class="has-dropdown"><a href="#">Product Tour</a>
+					<ul class="dropdown">
+						<li><a href="/applications/tour">Content Management</a></li>
+						<li><a href="/analytics/applications/tour">Usage Reports</a></li>
+					</ul></li>
+			</sec:authorize>
 			<li><a href="/account/plans">Plans &amp; Pricing</a></li>
 			<sec:authorize ifAnyGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">
 				<li><a href="/analytics/applications">Usage Reports</a></li>
@@ -80,7 +88,6 @@
 			</sec:authorize>
 			<li class="has-dropdown"><a href="#">Documents</a>
 				<ul class="dropdown">
-					<li><a href="/docs">Overview</a></li>
 					<li><a href="/docs/android">Getting Started with Android
 							SDK</a></li>
 					<li><a href="/resources/api/current/javadoc/index.html">Android

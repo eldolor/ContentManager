@@ -25,6 +25,7 @@
 	src="/resources/javascripts/cm/cm.application.setup.js"></script>
 <script type="text/javascript"
 	src="/resources/javascripts/cm/cm.application.js"></script>
+
 <!-- End Custom -->
 
 
@@ -39,7 +40,7 @@
 			<h2 class="text-center gray">Applications</h2>
 
 			<p class="text-center page_sub_heading">Create an application to
-				manage your rich media content (images &amp; videos)</p>
+				manage your rich content</p>
 			<div class="line">
 				<img src="/resources/images/box/line.png" alt="line" />
 			</div>
@@ -72,17 +73,17 @@
 							<div class="blog_snippet">
 								<div class="blog_details float_left">
 									<span class="title green">Wi-Fi</span> <span class="date">You
-										can restrict the rich media content to be auto-updated to
-										devices over Wi-Fi Only. This helps conserve the cellular data
-										usage. It is enabled by default.</span>
+										can restrict the rich content to be auto-updated to devices
+										over Wi-Fi Only. This helps conserve the cellular data usage.
+										It is enabled by default.</span>
 								</div>
 								<div class="clearfix"></div>
 							</div>
 							<div class="blog_snippet">
 								<div class="blog_details float_left">
 									<span class="title green">Enabled</span> <span class="date">Disabling
-										an application will prevent all the rich media content within
-										the application, from being downloaded</span>
+										an application will prevent all the rich content within the
+										application, from being downloaded</span>
 								</div>
 								<div class="clearfix"></div>
 							</div>
@@ -131,8 +132,9 @@
 			<p>Use the application id to initialize the SDK, and to access
 				any content for display on mobile devices</p>
 		</li>
-		<li data-id="first_contentgroup" data-text="Click on &apos;content groups&apos; to continue" data-prev-text="Prev"
-			data-options="next_button: false;">
+		<li data-id="first_contentgroup"
+			data-text="Click on &apos;content groups&apos; to continue"
+			data-prev-text="Prev" data-options="next_button: false;">
 			<h4>Access Content Groups</h4> <br>
 			<p>You can access all the content groups within this application
 				here.</p>

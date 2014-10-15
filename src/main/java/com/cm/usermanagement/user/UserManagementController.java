@@ -2,6 +2,7 @@ package com.cm.usermanagement.user;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.UUID;
@@ -38,6 +39,8 @@ import com.cm.contentmanager.content.Content;
 import com.cm.contentmanager.content.ContentService;
 import com.cm.contentmanager.contentgroup.ContentGroup;
 import com.cm.contentmanager.contentgroup.ContentGroupService;
+import com.cm.contentmanager.contentstat.ContentStat;
+import com.cm.contentmanager.contentstat.ContentStatService;
 import com.cm.quota.Quota;
 import com.cm.quota.QuotaService;
 import com.cm.stripe.StripeCustomer;
@@ -63,6 +66,8 @@ public class UserManagementController {
 	private ContentService contentService;
 	@Autowired
 	private QuotaService quotaService;
+	@Autowired
+	private ContentStatService contentStatService;
 
 	private static final Logger LOGGER = Logger
 			.getLogger(UserManagementController.class.getName());
@@ -123,7 +128,10 @@ public class UserManagementController {
 				Application lApplication = createDemoApplication(lUser);
 				List<ContentGroup> lContentGroups = createDemoContentGroups(
 						lDomainUser, lApplication);
-				createDemoContent(lDomainUser, lApplication, lContentGroups);
+				Long[] lContentIds = createDemoContent(lDomainUser,
+						lApplication, lContentGroups);
+				//create demo usage reports for the last 10 days
+				createDemoUsageReports(lApplication.getId(), 10);
 
 				// assign them the free quota
 				Quota lQuota = new Quota();
@@ -250,11 +258,13 @@ public class UserManagementController {
 
 	}
 
-	private void createDemoContent(User pUser, Application pApplication,
+	private Long[] createDemoContent(User pUser, Application pApplication,
 			List<ContentGroup> pContentGroups) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering createDemoContent");
+			Long[] lContentIds = new Long[2];
+
 			{
 				Content lContent = new Content();
 				lContent.setAccountId(pUser.getAccountId());
@@ -279,6 +289,7 @@ public class UserManagementController {
 				lContent.setEndDateMs(Long.MAX_VALUE);
 
 				lContent = contentService.save(pUser, lContent);
+				lContentIds[0] = lContent.getId();
 			}
 
 			{
@@ -305,13 +316,65 @@ public class UserManagementController {
 				lContent.setEndDateMs(Long.MAX_VALUE);
 
 				lContent = contentService.save(pUser, lContent);
+				lContentIds[1] = lContent.getId();
 			}
 
+			return lContentIds;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting createDemoContentGroup");
 		}
 
+	}
+
+	private void createDemoUsageReports(long applicationId, int lastNDays) {
+		
+		{
+			Calendar lEod = Utils.getEndOfDayToday(TimeZone.getTimeZone("UTC"));
+			List<Content> lContents = contentService.get(applicationId, false);
+			for (int i = 0; i < lastNDays; i++) {
+				LOGGER.info("Processing: " + lEod.getTime().toLocaleString());
+				for (Content content : lContents) {
+					int lRandom = Utils.getRandomNumber(1, 10);
+					for (int j = 0; j < lRandom; j++) {
+						contentStatService
+								.saveContentStat(createDemoContentStat(
+										content.getApplicationId(),
+										content.getContentGroupId(),
+										content.getId(), lEod.getTimeInMillis()));
+					}
+				}
+				lEod.add(Calendar.DATE, -1);
+			}
+		}
+
+		{
+			Calendar lEod = Utils.getEndOfDayToday(TimeZone.getTimeZone("UTC"));
+			Calendar lSod = Utils.getStartOfDayToday(TimeZone
+					.getTimeZone("UTC"));
+			for (int i = 0; i < lastNDays; i++) {
+				LOGGER.info("Processing: " + lSod.getTime().toLocaleString()
+						+ "::" + lEod.getTime().toLocaleString());
+				Utils.triggerRollupMessage(applicationId,
+						lSod.getTimeInMillis(), lEod.getTimeInMillis(), 0);
+				lSod.add(Calendar.DATE, -1);
+				lEod.add(Calendar.DATE, -1);
+			}
+		}
+
+	}
+
+	private ContentStat createDemoContentStat(long applicationId,
+			long contentGroupId, long contentId, long eventTime) {
+		ContentStat lContentStat = new ContentStat();
+		lContentStat.setApplicationId(applicationId);
+		lContentStat.setContentGroupId(contentGroupId);
+		lContentStat.setContentId(contentId);
+		lContentStat.setEventTimeMs(eventTime);
+		lContentStat.setEventTimeZoneOffsetMs((long) TimeZone
+				.getTimeZone("UTC").getRawOffset());
+		lContentStat.setEventType("impression");
+		return lContentStat;
 	}
 
 	private String createTrackingId(User pUser) {

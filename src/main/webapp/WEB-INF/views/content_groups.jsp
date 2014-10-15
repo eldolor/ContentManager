@@ -91,7 +91,7 @@
 							<div class="blog_snippet">
 								<div class="blog_details float_left">
 									<span class="title green">Enabled</span> <span class="date">Disabling
-										a content group will prevent the rich media content within
+										a content group will prevent the rich content within
 										that content group, from being downloaded</span>
 								</div>
 								<div class="clearfix"></div>

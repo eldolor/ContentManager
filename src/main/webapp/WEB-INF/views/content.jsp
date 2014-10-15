@@ -38,8 +38,8 @@ setSelectedContentGroup(${contentGroupId});
 		<div class="row full-width">
 			<h2 class="text-center gray">Content</h2>
 
-			<p class="text-center page_sub_heading">Manage your rich media
-				content (images &amp; videos) here</p>
+			<p class="text-center page_sub_heading">Manage your rich content
+				here</p>
 			<div class="line">
 				<img src="/resources/images/box/line.png" alt="line" />
 			</div>
@@ -115,7 +115,7 @@ setSelectedContentGroup(${contentGroupId});
 							<div class="blog_snippet">
 								<div class="blog_details float_left">
 									<span class="title green">Uploading Content</span> <span
-										class="date">Drag-n-drop the rich media files to the
+										class="date">Drag-n-drop the rich content files to the
 										drop location</span>
 								</div>
 								<div class="clearfix"></div>
@@ -141,8 +141,8 @@ setSelectedContentGroup(${contentGroupId});
 		</li>
 		<li data-id="create_content" data-class="custom so-awesome"
 			data-text="Next" data-prev-text="Prev">
-			<h4>Create a Content Group</h4> <br>
-			<p>Click here to create your rich media content.</p>
+			<h4>Create Content</h4> <br>
+			<p>Click here to create your rich content.</p>
 		</li>
 		<li data-id="content_tips" data-text="Next" data-prev-text="Prev">
 			<h4>Tips</h4> <br>

@@ -2,8 +2,12 @@ jQuery(function($) {
 	try {
 		log("function($)", "Entering");
 		setup();
+		var lPathName = window.location.pathname;	
+		
 		// call this post setup
-		if (typeof (Storage) !== "undefined") {
+		if (lPathName.lastIndexOf("tour") != -1) {
+			$(document).foundation('joyride', 'start');
+		} else if (typeof (Storage) !== "undefined") {
 			// Code for localStorage/sessionStorage.
 			// Store
 			var lProductTour = localStorage.productTour;

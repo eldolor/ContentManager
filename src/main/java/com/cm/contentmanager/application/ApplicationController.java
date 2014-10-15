@@ -87,6 +87,20 @@ public class ApplicationController {
 		}
 	}
 
+	@RequestMapping(value = "/applications/{tour}", method = RequestMethod.GET)
+	public ModelAndView displayApplications(ModelMap model,
+			@PathVariable String tour) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering displayApplications");
+		try {
+			model.addAttribute("tour", tour);
+			return new ModelAndView("applications", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting displayApplications");
+		}
+	}
+
 	/**
 	 * 
 	 * @param uuid
@@ -181,8 +195,8 @@ public class ApplicationController {
 			Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId, 0);
 
 			// trigger message to update quota
-			Utils.triggerUpdateQuotaUtilizationMessage(userService.getLoggedInUser()
-					.getAccountId(), 0);
+			Utils.triggerUpdateQuotaUtilizationMessage(userService
+					.getLoggedInUser().getAccountId(), 0);
 
 		} catch (Throwable e) {
 			// handled by GcmManager
@@ -231,8 +245,8 @@ public class ApplicationController {
 								lTrackingId, application);
 				Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId, 0);
 				// trigger message to update quota
-				Utils.triggerUpdateQuotaUtilizationMessage(userService.getLoggedInUser()
-						.getAccountId(), 0);
+				Utils.triggerUpdateQuotaUtilizationMessage(userService
+						.getLoggedInUser().getAccountId(), 0);
 				response.setStatus(HttpServletResponse.SC_CREATED);
 				return null;
 			}
@@ -350,7 +364,8 @@ public class ApplicationController {
 				return;
 			}
 			applicationService.updateChangesStaged(lApplication.getId(), false);
-			Utils.triggerSendContentListMessages(lApplication.getTrackingId(), 0);
+			Utils.triggerSendContentListMessages(lApplication.getTrackingId(),
+					0);
 			// remove from memcache
 			try {
 				if (mCache != null) {

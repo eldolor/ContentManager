@@ -153,12 +153,12 @@ public class SearchController {
 		}
 	}
 
-	@RequestMapping(value = "/docs", method = RequestMethod.GET)
+	@RequestMapping(value = "/docs/overview", method = RequestMethod.GET)
 	public ModelAndView displayOverview(ModelMap model) {
 		if (LOGGER.isLoggable(Level.INFO))
 			LOGGER.info("Entering");
 		try {
-			return new ModelAndView("docs", model);
+			return new ModelAndView("docs_overview", model);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting");

@@ -175,5 +175,16 @@ public class SearchController {
 				LOGGER.info("Exiting");
 		}
 	}
+	@RequestMapping(value = "/docs/javadoc", method = RequestMethod.GET)
+	public ModelAndView displayJavadoc(ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering");
+		try {
+			return new ModelAndView("docs_javadoc", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
 
 }

@@ -32,8 +32,8 @@
 
 			<h3 class="gray">Terms of Service</h3>
 			<div>
-				<label>By using the &lt;&nbsp;&gt;.com web site ("Service"),
-					or any services of &lt;&nbsp;&gt;, Inc ("&lt;&nbsp;&gt;"), you are
+				<label>By using the Coconut Martini.com web site ("Service"),
+					or any services of Coconut Martini, Inc ("Coconut Martini"), you are
 					agreeing to be bound by the following terms and conditions ("Terms
 					of Service"). IF YOU ARE ENTERING INTO THIS AGREEMENT ON BEHALF OF
 					A COMPANY OR OTHER LEGAL ENTITY, YOU REPRESENT THAT YOU HAVE THE
@@ -48,7 +48,7 @@
 			<div class="clearfix"></div>
 			<div class="separator"></div>
 			<div>
-				<label>If &lt;&nbsp;&gt; makes material changes to these
+				<label>If Coconut Martini makes material changes to these
 					Terms, we will notify you by email or by posting a notice on our
 					site before the changes are effective. Any new features that
 					augment or enhance the current Service, including the release of
@@ -56,7 +56,7 @@
 					Continued use of the Service after any such changes shall
 					constitute your consent to such changes. You can review the most
 					current version of the Terms of Service at any time at:
-					https://&lt;&nbsp;&gt;.com/site/terms </label>
+					https://Coconut Martini.com/site/terms </label>
 			</div>
 			<div class="clearfix"></div>
 			<div class="separator"></div>
@@ -64,9 +64,9 @@
 
 
 				<label>Violation of any of the terms below will result in
-					the termination of your Account. While &lt;&nbsp;&gt; prohibits
+					the termination of your Account. While Coconut Martini prohibits
 					such conduct and Content on the Service, you understand and agree
-					that &lt;&nbsp;&gt; cannot be responsible for the Content posted on
+					that Coconut Martini cannot be responsible for the Content posted on
 					the Service and you nonetheless may be exposed to such materials.
 					You agree to use the Service at your own risk.</label>
 			</div>
@@ -102,7 +102,7 @@
 
 
 				<label>5. You are responsible for maintaining the security
-					of your account and password. &lt;&nbsp;&gt; cannot and will not be
+					of your account and password. Coconut Martini cannot and will not be
 					liable for any loss or damage from your failure to comply with this
 					security obligation.</label>
 			</div>
@@ -135,17 +135,17 @@
 
 
 				<label>Any use of the SDK, including use of the SDK through
-					a third-party product that accesses &lt;&nbsp;&gt;, is bound by
+					a third-party product that accesses Coconut Martini, is bound by
 					these Terms of Service plus the following specific terms:</label>
 			</div>
 			<div>
 
 
 				<label>1. You expressly understand and agree that
-					&lt;&nbsp;&gt; shall not be liable for any direct, indirect,
+					Coconut Martini shall not be liable for any direct, indirect,
 					incidental, special, consequential or exemplary damages, including
 					but not limited to, damages for loss of profits, goodwill, use,
-					data or other intangible losses (even if &lt;&nbsp;&gt; has been
+					data or other intangible losses (even if Coconut Martini has been
 					advised of the possibility of such damages), resulting from your
 					use of the SDK or third-party products that access data via the
 					SDK.</label>
@@ -154,16 +154,16 @@
 
 
 				<label>2. Abuse or excessively frequent requests to
-					&lt;&nbsp;&gt; via the SDK may result in the temporary or permanent
-					suspension of your account's access to the API. &lt;&nbsp;&gt;, in
+					Coconut Martini via the SDK may result in the temporary or permanent
+					suspension of your account's access to the API. Coconut Martini, in
 					its sole discretion, will determine abuse or excessive usage of the
-					API. &lt;&nbsp;&gt; will make a reasonable attempt via email to
+					API. Coconut Martini will make a reasonable attempt via email to
 					warn the account owner prior to suspension.</label>
 			</div>
 			<div>
 
 
-				<label>3. &lt;&nbsp;&gt; reserves the right at any time to
+				<label>3. Coconut Martini reserves the right at any time to
 					modify or discontinue, temporarily or permanently, your access to
 					the API (or any part thereof) with or without notice.</label>
 			</div>
@@ -199,7 +199,7 @@
 
 
 				<label>4. When changing from a monthly billing cycle to a
-					yearly billing cycle, &lt;&nbsp;&gt; will bill for a full year at
+					yearly billing cycle, Coconut Martini will bill for a full year at
 					the next monthly billing date.</label>
 			</div>
 			<div>
@@ -216,7 +216,7 @@
 				<label>6. For any upgrade or downgrade in plan level while
 					on a monthly billing cycle, the credit card that you provided will
 					automatically be charged the new rate on your next billing cycle.
-					For upgrades or downgrades while on a yearly plan, &lt;&nbsp;&gt;
+					For upgrades or downgrades while on a yearly plan, Coconut Martini
 					will immediately charge or refund the difference in plan cost,
 					prorated for the remaining time in your yearly billing cycle.</label>
 			</div>
@@ -224,7 +224,7 @@
 
 
 				<label>7. Downgrading your Service may cause the loss of
-					Content, features, or capacity of your Account. &lt;&nbsp;&gt; does
+					Content, features, or capacity of your Account. Coconut Martini does
 					not accept any liability for such loss.</label>
 			</div>
 			<div class="clearfix"></div>
@@ -258,13 +258,13 @@
 			<div>
 
 
-				<label>4. &lt;&nbsp;&gt;, in its sole discretion, has the
+				<label>4. Coconut Martini, in its sole discretion, has the
 					right to suspend or terminate your account and refuse any and all
-					current or future use of the Service, or any other &lt;&nbsp;&gt;
+					current or future use of the Service, or any other Coconut Martini
 					service, for any reason at any time. Such termination of the
 					Service will result in the deactivation or deletion of your Account
 					or your access to your Account, and the forfeiture and
-					relinquishment of all Content in your Account. &lt;&nbsp;&gt;
+					relinquishment of all Content in your Account. Coconut Martini
 					reserves the right to refuse service to anyone for any reason at
 					any time.</label>
 			</div>
@@ -275,7 +275,7 @@
 			<div>
 
 
-				<label>1. &lt;&nbsp;&gt; reserves the right at any time and
+				<label>1. Coconut Martini reserves the right at any time and
 					from time to time to modify or discontinue, temporarily or
 					permanently, the Service (or any part thereof) with or without
 					notice.</label>
@@ -286,13 +286,13 @@
 				<label>2. Prices of all Services, including but not limited
 					to monthly subscription plan fees to the Service, are subject to
 					change upon 30 days notice from us. Such notice may be provided at
-					any time by posting the changes to the &lt;&nbsp;&gt; Site
-					(&lt;&nbsp;&gt;.com) or the Service itself.</label>
+					any time by posting the changes to the Coconut Martini Site
+					(Coconut Martini.com) or the Service itself.</label>
 			</div>
 			<div>
 
 
-				<label>3. &lt;&nbsp;&gt; shall not be liable to you or to
+				<label>3. Coconut Martini shall not be liable to you or to
 					any third-party for any modification, price change, suspension or
 					discontinuance of the Service.</label>
 			</div>
@@ -313,39 +313,39 @@
 			<div>
 
 
-				<label>2. &lt;&nbsp;&gt; does not pre-screen Content, but
-					&lt;&nbsp;&gt; and its designee have the right (but not the
+				<label>2. Coconut Martini does not pre-screen Content, but
+					Coconut Martini and its designee have the right (but not the
 					obligation) in their sole discretion to refuse or remove any
 					Content that is available via the Service.</label>
 			</div>
 			<div>
 
 
-				<label>3. You shall defend &lt;&nbsp;&gt; against any claim,
-					demand, suit or proceeding made or brought against &lt;&nbsp;&gt;
+				<label>3. You shall defend Coconut Martini against any claim,
+					demand, suit or proceeding made or brought against Coconut Martini
 					by a third-party alleging that Your Content, or Your use of the
 					Service in violation of this Agreement, infringes or
 					misappropriates the intellectual property rights of a third-party
-					or violates applicable law, and shall indemnify &lt;&nbsp;&gt; for
+					or violates applicable law, and shall indemnify Coconut Martini for
 					any damages finally awarded against, and for reasonable
-					attorney&apos;s fees incurred by, &lt;&nbsp;&gt; in connection with
+					attorney&apos;s fees incurred by, Coconut Martini in connection with
 					any such claim, demand, suit or proceeding; provided, that
-					&lt;&nbsp;&gt; (a) promptly gives You written notice of the claim,
+					Coconut Martini (a) promptly gives You written notice of the claim,
 					demand, suit or proceeding; (b) gives You sole control of the
 					defense and settlement of the claim, demand, suit or proceeding
 					(provided that You may not settle any claim, demand, suit or
 					proceeding unless the settlement unconditionally releases
-					&lt;&nbsp;&gt; of all liability); and (c) provides to You all
+					Coconut Martini of all liability); and (c) provides to You all
 					reasonable assistance, at Your expense.</label>
 			</div>
 			<div>
 
 
 				<label>4. The look and feel of the Service is copyright
-					©2010 &lt;&nbsp;&gt; Inc. All rights reserved. You may not
+					©2010 Coconut Martini Inc. All rights reserved. You may not
 					duplicate, copy, or reuse any portion of the HTML/CSS, Javascript,
 					or visual design elements or concepts without express written
-					permission from &lt;&nbsp;&gt;.</label>
+					permission from Coconut Martini.</label>
 			</div>
 
 			<div class="clearfix"></div>
@@ -360,13 +360,13 @@
 			<div>
 
 
-				<label>2. Support for &lt;&nbsp;&gt; services is only
+				<label>2. Support for Coconut Martini services is only
 					available in English, via email.</label>
 			</div>
 			<div>
 
 
-				<label>3. You understand that &lt;&nbsp;&gt; uses
+				<label>3. You understand that Coconut Martini uses
 					third-party vendors and hosting partners to provide the necessary
 					hardware, software, networking, storage, and related technology
 					required to run the Service.</label>
@@ -376,19 +376,19 @@
 
 				<label>4. You must not modify, adapt or hack the Service or
 					modify another website so as to falsely imply that it is associated
-					with the Service, &lt;&nbsp;&gt;, or any other &lt;&nbsp;&gt;
+					with the Service, Coconut Martini, or any other Coconut Martini
 					service.</label>
 			</div>
 			<div>
 
 
-				<label>5. You may use the &lt;&nbsp;&gt; Pages static
+				<label>5. You may use the Coconut Martini Pages static
 					hosting service solely as permitted and intended to host your
 					organization pages, personal pages, or project pages, and for no
-					other purpose. You may not use &lt;&nbsp;&gt; Pages in violation of
-					&lt;&nbsp;&gt;'s trademark or other rights or in violation of
-					applicable law. &lt;&nbsp;&gt; reserves the right at all times to
-					reclaim any &lt;&nbsp;&gt; subdomain without liability to you.</label>
+					other purpose. You may not use Coconut Martini Pages in violation of
+					Coconut Martini's trademark or other rights or in violation of
+					applicable law. Coconut Martini reserves the right at all times to
+					reclaim any Coconut Martini subdomain without liability to you.</label>
 			</div>
 			<div>
 
@@ -396,7 +396,7 @@
 				<label>6. You agree not to reproduce, duplicate, copy, sell,
 					resell or exploit any portion of the Service, use of the Service,
 					or access to the Service without the express written permission by
-					&lt;&nbsp;&gt;.</label>
+					Coconut Martini.</label>
 			</div>
 			<div>
 
@@ -412,7 +412,7 @@
 
 
 				<label>8. Verbal, physical, written or other abuse
-					(including threats of abuse or retribution) of any &lt;&nbsp;&gt;
+					(including threats of abuse or retribution) of any Coconut Martini
 					customer, employee, member, or officer will result in immediate
 					account termination.</label>
 			</div>
@@ -441,15 +441,15 @@
 
 
 				<label>12. If your bandwidth usage significantly exceeds the
-					average bandwidth usage (as determined solely by &lt;&nbsp;&gt;) of
-					other &lt;&nbsp;&gt; customers, we reserve the right to immediately
+					average bandwidth usage (as determined solely by Coconut Martini) of
+					other Coconut Martini customers, we reserve the right to immediately
 					disable your account or throttle your file hosting until you can
 					reduce your bandwidth consumption.</label>
 			</div>
 			<div>
 
 
-				<label>13. &lt;&nbsp;&gt; does not warrant that (i) the
+				<label>13. Coconut Martini does not warrant that (i) the
 					service will meet your specific requirements, (ii) the service will
 					be uninterrupted, timely, secure, or error-free, (iii) the results
 					that may be obtained from the use of the service will be accurate
@@ -462,10 +462,10 @@
 
 
 				<label>14. You expressly understand and agree that
-					&lt;&nbsp;&gt; shall not be liable for any direct, indirect,
+					Coconut Martini shall not be liable for any direct, indirect,
 					incidental, special, consequential or exemplary damages, including
 					but not limited to, damages for loss of profits, goodwill, use,
-					data or other intangible losses (even if &lt;&nbsp;&gt; has been
+					data or other intangible losses (even if Coconut Martini has been
 					advised of the possibility of such damages), resulting from: (i)
 					the use or the inability to use the service; (ii) the cost of
 					procurement of substitute goods and services resulting from any
@@ -479,12 +479,12 @@
 			<div>
 
 
-				<label>15. The failure of &lt;&nbsp;&gt; to exercise or
+				<label>15. The failure of Coconut Martini to exercise or
 					enforce any right or provision of the Terms of Service shall not
 					constitute a waiver of such right or provision. The Terms of
 					Service constitutes the entire agreement between you and
-					&lt;&nbsp;&gt; and govern your use of the Service, superseding any
-					prior agreements between you and &lt;&nbsp;&gt; (including, but not
+					Coconut Martini and govern your use of the Service, superseding any
+					prior agreements between you and Coconut Martini (including, but not
 					limited to, any prior versions of the Terms of Service). You agree
 					that these Terms of Service and Your use of the Service are
 					governed under California law.</label>
@@ -493,7 +493,7 @@
 
 
 				<label>16. Questions about the Terms of Service should be
-					sent to support@&lt;&nbsp;&gt;.com.</label>
+					sent to anshu@CoconutMartini.com.</label>
 			</div>
 
 

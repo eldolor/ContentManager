@@ -19,10 +19,6 @@
 				//always
 				return false;
 			});
-			$('#sign_up_button').unbind();
-			$('#sign_up_button').click(function() {
-				window.location.href = '/signup';
-			});
 
 		} catch (err) {
 			handleError("function($)", err);
@@ -44,28 +40,9 @@
 		<li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
 	</ul>
 	<section class="top-bar-section">
-		<!-- Left Nav Section -->
-		<sec:authorize ifAnyGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">
-			<div class="error_search left">
-				<div class="row">
-					<form role="form" id="searchForm">
-						<div class="form-group">
-							<input id="search_term" name="search_term" type="text"
-								class="form-control input-lg" placeholder="search" />
-						</div>
-					</form>
-				</div>
-			</div>
-		</sec:authorize>
-		<sec:authorize ifNotGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">
-			<div class="left">
-				<button id="sign_up_button" class="button radius btn-default">Sign
-					Up</button>
-			</div>
-		</sec:authorize>
 
 		<!-- Right Nav Section -->
-		<ul class="right">
+		<ul class="left">
 			<li><a href="/">Home</a></li>
 			<li><a href="/docs/overview">Overview</a></li>
 			<sec:authorize ifAnyGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">
@@ -102,9 +79,29 @@
 				<li><a href="<c:url value="/j_spring_security_logout"/>">Sign
 						out </a></li>
 			</sec:authorize>
-			<sec:authorize ifNotGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">
-				<li><a href="<c:url value="/login"/>">Sign In </a></li>
-			</sec:authorize>
 		</ul>
+
+		<!-- Left Nav Section -->
+		<sec:authorize ifNotGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">
+			<ul class="right">
+				<li><a href="<c:url value="/signup"/>">Sign Up </a></li>
+				<li class="divider"></li>
+				<li><a href="<c:url value="/login"/>">Sign In </a></li>
+				<li class="divider"></li>
+			</ul>
+		</sec:authorize>
+		<sec:authorize ifAnyGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">
+			<div class="error_search right">
+				<div class="row collapse">
+					<form role="form" id="searchForm">
+						<div class="form-group small-12 columns">
+							<input id="search_term" name="search_term" type="text"
+								class="form-control input-lg" placeholder="search" />
+						</div>
+					</form>
+				</div>
+			</div>
+		</sec:authorize>
+
 	</section>
 </nav>

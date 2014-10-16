@@ -65,6 +65,18 @@ public class ContentStatController {
 				LOGGER.info("Exiting");
 		}
 	}
+	@RequestMapping(value = "/analytics/applications/{tour}", method = RequestMethod.GET)
+	public ModelAndView displayApplications(@PathVariable String tour, ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering");
+		try {
+			model.addAttribute("tour", tour);
+			return new ModelAndView("analytics_applications", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
 
 	@RequestMapping(value = "/analytics/{applicationId}/contentgroups", method = RequestMethod.GET)
 	public ModelAndView displayContentGroups(@PathVariable Long applicationId,

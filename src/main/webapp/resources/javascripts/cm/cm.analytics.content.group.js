@@ -129,10 +129,14 @@ function displayAnalytics() {
 
 							}
 							// call this post graph setup
-							if (typeof (Storage) !== "undefined") {
+							var lPathName = window.location.pathname;
+
+							if (lPathName.lastIndexOf("tour") != -1) {
+								$(document).foundation('joyride', 'start');
+							} else if (typeof (Storage) !== "undefined") {
 								// Code for localStorage/sessionStorage.
 								// Store
-								var lReportsTour = localStorage.reportsProductTour;
+								var lReportsTour = localStorage.reportsTour;
 								if ((typeof (lReportsTour) === "undefined")
 										|| (lReportsTour == "N")) {
 									// set

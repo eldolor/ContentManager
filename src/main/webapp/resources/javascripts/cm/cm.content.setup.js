@@ -3,7 +3,11 @@ jQuery(function($) {
 		log("function($)", "Entering");
 		setup();
 		// call this post setup
-		if (typeof (Storage) !== "undefined") {
+		var lPathName = window.location.pathname;
+
+		if (lPathName.lastIndexOf("tour") != -1) {
+			$(document).foundation('joyride', 'start');
+		} else if (typeof (Storage) !== "undefined") {
 			// Code for localStorage/sessionStorage.
 			// Store
 			var lProductTour = localStorage.productTour;

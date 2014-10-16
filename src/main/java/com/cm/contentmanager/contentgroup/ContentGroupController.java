@@ -71,6 +71,20 @@ public class ContentGroupController {
 		}
 	}
 
+	@RequestMapping(value = "/{applicationId}/contentgroups/{tour}", method = RequestMethod.GET)
+	public ModelAndView displayContentGroups(@PathVariable Long applicationId,
+			@PathVariable String tour, ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering displayContentGroups");
+		try {
+			model.addAttribute("tour", tour);
+			return new ModelAndView("content_groups", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting displayContentGroups");
+		}
+	}
+
 	/**
 	 * 
 	 * @param campaignUuid
@@ -84,7 +98,7 @@ public class ContentGroupController {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getContentGroups");
-		List<ContentGroup> contentGroups = null;
+			List<ContentGroup> contentGroups = null;
 
 			contentGroups = contentGroupService.get(applicationId, false);
 
@@ -228,8 +242,8 @@ public class ContentGroupController {
 				response.setStatus(HttpServletResponse.SC_OK);
 				String lTrackingId = applicationService.getApplication(
 						contentGroup.getApplicationId()).getTrackingId();
-				Utils.triggerChangesStagedMessage(contentGroup
-						.getApplicationId(), 0);
+				Utils.triggerChangesStagedMessage(
+						contentGroup.getApplicationId(), 0);
 				Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId, 0);
 
 				return null;
@@ -239,7 +253,7 @@ public class ContentGroupController {
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 			return null;
-	} finally {
+		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting doUpdateContentGroup");
 		}

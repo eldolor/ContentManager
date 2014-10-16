@@ -73,6 +73,20 @@ public class ContentController {
 				LOGGER.info("Exiting displayContent");
 		}
 	}
+	@RequestMapping(value = "/{applicationId}/{contentGroupId}/content/{tour}", method = RequestMethod.GET)
+	public ModelAndView displayContent(@PathVariable Long applicationId,
+			@PathVariable Long contentGroupId, @PathVariable String tour, ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering displayContent");
+		try {
+			// pass it along to the view
+			model.addAttribute("tour", tour);
+			return new ModelAndView("content", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting displayContent");
+		}
+	}
 
 	/**
 	 * 

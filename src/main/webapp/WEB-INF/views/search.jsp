@@ -64,7 +64,7 @@
 				<p class="text-center page_sub_heading">Lorem ipsum dolor sit
 					amet, consectetur adipisicing elit.</p>
 				<div class="line">
-					<img src="/resources/images/box/line.png" alt="line" />
+					<img src="/resources/images/cm/line.png" alt="line" />
 				</div>
 				<br />
 				<div class="visible">
@@ -101,14 +101,14 @@
 		<div class="row full-width">
 			<h2 class="text-center gray">Search Results</h2>
 			<div class="line">
-				<img src="/resources/images/box/line.png" alt="line" />
+				<img src="/resources/images/cm/line.png" alt="line" />
 			</div>
 			<br />
 			<div class="row">
 				<div class="large-4 columns">
 					<h2 class="text-center gray">Applications</h2>
 					<div class="line">
-						<img src="/resources/images/box/line.png" alt="line" />
+						<img src="/resources/images/cm/line.png" alt="line" />
 					</div>
 					<div id="applications_list"></div>
 					<jsp:include page="create_application.jsp"></jsp:include>
@@ -116,7 +116,7 @@
 				<div class="large-4 columns">
 					<h2 class="text-center gray">Content Groups</h2>
 					<div class="line">
-						<img src="/resources/images/box/line.png" alt="line" />
+						<img src="/resources/images/cm/line.png" alt="line" />
 					</div>
 					<div id="content_groups_list"></div>
 					<jsp:include page="create_content_group.jsp"></jsp:include>
@@ -124,7 +124,7 @@
 				<div class="large-4 columns">
 					<h2 class="text-center gray">Content</h2>
 					<div class="line">
-						<img src="/resources/images/box/line.png" alt="line" />
+						<img src="/resources/images/cm/line.png" alt="line" />
 					</div>
 					<div id="content_list"></div>
 					<jsp:include page="create_content.jsp"></jsp:include>

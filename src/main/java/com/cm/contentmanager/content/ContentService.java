@@ -259,6 +259,19 @@ public class ContentService {
 				LOGGER.info("Exiting update");
 		}
 	}
+	public void moveContentGroup(Long id, Long contentGroupId,
+			Long timeUpdatedMs, Long timeUpdatedTimeZoneOffsetMs) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering deleteAllContents");
+			contentDao.moveContentGroup(id, contentGroupId, timeUpdatedMs,
+					timeUpdatedTimeZoneOffsetMs);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting delete");
+		}
+
+	}
 
 	public void delete(Long applicationId, Long contentGroupId,
 			Long timeUpdatedMs, Long timeUpdatedTimeZoneOffsetMs) {

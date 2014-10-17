@@ -5,12 +5,45 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@page
-	import="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"%><html>
+	import="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"%>
 
 <script type="text/javascript">
 	jQuery(function($) {
 		try {
 			log("function($)", "Entering");
+			
+			var sticky_navigation_offset_top = $('#sticky_navigation').offset().top;
+			// our function that decides weather the navigation bar should have
+			// "fixed" css position or not.
+			var sticky_navigation = function() {
+				var scroll_top = $(window).scrollTop(); // our current vertical
+														// position from the top
+
+				// if we've scrolled more than the navigation, change its position
+				// to fixed to stick to top, otherwise change it back to relative
+				if (scroll_top > sticky_navigation_offset_top) {
+					$('#sticky_navigation').css({
+						'position' : 'fixed',
+						'top' : 0,
+						'left' : 0,
+						'width' : '100%',
+						'z-index' : 9999999999
+					});
+				} else {
+					$('#sticky_navigation').css({
+						'position' : 'relative'
+					});
+				}
+			};
+
+			// run our function on load
+			sticky_navigation();
+
+			// and run it again every time you scroll
+			$(window).scroll(function() {
+				sticky_navigation();
+			});
+
 			$('#searchForm').unbind();
 			$('#searchForm').submit(function() {
 				var lSearchTerm = $('#search_term').val();
@@ -32,7 +65,7 @@
 		<!-- Title Area -->
 		<li class="name">
 			<h1>
-				<a href="#"> <img src="/resources/images/box/Cube.png"
+				<a href="#"> <img src="/resources/images/cm/Cube.png"
 					alt="big logo" />
 				</a>
 			</h1>
@@ -67,12 +100,12 @@
 				<ul class="dropdown">
 					<li><a href="/docs/android">Getting Started with Android
 							SDK</a></li>
-					<li><a href="/resources/api/current/javadoc/index.html">Android
+					<li><a href="/resources/api/current/javadoc/index.html" target="_blank">Android
 							SDK API Reference</a></li>
 				</ul></li>
 			<li class="has-dropdown"><a href="#">Downloads</a>
 				<ul class="dropdown">
-					<li><a href="/resources/api/content_manager_sdk_1_1.jar">Android
+					<li><a href="/resources/api/current/content_manager_sdk_1_1.jar">Android
 							SDK</a></li>
 				</ul></li>
 			<sec:authorize ifAnyGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">

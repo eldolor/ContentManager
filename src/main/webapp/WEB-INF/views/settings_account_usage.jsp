@@ -46,7 +46,7 @@
 		<div class="row full-width">
 			<h2 class="text-center gray">Account Usage</h2>
 			<div class="line">
-				<img src="/resources/images/box/line.png" alt="line" />
+				<img src="/resources/images/cm/line.png" alt="line" />
 			</div>
 			<div class="content" id="account_usage">
 				<div id="progress_bar" style="display: none">

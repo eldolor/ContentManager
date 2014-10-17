@@ -48,7 +48,7 @@ var mApplicationId = ${applicationId};
 				aggregate daily content impressions on mobile devices, for each
 				content group</p>
 			<div class="line">
-				<img src="/resources/images/box/line.png" alt="line" />
+				<img src="/resources/images/cm/line.png" alt="line" />
 			</div>
 			<div class="content" id="analytics">
 				<div id="progress_bar" style="display: none">

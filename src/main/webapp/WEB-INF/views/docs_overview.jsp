@@ -35,8 +35,11 @@
 		<div id="vision_mission">
 			<div class="row full-width">
 				<h2 class="text-center">Overview</h2>
+				<p class="text-center page_sub_heading">Advanced Content
+					Management and Delivery platform that manages &amp; delivers rich
+					content to your Mobile Apps</p>
 				<div class="line">
-					<img src="/resources/images/box/line.png" alt="line" />
+					<img src="/resources/images/cm/line.png" alt="line" />
 				</div>
 
 				<div class="large-7 columns">
@@ -52,26 +55,26 @@
 						<br>
 					</div>
 					<div>
-						<h3 class="gray">Reliable Content Delivery</h3>
+						<h3 class="gray">Streamlined Content Delivery</h3>
 						<p>A delivery tier that manages the performance unknowns of
 							the last wireless mile, is key to providing great mobile
-							experiences. &lt;&gt; is a content management and delivery
-							platform that reliably delivers your content to Mobile devices.
-							It handles spotty networks, dropped connections, and long pauses
-							between service requests.</p>
-						<p>This allows users of your Mobile Apps, to engage with your
-							rich content, even if they lose their data connection.</p>
+							experiences. &lt;&gt; reliably delivers your content to Mobile
+							devices over spotty networks, dropped connections, and long
+							pauses between service requests.</p>
+						<p>This elevates the user experience of your Mobile Apps, by
+							allowing users to engage with your rich content, even if they
+							lose their data connection.</p>
 						<p>
 					</div>
 					<p class="clearfix"></p>
 					<div>
 						<h3 class="gray">Manage Content as Bite-Sized Chunks</h3>
 						<p>The platform enables you to manage and deliver your content
-							as bite-sized chunks. It enables you to continually update your
+							as bite-sized chunks. It lets you continually update your
 							content, with no downtime or performance reduction on Mobile or
-							connected devices. You can add, update, or remove individual
-							content, without degrading the mobile experience at any point, or
-							having to release a new version of your Mobile App.</p>
+							connected devices. You can add, update, or remove content,
+							without degrading the mobile experience at any point, or having
+							to release a new version of your Mobile App.</p>
 						<p>In contrast, Google Play restricts APK file to 50MB, and
 							constrains you to bundle all your rich content into 2 monolithic
 							expansion files. Any updates to your rich content requires you to
@@ -89,14 +92,20 @@
 					<p class="clearfix"></p>
 					<div>
 						<h3 class="gray">Easily-pluggable &amp; Feature-rich SDK</h3>
-						<p>SDK that provides a simple API to access content on
-							Mobile or connected devices</p>
+						<p>SDK that provides a simple API to access content on Mobile
+							or connected devices</p>
 					</div>
 					<p class="clearfix"></p>
 					<div>
 						<h3 class="gray">Mobile Device Storage</h3>
 						<p>Notifies users if the device does not have enough storage,
 							or if the external storage is not accessible</p>
+					</div>
+					<p class="clearfix"></p>
+					<div>
+						<h3 class="gray">Advanced Caching on Device</h3>
+						<p>Advanced in-memory caching that results in faster content
+							display, and minimizes memory footprint.</p>
 					</div>
 					<p class="clearfix"></p>
 					<div>
@@ -138,7 +147,13 @@
 						<li>
 							<div>
 								<i class="fi-checkbox"></i>
-							</div> <span>Reliable Content Delivery</span>
+							</div> <span>Advanced Content Management Platform</span>
+							<p class="clearfix"></p>
+						</li>
+						<li>
+							<div>
+								<i class="fi-checkbox"></i>
+							</div> <span>Streamlined Content Delivery</span>
 							<p class="clearfix"></p>
 						</li>
 						<li>
@@ -150,7 +165,7 @@
 						<li>
 							<div>
 								<i class="fi-checkbox"></i>
-							</div> <span>Enables Continuous Content Updates</span>
+							</div> <span>Continuous Content Updates</span>
 							<p class="clearfix"></p>
 						</li>
 						<li>
@@ -169,6 +184,12 @@
 							<div>
 								<i class="fi-checkbox"></i>
 							</div> <span>Mobile Device Storage</span>
+							<p class="clearfix"></p>
+						</li>
+						<li>
+							<div>
+								<i class="fi-checkbox"></i>
+							</div> <span>Advanced Caching on Device</span>
 							<p class="clearfix"></p>
 						</li>
 						<li>

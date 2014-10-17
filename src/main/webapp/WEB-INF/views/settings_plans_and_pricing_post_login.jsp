@@ -5,7 +5,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@page
-	import="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"%><html>
+	import="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"%>
 
 
 
@@ -51,7 +51,7 @@
 			additional Storage or Bandwidth
 		</p>
 		<div class="line">
-			<img src="/resources/images/box/line.png" alt="line" />
+			<img src="/resources/images/cm/line.png" alt="line" />
 		</div>
 		<br>
 		<c:choose>

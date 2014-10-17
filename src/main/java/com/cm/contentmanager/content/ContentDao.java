@@ -302,7 +302,8 @@ class ContentDao {
 		}
 	}
 
-	List<Content> getByContentGroupId(Long contentGroupId, boolean includeDeleted) {
+	List<Content> getByContentGroupId(Long contentGroupId,
+			boolean includeDeleted) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
@@ -335,6 +336,7 @@ class ContentDao {
 				LOGGER.info("Exiting get");
 		}
 	}
+
 	List<Content> get(Long applicationId, boolean includeDeleted) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -484,7 +486,7 @@ class ContentDao {
 				_content.setNameIdx(content.getName().toLowerCase());
 				_content.setDescription(content.getDescription());
 				_content.setTags(content.getTags());
-				
+
 				// for existing contents
 				if (_content.getTimeCreatedMs() == null) {
 					// default it to the start date
@@ -507,6 +509,30 @@ class ContentDao {
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting update");
+		}
+	}
+
+	void moveContentGroup(Long id, Long contentGroupId, Long timeUpdatedMs,
+			Long timeUpdatedTimeZoneOffsetMs) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Content _content = pm.getObjectById(Content.class, id);
+				_content.setContentGroupId(contentGroupId);
+				_content.setTimeUpdatedMs(timeUpdatedMs);
+				_content.setTimeUpdatedTimeZoneOffsetMs(timeUpdatedTimeZoneOffsetMs);
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
 		}
 	}
 

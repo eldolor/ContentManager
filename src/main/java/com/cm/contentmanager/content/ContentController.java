@@ -73,9 +73,11 @@ public class ContentController {
 				LOGGER.info("Exiting displayContent");
 		}
 	}
+
 	@RequestMapping(value = "/{applicationId}/{contentGroupId}/content/{tour}", method = RequestMethod.GET)
 	public ModelAndView displayContent(@PathVariable Long applicationId,
-			@PathVariable Long contentGroupId, @PathVariable String tour, ModelMap model) {
+			@PathVariable Long contentGroupId, @PathVariable String tour,
+			ModelMap model) {
 		if (LOGGER.isLoggable(Level.INFO))
 			LOGGER.info("Entering displayContent");
 		try {
@@ -181,7 +183,6 @@ public class ContentController {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return errors;
 			} else {
-				
 
 				Content lContent = contentService.save(
 						userService.getLoggedInUser(), content);
@@ -195,8 +196,8 @@ public class ContentController {
 					Utils.triggerUpdateContentSizeInBytesMessage(
 							lContent.getId(), lContent.getUri(), 0);
 				// trigger message to update quota
-				Utils.triggerUpdateQuotaUtilizationMessage(userService.getLoggedInUser()
-						.getAccountId(), 0);
+				Utils.triggerUpdateQuotaUtilizationMessage(userService
+						.getLoggedInUser().getAccountId(), 0);
 				return null;
 			}
 		} catch (Throwable e) {
@@ -234,9 +235,9 @@ public class ContentController {
 					Utils.triggerUpdateContentSizeInBytesMessage(
 							content.getId(), content.getUri(), 0);
 				// trigger message to update quota
-				//TODO: added artificial delay. Should this be removed in prod?
-				Utils.triggerUpdateQuotaUtilizationMessage(userService.getLoggedInUser()
-						.getAccountId(), 3000);
+				// TODO: added artificial delay. Should this be removed in prod?
+				Utils.triggerUpdateQuotaUtilizationMessage(userService
+						.getLoggedInUser().getAccountId(), 3000);
 				return null;
 			}
 		} catch (Throwable e) {
@@ -247,6 +248,32 @@ public class ContentController {
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting doUpdateContentGroup");
+		}
+	}
+
+	@RequestMapping(value = "/secured/content/move/{id}/{contentGroupId}/{applicationId}/{timeUpdatedMs}/{timeUpdatedTimeZoneOffsetMs}", method = RequestMethod.PUT, consumes = "application/json")
+	public void doMoveContent(@PathVariable Long id,
+			@PathVariable Long contentGroupId,
+			@PathVariable Long applicationId, @PathVariable Long timeUpdatedMs,
+			@PathVariable Long timeUpdatedTimeZoneOffsetMs,
+			HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			contentService.moveContentGroup(id, contentGroupId, timeUpdatedMs,
+					timeUpdatedTimeZoneOffsetMs);
+			String lTrackingId = applicationService.getApplication(applicationId).getTrackingId();
+			Utils.triggerChangesStagedMessage(applicationId, 0);
+			Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId, 0);
+			response.setStatus(HttpServletResponse.SC_OK);
+
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
 		}
 	}
 
@@ -276,8 +303,8 @@ public class ContentController {
 			Utils.triggerChangesStagedMessage(id, 0);
 			Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId, 0);
 			// trigger message to update quota
-			Utils.triggerUpdateQuotaUtilizationMessage(userService.getLoggedInUser()
-					.getAccountId(), 0);
+			Utils.triggerUpdateQuotaUtilizationMessage(userService
+					.getLoggedInUser().getAccountId(), 0);
 
 		} catch (Throwable e) {
 			// handled by GcmManager

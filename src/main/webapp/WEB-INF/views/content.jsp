@@ -41,7 +41,7 @@ setSelectedContentGroup(${contentGroupId});
 			<p class="text-center page_sub_heading">Manage your rich content
 				here</p>
 			<div class="line">
-				<img src="/resources/images/box/line.png" alt="line" />
+				<img src="/resources/images/cm/line.png" alt="line" />
 			</div>
 			<br />
 			<div class="row">
@@ -163,6 +163,15 @@ setSelectedContentGroup(${contentGroupId});
 		</li>
 	</ol>
 
+
+	<div class="reveal-modal small" id="move_content_modal" data-reveal>
+		<h3 class="gray" id="moveContentModalLabel">Move Content</h3>
+		<div class="row">
+			<div id="content_group_list"></div>
+		</div>
+		<button id="move_confirm_button" class="button radius btn-default">move</button>
+		<a class="close-reveal-modal">&#215;</a>
+	</div>
 
 </body>
 </html>

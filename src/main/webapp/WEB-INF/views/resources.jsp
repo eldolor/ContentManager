@@ -5,7 +5,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@page
-	import="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"%><html>
+	import="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"%>
 
 
 <link rel="stylesheet"
@@ -166,7 +166,8 @@
 	rel="stylesheet">
 <link href="/resources/stylesheets/box/owl.theme.css" rel="stylesheet">
 <link href="/resources/stylesheets/box/style.css" rel="stylesheet">
-<link rel="stylesheet" type="text/css" href="/resources/stylesheets/jquery-plugins/jquery.tagsinput.css" />
+<link rel="stylesheet" type="text/css"
+	href="/resources/stylesheets/jquery-plugins/jquery.tagsinput.css" />
 
 <script type="text/javascript"
 	src="/resources/javascripts/jquery-plugins/jquery.simple-text-rotator.js"></script>

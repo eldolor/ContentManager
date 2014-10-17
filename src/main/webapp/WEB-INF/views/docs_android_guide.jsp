@@ -51,7 +51,7 @@
 		<h2 class="text-center gray">SDK Guide</h2>
 
 		<div class="line">
-			<img src="/resources/images/box/line.png" alt="line" />
+			<img src="/resources/images/cm/line.png" alt="line" />
 		</div>
 		<br />
 		<div class="row">
@@ -60,6 +60,9 @@
 					<dl class="sub-nav">
 						<dd data-magellan-arrival="getting_started">
 							<a href="#getting_started">Getting Started</a>
+						</dd>
+						<dd data-magellan-arrival="android_requirements">
+							<a href="#android_requirements">Android Requirements</a>
 						</dd>
 						<dd data-magellan-arrival="project_setup">
 							<a href="#project_setup">Project Setup</a>
@@ -82,6 +85,20 @@
 				<h3 data-magellan-destination="getting_started"
 					class="text-left gray">Getting Started</h3>
 				<a name="getting_started"></a>
+				<ol>
+					<li>Create an <a href="/applications">Application</a> on the
+						platform, and upload your content.
+					</li>
+					<li>Create a <a href="/account/clientkeys">Client Key</a>. We
+						highly recommend that you create a new Client Key for each
+						Application.
+					</li>
+				</ol>
+				<div class="clearfix"></div>
+				<div class="clearfix"></div>
+				<h3 data-magellan-destination="android_requirements"
+					class="text-left gray">Android Requirements</h3>
+				<a name="getting_started"></a>
 				<p class="text-left">You need the following to get started with
 					a new Android project.</p>
 				<ol>
@@ -90,7 +107,9 @@
 						higher.</li>
 					<li>Java IDE such as Eclipse or Android Studio, with ADT
 						installed.</li>
-					<li>Google account configured on the mobile device.</li>
+					<li>Google account configured on the mobile device. Content
+						synchronization is performed over Google Cloud Messaging, which
+						requires a Google account.</li>
 					<li>Google Play Store installed on the mobile device.</li>
 				</ol>
 				<div class="clearfix"></div>
@@ -100,11 +119,11 @@
 				<a name="project_setup"></a>
 				<ol>
 					<li>Download the latest Android <a
-						href="/resources/api/content_manager_sdk_1_1.jar">Content
+						href="/resources/api/current/content_manager_sdk_1_1.jar">Content
 							Manager API</a> library.
 					</li>
-					<li><a href="/resources/api/current/javadoc/index.html">Android
-							API Reference</a></li>
+					<li><a href="/resources/api/current/javadoc/index.html"
+						target="_blank">Android API Reference</a></li>
 					<li>Copy the <b>API library</b> to the <b>libs</b> folder of
 						your project.
 					</li>
@@ -122,39 +141,39 @@
 					<p>Add the following permissions to your project&quot;s
 						AndroidManifest.xml</p>
 					<pre>
-						<code>
+
     &lt;!-- Begin: SDK related --&gt;
     &lt;!-- Required to download files --&gt;
-    &lt;uses-permission android:name="android.permission.INTERNET" /&gt;
+   <code>&lt;uses-permission android:name="android.permission.INTERNET" /&gt;</code>
     &lt;!-- Content synchronization is performed over Google Cloud Messaging, which requires a Google account --&gt;
-    &lt;uses-permission android:name="android.permission.GET_ACCOUNTS" /&gt;
+   <code>&lt;uses-permission android:name="android.permission.GET_ACCOUNTS" /&gt;</code>
     &lt;!-- Required to keep CPU alive while downloading files (NOT to keep screen awake) --&gt;
-    &lt;uses-permission android:name="android.permission.WAKE_LOCK" /&gt;
-    &lt;uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" /&gt;
+    <code>&lt;uses-permission android:name="android.permission.WAKE_LOCK" /&gt;
+    &lt;uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" /&gt;</code>
 
     &lt;!-- An applicationPackage + ".permission.C2D_MESSAGE" permission to prevent other Android applications 
         from registering and receiving the Android application's messages. The permission name must exactly match 
         this pattern otherwise the Android application will not receive the messages. --&gt;
-    &lt;permission
+   <code>&lt;permission
         android:name="com.cm.contentmanagerdemo.permission.C2D_MESSAGE"
         android:protectionLevel="signature" /&gt;
 
-    &lt;uses-permission android:name="com.cm.contentmanagerdemo.permission.C2D_MESSAGE" /&gt;
+    &lt;uses-permission android:name="com.cm.contentmanagerdemo.permission.C2D_MESSAGE" /&gt;</code>
 
     &lt;!-- Required to read and write the content on shared storage --&gt;
-    &lt;uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /&gt;
+   <code>&lt;uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /&gt;</code>
     &lt;!-- Required to capture the usage statistics of the content --&gt;
-    &lt;uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /&gt;
+    <code>&lt;uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /&gt;
     &lt;uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /&gt;
-    &lt;uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /&gt;
+    &lt;uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /&gt;</code>
 
     &lt;!-- Required to poll the state of the network connection  and respond to changes --&gt;
-    &lt;uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /&gt;
+    <code>&lt;uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /&gt;</code>
 
     &lt;!-- Required to check whether Wi-Fi is enabled --&gt;
-    &lt;uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /&gt;
+    <code>&lt;uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /&gt;</code>
     &lt;!-- End: SDK related --&gt;
-						</code>
+
 					</pre>
 				</div>
 				<div class="panel radius">
@@ -162,33 +181,36 @@
 					<p>Add the following to the &lt;application/&gt; node of your
 						project&quot;s AndroidManifest.xml</p>
 					<p>
-						<b>Note: </b> The &quot;category&quot; name of <b>com.google.android.c2dm.intent.RECEIVE</b>
+						<b>NOTE: </b> The &quot;category&quot; name of <b>com.google.android.c2dm.intent.RECEIVE</b>
 						action must match the value in the &quot;package&quot; attribute,
 						defined in the &lt;manifest/&gt; element
 					</p>
 					<pre>
-						<code>
+
     &lt;!-- Begin: SDK related --&gt;
-    &lt;meta-data android:name="com.google.android.gms.version"
-	android:value="@integer/google_play_services_version" /&gt;
+    <code>&lt;meta-data android:name="com.google.android.gms.version"
+	android:value="@integer/google_play_services_version" /&gt;</code>
     &lt;!-- A receiver with the category set as applicationPackage.  The receiver should 
         require  the com.google.android.c2dm.SEND permission --&gt;
-    &lt;receiver android:name="com.cm.contentmanager.android.api.download.DownloaderBroadcastReceiver"
+    <code>&lt;receiver android:name="com.cm.contentmanager.android.api.download.DownloaderBroadcastReceiver"
 	android:permission="com.google.android.c2dm.permission.SEND"&gt;
         &lt;intent-filter&gt;
             &lt;action android:name="com.google.android.c2dm.intent.RECEIVE" /&gt;
-            &lt;!-- The following value must match the value in the &quot;package&quot; attribute, defined in the &lt;manifest/&gt; element --&gt;
-            &lt;category android:name="com.cm.contentmanagerdemo" /&gt;
-        &lt;/intent-filter&gt;
+            &lt;category android:name="my_android_application_package_name" /&gt;</code>
+            &lt;!-- The &quot;category&quot; name of <b>com.google.android.c2dm.intent.RECEIVE</b>
+						action must match the value in the &quot;package&quot; attribute,
+						defined in the &lt;manifest/&gt; element --&gt;
+             
+       <code>&lt;/intent-filter&gt;
         &lt;intent-filter&gt;
             &lt;action android:name="android.net.conn.CONNECTIVITY_CHANGE" /&gt;
         &lt;/intent-filter&gt;
-    &lt;/receiver&gt;
+    &lt;/receiver&gt;</code>
 
     &lt;!-- Handles downloading of content --&gt;
-    &lt;service android:name="com.cm.contentmanager.android.api.download.DownloaderService" android:exported="true" /&gt;
+    <code>&lt;service android:name="com.cm.contentmanager.android.api.download.DownloaderService" android:exported="true" /&gt;</code>
     &lt;!-- End: SDK related --&gt;
-							</code>
+
 					</pre>
 				</div>
 				<div class="clearfix"></div>
@@ -201,7 +223,7 @@
 					<p>The Downloader Service will display any of the following
 						Notifications</p>
 					<p>
-						<b>Note: </b>If the mobile device does not have either Network or
+						<b>NOTE: </b>If the mobile device does not have either Network or
 						Wi-Fi connectivity, the download process will pause and resume
 						automatically, once the device regains connectivity.
 					</p>
@@ -229,8 +251,10 @@
 						to process the result.</p>
 					<p>For instance, if the Downloader Service is unable to
 						download the contents on account of Wi-Fi being disabled, it will
-						respond with the appropriate status code. In this case, you might
-						want to prompt the user to enable Wi-Fi.</p>
+						display a Wi-Fi Disconnected Notification on the Notifications
+						Bar, and respond with the appropriate status code. For better user
+						experience, you can process the status code, and prompt the user
+						to enable Wi-Fi.</p>
 					<p>The Downloader Service will broadcast any of the following
 						status codes.</p>
 					<ol>
@@ -248,13 +272,13 @@
 					<p>Configure your Broadcast Receiver with the following intent
 						filter, to receive the Status Codes from the Downloader Service.</p>
 					<pre>
-						<code>
+<code>
         &lt;receiver android:name="com.cm.contentmanagerdemo.DemoBroadcastReceiver"&gt;
             &lt;intent-filter&gt;
                 &lt;action android:name="com.cm.contentmanager.android.api.download.DownloaderService.RESULT" /&gt;
             &lt;/intent-filter&gt;
         &lt;/receiver&gt;
-					</code>
+</code>
 					</pre>
 				</div>
 
@@ -262,7 +286,7 @@
 					<h4>Status Codes</h4>
 					<p>Configure your Broadcast Receiver to process the results</p>
 					<pre>
-						<code>
+<code>
 	public class DemoBroadcastReceiver extends WakefulBroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -309,7 +333,7 @@
 	
 		}
 	}
-					</code>
+</code>
 					</pre>
 				</div>
 				<div class="clearfix"></div>
@@ -325,20 +349,14 @@
 						this will automatically register the Content Manager Client, and
 						start downloading the contents, in the background.</p>
 					<pre>
-						<code>
+<code>
 	Private ContentManager mContentManager;
 	...
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		...
-		try {
-			mContentManager = ContentManagerFactory.getInstance(this, your_application_id);
-		} catch (ExternalStorageNotReadyException e) {
-			Logger.error(e.getMessage());
-		} catch (IOException e) {
-			Logger.error(e.getMessage());
-		}
+		mContentManager = ContentManagerFactory.getInstance(this, your_client_key, your_application_id);
 	}
 </code>
 					</pre>
@@ -363,7 +381,7 @@
 					<p>Contents are tagged on the server. Tags allows for dynamic
 						access of content, instead of accessing content by content id.</p>
 					<pre>
-						<code>
+<code>
 	Private ContentManager mContentManager;
 	private List<Content> mContentList;
 	...
@@ -376,8 +394,7 @@
 
 		Logger.log("Exiting");
 	}
-						
-						
+
 						
 						
 						
@@ -391,7 +408,7 @@
 						instances where you would want to display all of the contents in a
 						list or grid.</p>
 					<pre>
-						<code>
+<code>
 	Private ContentManager mContentManager;
 	private List<Content> mContentList;
 	...
@@ -404,8 +421,7 @@
 
 		Logger.log("Exiting");
 	}
-						
-						
+
 						
 						
 						
@@ -418,7 +434,7 @@
 						where you would want to display all of the contents in a list or
 						grid.</p>
 					<pre>
-						<code>
+<code>
 	Private ContentManager mContentManager;
 	private List<Content> mContentList;
 	...
@@ -431,8 +447,7 @@
 
 		Logger.log("Exiting");
 	}
-						
-						
+
 						
 						
 						
@@ -446,7 +461,7 @@
 						instances where you would want to display all of the contents in a
 						list or grid.</p>
 					<pre>
-						<code>
+<code>
 	Private ContentManager mContentManager;
 	private List<Content> mContentList;
 	...
@@ -459,8 +474,7 @@
 
 		Logger.log("Exiting");
 	}
-						
-						
+
 						
 						
 						
@@ -475,7 +489,7 @@
 						This is for instances where you would want to display all of the
 						contents in a list or grid.</p>
 					<pre>
-						<code>
+<code>
 	Private ContentManager mContentManager;
 	private List<Content> mContentList;
 	...
@@ -488,8 +502,7 @@
 
 		Logger.log("Exiting");
 	}
-						
-						
+
 						
 						
 						
@@ -503,7 +516,7 @@
 						This is for instances where you would want to display all of the
 						contents in a list or grid.</p>
 					<pre>
-						<code>
+<code>
 	Private ContentManager mContentManager;
 	private List<Content> mContentList;
 	...
@@ -517,8 +530,7 @@
 
 		Logger.log("Exiting");
 	}
-						
-						
+
 						
 						
 						
@@ -529,7 +541,7 @@
 					<h4>getContent(long contentId)</h4>
 					<p>To access a specific content</p>
 					<pre>
-						<code>
+<code>
 	Private ContentManager mContentManager;
 	...
 	private void loadContent() {
@@ -548,7 +560,7 @@
 					<h4>getVideo(long contentId)</h4>
 					<p>To access a specific image or video content</p>
 					<pre>
-						<code>
+<code>
 	Private ContentManager mContentManager;
 	...
 	private void loadContent() {
@@ -568,7 +580,7 @@
 					<h4>getAnyVideo()</h4>
 					<p>To access any random image or video content</p>
 					<pre>
-						<code>
+<code>
 	Private ContentManager mContentManager;
 	...
 	private void loadContent() {
@@ -589,7 +601,7 @@
 					<p>To access any random image or video content, from within a
 						specific Content Group</p>
 					<pre>
-						<code>
+<code>
 	Private ContentManager mContentManager;
 	...
 	private void loadContent() {
@@ -612,7 +624,7 @@
 					<p>Utility methods to access any random image that has been
 						scaled to the new size</p>
 					<pre>
-						<code>
+<code>
 	Private ContentManager mContentManager;
 	...
 	private void loadContent() {
@@ -640,7 +652,7 @@
 						thumbnailTypeImage)</h4>
 					<p>Utility Methods to create Thumbnails for images and videos</p>
 					<pre>
-						<code>
+<code>
 	Private ContentManager mContentManager;
 	...
 	private void loadContent() {

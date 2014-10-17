@@ -43,7 +43,7 @@
 			<p class="text-center page_sub_heading">Content groups help
 				organize your contents</p>
 			<div class="line">
-				<img src="/resources/images/box/line.png" alt="line" />
+				<img src="/resources/images/cm/line.png" alt="line" />
 			</div>
 			<br />
 			<div class="row">

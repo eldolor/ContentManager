@@ -198,12 +198,14 @@ function handleDisplayContent_Callback(pContent) {
 			lInnerHtml += "</h3>";
 			lInnerHtml += "<div class='blog_content_details float_left'>";
 			if (int == 0) {
-				lInnerHtml += "<ul> <li id='first_content_id' class='green'>Content Id: " + lContent.id
-				+ " </li><li>|</li><li class='light_gray'>";
+				lInnerHtml += "<ul> <li id='first_content_id' class='green'>Content Id: "
+						+ lContent.id
+						+ " </li><li>|</li><li class='light_gray'>";
 				lInnerHtml += "<a id='first_content' class='small green' href='javascript:void(0)' onclick='viewContent(";
 			} else {
-				lInnerHtml += "<ul> <li class='green'>Content Id: " + lContent.id
-				+ " </li><li>|</li><li class='light_gray'>";
+				lInnerHtml += "<ul> <li class='green'>Content Id: "
+						+ lContent.id
+						+ " </li><li>|</li><li class='light_gray'>";
 				lInnerHtml += "<a class='small green' href='javascript:void(0)' onclick='viewContent(";
 			}
 			lInnerHtml += lContent.id;
@@ -211,7 +213,12 @@ function handleDisplayContent_Callback(pContent) {
 					+ lContent.id
 					+ ")'><i class='fi-page-edit light_gray'></i>&nbsp;edit</a></li><li>|</li> <li class='light_gray'><a class='small' href='javascript:void(0)' onclick='deleteContent("
 					+ lContent.id
-					+ ")'><i class='fi-page-delete light_gray'></i>&nbsp;delete</a></li>";
+					+ ")'><i class='fi-page-delete light_gray'></i>&nbsp;delete</a></li>"
+					+ "<li class='light_gray'><a class='small' href='javascript:void(0)' onclick='moveContent("
+					+ lContent.id
+					+ ", "
+					+ lContent.applicationId
+					+ ")'><i class='fi-eject light_gray'></i>&nbsp;move</a></li>";
 			lInnerHtml += "</ul>";
 			lInnerHtml += "</div>";
 			var lEpochDate = (lContent.timeUpdatedMs == null) ? lContent.timeCreatedMs
@@ -1044,7 +1051,121 @@ function deleteContent(id) {
 	} finally {
 		log("deleteContent", "Exiting");
 	}
+}
+function moveContent(pId, pApplicationId) {
+	log("moveContent", "Entering");
+	try {
+		getContentGroups(pId, pApplicationId);
+
+	} catch (err) {
+		handleError("moveContent", err);
+	} finally {
+		log("moveContent", "Exiting");
+	}
 
 }
 
+function getContentGroups(pId, pApplicationId) {
+	log("getContentGroups", "Entering");
+	try {
+
+		var jqxhr = $.ajax({
+			url : "/secured/" + pApplicationId + "/contentgroups",
+			type : "GET",
+			contentType : "application/json",
+			async : false,
+			statusCode : {
+				200 : function(contentGroups) {
+					buildContentList(pId, pApplicationId, contentGroups);
+				},
+				503 : function() {
+				}
+			},
+			error : function(xhr, textStatus, errorThrown) {
+				log(errorThrown);
+			}
+		});
+
+	} catch (err) {
+		handleError("getContentGroups", err);
+		// close wait div
+		;
+	} finally {
+		log("getContentGroups", "Exiting");
+	}
+}
+
+function buildContentList(pId, pApplicationId, pContentGroups) {
+	log("buildContentList", "Entering");
+	try {
+		var lList = '<label>Please select a Content Group<select id="select_content_groups">';
+		for (var int = 0; int < pContentGroups.length; int++) {
+			var lContentGroup = pContentGroups[int];
+			lList += '<option value="';
+			lList += lContentGroup.id;
+			lList += '">';
+			lList += lContentGroup.name;
+			lList += '</option>';
+		}
+		lList += '</select></label>';
+		var _date = new Date();
+		var _timeUpdatedMs = _date.getTime();
+		var _timeUpdatedTimeZoneOffsetMs = (_date.getTimezoneOffset() * 60 * 1000);
+
+		displayMoveContentConfirm(lList, function() {
+			var lSelectedContentGroup = $('#select_content_groups').val();
+
+			var url = "/secured/content/move/" + pId + "/"
+					+ lSelectedContentGroup + "/" + pApplicationId + "/"
+					+ _timeUpdatedMs + "/" + _timeUpdatedTimeZoneOffsetMs;
+			var jqxhr = $.ajax({
+				url : url,
+				type : "PUT",
+				contentType : "application/json",
+				statusCode : {
+					200 : function() {
+						location.reload();
+					},
+					503 : function() {
+					}
+				},
+				error : function(xhr, textStatus, errorThrown) {
+					log(errorThrown);
+				}
+			});
+			jqxhr.always(function(msg) {
+			});
+		});
+
+	} catch (err) {
+		handleError("buildContentList", err);
+		// close wait div
+		;
+	} finally {
+		log("buildContentList", "Exiting");
+	}
+
+}
+function displayMoveContentConfirm(pList, pCallback) {
+	log("displayMoveContentConfirm", "Entering");
+	try {
+		$("#content_group_list").html(pList);
+		// if the user clicks "yes"
+		$('#move_confirm_button').bind('click', function() {
+			// call the callback
+			if ($.isFunction(pCallback)) {
+				pCallback.apply();
+			}
+			$('#move_content_modal').foundation('reveal', 'close');
+		});
+		$('#move_content_modal').foundation('reveal', 'open');
+	} catch (err) {
+		handleError("displayMoveContentConfirm", err);
+		// close wait div
+		;
+	} finally {
+		log("displayMoveContentConfirm", "Exiting");
+	}
+
+}
 /** *End Content***************************************** */

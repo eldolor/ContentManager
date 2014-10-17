@@ -27,17 +27,37 @@
 
 </head>
 <body>
+	<section id="home">
+		<div class="overlay">
+			<div id="intro">
+				<div class="container text_center">
+					<img src="/resources/images/cm/Cube_big.png" alt="big logo" />
+					<h1 class="white">
+						Advanced Content Management and Delivery platform that <span
+							class="rotate">manages rich content, delivers rich content
+							to your Mobile Apps, manages &amp; delivers rich content to your
+							Mobile Apps</span>
+					</h1>
+				</div>
+			</div>
+			<div class="container text_center" id="learn_more">
+				<a class="link" href="#sticky_navigation">Learn More</a>
+			</div>
+		</div>
+	</section>
+
+
 	<jsp:include page="top_bar.jsp"></jsp:include>
 
 	<br>
 	<section id="services" class="display-table">
 		<div class="container va-align">
 			<h2 class="text-center">&lt;app name here&gt;</h2>
-			<p class="text-center page_sub_heading">Content management and
-				delivery platform that manages &amp; reliably delivers rich content
-				(images and videos) to your Mobile Apps</p>
+			<p class="text-center page_sub_heading">Advanced Content
+				Management and Delivery platform that manages &amp; delivers rich
+				content to your Mobile Apps</p>
 			<div class="line">
-				<img src="/resources/images/box/line.png" alt="line" />
+				<img src="/resources/images/cm/line.png" alt="line" />
 			</div>
 			<br> <br>
 			<div class="visible text-center">
@@ -47,7 +67,7 @@
 							<div class="box">
 								<i class="fi-folder"></i>
 							</div>
-							<h5>Flexible Content Management Platform</h5>
+							<h5>Advanced Content Management Platform</h5>
 							<div class="service-content">Enables you to continually
 								add, update, or remove content, without degrading the mobile
 								experience at any point, or having to release a new version of
@@ -59,11 +79,11 @@
 							<div class="box">
 								<i class="fi-cloud"></i>
 							</div>
-							<h5>Reliable Content Delivery</h5>
-							<div class="service-content">Reliable content delivery
+							<h5>Streamlined Content Delivery</h5>
+							<div class="service-content">Streamlined content delivery
 								platform that handles spotty networks and dropped connections.
-								Allows users of your Mobile Apps, to engage with your rich
-								content, even if they lose their data connection.</div>
+								Elevates user experience by allowing users to engage with your
+								rich content, even if they lose their data connection.</div>
 						</div>
 					</div>
 					<div class="large-4 columns">
@@ -98,10 +118,10 @@
 	</section>
 	<section id="portfolio">
 		<br> <br>
-		<h2 class="text-center">Features</h2>
+		<h2 class="text-center">Powerful New Features</h2>
 		<p class="text-center page_sub_heading">&nbsp;</p>
 		<div class="line">
-			<img src="/resources/images/box/line.png" alt="line" />
+			<img src="/resources/images/cm/line.png" alt="line" />
 		</div>
 		<div id="owl-demo" class="owl-carousel owl-theme visible">
 			<div class="item">
@@ -114,10 +134,11 @@
 
 			<div class="item">
 				<img src="/resources/images/cm/reliable_platform.jpg" alt="img" />
-				<h3 class="gray">Reliable Content Delivery</h3>
-				<div class="gray ">Reliable content delivery platform that
-					handles spotty networks, dropped connections, and long pauses
-					between service requests</div>
+				<h3 class="gray">Streamlined Content Delivery</h3>
+				<div class="gray ">Streamlined content delivery platform that
+					handles spotty networks and dropped connections. Elevates user
+					experience by allowing users to engage with your rich content, even
+					if they lose their data connection.</div>
 			</div>
 
 			<div class="item">
@@ -153,6 +174,12 @@
 				<h3 class="gray">Mobile Device Storage</h3>
 				<div class="gray ">Notifies users if the device does not have
 					enough storage, or if the external storage is not accessible</div>
+			</div>
+			<div class="item">
+				<img src="/resources/images/cm/android_sdk.jpg" alt="img" />
+				<h3 class="gray">Advanced Caching on Device</h3>
+				<div class="gray ">Advanced in-memory caching that results in
+					faster content display, and minimizes memory footprint</div>
 			</div>
 			<div class="item">
 				<img src="/resources/images/cm/android_sdk.jpg" alt="img" />

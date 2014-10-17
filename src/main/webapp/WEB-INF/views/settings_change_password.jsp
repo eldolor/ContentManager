@@ -36,7 +36,7 @@
 		<div class="row full-width">
 			<h2 class="text-center gray">Change Password</h2>
 			<div class="line">
-				<img src="/resources/images/box/line.png" alt="line" />
+				<img src="/resources/images/cm/line.png" alt="line" />
 			</div>
 			<div class="large-12 columns" id="change_password">
 				<form role="form" id="changePasswordForm" name="changePasswordForm"

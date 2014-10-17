@@ -51,7 +51,7 @@
 	<br>
 	<h2 class="text-center">Overview</h2>
 	<div class="line">
-		<img src="/resources/images/box/line.png" alt="line" />
+		<img src="/resources/images/cm/line.png" alt="line" />
 	</div>
 	<div id="owl-demo" class="owl-carousel owl-theme visible">
 		<div class="item">

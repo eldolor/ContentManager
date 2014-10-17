@@ -35,10 +35,8 @@
 		<div class="row full-width">
 
 			<h2 class="text-center gray">Client Keys in Use</h2>
-
-			<p class="text-center page_sub_heading"></p>
 			<div class="line">
-				<img src="/resources/images/box/line.png" alt="line" />
+				<img src="/resources/images/cm/line.png" alt="line" />
 			</div>
 			<br />
 			<div class="row">

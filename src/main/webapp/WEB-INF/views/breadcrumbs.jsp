@@ -5,7 +5,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@page
-	import="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"%><html>
+	import="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"%>
 
 <div class="row">
 	<div class="large-12 columns">

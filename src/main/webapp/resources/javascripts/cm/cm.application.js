@@ -10,7 +10,7 @@ function displayAnyMessage() {
 					statusCode : {
 						200 : function(pMessages) {
 							if (pMessages === '') {
-								log("displayAnyMessage", "no incoming messages")
+								log("displayAnyMessage", "no incoming messages");
 							} else {
 								// TODO: enhance to handle multiple messages
 								log("displayAnyMessage", "display messages");
@@ -141,13 +141,13 @@ function handleDisplayApplications_Callback(pApplications) {
 			lInnerHtml += "<div class='blog_content_details float_left'>";
 			if (int == 0) {
 				lInnerHtml += "<ul> <li id='first_application_id' class='green'>Application Id: "
-					+ lApplication.trackingId
-					+ " </li><li>|</li><li class='light_gray'>";
+						+ lApplication.trackingId
+						+ " </li><li>|</li><li class='light_gray'>";
 				lInnerHtml += "<a id='first_contentgroup' class='small green' href='javascript:void(0)' onclick='displayContentGroups(";
 			} else {
 				lInnerHtml += "<ul> <li class='green'>Application Id: "
-					+ lApplication.trackingId
-					+ " </li><li>|</li><li class='light_gray'>";
+						+ lApplication.trackingId
+						+ " </li><li>|</li><li class='light_gray'>";
 				lInnerHtml += "<a class='small green' href='javascript:void(0)' onclick='displayContentGroups(";
 			}
 			lInnerHtml += lApplication.id
@@ -180,9 +180,9 @@ function handleDisplayApplications_Callback(pApplications) {
 			lInnerHtml += "<div class='blog_content_details float_left'><p class='light_gray'>"
 					+ lApplication.description + "</p>";
 			if (lApplication.changesStaged) {
-				lInnerHtml += "<a href='javascript:void(0);' onclick='pushChangestoHandsets('"
+				lInnerHtml += "<a href='javascript:void(0);' onclick='pushChangestoHandsets("
 						+ lApplication.id
-						+ "')' class='button tiny radius btn-default'>Push Changes to Handsets</a>";
+						+ ")' class='button tiny radius btn-default'>Push Changes to Handsets</a>";
 			}
 			lInnerHtml += "</div>";
 			lInnerHtml += "<div class='clearfix'></div><div class='separator'></div>";

@@ -34,8 +34,8 @@
 		<div class="container va-align">
 			<h2 class="text-center">&lt;app name here&gt;</h2>
 			<p class="text-center page_sub_heading">Content management and
-				delivery platform that reliably delivers rich content (images and
-				videos) to your Mobile Apps</p>
+				delivery platform that manages &amp; reliably delivers rich content
+				(images and videos) to your Mobile Apps</p>
 			<div class="line">
 				<img src="/resources/images/box/line.png" alt="line" />
 			</div>
@@ -48,10 +48,10 @@
 								<i class="fi-folder"></i>
 							</div>
 							<h5>Flexible Content Management Platform</h5>
-							<div class="service-content">Manage your rich content as
-								bite-sized chunks, instead of trying to deliver the full content
-								payload in one shot. Continually update your rich content, with
-								no downtime or performance reduction.</div>
+							<div class="service-content">Enables you to continually
+								add, update, or remove content, without degrading the mobile
+								experience at any point, or having to release a new version of
+								your Mobile App.</div>
 						</div>
 					</div>
 					<div class="large-4 columns">
@@ -60,10 +60,10 @@
 								<i class="fi-cloud"></i>
 							</div>
 							<h5>Reliable Content Delivery</h5>
-							<div class="service-content">Manage the performance
-								unknowns of the last wireless mile, to deliver rich content to
-								Mobile devices. Allows users of your Mobile Apps, to engage with
-								your rich content, even if they lose their data connection.</div>
+							<div class="service-content">Reliable content delivery
+								platform that handles spotty networks and dropped connections.
+								Allows users of your Mobile Apps, to engage with your rich
+								content, even if they lose their data connection.</div>
 						</div>
 					</div>
 					<div class="large-4 columns">
@@ -73,8 +73,8 @@
 							</div>
 							<h5>Increased Developer Productivity</h5>
 							<div class="service-content">Manages the download and
-								storage of rich content on Mobile devices, without requiring to
-								write any code or having to upload a new APK to Google Play</div>
+								storage of content on Mobile devices, without requiring to write
+								any code, or having to release a new version of your Mobile App</div>
 						</div>
 					</div>
 				</div>
@@ -115,8 +115,8 @@
 			<div class="item">
 				<img src="/resources/images/cm/reliable_platform.jpg" alt="img" />
 				<h3 class="gray">Reliable Content Delivery</h3>
-				<div class="gray ">Reliable content delivery platform that can
-					handle spotty networks, dropped connections, and long pauses
+				<div class="gray ">Reliable content delivery platform that
+					handles spotty networks, dropped connections, and long pauses
 					between service requests</div>
 			</div>
 
@@ -124,63 +124,71 @@
 				<img src="/resources/images/cm/expansion_files.png" alt="img" />
 
 				<h3 class="gray">Say Goodbye to Google Play APK Expansion Files</h3>
-				<div class="gray ">You are no longer forced to bundle all your
-					rich content into expansion files, or required to release a new
-					application update, just to update your rich content</div>
+				<div class="gray ">Liberates you from having to bundle all
+					your rich content into monolithic expansion files, and to release a
+					new application update, all to just update your content</div>
 			</div>
 			<div class="item">
 				<img src="/resources/images/cm/continuous_updates.jpg" alt="img" />
-				<h3 class="gray">Enables Continuous Content Updates</h3>
-				<div class="gray ">Continuous rich content updates with no
-					downtime or performance reduction on Mobile devices</div>
+				<h3 class="gray">Continuous Content Updates</h3>
+				<div class="gray ">Continuous content updates with no downtime
+					or performance reduction on Mobile devices, or having to release a
+					new version of your Mobile App</div>
 			</div>
 
+			<div class="item">
+				<img src="/resources/images/cm/no_extra_coding.jpg" alt="img" />
+				<h3 class="gray">No Extra Coding Required</h3>
+				<div class="gray">Reliably downloads and stores content on
+					Mobile or connected devices, without requiring to write any code.</div>
+			</div>
 			<div class="item">
 				<img src="/resources/images/cm/android_sdk.jpg" alt="img" />
 				<h3 class="gray">Easily-pluggable &amp; Feature-rich SDK</h3>
 				<div class="gray ">SDK that provides a simple API to access
-					rich content on Mobile or connected devices</div>
+					content on Mobile or connected devices</div>
 			</div>
 			<div class="item">
 				<img src="/resources/images/cm/android_sdk.jpg" alt="img" />
 				<h3 class="gray">Mobile Device Storage</h3>
-				<div class="gray ">The SDK notifies the user if the device
-					does not have enough storage, or if the external storage is not
-					accessible.</div>
+				<div class="gray ">Notifies users if the device does not have
+					enough storage, or if the external storage is not accessible</div>
 			</div>
 			<div class="item">
 				<img src="/resources/images/cm/android_sdk.jpg" alt="img" />
-				<h3 class="gray">Content Downloads are Non-Blocking</h3>
-				<div class="gray ">File downloads occur in the background, in
-					order to avoid blocking the user interaction</div>
+				<h3 class="gray">Non-Blocking Content Downloads</h3>
+				<div class="gray ">Content downloads occur in the background,
+					and do not block user interaction</div>
 			</div>
 			<div class="item">
 				<img src="/resources/images/cm/android_sdk.jpg" alt="img" />
 				<h3 class="gray">Network Connectivity</h3>
 				<div class="gray ">Network connectivity can change during the
-					download. The SDK handles such changes, and if interrupted, resumes
-					the download when possible.</div>
+					download. Handles such changes, and if interrupted, resumes the
+					download when possible.</div>
 			</div>
 			<div class="item">
 				<img src="/resources/images/cm/android_sdk.jpg" alt="img" />
 				<h3 class="gray">Download Notifications</h3>
-				<div class="gray ">The SDK notifies the user while downloading
-					rich content in the background, and when the download process is
-					complete.</div>
+				<div class="gray ">Notifies users while downloading content in
+					the background, and when the download process is complete.</div>
 			</div>
 			<div class="item">
 				<img src="/resources/images/cm/android_sdk.jpg" alt="img" />
 				<h3 class="gray">Analytics</h3>
-				<div class="gray ">The SDK collects analytics to track usage
-					statistics of your rich content, which can be viewed online.</div>
+				<div class="gray ">Collects analytics to track usage
+					statistics of your content, which can be viewed online.</div>
 			</div>
 
 
 		</div>
 
 	</section>
-	<br>
-	<br>
+	<p>&nbsp;</p>
+	<p>&nbsp;</p>
+	<p>&nbsp;</p>
+	<p>&nbsp;</p>
+	<p>&nbsp;</p>
 
 	<section id="footer">
 

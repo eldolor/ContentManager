@@ -56,9 +56,9 @@
 						<p>A delivery tier that manages the performance unknowns of
 							the last wireless mile, is key to providing great mobile
 							experiences. &lt;&gt; is a content management and delivery
-							platform that reliably delivers your rich content to Mobile
-							devices. It handles spotty networks, dropped connections, and
-							long pauses between service requests.</p>
+							platform that reliably delivers your content to Mobile devices.
+							It handles spotty networks, dropped connections, and long pauses
+							between service requests.</p>
 						<p>This allows users of your Mobile Apps, to engage with your
 							rich content, even if they lose their data connection.</p>
 						<p>
@@ -66,65 +66,62 @@
 					<p class="clearfix"></p>
 					<div>
 						<h3 class="gray">Manage Content as Bite-Sized Chunks</h3>
-						<p>The platform enables you to manage and deliver your rich
-							content as bite-sized chunks. It enables you to continually
-							update your rich content, with no downtime or performance
-							reduction on Mobile or connected devices. You can add, update, or
-							remove individual rich content, without degrading the mobile
-							experience at any point.</p>
+						<p>The platform enables you to manage and deliver your content
+							as bite-sized chunks. It enables you to continually update your
+							content, with no downtime or performance reduction on Mobile or
+							connected devices. You can add, update, or remove individual
+							content, without degrading the mobile experience at any point, or
+							having to release a new version of your Mobile App.</p>
 						<p>In contrast, Google Play restricts APK file to 50MB, and
 							constrains you to bundle all your rich content into 2 monolithic
 							expansion files. Any updates to your rich content requires you to
-							upload a new APK with an updated versionCode in the manifest.</p>
+							release a new version of your Mobile App</p>
 					</div>
 					<p class="clearfix"></p>
 					<div>
-						<h3 class="gray">Requires No Extra Coding</h3>
-						<p>The platform manages the download and storage of rich
-							content on Mobile devices, without requiring to write any code.</p>
-						<p>In contrast, Google Play does not guarantee that the
-							expansion files will be downloaded the same time a user downloads
-							your application. To handle these situations, your App must be
-							able to download the files itself when the main activity starts,
-							using a URL provided by Google Play. Google Downloader Library
-							still requires a few code hooks to your application.</p>
+						<h3 class="gray">No Extra Coding Required</h3>
+						<p>The platform reliably downloads and stores content on
+							Mobile or connected devices, without requiring to write any code.</p>
+						<p>In contrast, Google Play requires application hooks within
+							your Mobile Apps, to handle situations where expansion files have
+							not yet been downloaded and processed.</p>
 					</div>
 					<p class="clearfix"></p>
 					<div>
 						<h3 class="gray">Easily-pluggable &amp; Feature-rich SDK</h3>
-						<p>SDK that provides a simple API to access rich content on
+						<p>SDK that provides a simple API to access content on
 							Mobile or connected devices</p>
 					</div>
 					<p class="clearfix"></p>
 					<div>
 						<h3 class="gray">Mobile Device Storage</h3>
-						<p>The SDK notifies the user if the device does not have
-							enough storage, or if the external storage is not accessible.</p>
+						<p>Notifies users if the device does not have enough storage,
+							or if the external storage is not accessible</p>
 					</div>
 					<p class="clearfix"></p>
 					<div>
-						<h3 class="gray">Content Downloads are Non-Blocking</h3>
-						<p>File downloads occur in the background, in order to avoid
-							blocking the user interaction</p>
+						<h3 class="gray">Non-Blocking Content Downloads</h3>
+						<p>Content downloads occur in the background, and do not block
+							user interaction</p>
 					</div>
 					<p class="clearfix"></p>
 					<div>
 						<h3 class="gray">Network Connectivity</h3>
-						<p>Network connectivity can change during the download. The
-							SDK handles such changes, and if interrupted, resumes the
-							download when possible.</p>
+						<p>Network connectivity can change during the download.
+							Handles such changes, and if interrupted, resumes the download
+							when possible.</p>
 					</div>
 					<p class="clearfix"></p>
 					<div>
 						<h3 class="gray">Download Notifications</h3>
-						<p>The SDK notifies the user while downloading rich content in
-							the background, and when the download process is complete.</p>
+						<p>Notifies the user while downloading content in the
+							background, and when the download process is complete.</p>
 					</div>
 					<p class="clearfix"></p>
 					<div>
 						<h3 class="gray">Analytics</h3>
-						<p>The SDK collects analytics to track usage statistics of
-							your rich content, which can be viewed online.</p>
+						<p>Collects analytics to track usage statistics of your
+							content, which can be viewed online.</p>
 					</div>
 					<p class="clearfix"></p>
 				</div>
@@ -159,19 +156,25 @@
 						<li>
 							<div>
 								<i class="fi-checkbox"></i>
+							</div> <span>No Extra Coding Required</span>
+							<p class="clearfix"></p>
+						</li>
+						<li>
+							<div>
+								<i class="fi-checkbox"></i>
 							</div> <span>Easily-pluggable &amp; Feature-rich SDK</span>
 							<p class="clearfix"></p>
 						</li>
 						<li>
 							<div>
 								<i class="fi-checkbox"></i>
-							</div> <span>Insufficient Device Storage Notifications</span>
+							</div> <span>Mobile Device Storage</span>
 							<p class="clearfix"></p>
 						</li>
 						<li>
 							<div>
 								<i class="fi-checkbox"></i>
-							</div> <span>Content Downloads are Non-Blocking</span>
+							</div> <span>Non-Blocking Content Downloads</span>
 							<p class="clearfix"></p>
 						</li>
 						<li>

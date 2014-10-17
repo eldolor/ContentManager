@@ -100,9 +100,6 @@
 	 <section id="blog">
 		<div class="row full-width">
 			<h2 class="text-center gray">Search Results</h2>
-
-			<p class="text-center page_sub_heading">Lorem ipsum dolor sit
-				amet, consectetur adipisicing elit.</p>
 			<div class="line">
 				<img src="/resources/images/box/line.png" alt="line" />
 			</div>

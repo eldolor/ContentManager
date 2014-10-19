@@ -39,7 +39,7 @@
 			</div>
 			<div>
 				<fieldset>
-					<legend>Tags</legend>
+					<legend>Add Tags</legend>
 					<input name="content_tags" id="content_tags" />
 				</fieldset>
 			</div>

@@ -290,10 +290,7 @@
 	public class DemoBroadcastReceiver extends WakefulBroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			try {
-				if (Logger.isLogEnabled())
-					Logger.log("Entering");
-	
+			try {	
 				if (intent.getAction().equalsIgnoreCase(DownloaderService.RESULT)) {
 					// Depending on the result code, you can trigger application
 					// specific actions.
@@ -327,8 +324,7 @@
 					}
 				}
 			} finally {
-				if (Logger.isLogEnabled())
-					Logger.log("Exiting");
+				//
 			}
 	
 		}
@@ -386,13 +382,11 @@
 	private List<Content> mContentList;
 	...
 	private void loadContent() {
-		Logger.log("Entering");
 
 		mContentList = mContentManager.getAllContents();
 		
 		//display the contents in a list or grid
 
-		Logger.log("Exiting");
 	}
 
 						
@@ -413,13 +407,11 @@
 	private List<Content> mContentList;
 	...
 	private void loadContent() {
-		Logger.log("Entering");
 
 		mContentList = mContentManager.getAllContentsByType(ContentType.IMAGE);
 		
 		//display the contents in a list or grid
 
-		Logger.log("Exiting");
 	}
 
 						
@@ -439,13 +431,11 @@
 	private List<Content> mContentList;
 	...
 	private void loadContent() {
-		Logger.log("Entering");
 
 		mContentList = mContentManager.getAllContents();
 		
 		//display the contents in a list or grid
 
-		Logger.log("Exiting");
 	}
 
 						
@@ -466,13 +456,11 @@
 	private List<Content> mContentList;
 	...
 	private void loadContent() {
-		Logger.log("Entering");
 
 		mContentList = mContentManager.getAllContentsByType(ContentType.IMAGE);
 		
 		//display the contents in a list or grid
 
-		Logger.log("Exiting");
 	}
 
 						
@@ -494,13 +482,11 @@
 	private List<Content> mContentList;
 	...
 	private void loadContent() {
-		Logger.log("Entering");
 
 		mContentList = mContentManager.getAllContentsFromContentGroup(lContentGroupId);
 		
 		//display the contents in a list or grid
 
-		Logger.log("Exiting");
 	}
 
 						
@@ -521,14 +507,12 @@
 	private List<Content> mContentList;
 	...
 	private void loadContent() {
-		Logger.log("Entering");
 
 		mContentList = mContentManager.getAllContentsFromContentGroupByType(lContentGroupId,
 								ContentType.IMAGE);
 		
 		//display the contents in a list or grid
 
-		Logger.log("Exiting");
 	}
 
 						
@@ -545,11 +529,9 @@
 	Private ContentManager mContentManager;
 	...
 	private void loadContent() {
-		Logger.log("Entering");
 
 		Content lContent = getContent(lContentId);
 
-		Logger.log("Exiting");
 	}
 </code>
 					</pre>
@@ -564,13 +546,11 @@
 	Private ContentManager mContentManager;
 	...
 	private void loadContent() {
-		Logger.log("Entering");
 
 		Bitmap lImageBitmap = mContentManager.getImage(1234);
 		
 		Uri lVideoUri = mContentManager.getVideo(5678);
 
-		Logger.log("Exiting");
 	}
 </code>
 					</pre>
@@ -584,13 +564,11 @@
 	Private ContentManager mContentManager;
 	...
 	private void loadContent() {
-		Logger.log("Entering");
 
 		Bitmap lImageBitmap = mContentManager.getAnyImage();
 		
 		Uri lVideoUri = mContentManager.getAnyVideo();
 
-		Logger.log("Exiting");
 	}
 </code>
 					</pre>
@@ -605,13 +583,11 @@
 	Private ContentManager mContentManager;
 	...
 	private void loadContent() {
-		Logger.log("Entering");
 
 		Bitmap lImageBitmap = mContentManager.getAnyImageFromContentGroup(9876);
 		
 		Uri lVideoUri = mContentManager.getAnyVideoFromContentGroup(5432);
 
-		Logger.log("Exiting");
 	}
 </code>
 					</pre>
@@ -628,7 +604,6 @@
 	Private ContentManager mContentManager;
 	...
 	private void loadContent() {
-		Logger.log("Entering");
 
 		Bitmap lScaledBitmap = mContentManager.getScaledImage(9876, 200);
 		
@@ -636,7 +611,6 @@
 
 		Bitmap lScaledBitmapAny = mContentManager.getAnyScaledImage(200);
 
-		Logger.log("Exiting");
 	}
 </code>
 					</pre>
@@ -656,7 +630,6 @@
 	Private ContentManager mContentManager;
 	...
 	private void loadContent() {
-		Logger.log("Entering");
 
 		Bitmap lImageThumbnail = mContentManager.createThumbnail(9876, ThumbnailTypeImage.THUMBNAIL_MICRO_KIND);
 		
@@ -664,7 +637,6 @@
 
 		Bitmap lScaledBitmapAny = mContentManager.getAnyScaledImage(200);
 
-		Logger.log("Exiting");
 	}
 </code>
 					</pre>

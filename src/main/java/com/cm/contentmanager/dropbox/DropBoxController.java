@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
+import com.google.appengine.api.blobstore.UploadOptions;
 
 @Controller
 public class DropBoxController {
@@ -24,6 +25,7 @@ public class DropBoxController {
 
 	private static final Logger LOGGER = Logger
 			.getLogger(DropBoxController.class.getName());
+	private static final String GCS_STORAGE_BUCKET = "cmi-contentmanager.appspot.com/media";
 
 	@RequestMapping(value = "/secured/dropbox", method = RequestMethod.POST, produces = "application/json", headers = { "content-type=multipart/form-data" })
 	public @ResponseBody
@@ -38,6 +40,7 @@ public class DropBoxController {
 			if (keys != null && keys.size() > 0) {
 				response.setStatus(HttpServletResponse.SC_CREATED);
 				String _keyString = keys.get(0).getKeyString().trim();
+
 				if (LOGGER.isLoggable(Level.INFO))
 					LOGGER.info("Returning Key " + _keyString);
 				return "{\"uri\":\"" + _keyString + "\"}";
@@ -64,7 +67,11 @@ public class DropBoxController {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getDropboxUrl");
-			String url = mBlobstoreFactory.createUploadUrl("/secured/dropbox");
+			// String url =
+			// mBlobstoreFactory.createUploadUrl("/secured/dropbox");
+			String url = mBlobstoreFactory.createUploadUrl("/secured/dropbox",
+					UploadOptions.Builder
+							.withGoogleStorageBucketName(GCS_STORAGE_BUCKET));
 
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Returning Url " + url);

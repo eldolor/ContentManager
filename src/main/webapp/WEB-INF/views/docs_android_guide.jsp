@@ -50,10 +50,10 @@
 
 		<h2 class="text-center gray">SDK Guide</h2>
 
-		<div class="line">
+<!-- 		<div class="line">
 			<img src="/resources/images/cm/line.png" alt="line" />
 		</div>
-		<br />
+ -->		<br />
 		<div class="row">
 			<div class="large-12 columns">
 				<div data-magellan-expedition="fixed">

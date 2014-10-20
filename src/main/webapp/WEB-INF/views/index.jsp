@@ -33,10 +33,8 @@
 				<div class="container text_center">
 					<img src="/resources/images/cm/Cube_big.png" alt="big logo" />
 					<h1 class="white">
-						Advanced Content Management and Delivery platform that <span
-							class="rotate">manages rich content, delivers rich content
-							to your Mobile Apps, manages &amp; delivers rich content to your
-							Mobile Apps</span>
+						Advanced Content Management and Delivery platform for your Mobile
+						Apps</span>
 					</h1>
 				</div>
 			</div>
@@ -54,12 +52,11 @@
 		<div class="container va-align">
 			<h2 class="text-center">&lt;app name here&gt;</h2>
 			<p class="text-center page_sub_heading">Advanced Content
-				Management and Delivery platform that manages &amp; delivers rich
-				content to your Mobile Apps</p>
-			<div class="line">
+				Management and Delivery platform for your Mobile Apps</p>
+<!-- 			<div class="line">
 				<img src="/resources/images/cm/line.png" alt="line" />
 			</div>
-			<br> <br>
+ -->			<br> <br>
 			<div class="visible text-center">
 				<div class="row full-width">
 					<div class="large-4 columns">
@@ -69,9 +66,9 @@
 							</div>
 							<h5>Advanced Content Management Platform</h5>
 							<div class="service-content">Enables you to continually
-								add, update, or remove content, without degrading the mobile
-								experience at any point, or having to release a new version of
-								your Mobile App.</div>
+								add, update, or remove content on your Mobile Apps, without
+								degrading the mobile experience of the users at any point, or
+								having to release a new version of your Mobile App.</div>
 						</div>
 					</div>
 					<div class="large-4 columns">
@@ -82,8 +79,9 @@
 							<h5>Streamlined Content Delivery</h5>
 							<div class="service-content">Streamlined content delivery
 								platform that handles spotty networks and dropped connections.
-								Elevates user experience by allowing users to engage with your
-								rich content, even if they lose their data connection.</div>
+								Elevates user experience by allowing users of your Mobile Apps
+								to engage with your rich content, even if they lose their data
+								connection.</div>
 						</div>
 					</div>
 					<div class="large-4 columns">
@@ -93,8 +91,9 @@
 							</div>
 							<h5>Increased Developer Productivity</h5>
 							<div class="service-content">Manages the download and
-								storage of content on Mobile devices, without requiring to write
-								any code, or having to release a new version of your Mobile App</div>
+								storage of content on your Mobile Apps, without requiring to
+								write any code, or having to release a new version of your
+								Mobile App</div>
 						</div>
 					</div>
 				</div>
@@ -120,10 +119,10 @@
 		<br> <br>
 		<h2 class="text-center">Powerful New Features</h2>
 		<p class="text-center page_sub_heading">&nbsp;</p>
-		<div class="line">
+<!-- 		<div class="line">
 			<img src="/resources/images/cm/line.png" alt="line" />
 		</div>
-		<div id="owl-demo" class="owl-carousel owl-theme visible">
+ -->		<div id="owl-demo" class="owl-carousel owl-theme visible">
 			<div class="item">
 				<img src="/resources/images/cm/cloud_driven.jpg" alt="owl" />
 				<h3 class="gray">Cloud-driven Architecture</h3>
@@ -137,8 +136,8 @@
 				<h3 class="gray">Streamlined Content Delivery</h3>
 				<div class="gray ">Streamlined content delivery platform that
 					handles spotty networks and dropped connections. Elevates user
-					experience by allowing users to engage with your rich content, even
-					if they lose their data connection.</div>
+					experience by allowing users of your Mobile Apps to engage with
+					your rich content, even if they lose their data connection.</div>
 			</div>
 
 			<div class="item">
@@ -153,21 +152,21 @@
 				<img src="/resources/images/cm/continuous_updates.jpg" alt="img" />
 				<h3 class="gray">Continuous Content Updates</h3>
 				<div class="gray ">Continuous content updates with no downtime
-					or performance reduction on Mobile devices, or having to release a
-					new version of your Mobile App</div>
+					or performance reduction of your Mobile Apps, or having to release
+					a new version of your Mobile App</div>
 			</div>
 
 			<div class="item">
 				<img src="/resources/images/cm/no_extra_coding.jpg" alt="img" />
 				<h3 class="gray">No Extra Coding Required</h3>
-				<div class="gray">Reliably downloads and stores content on
-					Mobile or connected devices, without requiring to write any code.</div>
+				<div class="gray">Downloads and stores content on your Mobile
+					Apps, without requiring to write any code.</div>
 			</div>
 			<div class="item">
 				<img src="/resources/images/cm/android_sdk.jpg" alt="img" />
 				<h3 class="gray">Easily-pluggable &amp; Feature-rich SDK</h3>
 				<div class="gray ">SDK that provides a simple API to access
-					content on Mobile or connected devices</div>
+					content within your Mobile Apps</div>
 			</div>
 			<div class="item">
 				<img src="/resources/images/cm/android_sdk.jpg" alt="img" />

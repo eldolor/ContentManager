@@ -35,10 +35,10 @@
 	<section>
 		<div class="row full-width">
 			<h2 class="text-center gray">Billing</h2>
-			<div class="line">
+<!-- 			<div class="line">
 				<img src="/resources/images/cm/line.png" alt="line" />
 			</div>
-
+ -->
 			<form id="updateBillingForm" name="updateBillingForm"
 				data-abide="ajax">
 				<div id="billing_not_enabled_message" style="display: none">

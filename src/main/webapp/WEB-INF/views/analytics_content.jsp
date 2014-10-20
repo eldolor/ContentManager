@@ -46,10 +46,10 @@
 			<h2 class="text-center gray">Content Usage</h2>
 			<p class="text-center page_sub_heading">These charts show the
 				daily content impressions on mobile devices, for each content</p>
-			<div class="line">
+<!-- 			<div class="line">
 				<img src="/resources/images/cm/line.png" alt="line" />
 			</div>
-			<div class="content" id="analytics">
+ -->			<div class="content" id="analytics">
 				<div id="progress_bar" style="display: none">
 					<div class="progress radius">
 						<span class="meter" style="width: 40%; background-color: #5cb85c;">Loading...</span>

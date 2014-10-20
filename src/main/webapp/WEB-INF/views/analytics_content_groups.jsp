@@ -47,10 +47,10 @@ var mApplicationId = ${applicationId};
 			<p class="text-center page_sub_heading">These charts show the
 				aggregate daily content impressions on mobile devices, for each
 				content group</p>
-			<div class="line">
+<!-- 			<div class="line">
 				<img src="/resources/images/cm/line.png" alt="line" />
 			</div>
-			<div class="content" id="analytics">
+ -->			<div class="content" id="analytics">
 				<div id="progress_bar" style="display: none">
 					<div class="progress radius">
 						<span class="meter" style="width: 40%; background-color: #5cb85c;">Loading...</span>

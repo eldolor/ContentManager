@@ -42,10 +42,10 @@
 
 			<p class="text-center page_sub_heading">Content groups help
 				organize your contents</p>
-			<div class="line">
+<!-- 			<div class="line">
 				<img src="/resources/images/cm/line.png" alt="line" />
 			</div>
-			<br />
+ -->			<br />
 			<div class="row">
 				<div class="large-7 columns">
 					<jsp:include page="breadcrumbs.jsp"></jsp:include>

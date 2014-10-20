@@ -35,10 +35,10 @@
 		<div class="row full-width">
 
 			<h2 class="text-center gray">Client Keys in Use</h2>
-			<div class="line">
+<!-- 			<div class="line">
 				<img src="/resources/images/cm/line.png" alt="line" />
 			</div>
-			<br />
+ -->			<br />
 			<div class="row">
 				<div class="large-7 columns">
 					<jsp:include page="progress_bar.jsp"></jsp:include>

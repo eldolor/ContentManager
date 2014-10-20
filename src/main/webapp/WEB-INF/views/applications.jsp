@@ -40,11 +40,11 @@
 			<h2 class="text-center gray">Applications</h2>
 
 			<p class="text-center page_sub_heading">Create an application to
-				manage your rich content</p>
-			<div class="line">
+				manage your content</p>
+<!-- 			<div class="line">
 				<img src="/resources/images/cm/line.png" alt="line" />
 			</div>
-			<br />
+ -->			<br />
 			<div class="row">
 				<div class="large-7 columns">
 					<jsp:include page="breadcrumbs.jsp"></jsp:include>

@@ -36,31 +36,29 @@
 			<div class="row full-width">
 				<h2 class="text-center">Overview</h2>
 				<p class="text-center page_sub_heading">Advanced Content
-					Management and Delivery platform that manages &amp; delivers rich
-					content to your Mobile Apps</p>
-				<div class="line">
+					Management and Delivery platform for your Mobile Apps</p>
+<!-- 				<div class="line">
 					<img src="/resources/images/cm/line.png" alt="line" />
 				</div>
-
+ -->
 				<div class="large-7 columns">
 					<p class="clearfix"></p>
 					<div>
 						<h3 class="gray">Mobile Content Requirements</h3>
 						<p>Mobile is pushing ageing web architectures to the brink.
 							The three-tier web architecture won&apos;t deliver any more. At
-							the same time, the content requirements of Mobile Apps continue
+							the same time, the content requirements of your Mobile Apps continue
 							to expand. The performance unknowns of the last wireless mile has
 							further exacerbated the problem of delivering rich content,
-							images and videos, to mobile devices.</p>
+							images and videos, to your Mobile Apps.</p>
 						<br>
 					</div>
 					<div>
 						<h3 class="gray">Streamlined Content Delivery</h3>
 						<p>A delivery tier that manages the performance unknowns of
 							the last wireless mile, is key to providing great mobile
-							experiences. &lt;&gt; reliably delivers your content to Mobile
-							devices over spotty networks, dropped connections, and long
-							pauses between service requests.</p>
+							experiences. &lt;&gt; streamlines the delivery of your content to
+							your Mobile Apps, over spotty networks and dropped connections.</p>
 						<p>This elevates the user experience of your Mobile Apps, by
 							allowing users to engage with your rich content, even if they
 							lose their data connection.</p>
@@ -70,11 +68,11 @@
 					<div>
 						<h3 class="gray">Manage Content as Bite-Sized Chunks</h3>
 						<p>The platform enables you to manage and deliver your content
-							as bite-sized chunks. It lets you continually update your
-							content, with no downtime or performance reduction on Mobile or
-							connected devices. You can add, update, or remove content,
-							without degrading the mobile experience at any point, or having
-							to release a new version of your Mobile App.</p>
+							as bite-sized chunks. It lets you continually update content on
+							your Mobile Apps, with no downtime or performance reduction. You
+							can add, update, or remove content, without degrading the mobile
+							experience of the users of your Mobile Apps at any point, or
+							having to release a new version of your Mobile App.</p>
 						<p>In contrast, Google Play restricts APK file to 50MB, and
 							constrains you to bundle all your rich content into 2 monolithic
 							expansion files. Any updates to your rich content requires you to
@@ -83,8 +81,8 @@
 					<p class="clearfix"></p>
 					<div>
 						<h3 class="gray">No Extra Coding Required</h3>
-						<p>The platform reliably downloads and stores content on
-							Mobile or connected devices, without requiring to write any code.</p>
+						<p>The platform downloads and stores content on
+							your Mobile Apps, without requiring to write any code.</p>
 						<p>In contrast, Google Play requires application hooks within
 							your Mobile Apps, to handle situations where expansion files have
 							not yet been downloaded and processed.</p>
@@ -92,8 +90,7 @@
 					<p class="clearfix"></p>
 					<div>
 						<h3 class="gray">Easily-pluggable &amp; Feature-rich SDK</h3>
-						<p>SDK that provides a simple API to access content on Mobile
-							or connected devices</p>
+						<p>SDK that provides a simple API to access content within your Mobile Apps</p>
 					</div>
 					<p class="clearfix"></p>
 					<div>

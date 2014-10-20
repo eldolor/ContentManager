@@ -50,10 +50,10 @@
 				href="mailto:anshu@coconutmartini.com?Subject=Plans%20and%20Pricing">Contact Us</a> if you need
 			additional Storage or Bandwidth
 		</p>
-		<div class="line">
+<!-- 		<div class="line">
 			<img src="/resources/images/cm/line.png" alt="line" />
 		</div>
-		<br>
+ -->		<br>
 		<c:choose>
 			<c:when test="${isError == true}">
 				<div id="subscription_errors" style="display: none">

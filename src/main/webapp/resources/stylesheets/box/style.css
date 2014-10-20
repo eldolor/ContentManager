@@ -309,7 +309,7 @@ textarea:focus, input[type="text"]:focus, input[type="password"]:focus, input[ty
 }
 
 .page_sub_heading {
-    width: 40%;
+    width: 60%;
     font-style: italic;
     margin: auto;
 }
@@ -401,7 +401,7 @@ a {
 
     #services .row div:nth-child(1), #services .row div:nth-child(2), #services .row div:nth-child(3), #services .row div:nth-child(4) {
         padding: 10px;
-        height: 230px;
+        height: 330px;
     }
 
     #services .box {
@@ -411,10 +411,10 @@ a {
         margin: auto;
         padding: 15px !important;
         text-align: center;
-        -webkit-transition-duration: 1s;
-        -moz-transition-duration: 1s;
-        -o-transition-duration: 1s;
-        transition-duration: 1s;
+        -webkit-transition-duration: 2s;
+        -moz-transition-duration: 2s;
+        -o-transition-duration: 2s;
+        transition-duration: 2s;
         -webkit-transition-property: -webkit-transform;
         -moz-transition-property: -moz-transform;
         -o-transition-property: -o-transform;
@@ -584,6 +584,7 @@ a {
     border-radius: 3px;
     text-align: center;
     border: 1px solid #e1e1e1;
+    height: 530px;
     -webkit-transition: all 0.9s ease-in-out;
     -moz-transition: all 0.9s ease-in-out;
     -o-transition: all 0.9s ease-in-out;
@@ -1107,6 +1108,10 @@ a {
         .blog_content:hover .blog_date {
             background-color: #1fad9d;
             color: #fff !important;
+	        -webkit-transition-duration: 2s;
+	        -moz-transition-duration: 2s;
+	        -o-transition-duration: 2s;
+	        transition-duration: 2s;
             -webkit-transform: rotate(10deg);
             -moz-transform: rotate(10deg);
             -o-transform: rotate(10deg);

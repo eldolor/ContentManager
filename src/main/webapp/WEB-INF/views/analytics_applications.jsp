@@ -41,8 +41,7 @@
 	<section>
 		<div class="row full-width">
 			<h2 class="text-center gray">Content Usage</h2>
-			<p class="text-center page_sub_heading">These charts show the
-				aggregate daily content impressions on mobile devices, for each
+			<p class="text-center page_sub_heading">Aggregate daily content impressions on mobile devices, for each
 				application.</p>
 <!-- 			<div class="line">
 				<img src="/resources/images/cm/line.png" alt="line" />

@@ -383,10 +383,28 @@
 	...
 	private void loadContent() {
 
-		mContentList = mContentManager.getAllContents();
+		mContentList = mContentManager.getAllContentsByTag(String tag);
 		
-		//display the contents in a list or grid
+		//Iterate through the content list
+		Content lContent = mContentList.get(position);
+		long lContentId = lContent.getId();
+		
+		if (lContent.getType().equals(ContentType.IMAGE.getType())) {
 
+			//For each image
+			ImageView lImage = (ImageView) mRootView.findViewById(R.id.content_image);
+			Bitmap lBitmap = mContentManager.getScaledImage(lContentId, width);
+			lImage.setImageBitmap(lBitmap);
+
+		} else if (mContent.getType().equals(ContentType.VIDEO.getType())) {
+			
+			//For each video
+			VideoView lVideoView = (VideoView) mRootView.findViewById(R.id.content_video);
+			Uri lUri = mContentManager.getVideo(lContentId);
+			lVideoView.setVideoURI(lUri);
+
+		}
+		
 	}
 
 						
@@ -410,7 +428,25 @@
 
 		mContentList = mContentManager.getAllContentsByType(ContentType.IMAGE);
 		
-		//display the contents in a list or grid
+		//Iterate through the content list
+		Content lContent = mContentList.get(position);
+		long lContentId = lContent.getId();
+		
+		if (lContent.getType().equals(ContentType.IMAGE.getType())) {
+
+			//For each image
+			ImageView lImage = (ImageView) mRootView.findViewById(R.id.content_image);
+			Bitmap lBitmap = mContentManager.getScaledImage(lContentId, width);
+			lImage.setImageBitmap(lBitmap);
+
+		} else if (mContent.getType().equals(ContentType.VIDEO.getType())) {
+			
+			//For each video
+			VideoView lVideoView = (VideoView) mRootView.findViewById(R.id.content_video);
+			Uri lUri = mContentManager.getVideo(lContentId);
+			lVideoView.setVideoURI(lUri);
+
+		}
 
 	}
 
@@ -434,7 +470,25 @@
 
 		mContentList = mContentManager.getAllContents();
 		
-		//display the contents in a list or grid
+		//Iterate through the content list
+		Content lContent = mContentList.get(position);
+		long lContentId = lContent.getId();
+		
+		if (lContent.getType().equals(ContentType.IMAGE.getType())) {
+
+			//For each image
+			ImageView lImage = (ImageView) mRootView.findViewById(R.id.content_image);
+			Bitmap lBitmap = mContentManager.getScaledImage(lContentId, width);
+			lImage.setImageBitmap(lBitmap);
+
+		} else if (mContent.getType().equals(ContentType.VIDEO.getType())) {
+			
+			//For each video
+			VideoView lVideoView = (VideoView) mRootView.findViewById(R.id.content_video);
+			Uri lUri = mContentManager.getVideo(lContentId);
+			lVideoView.setVideoURI(lUri);
+
+		}
 
 	}
 
@@ -459,8 +513,15 @@
 
 		mContentList = mContentManager.getAllContentsByType(ContentType.IMAGE);
 		
-		//display the contents in a list or grid
-
+		//Iterate through the content list
+		Content lContent = mContentList.get(position);
+		long lContentId = lContent.getId();
+		
+		//For each image
+		ImageView lImage = (ImageView) mRootView.findViewById(R.id.content_image);
+		Bitmap lBitmap = mContentManager.getScaledImage(lContentId, width);
+		lImage.setImageBitmap(lBitmap);
+		
 	}
 
 						
@@ -485,7 +546,25 @@
 
 		mContentList = mContentManager.getAllContentsFromContentGroup(lContentGroupId);
 		
-		//display the contents in a list or grid
+		//Iterate through the content list
+		Content lContent = mContentList.get(position);
+		long lContentId = lContent.getId();
+		
+		if (lContent.getType().equals(ContentType.IMAGE.getType())) {
+
+			//For each image
+			ImageView lImage = (ImageView) mRootView.findViewById(R.id.content_image);
+			Bitmap lBitmap = mContentManager.getScaledImage(lContentId, width);
+			lImage.setImageBitmap(lBitmap);
+
+		} else if (mContent.getType().equals(ContentType.VIDEO.getType())) {
+			
+			//For each video
+			VideoView lVideoView = (VideoView) mRootView.findViewById(R.id.content_video);
+			Uri lUri = mContentManager.getVideo(lContentId);
+			lVideoView.setVideoURI(lUri);
+
+		}
 
 	}
 
@@ -511,7 +590,15 @@
 		mContentList = mContentManager.getAllContentsFromContentGroupByType(lContentGroupId,
 								ContentType.IMAGE);
 		
-		//display the contents in a list or grid
+		//Iterate through the content list
+		Content lContent = mContentList.get(position);
+		long lContentId = lContent.getId();
+		
+		//For each image
+		ImageView lImage = (ImageView) mRootView.findViewById(R.id.content_image);
+		Bitmap lBitmap = mContentManager.getScaledImage(lContentId, width);
+		lImage.setImageBitmap(lBitmap);
+		
 
 	}
 
@@ -531,6 +618,22 @@
 	private void loadContent() {
 
 		Content lContent = getContent(lContentId);
+		
+		if (lContent.getType().equals(ContentType.IMAGE.getType())) {
+
+			//For each image
+			ImageView lImage = (ImageView) mRootView.findViewById(R.id.content_image);
+			Bitmap lBitmap = mContentManager.getScaledImage(lContentId, width);
+			lImage.setImageBitmap(lBitmap);
+
+		} else if (mContent.getType().equals(ContentType.VIDEO.getType())) {
+			
+			//For each video
+			VideoView lVideoView = (VideoView) mRootView.findViewById(R.id.content_video);
+			Uri lUri = mContentManager.getVideo(lContentId);
+			lVideoView.setVideoURI(lUri);
+
+		}
 
 	}
 </code>

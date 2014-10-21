@@ -124,7 +124,7 @@
 		</div>
  -->		<div id="owl-demo" class="owl-carousel owl-theme visible">
 			<div class="item">
-				<img src="/resources/images/cm/cloud_driven.jpg" alt="owl" />
+				<img src="/resources/images/cm/Letter-C-orange-icon.png" alt="owl" />
 				<h3 class="gray">Cloud-driven Architecture</h3>
 				<div class="gray ">Cloud-driven architecture that is more
 					efficient and cost-effective. Powered by Google AppEngine and
@@ -132,7 +132,7 @@
 			</div>
 
 			<div class="item">
-				<img src="/resources/images/cm/reliable_platform.jpg" alt="img" />
+				<img src="/resources/images/cm/Letter-S-orange-icon.png" alt="img" />
 				<h3 class="gray">Streamlined Content Delivery</h3>
 				<div class="gray ">Streamlined content delivery platform that
 					handles spotty networks and dropped connections. Elevates user
@@ -141,7 +141,7 @@
 			</div>
 
 			<div class="item">
-				<img src="/resources/images/cm/expansion_files.png" alt="img" />
+				<img src="/resources/images/cm/Letter-G-orange-icon.png" alt="img" />
 
 				<h3 class="gray">Say Goodbye to Google Play APK Expansion Files</h3>
 				<div class="gray ">Liberates you from having to bundle all
@@ -149,7 +149,7 @@
 					new application update, all to just update your content</div>
 			</div>
 			<div class="item">
-				<img src="/resources/images/cm/continuous_updates.jpg" alt="img" />
+				<img src="/resources/images/cm/Letter-C-orange-icon.png" alt="img" />
 				<h3 class="gray">Continuous Content Updates</h3>
 				<div class="gray ">Continuous content updates with no downtime
 					or performance reduction of your Mobile Apps, or having to release
@@ -157,50 +157,50 @@
 			</div>
 
 			<div class="item">
-				<img src="/resources/images/cm/no_extra_coding.jpg" alt="img" />
+				<img src="/resources/images/cm/Letter-N-orange-icon.png" alt="img" />
 				<h3 class="gray">No Extra Coding Required</h3>
 				<div class="gray">Downloads and stores content on your Mobile
 					Apps, without requiring to write any code.</div>
 			</div>
 			<div class="item">
-				<img src="/resources/images/cm/android_sdk.jpg" alt="img" />
+				<img src="/resources/images/cm/Letter-E-orange-icon.png" alt="img" />
 				<h3 class="gray">Easily-pluggable &amp; Feature-rich SDK</h3>
 				<div class="gray ">SDK that provides a simple API to access
 					content within your Mobile Apps</div>
 			</div>
 			<div class="item">
-				<img src="/resources/images/cm/android_sdk.jpg" alt="img" />
+				<img src="/resources/images/cm/Letter-M-orange-icon.png" alt="img" />
 				<h3 class="gray">Mobile Device Storage</h3>
 				<div class="gray ">Notifies users if the device does not have
 					enough storage, or if the external storage is not accessible</div>
 			</div>
 			<div class="item">
-				<img src="/resources/images/cm/android_sdk.jpg" alt="img" />
+				<img src="/resources/images/cm/Letter-A-orange-icon.png" alt="img" />
 				<h3 class="gray">Advanced Caching on Device</h3>
 				<div class="gray ">Advanced in-memory caching that results in
 					faster content display, and minimizes memory footprint</div>
 			</div>
 			<div class="item">
-				<img src="/resources/images/cm/android_sdk.jpg" alt="img" />
+				<img src="/resources/images/cm/Letter-N-orange-icon.png" alt="img" />
 				<h3 class="gray">Non-Blocking Content Downloads</h3>
 				<div class="gray ">Content downloads occur in the background,
 					and do not block user interaction</div>
 			</div>
 			<div class="item">
-				<img src="/resources/images/cm/android_sdk.jpg" alt="img" />
+				<img src="/resources/images/cm/Letter-N-orange-icon.png" alt="img" />
 				<h3 class="gray">Network Connectivity</h3>
 				<div class="gray ">Network connectivity can change during the
 					download. Handles such changes, and if interrupted, resumes the
 					download when possible.</div>
 			</div>
 			<div class="item">
-				<img src="/resources/images/cm/android_sdk.jpg" alt="img" />
+				<img src="/resources/images/cm/Letter-D-orange-icon.png" alt="img" />
 				<h3 class="gray">Download Notifications</h3>
 				<div class="gray ">Notifies users while downloading content in
 					the background, and when the download process is complete.</div>
 			</div>
 			<div class="item">
-				<img src="/resources/images/cm/android_sdk.jpg" alt="img" />
+				<img src="/resources/images/cm/Letter-A-orange-icon.png" alt="img" />
 				<h3 class="gray">Analytics</h3>
 				<div class="gray ">Collects analytics to track usage
 					statistics of your content, which can be viewed online.</div>

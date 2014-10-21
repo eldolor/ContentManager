@@ -35,6 +35,8 @@
 	google.load("visualization", "1", {packages:["corechart"]});
 	//setupAccountUsageGoogCharts() is defined in cm.account.settings.js
 	google.setOnLoadCallback(setupAccountUsageGoogCharts);
+	
+	
 </script>
 <body>
 
@@ -44,7 +46,7 @@
 	<jsp:include page="top_bar.jsp"></jsp:include>
 	<section>
 		<div class="row full-width">
-			<h2 class="text-center gray">Account Usage</h2>
+			<!-- <h2 class="text-center gray">Account Usage</h2> -->
 <!-- 			<div class="line">
 				<img src="/resources/images/cm/line.png" alt="line" />
 			</div>
@@ -59,6 +61,11 @@
 
 		</div>
 	</section>
+	<p>&nbsp;</p>
+	<p>&nbsp;</p>
+	<p>&nbsp;</p>
+	<p>&nbsp;</p>
+	<p>&nbsp;</p>
 
 	<br>
 	<section id="footer">

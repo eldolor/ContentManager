@@ -272,6 +272,172 @@ function setupAccountUsage() {
 	}
 }
 
+// function setupAccountUsageGoogCharts() {
+// log("setupAccountUsageGoogCharts", "Entering");
+// try {
+// $('#progress_bar').show();
+// var url = "/secured/quota";
+// var jqxhr = $
+// .ajax({
+// url : url,
+// type : "GET",
+// contentType : "application/json",
+// async : true,
+// statusCode : {
+// 200 : function(quota) {
+// mQuota = quota;
+// // displayMessage(JSON.stringify(mQuota, null, 2));
+// var lAccountUsageDetailsHtml = '';
+// lAccountUsageDetailsHtml += '<div class="row full-width" data-equalizer><div
+// class="large-12 columns" >';
+//
+// // BANDWIDTH
+// lAccountUsageDetailsHtml += '<div class="large-4 columns"
+// data-equalizer-watch><div id="bandwidth_chart"></div>';
+// // lAccountUsageDetailsHtml += '<h2
+// // class="gray">Bandwidth</h2>';
+// var lPercentageBandwidthUsed = (mQuota.percentageBandwidthUsed == '0.0') ?
+// '<1%'
+// : mQuota.percentageBandwidthUsed;
+// lAccountUsageDetailsHtml += '<h3 class="gray"><small>'
+// + lPercentageBandwidthUsed
+// + ' OR '
+// + convertBytes(mQuota.bandwidthUsed)
+// + ' of '
+// + convertBytes(mQuota.bandwidthLimit)
+// + ' used';
+// lAccountUsageDetailsHtml += '</small></h3>';
+// lAccountUsageDetailsHtml += '</div>';
+//
+// // TOTAL STORAGE
+// lAccountUsageDetailsHtml += '<div class="large-4 columns"
+// data-equalizer-watch><div id="storage_chart"></div>';
+// // lAccountUsageDetailsHtml += '<h2
+// // class="gray">Storage</h2>';
+// var lPercentageStorageUsed = (mQuota.percentageStorageUsed == '0.0') ? '<1%'
+// : mQuota.percentageStorageUsed;
+// lAccountUsageDetailsHtml += '<h3 class="gray"><small>'
+// + lPercentageStorageUsed
+// + ' OR '
+// + convertBytes(mQuota.storageUsed)
+// + ' of '
+// + convertBytes(mQuota.storageLimit)
+// + ' used';
+// lAccountUsageDetailsHtml += '</small></h3>';
+// lAccountUsageDetailsHtml += '</div>';
+//
+// // STORAGE per application
+// lAccountUsageDetailsHtml += '<div class="large-4 columns"
+// data-equalizer-watch><div id="storage_per_application_chart" ></div>';
+//
+// lAccountUsageDetailsHtml += '<h3 class="gray"><small>Storage Per
+// Application</small></h3>';
+// lAccountUsageDetailsHtml += '</div>';
+//
+// lAccountUsageDetailsHtml += '</div>';
+// lAccountUsageDetailsHtml += '</div>';
+//
+// $('#account_usage_details').html(
+// lAccountUsageDetailsHtml);
+// // log("setupAccountUsage",
+// // lAccountUsageDetailsHtml);
+//
+// // GOOG Charts
+// var lBandwidthData = google.visualization
+// .arrayToDataTable([
+// [ 'Label', 'Value' ],
+// [
+// 'Bandwidth',
+// Math
+// .ceil(mQuota.percentageBandwidthUsed) ] ]);
+//
+// var lStorageData = google.visualization
+// .arrayToDataTable([
+// [ 'Label', 'Value' ],
+//
+// [
+// 'Storage',
+// Math
+// .ceil(mQuota.percentageStorageUsed) ] ]);
+// var options = {
+// redFrom : 90,
+// redTo : 100,
+// yellowFrom : 75,
+// yellowTo : 90,
+// minorTicks : 5
+// };
+//
+// var lBandwidthChart = new google.visualization.Gauge(
+// document.getElementById('bandwidth_chart'));
+// var lStorageChart = new google.visualization.Gauge(
+// document.getElementById('storage_chart'));
+//
+// lBandwidthChart.draw(lBandwidthData, options);
+// lStorageChart.draw(lStorageData, options);
+//
+// // Storage per application
+// var lStoragePerApplicationData = new google.visualization.DataTable();
+// lStoragePerApplicationData.addColumn({
+// title : 'Storage per Application',
+// type : 'string',
+// id : 'Application'
+// });
+// lStoragePerApplicationData.addColumn({
+// type : 'number',
+// id : 'Storage'
+// });
+//
+// for (var i = 0; i < mQuota.storageQuota.length; i++) {
+// lStoragePerApplicationData
+// .addRow([
+// mQuota.storageQuota[i].trackingId,
+// mQuota.storageQuota[i].storageUsedInBytes ]);
+// }
+//
+// var lStoragePerApplicationChartOptions = {
+// is3D : true,
+// legend : {
+// position : 'right'
+// },
+// tooltip : {
+// showColorCode : true
+// }
+// };
+//
+// var lStoragePerApplicationChart = new google.visualization.PieChart(
+// document
+// .getElementById('storage_per_application_chart'));
+//
+// lStoragePerApplicationChart.draw(
+// lStoragePerApplicationData,
+// lStoragePerApplicationChartOptions);
+// },
+// 503 : function() {
+// $('#content_errors').html(
+// 'Unable to get available storage quota');
+// $('#content_errors').show();
+// }
+// },
+// error : function(xhr, textStatus, errorThrown) {
+// log(errorThrown);
+// $('#content_errors')
+// .html(
+// 'Unable to process the request. Please try again later');
+// $('#content_errors').show();
+// },
+// complete : function(xhr, textStatus) {
+// $('#progress_bar').css("width", "100%");
+// $('#progress_bar').hide();
+// log(xhr.status);
+// }
+// });
+// } catch (err) {
+// handleError("setupAccountUsageGoogCharts", err);
+// } finally {
+// log("setupAccountUsageGoogCharts", "Exiting");
+// }
+// }
+
 function setupAccountUsageGoogCharts() {
 	log("setupAccountUsageGoogCharts", "Entering");
 	try {
@@ -288,48 +454,52 @@ function setupAccountUsageGoogCharts() {
 							mQuota = quota;
 							// displayMessage(JSON.stringify(mQuota, null, 2));
 							var lAccountUsageDetailsHtml = '';
-							lAccountUsageDetailsHtml += '<div class="row full-width" data-equalizer><div class="large-12 columns" >';
 
-							// BANDWIDTH
-							lAccountUsageDetailsHtml += '<div class="large-4 columns" data-equalizer-watch><div id="bandwidth_chart"></div>';
-							// lAccountUsageDetailsHtml += '<h2
-							// class="gray">Bandwidth</h2>';
+							lAccountUsageDetailsHtml += '<section id="charts" class="display-table"><div class="container va-align"><h2 class="text-center">Account Usage</h2><br> <br>';
+
+							lAccountUsageDetailsHtml += '<div class="text-center"><div class="row full-width">';
+							// BANDWIDTH CHART
+							lAccountUsageDetailsHtml += '<div class="large-4 columns"><div id="one"><div id="bandwidth_chart" style="width: 600px; height: 300px;display: block; margin: 0 auto;"></div>';
+
 							var lPercentageBandwidthUsed = (mQuota.percentageBandwidthUsed == '0.0') ? '<1%'
 									: mQuota.percentageBandwidthUsed;
-							lAccountUsageDetailsHtml += '<h3 class="gray"><small>'
-									+ lPercentageBandwidthUsed
-									+ ' OR '
-									+ convertBytes(mQuota.bandwidthUsed)
+
+							lAccountUsageDetailsHtml += '<h5>'
+									+ lPercentageBandwidthUsed + ' used OR ';
+
+							lAccountUsageDetailsHtml += convertBytes(mQuota.bandwidthUsed)
 									+ ' of '
 									+ convertBytes(mQuota.bandwidthLimit)
-									+ ' used';
-							lAccountUsageDetailsHtml += '</small></h3>';
-							lAccountUsageDetailsHtml += '</div>';
+									+ ' used </h5>';
+							lAccountUsageDetailsHtml += '</div></div>';// end
+																		// large
+							// 4 columns
 
-							// TOTAL STORAGE
-							lAccountUsageDetailsHtml += '<div class="large-4 columns" data-equalizer-watch><div id="storage_chart"></div>';
-							// lAccountUsageDetailsHtml += '<h2
-							// class="gray">Storage</h2>';
+							// STORAGE CHART
+							lAccountUsageDetailsHtml += '<div class="large-4 columns"><div id="two"><div id="storage_chart" style="width: 600px; height: 300px;display: block; margin: 0 auto;" ></div>';
+
 							var lPercentageStorageUsed = (mQuota.percentageStorageUsed == '0.0') ? '<1%'
 									: mQuota.percentageStorageUsed;
-							lAccountUsageDetailsHtml += '<h3 class="gray"><small>'
-									+ lPercentageStorageUsed
-									+ ' OR '
-									+ convertBytes(mQuota.storageUsed)
+
+							lAccountUsageDetailsHtml += '<h5>'
+									+ lPercentageStorageUsed + ' used OR ';
+
+							lAccountUsageDetailsHtml += convertBytes(mQuota.storageUsed)
 									+ ' of '
 									+ convertBytes(mQuota.storageLimit)
-									+ ' used';
-							lAccountUsageDetailsHtml += '</small></h3>';
-							lAccountUsageDetailsHtml += '</div>';
+									+ ' used </h5>';
+							lAccountUsageDetailsHtml += '</div></div>';// end
+																		// large
+							// 4 columns
 
-							// STORAGE per application
-							lAccountUsageDetailsHtml += '<div class="large-4 columns" data-equalizer-watch><div id="storage_per_application_chart" ></div>';
+							// STORAGE PER APPLICATION CHART
+							lAccountUsageDetailsHtml += '<div class="large-4 columns"><div id="three"><div id="storage_per_application_chart" style="width: 600px; height: 300px;display: block; margin: 0 auto;"></div> <h5>Storage Per Application</h5>';
 
-							lAccountUsageDetailsHtml += '<h3 class="gray"><small>Storage Per Application</small></h3>';
-							lAccountUsageDetailsHtml += '</div>';
+							lAccountUsageDetailsHtml += '</div></div>';// end
+																		// large
+							// 4 columns
 
-							lAccountUsageDetailsHtml += '</div>';
-							lAccountUsageDetailsHtml += '</div>';
+							lAccountUsageDetailsHtml += '</div></div></div></section>';
 
 							$('#account_usage_details').html(
 									lAccountUsageDetailsHtml);

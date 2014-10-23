@@ -16,7 +16,7 @@
 <jsp:include page="meta_tags.jsp"></jsp:include>
 
 
-<title>Content Manager</title>
+<title>Skok</title>
 
 <jsp:include page="resources.jsp" flush="true"></jsp:include>
 
@@ -50,7 +50,7 @@
 	<br>
 	<section id="services" class="display-table">
 		<div class="container va-align">
-			<h2 class="text-center">&lt;app name here&gt;</h2>
+			<h2 class="text-center">Skok</h2>
 			<p class="text-center page_sub_heading">Advanced Content
 				Management and Delivery platform for your Mobile Apps</p>
 <!-- 			<div class="line">

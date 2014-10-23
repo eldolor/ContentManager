@@ -15,7 +15,7 @@
 <head>
 <jsp:include page="meta_tags.jsp"></jsp:include>
 
-<title>Content Manager</title>
+<title>Skok</title>
 <jsp:include page="resources.jsp" flush="true"></jsp:include>
 <script>
 	$(document).foundation();

@@ -27,7 +27,7 @@
 <head>
 <jsp:include page="meta_tags.jsp"></jsp:include>
 
-<title>Content Manager</title>
+<title>Skok</title>
 <jsp:include page="resources.jsp" flush="true"></jsp:include>
 
 <!-- Begin Custom -->
@@ -60,7 +60,7 @@
 		<h2 class="text-center gray">Plans and Pricing</h2>
 		<p class="text-center page_sub_heading">
 			Please <a
-				href="mailto:anshu@coconutmartini.com?Subject=Plans%20and%20Pricing">Contact Us</a> if you need
+				href="mailto:anshu@skok.co?Subject=Plans%20and%20Pricing">Contact Us</a> if you need
 			additional Storage or Bandwidth
 		</p>
 <!-- 		<div class="line">

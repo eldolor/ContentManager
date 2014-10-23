@@ -18,7 +18,7 @@
 <head>
 <jsp:include page="meta_tags.jsp"></jsp:include>
 
-<title>Content Manager</title>
+<title>Skok</title>
 <jsp:include page="resources.jsp" flush="true"></jsp:include>
 
 <!-- Begin Custom -->
@@ -57,7 +57,7 @@
 						<h3 class="gray">Streamlined Content Delivery</h3>
 						<p>A delivery tier that manages the performance unknowns of
 							the last wireless mile, is key to providing great mobile
-							experiences. &lt;&gt; streamlines the delivery of your content to
+							experiences. Skok streamlines the delivery of your content to
 							your Mobile Apps, over spotty networks and dropped connections.</p>
 						<p>This elevates the user experience of your Mobile Apps, by
 							allowing users to engage with your rich content, even if they

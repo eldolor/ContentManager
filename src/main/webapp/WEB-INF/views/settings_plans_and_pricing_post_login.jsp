@@ -27,7 +27,7 @@
 <head>
 <jsp:include page="meta_tags.jsp"></jsp:include>
 
-<title>Content Manager</title>
+<title>Skok</title>
 <jsp:include page="resources.jsp" flush="true"></jsp:include>
 
 <!-- Begin Custom -->
@@ -47,7 +47,7 @@
 		<h2 class="text-center gray">Plans and Pricing</h2>
 		<p class="text-center page_sub_heading">
 			Please <a
-				href="mailto:anshu@coconutmartini.com?Subject=Plans%20and%20Pricing">Contact Us</a> if you need
+				href="mailto:anshu@skok.co?Subject=Plans%20and%20Pricing">Contact Us</a> if you need
 			additional Storage or Bandwidth
 		</p>
 <!-- 		<div class="line">
@@ -143,7 +143,7 @@
 								<script src="https://checkout.stripe.com/checkout.js"
 									class="stripe-button"
 									data-key="pk_test_4aEi34FWLvjmVHc14fQoUQPZ" data-amount="700"
-									data-name="Content Manager"
+									data-name="Skok"
 									data-description="500MB Plan @ $7/month"
 									data-image="/resources/images/cm/done.png" data-zip-code="true"
 									data-panel-label="Subscribe" data-label="Get Started">
@@ -207,7 +207,7 @@
 								<script src="https://checkout.stripe.com/checkout.js"
 									class="stripe-button"
 									data-key="pk_test_4aEi34FWLvjmVHc14fQoUQPZ" data-amount="1500"
-									data-name="Content Manager"
+									data-name="Skok"
 									data-description="1GB Plan @ $15/month"
 									data-image="/resources/images/cm/done.png" data-zip-code="true"
 									data-panel-label="Subscribe" data-label="Get Started">
@@ -270,7 +270,7 @@
 								<script src="https://checkout.stripe.com/checkout.js"
 									class="stripe-button"
 									data-key="pk_test_4aEi34FWLvjmVHc14fQoUQPZ" data-amount="2500"
-									data-name="Content Manager"
+									data-name="Skok"
 									data-description="2GB Plan @ $25/month"
 									data-image="/resources/images/cm/done.png" data-zip-code="true"
 									data-panel-label="Subscribe" data-label="Get Started">
@@ -333,7 +333,7 @@
 								<script src="https://checkout.stripe.com/checkout.js"
 									class="stripe-button"
 									data-key="pk_test_4aEi34FWLvjmVHc14fQoUQPZ" data-amount="5000"
-									data-name="Content Manager"
+									data-name="Skok"
 									data-description="4GB Plan @ $50/month"
 									data-image="/resources/images/cm/done.png" data-zip-code="true"
 									data-panel-label="Subscribe" data-label="Get Started">

@@ -71,6 +71,38 @@ public class StripeCustomerDao {
 		}
 	}
 
+	StripeCustomer getByStripeId(String stripeId) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering get");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(StripeCustomer.class);
+				q.setFilter("stripeId == stripeIdParam && deleted == deletedParam");
+				q.declareParameters("String stripeIdParam, Boolean deletedParam");
+				List<StripeCustomer> lList = (List<StripeCustomer>) q.execute(
+						stripeId, Boolean.valueOf(false));
+				if (lList != null && (!lList.isEmpty()))
+					return lList.get(0);
+				else
+					return null;
+
+			} catch (JDOObjectNotFoundException e) {
+				LOGGER.log(Level.WARNING, e.getMessage());
+				return null;
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting get");
+		}
+	}
+
 	void update(StripeCustomer pCustomer) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))

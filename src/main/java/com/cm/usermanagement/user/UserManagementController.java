@@ -749,8 +749,8 @@ public class UserManagementController {
 			htmlBody.append(lEmailMessage);
 			try {
 				Utils.sendEmail(
-						Configuration.FORGOT_PASSWORD_FROM_EMAIL_ADDRESS,
-						Configuration.FORGOT_PASSWORD_FROM_NAME,
+						Configuration.FROM_EMAIL_ADDRESS,
+						Configuration.FROM_NAME,
 						lRequest.getEmail(), "", Configuration.SITE_NAME,
 						htmlBody.toString(), null);
 			} catch (UnsupportedEncodingException e) {

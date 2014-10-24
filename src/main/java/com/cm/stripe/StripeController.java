@@ -1,5 +1,7 @@
 package com.cm.stripe;
 
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,6 +10,7 @@ import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.simple.JSONObject;
@@ -25,6 +28,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.cm.config.CanonicalPlanName;
 import com.cm.config.Configuration;
 import com.cm.stripe.transfer.StripeCard;
+import com.cm.usermanagement.user.StripeChargeEmailBuilder;
 import com.cm.usermanagement.user.User;
 import com.cm.usermanagement.user.UserService;
 import com.cm.util.Utils;
@@ -660,14 +664,226 @@ public class StripeController {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
 			LOGGER.info(json.toString());
-			String lType = (String)json.get("type");
+			String lStripeId = null;
+			StripeCustomer lStripeCustomer = null;
+
+			Map lData = (Map) json.get("data");
+
+			// String lCurrency = (String) lCharge.get("currency");
+			StripeChargeEmailBuilder lEmailBuilder = new StripeChargeEmailBuilder();
+
+			String lType = (String) json.get("type");
 			if (lType.equals("charge.succeeded")) {
 				// TODO: send out an email
 				if (LOGGER.isLoggable(Level.INFO))
 					LOGGER.info("Charge Succeeded");
+				Map lCharge = (Map) lData.get("object");
+
+				Map lCard = (Map) lCharge.get("card");
+				String lBrand = (String) lCard.get("brand");
+				String lLast4 = (String) lCard.get("last4");
+				Integer lAmount = (Integer) lCharge.get("amount");
+				BigDecimal bg1, bg2, bg3;
+
+				bg1 = new BigDecimal(lAmount);
+				bg2 = new BigDecimal("100");
+
+				// divide bg1 with bg2 with 3 scale
+				bg3 = bg1.divide(bg2);
+				lStripeId = (String) lCharge.get("customer");
+				lStripeCustomer = stripeCustomerService
+						.getByStripeId(lStripeId);
+				if (lStripeCustomer == null) {
+					LOGGER.log(Level.SEVERE,
+							"Stripe Customer not found for Webhook");
+					response.setStatus(HttpServletResponse.SC_OK);
+					return;
+				}
+				String lInvoice = (String) lCharge.get("invoice");
+				StringBuilder lHtmlFormattedMessage = new StringBuilder();
+
+				lHtmlFormattedMessage.append("<p>Hi,</p>");
+				lHtmlFormattedMessage
+						.append("<p class=\"lead\">We have received your payment for your Skok subscription. You can keep this receipt for your records. Feel free to reach out to us at anshu@skok.co.</p>");
+				lHtmlFormattedMessage.append("<p><b>Skok Receipt</b></p>");
+				lHtmlFormattedMessage.append("<p>Plan: "
+						+ lStripeCustomer.getCanonicalPlanName() + "</p>");
+
+				lHtmlFormattedMessage.append("<p>Amount: $" + bg3 + "USD</p>");
+				lHtmlFormattedMessage.append("<p>Charged to: " + lBrand
+						+ " card ending in " + lLast4 + "</p>");
+				lHtmlFormattedMessage
+						.append("<p>Invoice: " + lInvoice + "</p>");
+				lHtmlFormattedMessage.append("<p>&nbsp;</p><p>Thank you!</p>");
+				String lEmailTemplate = lEmailBuilder
+						.build(lHtmlFormattedMessage.toString());
+				try {
+					Utils.sendEmail(Configuration.FROM_EMAIL_ADDRESS,
+							Configuration.FROM_NAME,
+							lStripeCustomer.getUsername(), "",
+							Configuration.SITE_NAME + " Payment Receipt",
+							lEmailTemplate, null);
+				} catch (UnsupportedEncodingException e) {
+					LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				} catch (MessagingException e) {
+					LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				}
+
 			} else if (lType.equals("charge.failed")) {
 				// TODO: send out an email
 				LOGGER.warning("Charge Failed!!!");
+				Map lCharge = (Map) lData.get("object");
+
+				Map lCard = (Map) lCharge.get("card");
+				String lBrand = (String) lCard.get("brand");
+				String lLast4 = (String) lCard.get("last4");
+				Integer lAmount = (Integer) lCharge.get("amount");
+				BigDecimal bg1, bg2, bg3;
+
+				bg1 = new BigDecimal(lAmount);
+				bg2 = new BigDecimal("100");
+
+				// divide bg1 with bg2 with 3 scale
+				bg3 = bg1.divide(bg2);
+
+				String lFailureCode = (String) lCharge.get("failure_code");
+				if (lFailureCode.equals("expired_card")
+						|| lFailureCode.equals("card_declined")
+						|| lFailureCode.equals("incorrect_number")
+						|| lFailureCode.equals("invalid_number")
+						|| lFailureCode.equals("invalid_expiry_month")
+						|| lFailureCode.equals("invalid_expiry_year")
+						|| lFailureCode.equals("invalid_cvc")
+						|| lFailureCode.equals("incorrect_cvc")
+						|| lFailureCode.equals("incorrect_zip")) {
+					lStripeId = (String) lCharge.get("customer");
+					lStripeCustomer = stripeCustomerService
+							.getByStripeId(lStripeId);
+
+					if (lStripeCustomer == null) {
+						LOGGER.log(Level.SEVERE,
+								"Stripe Customer not found for Webhook");
+						response.setStatus(HttpServletResponse.SC_OK);
+						return;
+					}
+					String lInvoice = (String) lCharge.get("invoice");
+					StringBuilder lHtmlFormattedMessage = new StringBuilder();
+
+					lHtmlFormattedMessage.append("<p>Hi,</p>");
+					lHtmlFormattedMessage
+							.append("<p class=\"lead\">We were unable to process your payment for your Skok subscription.</p>");
+
+					lHtmlFormattedMessage
+							.append("<p>Please login to http://skok.co and update your Billing information.</p>");
+					lHtmlFormattedMessage.append("<p>Plan: "
+							+ lStripeCustomer.getCanonicalPlanName() + "</p>");
+
+					lHtmlFormattedMessage.append("<p>Amount: $" + bg3
+							+ "USD</p>");
+					lHtmlFormattedMessage.append("<p>Charged to: " + lBrand
+							+ " card ending in " + lLast4 + "</p>");
+					lHtmlFormattedMessage.append("<p>Invoice: " + lInvoice
+							+ "</p>");
+					lHtmlFormattedMessage.append("<p>&nbsp;</p><p>Thank you!</p>");
+					String lEmailTemplate = lEmailBuilder
+							.build(lHtmlFormattedMessage.toString());
+					try {
+						Utils.sendEmail(Configuration.FROM_EMAIL_ADDRESS,
+								Configuration.FROM_NAME,
+								lStripeCustomer.getUsername(), "",
+								Configuration.SITE_NAME + " Payment Failure",
+								lEmailTemplate, null);
+					} catch (UnsupportedEncodingException e) {
+						LOGGER.log(Level.SEVERE, e.getMessage(), e);
+					} catch (MessagingException e) {
+						LOGGER.log(Level.SEVERE, e.getMessage(), e);
+					}
+
+				}
+			} else if (lType.equals("customer.card.updated")) {
+				// TODO: send out an email
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("Customer Card updated");
+				Map lObject = (Map) lData.get("object");
+
+				String lBrand = (String) lObject.get("brand");
+				String lLast4 = (String) lObject.get("last4");
+				lStripeId = (String) lObject.get("customer");
+				lStripeCustomer = stripeCustomerService
+						.getByStripeId(lStripeId);
+				if (lStripeCustomer == null) {
+					LOGGER.log(Level.SEVERE,
+							"Stripe Customer not found for Webhook");
+					response.setStatus(HttpServletResponse.SC_OK);
+					return;
+				}
+				StringBuilder lHtmlFormattedMessage = new StringBuilder();
+
+				lHtmlFormattedMessage.append("<p>Hi,</p>");
+				lHtmlFormattedMessage
+						.append("<p class=\"lead\">You have successfully updated your payment information for your Skok subscription.</p>");
+
+				lHtmlFormattedMessage.append("<p>Plan: "
+						+ lStripeCustomer.getCanonicalPlanName() + "</p>");
+
+				lHtmlFormattedMessage.append("<p>Card: " + lBrand
+						+ " card ending in " + lLast4 + "</p>");
+				lHtmlFormattedMessage.append("<p>&nbsp;</p><p>Thank you!</p>");
+				String lEmailTemplate = lEmailBuilder
+						.build(lHtmlFormattedMessage.toString());
+				try {
+					Utils.sendEmail(Configuration.FROM_EMAIL_ADDRESS,
+							Configuration.FROM_NAME,
+							lStripeCustomer.getUsername(), "",
+							Configuration.SITE_NAME
+									+ " Payment Information Updated",
+							lEmailTemplate, null);
+				} catch (UnsupportedEncodingException e) {
+					LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				} catch (MessagingException e) {
+					LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				}
+			} else if (lType.equals("customer.subscription.created")
+					|| lType.equals("customer.subscription.updated")) {
+				// TODO: send out an email
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("Customer Subscription");
+				Map lObject = (Map) lData.get("object");
+
+				lStripeId = (String) lObject.get("customer");
+				lStripeCustomer = stripeCustomerService
+						.getByStripeId(lStripeId);
+				if (lStripeCustomer == null) {
+					LOGGER.log(Level.SEVERE,
+							"Stripe Customer not found for Webhook");
+					response.setStatus(HttpServletResponse.SC_OK);
+					return;
+				}
+				StringBuilder lHtmlFormattedMessage = new StringBuilder();
+
+				lHtmlFormattedMessage.append("<p>Hi,</p>");
+				lHtmlFormattedMessage
+						.append("<p class=\"lead\">You have successfully subscribed to the following plan.</p>");
+
+				lHtmlFormattedMessage.append("<p>Plan: "
+						+ lStripeCustomer.getCanonicalPlanName() + "</p>");
+
+				lHtmlFormattedMessage.append("<p>&nbsp;</p><p>Thank you!</p>");
+				String lEmailTemplate = lEmailBuilder
+						.build(lHtmlFormattedMessage.toString());
+				try {
+					Utils.sendEmail(Configuration.FROM_EMAIL_ADDRESS,
+							Configuration.FROM_NAME,
+							lStripeCustomer.getUsername(), "",
+							Configuration.SITE_NAME
+									+ " Subscription Updated",
+							lEmailTemplate, null);
+				} catch (UnsupportedEncodingException e) {
+					LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				} catch (MessagingException e) {
+					LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				}
+
 			}
 			response.setStatus(HttpServletResponse.SC_OK);
 

@@ -35,6 +35,17 @@ public class StripeCustomerService {
 				LOGGER.info("Exiting");
 		}
 	}
+	
+	public StripeCustomer getByStripeId(String stripeId) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			return stripeCustomerDao.getByStripeId(stripeId);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
 
 	public void update(StripeCustomer customer) {
 		try {

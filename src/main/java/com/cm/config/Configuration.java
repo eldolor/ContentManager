@@ -5,10 +5,13 @@ public class Configuration {
 	public static final String MESSAGE_TYPE = "MESSAGE_TYPE";
 	public static final String MESSAGE_TYPE_CONTENT_LIST = "MESSAGE_TYPE_CONTENT_LIST";
 	public static final String MESSAGE_TYPE_SEND_TO_SYNC = "MESSAGE_TYPE_SEND_TO_SYNC";
-	public static final String SITE_NAME = "Roquette";
-	public static final String FORGOT_PASSWORD_URL = "https://roquette.com/forgotpassword";
-	public static final String FORGOT_PASSWORD_FROM_EMAIL_ADDRESS = "anshu.gaind@gmail.com";
-	public static final String FORGOT_PASSWORD_FROM_NAME = "Coconut Martini Inc";
+	
+	public static final String SITE_NAME = "Skok";
+	public static final String FORGOT_PASSWORD_URL = "https://skok.co/forgotpassword";
+	public static final String FROM_EMAIL_ADDRESS = "anshu@skok.co";
+	public static final String FROM_NAME = "Skok";
+	
+	
 	public static final String STRIPE_API_KEY = "sk_test_4aEiOFaIp1sl35p1Gqjco3Is";
 	public static final String GOOGLE_API_PROJECT_NUMBER = "468566067831";
 

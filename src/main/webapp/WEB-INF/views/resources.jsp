@@ -112,38 +112,70 @@
 	ga('create', 'UA-53875097-1', 'auto');
 
 	var PageTitle = {
+		SIGN_IN : "sign_in",
+		SIGN_UP : "sign_up",
+		HOME : "home",
+		MESSAGES : "messages",
+		FORGOT_PASSWORD : "forgot_password",
 		APPLICATIONS : "applications",
 		APPLICATION : "application",
 		CONTENT_GROUPS : "content_groups",
 		CONTENT_GROUP : "content_group",
 		CONTENTS : "contents",
 		CONTENT : "content",
-		ACCOUNT_SETTINGS : "account_settings",
-		SEARCH_RESULTS : "search_results"
+		CLIENT_KEYS : "client_keys",
+		BILLING : "billing",
+		ACCOUNT_USAGE : "account_usage",
+		CHANGE_PASSWORD : "change_password",
+		SEARCH_RESULTS : "search_results",
+		PLANS : "plans",
+		PRODUCT_TOUR_CONTENT_MANAGEMENT : "product_tour_content_management",
+		PRODUCT_TOUR_USAGE_REPORTS : "product_tour_usage_reports",
+		OVERVIEW : "overview",
+		USAGE_REPORTS_APPLICATIONS : "usage_reports_applications",
+		USAGE_REPORTS_CONTENT_GROUPS : "usage_reports_content_groups",
+		USAGE_REPORTS_CONTENTS : "usage_reports_contents",
+		DOCUMENTS_GETTING_STARTED_ANDROID : "documents_getting_started_android",
+		DOCUMENTS_ANDROID_SDK_API_REFERENCE : "documents_android_sdk_api_reference",
+		DOWNLOADS_ANDROID_SDK : "downloads_android_sdk"
 	};
 	var Category = {
+		MESSAGES : "messages",
+		FORGOT_PASSWORD : "forgot_password",
 		APPLICATIONS : "applications",
 		APPLICATION : "application",
 		CONTENT_GROUPS : "content_group",
 		CONTENT_GROUP : "content_group",
 		CONTENTS : "contents",
 		CONTENT : "content",
-		ACCOUNT_SETTINGS : "account_settings",
+		CLIENT_KEYS : "client_keys",
+		BILLING : "billing",
+		ACCOUNT_USAGE : "account_usage",
+		CHANGE_PASSWORD : "change_password",
 		SIGN_IN : "sign_in",
 		SIGN_OUT : "sign_out",
-		SIGN_UP : "sign_up"
+		SIGN_UP : "sign_up",
+		PLANS : "plans",
+		PRODUCT_TOUR : "product_tour",
+		USAGE_REPORTS : "usage_reports",
+		DOCUMENTS : "documents",
+		SDK : "sdk",
+		SDK_DOCUMENTS : "sdk_documents"
 	};
 	var Action = {
-		CREATE_NEW : "create_new",
 		CREATE : "create",
 		UPDATE : "update",
 		CANCEL : "cancel",
 		DELETE : "delete",
-		FORGOT_PASSWORD : "forgot_password",
+		VIEW : "view",
+		MOVE : "move",
+		REQUEST : "request",
+		UPLOAD : "upload",
 		SIGN_IN : "sign_in",
 		SIGN_OUT : "sign_out",
 		SIGN_UP : "sign_up",
-		ACCOUNT_SETTINGS : "account_settings"
+		PUSH_CHANGES_TO_HANDSETS : "push_changes_to_handsets",
+		DOWNLOAD : "download"
 	};
 </script>
 <!-- End Google Analytics -->
@@ -154,6 +186,10 @@
 		CONTENT : "content"
 	};
 </script>
+
+<!-- Favicon -->
+<link rel="shortcut icon" href="/resources/images/cm/favicon.ico" type="image/x-icon">
+<link rel="icon" href="/resources/images/cm/favicon.ico" type="image/x-icon">
 
 
 <!-- Theme Related -->

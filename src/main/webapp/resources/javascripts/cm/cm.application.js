@@ -36,6 +36,13 @@ function displayAnyMessage() {
 								// alert(pMessages);
 								$('#message_box').html(lMessagesHtml);
 								$('#message_box').show();
+								// Google Analytics
+								ga('send', {
+									'hitType' : 'pageview',
+									'page' : '/secured/messages',
+									'title' : PageTitle.MESSAGES
+								});
+								// End Google Analytics
 							}
 						}
 					}
@@ -73,6 +80,11 @@ function displayAnyMessage() {
 									}
 								}
 							});
+							// Google Analytics
+							ga('send', 'event', Category.MESSAGES,
+									Action.CANCEL);
+							// End Google Analytics
+
 						});
 	} catch (err) {
 		handleError("displayAnyMessage", err);
@@ -205,6 +217,10 @@ function pushChangestoHandsets(pApplicationId) {
 	// load entry info via ajax
 	log("pushChangestoHandsets", "Entering");
 	try {
+		// Google Analytics
+		ga('send', 'event', Category.APPLICATION,
+				Action.PUSH_CHANGES_TO_HANDSETS);
+		// End Google Analytics
 		var jqxhr = $
 				.ajax({
 					url : "/secured/pushchanges/" + pApplicationId,
@@ -547,10 +563,16 @@ function newApplication() {
 										// End Google Analytics
 									});
 							$('#application_cancel_button').unbind();
-							$('#application_cancel_button').click(function() {
-								$('#application_create').hide();
-								$('#applications_list').show();
-							});
+							$('#application_cancel_button').click(
+									function() {
+										$('#application_create').hide();
+										$('#applications_list').show();
+										// Google Analytics
+										ga('send', 'event',
+												Category.APPLICATION,
+												Action.CANCEL);
+										// End Google Analytics
+									});
 
 							$('#application_id').val('');
 							$('#application_name').val('');
@@ -564,6 +586,10 @@ function newApplication() {
 									.attr('checked', 'checked');
 
 							$('#application_errors').empty();
+							// Google Analytics
+							ga('send', 'event', Category.APPLICATION,
+									Action.CREATE);
+							// End Google Analytics
 						},
 						409 : function() {
 							// insufficient quota
@@ -787,9 +813,6 @@ function deleteApplication(id) {
 		displayConfirm(
 				"Are you sure you want to delete this Application?",
 				function() {
-					// Google Analytics
-					ga('send', 'event', Category.APPLICATION, Action.DELETE);
-					// End Google Analytics
 
 					var url = "/secured/application/" + id + "/"
 							+ _timeUpdatedMs + "/"
@@ -801,6 +824,11 @@ function deleteApplication(id) {
 								contentType : "application/json",
 								statusCode : {
 									200 : function() {
+										// Google Analytics
+										ga('send', 'event',
+												Category.APPLICATION,
+												Action.DELETE);
+										// End Google Analytics
 										$('#application_create').hide();
 										location.reload();
 										// getApplications();

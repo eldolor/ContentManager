@@ -154,8 +154,7 @@ function getContent(pApplicationId, pContentGroupId) {
 							// Google Analytics
 							ga('send', {
 								'hitType' : 'pageview',
-								'page' : '/secured/' + pApplicationId + '/'
-										+ pContentGroupId + '/content/',
+								'page' : '/secured/content',
 								'title' : PageTitle.CONTENTS
 							});
 							// End Google Analytics
@@ -493,15 +492,26 @@ function editContent(id) {
 										var invalid_fields = $(this).find(
 												'[data-invalid]');
 										log(invalid_fields);
-									}).on('valid', function() {
-								updateContent();
-							});
+									}).on(
+									'valid',
+									function() {
+										updateContent();
+										// Google Analytics
+										ga('send', 'event', Category.CONTENT,
+												Action.UPDATE);
+										// End Google Analytics
+									});
 
 							$('#content_cancel_button').unbind();
-							$('#content_cancel_button').click(function() {
-								$('#content_create').hide();
-								$('#content_list').show();
-							});
+							$('#content_cancel_button').click(
+									function() {
+										$('#content_create').hide();
+										$('#content_list').show();
+										// Google Analytics
+										ga('send', 'event', Category.CONTENT,
+												Action.CANCEL);
+										// End Google Analytics
+									});
 
 							$('#content_errors').empty();
 						},
@@ -600,12 +610,15 @@ function viewContent(pContentId) {
 					contentType : "application/json",
 					statusCode : {
 						200 : function(content) {
+							// Google Analytics
+							ga('send', 'event', Category.CONTENT, Action.VIEW);
+							// End Google Analytics
 
 							if (content.type == 'image') {
 								var _url = "/contentserver/dropbox/"
 										+ content.uri;
 								log("viewImage", _url);
-								if (content.uri != null) {
+								if (content.uri) {
 									$("#image_widget").attr("src", _url);
 									// close wait div
 
@@ -634,7 +647,7 @@ function viewContent(pContentId) {
 								var _url = "/contentserver/dropbox/"
 										+ content.uri;
 								log("viewVideo", _url);
-								if (content.uri != null) {
+								if (content.uri) {
 									// reset
 									$("#jquery_jplayer_1")
 											.jPlayer("clearMedia");
@@ -782,11 +795,17 @@ function newContent() {
 			log(invalid_fields);
 		}).on('valid', function() {
 			createContent();
+			// Google Analytics
+			ga('send', 'event', Category.CONTENT, Action.CREATE);
+			// End Google Analytics
 		});
 		$('#content_cancel_button').unbind();
 		$('#content_cancel_button').click(function() {
 			$('#content_create').hide();
 			$('#content_list').show();
+			// Google Analytics
+			ga('send', 'event', Category.CONTENT, Action.CANCEL);
+			// End Google Analytics
 		});
 
 		$('#content_list').hide();
@@ -1022,6 +1041,10 @@ function deleteContent(id) {
 								contentType : "application/json",
 								statusCode : {
 									200 : function() {
+										// Google Analytics
+										ga('send', 'event', Category.CONTENT,
+												Action.DELETE);
+										// End Google Analytics
 										$('#content_create').hide();
 										location.reload();
 										// getContent(mSelectedApplication.id,
@@ -1124,6 +1147,9 @@ function buildContentList(pId, pApplicationId, pContentGroups) {
 				contentType : "application/json",
 				statusCode : {
 					200 : function() {
+						// Google Analytics
+						ga('send', 'event', Category.CONTENT, Action.MOVE);
+						// End Google Analytics
 						location.reload();
 					},
 					503 : function() {

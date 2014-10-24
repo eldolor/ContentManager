@@ -52,6 +52,9 @@ function setup() {
 		}).on('valid', function() {
 			log('changePasswordForm: valid!');
 			changePassword();
+			// Google Analytics
+			ga('send', 'event', Category.CHANGE_PASSWORD, Action.UPDATE);
+			// End Google Analytics
 		});
 		$('#cm_errors_container').hide();
 
@@ -69,6 +72,9 @@ function setup() {
 			log(invalid_fields);
 		}).on('valid', function() {
 			submitForgotPasswordRequest();
+			// Google Analytics
+			ga('send', 'event', Category.FORGOT_PASSWORD, Action.REQUEST);
+			// End Google Analytics
 		});
 
 		// default behaviour
@@ -86,11 +92,15 @@ function setup() {
 				newStripeCard();
 			} else {
 				updateStripeCard();
+				// Google Analytics
+				ga('send', 'event', Category.BILLING, Action.UPDATE);
+				// End Google Analytics
 			}
 		});
 		$('#payment_info_update_errors').hide();
 
-		Stripe.setPublishableKey('pk_test_4aEi34FWLvjmVHc14fQoUQPZ');
+		// defined in Globals
+		Stripe.setPublishableKey(mStripeKey);
 		$("#cm_errors_container").addClass("fadeInUp animated");
 		$("#user_forgot_password_errors_container").addClass(
 				"fadeInUp animated");
@@ -248,6 +258,13 @@ function setupAccountUsage() {
 							lAccountUsageDetailsHtml += '</div>';
 							$('#account_usage_details').html(
 									lAccountUsageDetailsHtml);
+							// Google Analytics
+							ga('send', {
+								'hitType' : 'pageview',
+								'page' : '/account/usage',
+								'title' : PageTitle.ACCOUNT_USAGE
+							});
+							// End Google Analytics
 							log("setupAccountUsage", lAccountUsageDetailsHtml);
 
 						},
@@ -271,172 +288,6 @@ function setupAccountUsage() {
 		log("setupAccountUsage", "Exiting");
 	}
 }
-
-// function setupAccountUsageGoogCharts() {
-// log("setupAccountUsageGoogCharts", "Entering");
-// try {
-// $('#progress_bar').show();
-// var url = "/secured/quota";
-// var jqxhr = $
-// .ajax({
-// url : url,
-// type : "GET",
-// contentType : "application/json",
-// async : true,
-// statusCode : {
-// 200 : function(quota) {
-// mQuota = quota;
-// // displayMessage(JSON.stringify(mQuota, null, 2));
-// var lAccountUsageDetailsHtml = '';
-// lAccountUsageDetailsHtml += '<div class="row full-width" data-equalizer><div
-// class="large-12 columns" >';
-//
-// // BANDWIDTH
-// lAccountUsageDetailsHtml += '<div class="large-4 columns"
-// data-equalizer-watch><div id="bandwidth_chart"></div>';
-// // lAccountUsageDetailsHtml += '<h2
-// // class="gray">Bandwidth</h2>';
-// var lPercentageBandwidthUsed = (mQuota.percentageBandwidthUsed == '0.0') ?
-// '<1%'
-// : mQuota.percentageBandwidthUsed;
-// lAccountUsageDetailsHtml += '<h3 class="gray"><small>'
-// + lPercentageBandwidthUsed
-// + ' OR '
-// + convertBytes(mQuota.bandwidthUsed)
-// + ' of '
-// + convertBytes(mQuota.bandwidthLimit)
-// + ' used';
-// lAccountUsageDetailsHtml += '</small></h3>';
-// lAccountUsageDetailsHtml += '</div>';
-//
-// // TOTAL STORAGE
-// lAccountUsageDetailsHtml += '<div class="large-4 columns"
-// data-equalizer-watch><div id="storage_chart"></div>';
-// // lAccountUsageDetailsHtml += '<h2
-// // class="gray">Storage</h2>';
-// var lPercentageStorageUsed = (mQuota.percentageStorageUsed == '0.0') ? '<1%'
-// : mQuota.percentageStorageUsed;
-// lAccountUsageDetailsHtml += '<h3 class="gray"><small>'
-// + lPercentageStorageUsed
-// + ' OR '
-// + convertBytes(mQuota.storageUsed)
-// + ' of '
-// + convertBytes(mQuota.storageLimit)
-// + ' used';
-// lAccountUsageDetailsHtml += '</small></h3>';
-// lAccountUsageDetailsHtml += '</div>';
-//
-// // STORAGE per application
-// lAccountUsageDetailsHtml += '<div class="large-4 columns"
-// data-equalizer-watch><div id="storage_per_application_chart" ></div>';
-//
-// lAccountUsageDetailsHtml += '<h3 class="gray"><small>Storage Per
-// Application</small></h3>';
-// lAccountUsageDetailsHtml += '</div>';
-//
-// lAccountUsageDetailsHtml += '</div>';
-// lAccountUsageDetailsHtml += '</div>';
-//
-// $('#account_usage_details').html(
-// lAccountUsageDetailsHtml);
-// // log("setupAccountUsage",
-// // lAccountUsageDetailsHtml);
-//
-// // GOOG Charts
-// var lBandwidthData = google.visualization
-// .arrayToDataTable([
-// [ 'Label', 'Value' ],
-// [
-// 'Bandwidth',
-// Math
-// .ceil(mQuota.percentageBandwidthUsed) ] ]);
-//
-// var lStorageData = google.visualization
-// .arrayToDataTable([
-// [ 'Label', 'Value' ],
-//
-// [
-// 'Storage',
-// Math
-// .ceil(mQuota.percentageStorageUsed) ] ]);
-// var options = {
-// redFrom : 90,
-// redTo : 100,
-// yellowFrom : 75,
-// yellowTo : 90,
-// minorTicks : 5
-// };
-//
-// var lBandwidthChart = new google.visualization.Gauge(
-// document.getElementById('bandwidth_chart'));
-// var lStorageChart = new google.visualization.Gauge(
-// document.getElementById('storage_chart'));
-//
-// lBandwidthChart.draw(lBandwidthData, options);
-// lStorageChart.draw(lStorageData, options);
-//
-// // Storage per application
-// var lStoragePerApplicationData = new google.visualization.DataTable();
-// lStoragePerApplicationData.addColumn({
-// title : 'Storage per Application',
-// type : 'string',
-// id : 'Application'
-// });
-// lStoragePerApplicationData.addColumn({
-// type : 'number',
-// id : 'Storage'
-// });
-//
-// for (var i = 0; i < mQuota.storageQuota.length; i++) {
-// lStoragePerApplicationData
-// .addRow([
-// mQuota.storageQuota[i].trackingId,
-// mQuota.storageQuota[i].storageUsedInBytes ]);
-// }
-//
-// var lStoragePerApplicationChartOptions = {
-// is3D : true,
-// legend : {
-// position : 'right'
-// },
-// tooltip : {
-// showColorCode : true
-// }
-// };
-//
-// var lStoragePerApplicationChart = new google.visualization.PieChart(
-// document
-// .getElementById('storage_per_application_chart'));
-//
-// lStoragePerApplicationChart.draw(
-// lStoragePerApplicationData,
-// lStoragePerApplicationChartOptions);
-// },
-// 503 : function() {
-// $('#content_errors').html(
-// 'Unable to get available storage quota');
-// $('#content_errors').show();
-// }
-// },
-// error : function(xhr, textStatus, errorThrown) {
-// log(errorThrown);
-// $('#content_errors')
-// .html(
-// 'Unable to process the request. Please try again later');
-// $('#content_errors').show();
-// },
-// complete : function(xhr, textStatus) {
-// $('#progress_bar').css("width", "100%");
-// $('#progress_bar').hide();
-// log(xhr.status);
-// }
-// });
-// } catch (err) {
-// handleError("setupAccountUsageGoogCharts", err);
-// } finally {
-// log("setupAccountUsageGoogCharts", "Exiting");
-// }
-// }
 
 function setupAccountUsageGoogCharts() {
 	log("setupAccountUsageGoogCharts", "Entering");
@@ -472,7 +323,7 @@ function setupAccountUsageGoogCharts() {
 									+ convertBytes(mQuota.bandwidthLimit)
 									+ ' used </h5>';
 							lAccountUsageDetailsHtml += '</div></div>';// end
-																		// large
+							// large
 							// 4 columns
 
 							// STORAGE CHART
@@ -489,14 +340,14 @@ function setupAccountUsageGoogCharts() {
 									+ convertBytes(mQuota.storageLimit)
 									+ ' used </h5>';
 							lAccountUsageDetailsHtml += '</div></div>';// end
-																		// large
+							// large
 							// 4 columns
 
 							// STORAGE PER APPLICATION CHART
 							lAccountUsageDetailsHtml += '<div class="large-4 columns"><div id="three"><div id="storage_per_application_chart" style="width: 600px; height: 300px;display: block; margin: 0 auto;"></div> <h5>Storage Per Application</h5>';
 
 							lAccountUsageDetailsHtml += '</div></div>';// end
-																		// large
+							// large
 							// 4 columns
 
 							lAccountUsageDetailsHtml += '</div></div></div></section>';
@@ -575,6 +426,13 @@ function setupAccountUsageGoogCharts() {
 							lStoragePerApplicationChart.draw(
 									lStoragePerApplicationData,
 									lStoragePerApplicationChartOptions);
+							// Google Analytics
+							ga('send', {
+								'hitType' : 'pageview',
+								'page' : '/account/usage',
+								'title' : PageTitle.ACCOUNT_USAGE
+							});
+							// End Google Analytics
 						},
 						503 : function() {
 							$('#content_errors').html(
@@ -771,6 +629,9 @@ function planUpdate(pPlanName, pProgressBarName, pPlanCharge) {
 			async : true,
 			statusCode : {
 				200 : function() {
+					// Google Analytics
+					ga('send', 'event', Category.PLANS, Action.UPDATE);
+					// End Google Analytics
 					location.reload('/account/plans');
 				},
 				409 : function(errors) {

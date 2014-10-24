@@ -25,6 +25,13 @@ function setup() {
 		setupContent();
 
 		getSearchResults(mSearchTerm);
+		// Google Analytics
+		ga('send', {
+			'hitType' : 'pageview',
+			'page' : '/search',
+			'title' : PageTitle.SEARCH_RESULTS
+		});
+		// End Google Analytics
 	} catch (err) {
 		handleError("setup", err);
 	} finally {

@@ -26,6 +26,10 @@ function setupContentDropBox(pUrl, pAvailableStorageQuotaInBytes,
 			$.data(file).addClass('done');
 			// response is the JSON object that post_file.php returns
 			$('#content_uri').val(response.uri);
+			// Google Analytics
+			ga('send', 'event', Category.CONTENT, Action.UPLOAD);
+			// End Google Analytics
+
 		},
 
 		error : function(err, file) {

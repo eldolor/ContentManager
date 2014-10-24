@@ -32,7 +32,7 @@
 
 			<h3 class="gray">Terms of Service</h3>
 			<div>
-				<label>By using the Coconut Martini.com web site ("Service"),
+				<label>By using the Skok.co web site ("Service"),
 					or any services of Coconut Martini, Inc ("Coconut Martini"), you are
 					agreeing to be bound by the following terms and conditions ("Terms
 					of Service"). IF YOU ARE ENTERING INTO THIS AGREEMENT ON BEHALF OF
@@ -56,7 +56,7 @@
 					Continued use of the Service after any such changes shall
 					constitute your consent to such changes. You can review the most
 					current version of the Terms of Service at any time at:
-					https://Coconut Martini.com/site/terms </label>
+					https://skok.co/site/terms </label>
 			</div>
 			<div class="clearfix"></div>
 			<div class="separator"></div>
@@ -286,8 +286,8 @@
 				<label>2. Prices of all Services, including but not limited
 					to monthly subscription plan fees to the Service, are subject to
 					change upon 30 days notice from us. Such notice may be provided at
-					any time by posting the changes to the Coconut Martini Site
-					(Coconut Martini.com) or the Service itself.</label>
+					any time by posting the changes to the Skok Site
+					(Skok.co) or the Service itself.</label>
 			</div>
 			<div>
 
@@ -493,7 +493,7 @@
 
 
 				<label>16. Questions about the Terms of Service should be
-					sent to anshu@CoconutMartini.com.</label>
+					sent to anshu@skok.co.</label>
 			</div>
 
 

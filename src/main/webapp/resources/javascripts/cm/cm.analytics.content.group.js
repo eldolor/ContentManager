@@ -18,6 +18,13 @@ function setup() {
 		var doc = document.documentElement;
 		doc.setAttribute('data-useragent', navigator.userAgent);
 		google.setOnLoadCallback(displayAnalytics);
+		// Google Analytics
+		ga('send', {
+			'hitType' : 'pageview',
+			'page' : '/analytics/contentgroups',
+			'title' : PageTitle.USAGE_REPORTS_CONTENT_GROUPS
+		});
+		// End Google Analytics
 
 	} catch (err) {
 		handleError("setup", err);

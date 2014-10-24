@@ -59,9 +59,6 @@ function setupContextNavBar() {
 			// $('#application_create_modal').foundation('reveal',
 			// 'open');
 			newApplication();
-			// Google Analytics
-			ga('send', 'event', Category.APPLICATION, Action.CREATE_NEW);
-			// End Google Analytics
 		});
 
 	} catch (err) {

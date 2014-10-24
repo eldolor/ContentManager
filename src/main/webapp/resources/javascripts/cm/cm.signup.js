@@ -28,15 +28,28 @@ function setup() {
 			log(invalid_fields);
 		}).on('valid', function() {
 			signup();
+			// Google Analytics
+			ga('send', 'event', Category.SIGN_UP, Action.SIGN_UP);
+			// End Google Analytics
 		});
 
 		$('#user_sign_up_cancel_button').unbind();
 		$('#user_sign_up_cancel_button').bind('click', function() {
+			// Google Analytics
+			ga('send', 'event', Category.SIGN_UP, Action.CANCEL);
+			// End Google Analytics
 			$('#user_sign_up_submit_button').unbind();
 			window.location.href = '/';
 		});
 
 		$("#cm_errors_container").addClass("fadeInUp animated");
+		// Google Analytics
+		ga('send', {
+			'hitType' : 'pageview',
+			'page' : '/signup',
+			'title' : PageTitle.SIGN_UP
+		});
+		// End Google Analytics
 	} catch (err) {
 		handleError("setup", err);
 	} finally {

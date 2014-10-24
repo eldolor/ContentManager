@@ -4,6 +4,13 @@ jQuery(function($) {
 		setup();
 		// call this post setup
 		// $(document).foundation('joyride', 'start');
+		// Google Analytics
+		ga('send', {
+			'hitType' : 'pageview',
+			'page' : '/forgotpassword',
+			'title' : PageTitle.FORGOT_PASSWORD
+		});
+		// End Google Analytics
 	} catch (err) {
 		handleError("function($)", err);
 	} finally {
@@ -29,6 +36,9 @@ function setup() {
 		}).on('valid', function() {
 			log('changePasswordForm: valid!');
 			changePassword();
+			// Google Analytics
+			ga('send', 'event', Category.FORGOT_PASSWORD, Action.UPDATE);
+			// End Google Analytics
 		});
 		$('#cm_errors_container').hide();
 

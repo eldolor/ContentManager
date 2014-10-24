@@ -46,8 +46,7 @@ function getContentGroups(pApplicationId) {
 							// Google Analytics
 							ga('send', {
 								'hitType' : 'pageview',
-								'page' : '/secured/' + pApplicationId
-										+ '/contentgroups',
+								'page' : '/secured/contentgroups',
 								'title' : PageTitle.CONTENT_GROUPS
 							});
 							// End Google Analytics
@@ -90,13 +89,13 @@ function handleDisplayContentGroups_Callback(pContentGroups) {
 			lInnerHtml += "<div class='blog_content_details float_left'>";
 			if (int == 0) {
 				lInnerHtml += "<ul> <li id='first_contentgroup_id' class='green'>Content Group Id: "
-					+ lContentGroup.id
-					+ " </li><li>|</li><li class='light_gray'>";
+						+ lContentGroup.id
+						+ " </li><li>|</li><li class='light_gray'>";
 				lInnerHtml += "<a id='first_content' class='small green' href='javascript:void(0)' onclick='displayContent(";
 			} else {
 				lInnerHtml += "<ul> <li class='green'>Content Group Id: "
-					+ lContentGroup.id
-					+ " </li><li>|</li><li class='light_gray'>";
+						+ lContentGroup.id
+						+ " </li><li>|</li><li class='light_gray'>";
 				lInnerHtml += "<a class='small green' href='javascript:void(0)' onclick='displayContent(";
 			}
 
@@ -347,16 +346,29 @@ function editContentGroup(id) {
 										var invalid_fields = $(this).find(
 												'[data-invalid]');
 										log(invalid_fields);
-									}).on('valid', function() {
-								updateContentGroup();
-							});
+									}).on(
+									'valid',
+									function() {
+										updateContentGroup();
+										// Google Analytics
+										ga('send', 'event',
+												Category.CONTENT_GROUP,
+												Action.UPDATE);
+										// End Google Analytics
+									});
 							// unbind click listener to reset
 
 							$('#contentgroup_cancel_button').unbind();
-							$('#contentgroup_cancel_button').click(function() {
-								$('#content_group_create').hide();
-								$('#content_groups_list').show();
-							});
+							$('#contentgroup_cancel_button').click(
+									function() {
+										$('#content_group_create').hide();
+										$('#content_groups_list').show();
+										// Google Analytics
+										ga('send', 'event',
+												Category.CONTENT_GROUP,
+												Action.CANCEL);
+										// End Google Analytics
+									});
 
 							$('#contentgroup_errors').empty();
 						},
@@ -411,11 +423,17 @@ function newContentGroup() {
 			log(invalid_fields);
 		}).on('valid', function() {
 			createContentGroup();
+			// Google Analytics
+			ga('send', 'event', Category.CONTENT_GROUP, Action.CREATE);
+			// End Google Analytics
 		});
 		$('#contentgroup_cancel_button').unbind();
 		$('#contentgroup_cancel_button').click(function() {
 			$('#content_group_create').hide();
 			$('#content_groups_list').show();
+			// Google Analytics
+			ga('send', 'event', Category.CONTENT_GROUP, Action.CANCEL);
+			// End Google Analytics
 		});
 
 		$('#application_id').val(mSelectedApplication.id);
@@ -622,7 +640,6 @@ function deleteContentGroup(id) {
 		displayConfirm(
 				"Are you sure you want to delete this ContentGroup?",
 				function() {
-					wait("confirm_wait");
 					var url = "/secured/contentgroup/" + id + "/"
 							+ _timeUpdatedMs + "/"
 							+ _timeUpdatedTimeZoneOffsetMs;
@@ -633,6 +650,11 @@ function deleteContentGroup(id) {
 								contentType : "application/json",
 								statusCode : {
 									200 : function() {
+										// Google Analytics
+										ga('send', 'event',
+												Category.CONTENT_GROUP,
+												Action.DELETE);
+										// End Google Analytics
 										$('#content_group_create').hide();
 										location.reload();
 										// getContentGroups(mSelectedApplication.id);
@@ -653,7 +675,7 @@ function deleteContentGroup(id) {
 								}
 							});
 					jqxhr.always(function(msg) {
-						clearWait("confirm_wait");
+
 					});
 				});
 	} catch (err) {

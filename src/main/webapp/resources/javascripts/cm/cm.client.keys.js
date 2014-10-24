@@ -20,9 +20,6 @@ function setupContextNavBar() {
 		$('#create_client_key').unbind();
 		$('#create_client_key').click(function() {
 			createClientKey()
-			// Google Analytics
-			// ga('send', 'event', Category.APPLICATION, Action.CREATE_NEW);
-			// End Google Analytics
 		});
 
 	} catch (err) {
@@ -46,11 +43,11 @@ function getClientKeys() {
 					// displayMessage(JSON.stringify(clientKeys, null, 2));
 					handleDisplayClientKeys_Callback(clientKeys);
 					// Google Analytics
-					// ga('send', {
-					// 'hitType' : 'pageview',
-					// 'page' : '/secured/applications',
-					// 'title' : PageTitle.APPLICATIONS
-					// });
+					ga('send', {
+						'hitType' : 'pageview',
+						'page' : '/account/clientkeys',
+						'title' : PageTitle.CLIENT_KEYS
+					});
 					// End Google Analytics
 				},
 				503 : function() {
@@ -152,6 +149,10 @@ function deleteClientKey(id) {
 						contentType : "application/json",
 						statusCode : {
 							200 : function() {
+								// Google Analytics
+								ga('send', 'event', Category.CLIENT_KEYS,
+										Action.DELETE);
+								// End Google Analytics
 								location.reload();
 							},
 							503 : function() {
@@ -191,6 +192,9 @@ function createClientKey() {
 			async : true,
 			statusCode : {
 				200 : function(clientKeys) {
+					// Google Analytics
+					ga('send', 'event', Category.CLIENT_KEYS, Action.CREATE);
+					// End Google Analytics
 					location.reload();
 				},
 				503 : function() {

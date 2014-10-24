@@ -64,6 +64,14 @@ jQuery(function($) {
 		});
 
 		$(document).foundation();
+		// Google Analytics
+		ga('send', {
+			'hitType' : 'pageview',
+			'page' : '/',
+			'title' : PageTitle.HOME
+		});
+		// End Google Analytics
+
 	} catch (err) {
 		handleError("function($)", err);
 	} finally {

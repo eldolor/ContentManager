@@ -11,13 +11,13 @@
 	jQuery(function($) {
 		try {
 			log("function($)", "Entering");
-			
+
 			var sticky_navigation_offset_top = $('#sticky_navigation').offset().top;
 			// our function that decides weather the navigation bar should have
 			// "fixed" css position or not.
 			var sticky_navigation = function() {
 				var scroll_top = $(window).scrollTop(); // our current vertical
-														// position from the top
+				// position from the top
 
 				// if we've scrolled more than the navigation, change its position
 				// to fixed to stick to top, otherwise change it back to relative
@@ -59,6 +59,40 @@
 			log("function($)", "Exiting");
 		}
 	});
+
+	function sendGAStatsDownloadAndroidSdk() {
+		try {
+			log("sendGAStatsDownloadAndroidSdk", "Entering");
+			// Google Analytics
+			ga('send', 'event', Category.SDK, Action.DOWNLOAD);
+			// End Google Analytics
+
+			//always
+			return false;
+		} catch (err) {
+			//do nothing handleError("function($)", err);
+		} finally {
+			log("sendGAStatsDownloadAndroidSdk", "Exiting");
+		}
+
+	}
+
+	function sendGAStatsAndroidSdkAPIReference() {
+		try {
+			log("sendGAStatsAndroidSdkAPIReference", "Entering");
+			// Google Analytics
+			ga('send', 'event', Category.SDK_DOCUMENTS, Action.VIEW);
+			// End Google Analytics
+
+			//always
+			return false;
+		} catch (err) {
+			//do nothing handleError("function($)", err);
+		} finally {
+			log("sendGAStatsAndroidSdkAPIReference", "Exiting");
+		}
+
+	}
 </script>
 <nav id="sticky_navigation" class="top-bar" data-topbar>
 	<ul class="title-area">
@@ -66,7 +100,7 @@
 		<li class="name">
 			<h1>
 				<a href="#"> <img src="/resources/images/cm/logo-72x72.png"
-					alt="big logo" />
+					alt="medium logo" />
 				</a>
 			</h1>
 		</li>
@@ -85,8 +119,11 @@
 						<li><a href="/analytics/applications/tour">Usage Reports</a></li>
 					</ul></li>
 			</sec:authorize>
-			<li><a href="/account/plans">Plans &amp; Pricing</a></li>
+			<sec:authorize ifNotGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">
+				<li><a href="/plans">Plans &amp; Pricing</a></li>
+			</sec:authorize>
 			<sec:authorize ifAnyGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">
+				<li><a href="/account/plans">Plans &amp; Pricing</a></li>
 				<li><a href="/analytics/applications">Usage Reports</a></li>
 				<li class="has-dropdown"><a href="#">Account Settings</a>
 					<ul class="dropdown">
@@ -100,13 +137,14 @@
 				<ul class="dropdown">
 					<li><a href="/docs/android">Getting Started with Android
 							SDK</a></li>
-					<li><a href="/resources/api/current/javadoc/index.html" target="_blank">Android
+					<li><a onclick="sendGAStatsAndroidSdkAPIReference();"
+						href="/resources/api/current/javadoc/index.html" target="_blank">Android
 							SDK API Reference</a></li>
 				</ul></li>
 			<li class="has-dropdown"><a href="#">Downloads</a>
 				<ul class="dropdown">
-					<li><a href="/resources/api/current/skok_sdk_1_1.jar">Android
-							SDK</a></li>
+					<li><a onclick="sendGAStatsDownloadAndroidSdk();"
+						href="/resources/api/current/skok_sdk_1_1.jar">Android SDK</a></li>
 				</ul></li>
 			<sec:authorize ifAnyGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">
 				<li><a href="<c:url value="/j_spring_security_logout"/>">Sign

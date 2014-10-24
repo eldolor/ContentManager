@@ -37,6 +37,9 @@ function setup() {
 			log(invalid_fields);
 		}).on('valid', function() {
 			login();
+			// Google Analytics
+			ga('send', 'event', Category.SIGN_IN, Action.SIGN_IN);
+			// End Google Analytics
 		});
 		// forgot password
 		$('#user_forgot_password_errors').hide();
@@ -52,11 +55,21 @@ function setup() {
 			log(invalid_fields);
 		}).on('valid', function() {
 			submitForgotPasswordRequest();
+			// Google Analytics
+			ga('send', 'event', Category.FORGOT_PASSWORD, Action.REQUEST);
+			// End Google Analytics
 		});
 
 		$("#cm_errors_container").addClass("fadeInUp animated");
 		$("#user_forgot_password_errors_container").addClass(
 				"fadeInUp animated");
+		// Google Analytics
+		ga('send', {
+			'hitType' : 'pageview',
+			'page' : '/login',
+			'title' : PageTitle.SIGN_IN
+		});
+		// End Google Analytics
 	} catch (err) {
 		handleError("setup", err);
 	} finally {

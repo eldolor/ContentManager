@@ -11,5 +11,5 @@
 <div class="container va-align">
 	<a href="/site/terms">Terms</a>&nbsp;|&nbsp;<a href="/site/privacy">Privacy</a>
 	<p>&#169; Copyright Coconut Martini Inc.</p>
-	<img src="/resources/images/cm/cube_footer.png" alt="cube" /> Box
+	<img src="/resources/images/cm/logo-48x48.png" alt="small logo" /> Box
 </div>

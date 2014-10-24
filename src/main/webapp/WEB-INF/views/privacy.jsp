@@ -129,7 +129,7 @@
 					<label>For European Union and Swiss residents, any
 						questions or concerns regarding the use or disclosure of your
 						information should be directed to Coconut Martini by sending an
-						email to privacy@Coconut Martini.com. We will investigate and
+						email to anshu@skok.co. We will investigate and
 						attempt to resolve complaints and disputes regarding use and
 						disclosure of your information in accordance with this Privacy
 						Policy. For complaints that cannot be resolved, and consistent
@@ -153,7 +153,7 @@
 				<h3 class="gray">Questions</h3>
 				<div>
 					<label>Any questions about this Privacy Policy should be
-						addressed to anshu@CoconutMartini.com.</label>
+						addressed to anshu@skok.co.</label>
 				</div>
 			</div>
 

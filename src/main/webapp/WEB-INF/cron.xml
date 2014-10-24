@@ -5,10 +5,10 @@
 		<description>Cleanup blobstore</description>
 		<schedule>every 24 hours</schedule>
 	</cron>
-	<cron>
+<!-- 	<cron>
 		<url>/cron/rollup/contentstats/daily</url>
 		<description>Create Daily Rollup</description>
 		<schedule>every 24 hours</schedule>
 	</cron>
-	
+ -->	
 </cronentries>

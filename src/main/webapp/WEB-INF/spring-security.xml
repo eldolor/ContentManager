@@ -18,6 +18,7 @@
 	<security:http pattern="/contentstats**" security="none" />
 	<security:http pattern="/contentdownloadstats**"
 		security="none" />
+	<security:http pattern="/plans" security="none" />
 	<!-- End: utilized by the SDK -->
 
 

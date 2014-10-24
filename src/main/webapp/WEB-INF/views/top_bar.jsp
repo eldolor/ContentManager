@@ -65,7 +65,7 @@
 		<!-- Title Area -->
 		<li class="name">
 			<h1>
-				<a href="#"> <img src="/resources/images/cm/Cube.png"
+				<a href="#"> <img src="/resources/images/cm/logo-72x72.png"
 					alt="big logo" />
 				</a>
 			</h1>
@@ -105,7 +105,7 @@
 				</ul></li>
 			<li class="has-dropdown"><a href="#">Downloads</a>
 				<ul class="dropdown">
-					<li><a href="/resources/api/current/content_manager_sdk_1_1.jar">Android
+					<li><a href="/resources/api/current/skok_sdk_1_1.jar">Android
 							SDK</a></li>
 				</ul></li>
 			<sec:authorize ifAnyGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">

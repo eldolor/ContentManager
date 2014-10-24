@@ -130,7 +130,7 @@ public class UserManagementController {
 						lDomainUser, lApplication);
 				Long[] lContentIds = createDemoContent(lDomainUser,
 						lApplication, lContentGroups);
-				//create demo usage reports for the last 10 days
+				// create demo usage reports for the last 10 days
 				createDemoUsageReports(lApplication.getId(), 10);
 
 				// assign them the free quota
@@ -328,7 +328,7 @@ public class UserManagementController {
 	}
 
 	private void createDemoUsageReports(long applicationId, int lastNDays) {
-		
+
 		{
 			Calendar lEod = Utils.getEndOfDayToday(TimeZone.getTimeZone("UTC"));
 			List<Content> lContents = contentService.get(applicationId, false);
@@ -568,11 +568,6 @@ public class UserManagementController {
 			LOGGER.info("Entering");
 		try {
 			User lUser = userService.getLoggedInUser();
-			// no user logged in
-			if (lUser == null) {
-				return new ModelAndView("settings_plans_and_pricing_no_login",
-						model);
-			}
 			model.addAttribute("canonicalPlanNameFree",
 					CanonicalPlanName.FREE.getValue());
 			model.addAttribute("canonicalPlanNameMicro",
@@ -609,6 +604,19 @@ public class UserManagementController {
 			model.addAttribute("isError", false);
 
 			return new ModelAndView("settings_plans_and_pricing_post_login",
+					model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	@RequestMapping(value = "/plans", method = RequestMethod.GET)
+	public ModelAndView displayPlansAndPricingUnsecured(ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering");
+		try {
+			return new ModelAndView("settings_plans_and_pricing_no_login",
 					model);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))

@@ -31,7 +31,7 @@
 		<div class="overlay">
 			<div id="intro">
 				<div class="container text_center">
-					<img src="/resources/images/cm/Cube_big.png" alt="big logo" />
+					<img src="/resources/images/cm/logo-192x192.png" alt="big logo" />
 					<h1 class="white">
 						Advanced Content Management and Delivery platform for your Mobile
 						Apps</span>

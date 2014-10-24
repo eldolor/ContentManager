@@ -145,7 +145,7 @@
 									data-key="pk_test_4aEi34FWLvjmVHc14fQoUQPZ" data-amount="700"
 									data-name="Skok"
 									data-description="500MB Plan @ $7/month"
-									data-image="/resources/images/cm/done.png" data-zip-code="true"
+									data-image="/resources/images/cm/logo-128x128.png" data-zip-code="true"
 									data-panel-label="Subscribe" data-label="Get Started">
 									
 								</script>
@@ -209,7 +209,7 @@
 									data-key="pk_test_4aEi34FWLvjmVHc14fQoUQPZ" data-amount="1500"
 									data-name="Skok"
 									data-description="1GB Plan @ $15/month"
-									data-image="/resources/images/cm/done.png" data-zip-code="true"
+									data-image="/resources/images/cm/logo-128x128.png" data-zip-code="true"
 									data-panel-label="Subscribe" data-label="Get Started">
 									
 								</script>
@@ -272,7 +272,7 @@
 									data-key="pk_test_4aEi34FWLvjmVHc14fQoUQPZ" data-amount="2500"
 									data-name="Skok"
 									data-description="2GB Plan @ $25/month"
-									data-image="/resources/images/cm/done.png" data-zip-code="true"
+									data-image="/resources/images/cm/logo-128x128.png" data-zip-code="true"
 									data-panel-label="Subscribe" data-label="Get Started">
 									
 								</script>
@@ -335,7 +335,7 @@
 									data-key="pk_test_4aEi34FWLvjmVHc14fQoUQPZ" data-amount="5000"
 									data-name="Skok"
 									data-description="4GB Plan @ $50/month"
-									data-image="/resources/images/cm/done.png" data-zip-code="true"
+									data-image="/resources/images/cm/logo-128x128.png" data-zip-code="true"
 									data-panel-label="Subscribe" data-label="Get Started">
 									
 								</script>

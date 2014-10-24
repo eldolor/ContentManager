@@ -119,8 +119,7 @@
 				<a name="project_setup"></a>
 				<ol>
 					<li>Download the latest Android <a
-						href="/resources/api/current/content_manager_sdk_1_1.jar">Content
-							Manager API</a> library.
+						href="/resources/api/current/skok_sdk_1_1.jar">Skok API</a> library.
 					</li>
 					<li><a href="/resources/api/current/javadoc/index.html"
 						target="_blank">Android API Reference</a></li>

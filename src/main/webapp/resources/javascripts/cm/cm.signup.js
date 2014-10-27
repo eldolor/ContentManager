@@ -121,10 +121,13 @@ function signup() {
 					},
 					error : function(xhr, textStatus, errorThrown) {
 						log(errorThrown);
-						$('#signup_errors')
-								.html(
-										'Unable to process the request. Please try again later');
-						$('#cm_errors_container').show();
+						// Anshu: commented out for now as it throws 'unexpected
+						// end of input error on signup'
+						// $('#signup_errors')
+						// .html(
+						// 'Unable to process the request. Please try again
+						// later');
+						// $('#cm_errors_container').show();
 
 					},
 					complete : function(xhr, textStatus) {

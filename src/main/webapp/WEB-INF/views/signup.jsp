@@ -73,10 +73,16 @@
 							class="button radius btn-default">sign up</button>
 						<a href="javascript:void(0);" id="user_sign_up_cancel_button">cancel</a>
 					</div>
-					<div id="progress_bar" style="display: none">
+					<div id="progress_bar_sign_up" style="display: none">
 						<div class="progress radius">
 							<span class="meter"
 								style="width: 40%; background-color: #5cb85c;">Registering...</span>
+						</div>
+					</div>
+					<div id="progress_bar_sign_in" style="display: none">
+						<div class="progress radius">
+							<span class="meter"
+								style="width: 40%; background-color: #5cb85c;">Logging in...</span>
 						</div>
 					</div>
 				</form>

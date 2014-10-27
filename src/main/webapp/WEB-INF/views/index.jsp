@@ -50,13 +50,34 @@
 	<br>
 	<section id="services" class="display-table">
 		<div class="container va-align">
-			<h2 class="text-center">Skok</h2>
+			<!-- 			<h2 class="text-center">Skok</h2>
 			<p class="text-center page_sub_heading">Advanced Content
 				Management and Delivery platform for your Mobile Apps</p>
-<!-- 			<div class="line">
+ -->
+			<!-- 			<div class="line">
 				<img src="/resources/images/cm/line.png" alt="line" />
 			</div>
- -->			<br> <br>
+			<br> <br>
+ -->
+			<div class="row full-width">
+				<h2 class="text-center">Skok</h2>
+				<p class="text-left">Mobile is pushing ageing web architectures
+					to the brink. The three-tier web architecture won&apos;t deliver
+					any more. At the same time, the content requirements of your Mobile
+					Apps continue to expand. The performance unknowns of the last
+					wireless mile has further exacerbated the problem of delivering
+					rich content, images and videos, to your Mobile Apps.</p>
+				<p class="text-left">Skok is an Advanced Content Management and
+					Delivery platform for your Mobile Apps. It enables you to
+					continually add, update, or remove content on your Mobile Apps,
+					without degrading the mobile experience of the users at any point,
+					or having to release a new version of your Mobile App.</p>
+				<p class="text-left">Skok streamlines content delivery to your
+					Mobile Apps, over spotty networks and dropped connections. It
+					elevates user experience by allowing users of your Mobile Apps to
+					engage with your rich content, even if they lose their data
+					connection.</p>
+			</div>
 			<div class="visible text-center">
 				<div class="row full-width">
 					<div class="large-4 columns">
@@ -119,10 +140,11 @@
 		<br> <br>
 		<h2 class="text-center">Powerful New Features</h2>
 		<p class="text-center page_sub_heading">&nbsp;</p>
-<!-- 		<div class="line">
+		<!-- 		<div class="line">
 			<img src="/resources/images/cm/line.png" alt="line" />
 		</div>
- -->		<div id="owl-demo" class="owl-carousel owl-theme visible">
+ -->
+		<div id="owl-demo" class="owl-carousel owl-theme visible">
 			<div class="item">
 				<img src="/resources/images/cm/Letter-C-orange-icon.png" alt="owl" />
 				<h3 class="gray">Cloud-driven Architecture</h3>

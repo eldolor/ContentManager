@@ -79,7 +79,7 @@ public class ApplicationQuotaUsed {
 	}
 
 	public Integer getApplicationsUsed() {
-		return applicationsUsed;
+		return (applicationsUsed == null)?0:applicationsUsed;
 	}
 
 	public void setApplicationsUsed(Integer applicationsUsed) {

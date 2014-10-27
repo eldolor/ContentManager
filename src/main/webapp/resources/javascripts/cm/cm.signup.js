@@ -68,7 +68,7 @@ function signup() {
 		// $('#signup_errors').show();
 		// return;
 		// }
-		$('#progress_bar').show();
+		$('#progress_bar_sign_up').show();
 		$('.button').addClass('disabled');
 
 		var lDate = new Date();
@@ -96,7 +96,9 @@ function signup() {
 					async : true,
 					statusCode : {
 						201 : function() {
-
+							$('.meter').css("width", "100%");
+							$('#progress_bar_sign_up').hide();
+							$('#progress_bar_sign_in').show();
 							postSignupAutoLogin($('#userName').val(), $(
 									'#password').val());
 						},
@@ -132,7 +134,7 @@ function signup() {
 					},
 					complete : function(xhr, textStatus) {
 						$('.meter').css("width", "100%");
-						$('#progress_bar').hide();
+						$('#progress_bar_sign_up').hide();
 						$('.button').removeClass('disabled');
 						log(xhr.status);
 					}

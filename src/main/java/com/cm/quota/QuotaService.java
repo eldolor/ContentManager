@@ -145,7 +145,7 @@ public class QuotaService {
 			Quota lQuota = quotaDao.get(accountId);
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Applications used: "
-						+ lApplicationQuotaUsed.getApplicationsUsed()
+						+ ((lApplicationQuotaUsed!=null)?lApplicationQuotaUsed.getApplicationsUsed():0)
 						+ " Application Limit: " + lQuota.getApplicationLimit());
 
 			if (lApplicationQuotaUsed.getApplicationsUsed() < lQuota

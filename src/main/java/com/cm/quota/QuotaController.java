@@ -570,11 +570,11 @@ public class QuotaController {
 		lQuota.setCanonicalPlanName(pQuota.getCanonicalPlanName());
 
 		lQuota.setApplicationLimit(pQuota.getApplicationLimit());
-		lQuota.setApplicationsUsed(pApplicationQuotaUsed.getApplicationsUsed());
+		lQuota.setApplicationsUsed((pApplicationQuotaUsed != null)?pApplicationQuotaUsed.getApplicationsUsed():0);
 		try {
 
 			BigDecimal lBd1 = new BigDecimal(
-					pApplicationQuotaUsed.getApplicationsUsed() * 100);
+					(pApplicationQuotaUsed != null)?pApplicationQuotaUsed.getApplicationsUsed():0 * 100);
 			BigDecimal lBd2 = new BigDecimal(pQuota.getApplicationLimit());
 
 			// divide bg1 with bg2 with 0 scale

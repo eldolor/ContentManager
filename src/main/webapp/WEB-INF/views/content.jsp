@@ -40,10 +40,11 @@ setSelectedContentGroup(${contentGroupId});
 
 			<p class="text-center page_sub_heading">Manage your rich content
 				here</p>
-<!-- 			<div class="line">
+			<!-- 			<div class="line">
 				<img src="/resources/images/cm/line.png" alt="line" />
 			</div>
- -->			<br />
+ -->
+			<br />
 			<div class="row">
 				<div class="large-7 columns">
 					<jsp:include page="breadcrumbs.jsp"></jsp:include>
@@ -59,6 +60,8 @@ setSelectedContentGroup(${contentGroupId});
 						<ul>
 							<li><i class="fi-arrow-right"></i><a id="create_content"
 								href="javascript:void(0);">&nbsp;Create New Content</a></li>
+							<li><i class="fi-arrow-right"></i><a id="restore_content"
+								href="javascript:void(0);">&nbsp;Restore Deleted Content</a></li>
 						</ul>
 					</div>
 					<br> <br />
@@ -170,6 +173,14 @@ setSelectedContentGroup(${contentGroupId});
 			<div id="content_group_list"></div>
 		</div>
 		<button id="move_confirm_button" class="button radius btn-default">move</button>
+		<a class="close-reveal-modal">&#215;</a>
+	</div>
+	<div class="reveal-modal small" id="restore_modal" data-reveal>
+		<h3 class="gray" id="modalLabel">Restore Content</h3>
+		<div class="row">
+			<div id="select_from_deleted_list"></div>
+		</div>
+		<button id="restore_confirm_button" class="button radius btn-default">restore</button>
 		<a class="close-reveal-modal">&#215;</a>
 	</div>
 

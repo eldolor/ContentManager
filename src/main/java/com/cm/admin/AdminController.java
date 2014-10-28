@@ -3,6 +3,7 @@ package com.cm.admin;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -574,8 +575,14 @@ public class AdminController {
 							lApplication.getId(), false);
 					for (Content lContent : lContentList) {
 						if (!Utils.isEmpty(lContent.getUri())) {
+							//over the next 
+							long lDelayInMs =  new Random().nextInt(60 * 1000);
+							if (LOGGER.isLoggable(Level.INFO))
+								LOGGER.info("Adding delay of "
+										+ lDelayInMs
+										+ " ms before attempting to process");
 							Utils.triggerUpdateContentSizeInBytesMessage(
-									lContent.getId(), lContent.getUri(), 0);
+									lContent.getId(), lContent.getUri(), lDelayInMs);
 						}
 					}
 				}

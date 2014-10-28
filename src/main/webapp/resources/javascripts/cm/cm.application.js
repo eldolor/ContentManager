@@ -857,4 +857,126 @@ function deleteApplication(id) {
 
 }
 
+function restoreApplications() {
+	log("restoreApplications", "Entering");
+	try {
+		getDeletedApplications();
+
+	} catch (err) {
+		handleError("restoreApplications", err);
+	} finally {
+		log("restoreApplications", "Exiting");
+	}
+
+}
+
+function getDeletedApplications() {
+	log("getDeletedApplications", "Entering");
+	try {
+
+		var jqxhr = $.ajax({
+			url : "/secured/applications/deleted",
+			type : "GET",
+			contentType : "application/json",
+			async : false,
+			statusCode : {
+				200 : function(lListItems) {
+					buildList(lListItems);
+				},
+				503 : function() {
+				}
+			},
+			error : function(xhr, textStatus, errorThrown) {
+				log(errorThrown);
+			}
+		});
+
+	} catch (err) {
+		handleError("getDeletedApplications", err);
+		// close wait div
+		;
+	} finally {
+		log("getDeletedApplications", "Exiting");
+	}
+}
+
+function buildList(pListItems) {
+	log("buildList", "Entering");
+	try {
+		var lList = '<label>Please select an Application<select id="select_from_deleted">';
+		for (var int = 0; int < pListItems.length; int++) {
+			var lItem = pListItems[int];
+			lList += '<option value="';
+			lList += lItem.id;
+			lList += '">';
+			lList += lItem.name;
+			lList += '</option>';
+		}
+		lList += '</select></label>';
+		var _date = new Date();
+		var _timeUpdatedMs = _date.getTime();
+		var _timeUpdatedTimeZoneOffsetMs = (_date.getTimezoneOffset() * 60 * 1000);
+
+		displayRestoreConfirm(lList, function() {
+			var lSelected = $('#select_from_deleted').val();
+
+			if (lSelected) {
+				var url = "/secured/application/restore/" + lSelected + "/"
+						+ _timeUpdatedMs + "/" + _timeUpdatedTimeZoneOffsetMs;
+				var jqxhr = $.ajax({
+					url : url,
+					type : "PUT",
+					contentType : "application/json",
+					statusCode : {
+						200 : function() {
+							// Google Analytics
+							ga('send', 'event', Category.APPLICATION,
+									Action.RESTORE);
+							// End Google Analytics
+							location.reload();
+						},
+						503 : function() {
+						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						log(errorThrown);
+					}
+				});
+				jqxhr.always(function(msg) {
+				});
+			}
+		});
+
+	} catch (err) {
+		handleError("buildList", err);
+		// close wait div
+		;
+	} finally {
+		log("buildList", "Exiting");
+	}
+
+}
+function displayRestoreConfirm(pList, pCallback) {
+	log("displayRestoreConfirm", "Entering");
+	try {
+		$("#select_from_deleted_list").html(pList);
+		// if the user clicks "yes"
+		$('#restore_confirm_button').bind('click', function() {
+			// call the callback
+			if ($.isFunction(pCallback)) {
+				pCallback.apply();
+			}
+			$('#restore_modal').foundation('reveal', 'close');
+		});
+		$('#restore_modal').foundation('reveal', 'open');
+	} catch (err) {
+		handleError("displayRestoreConfirm", err);
+		// close wait div
+		;
+	} finally {
+		log("displayRestoreConfirm", "Exiting");
+	}
+
+}
+
 /** *End Application***************************************** */

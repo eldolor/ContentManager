@@ -250,6 +250,17 @@ public class ApplicationService {
 		}
 
 	}
+	public void restoreApplication(Long id) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			applicationDao.restoreApplication(id);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+
+	}
 
 	public void updateApplication(Application application) {
 		try {

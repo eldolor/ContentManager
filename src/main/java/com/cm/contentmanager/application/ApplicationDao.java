@@ -494,6 +494,38 @@ class ApplicationDao {
 		}
 	}
 
+	void restoreApplication(Long id) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Application lApplication = pm.getObjectById(Application.class,
+						id);
+				if (lApplication != null) {
+					lApplication.setDeleted(false);
+					lApplication.setTimeUpdatedMs(System.currentTimeMillis());
+					lApplication.setTimeUpdatedTimeZoneOffsetMs((long) TimeZone
+							.getDefault().getRawOffset());
+					if (LOGGER.isLoggable(Level.INFO))
+						LOGGER.info(id + " application restored");
+				} else {
+					LOGGER.log(Level.WARNING, id + "  APPLICATION NOT FOUND!");
+				}
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting restore");
+		}
+	}
+
 	void update(Application pApplication) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))

@@ -3,6 +3,7 @@ package com.cm.contentmanager.contentstat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Random;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -387,8 +388,14 @@ public class ContentStatController {
 						.getApplicationsByAccountId(account.getId(), false);
 				// for each application in the account
 				for (Application application : lApplications) {
+					//over the next 
+					long lDelayInMs =  new Random().nextInt(60 * 1000);
+					if (LOGGER.isLoggable(Level.INFO))
+						LOGGER.info("Adding delay of "
+								+ lDelayInMs
+								+ " ms before attempting to process");
 					Utils.triggerRollupMessage(application.getId(),
-							lSod.getTimeInMillis(), lEod.getTimeInMillis(), 0);
+							lSod.getTimeInMillis(), lEod.getTimeInMillis(), lDelayInMs);
 				}
 			}
 			response.setStatus(HttpServletResponse.SC_OK);
@@ -512,9 +519,15 @@ public class ContentStatController {
 						LOGGER.info("Processing: "
 								+ lSod.getTime().toLocaleString() + "::"
 								+ lEod.getTime().toLocaleString());
+						//over the next 
+						long lDelayInMs =  new Random().nextInt(60 * 1000);
+						if (LOGGER.isLoggable(Level.INFO))
+							LOGGER.info("Adding delay of "
+									+ lDelayInMs
+									+ " ms before attempting to process");
 						Utils.triggerRollupMessage(application.getId(),
 								lSod.getTimeInMillis(), lEod.getTimeInMillis(),
-								0);
+								lDelayInMs);
 						lMessagesEnqueued++;
 						lSod.add(Calendar.DATE, -1);
 						lEod.add(Calendar.DATE, -1);
@@ -551,8 +564,14 @@ public class ContentStatController {
 						.getApplicationsByAccountId(account.getId(), false);
 				// for each application in the account
 				for (Application application : lApplications) {
+					//over the next 1 hr
+					long lDelayInMs =  new Random().nextInt(60 *60 * 1000);
+					if (LOGGER.isLoggable(Level.INFO))
+						LOGGER.info("Adding delay of "
+								+ lDelayInMs
+								+ " ms before attempting to rollup daily summary for application " + application.getId());
 					Utils.triggerRollupMessage(application.getId(),
-							lSod.getTimeInMillis(), lEod.getTimeInMillis(), 0);
+							lSod.getTimeInMillis(), lEod.getTimeInMillis(), lDelayInMs);
 				}
 			}
 			response.setStatus(HttpServletResponse.SC_OK);

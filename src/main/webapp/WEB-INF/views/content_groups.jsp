@@ -42,10 +42,11 @@
 
 			<p class="text-center page_sub_heading">Content groups help
 				organize your contents</p>
-<!-- 			<div class="line">
+			<!-- 			<div class="line">
 				<img src="/resources/images/cm/line.png" alt="line" />
 			</div>
- -->			<br />
+ -->
+			<br />
 			<div class="row">
 				<div class="large-7 columns">
 					<jsp:include page="breadcrumbs.jsp"></jsp:include>
@@ -62,6 +63,9 @@
 							<li><i class="fi-arrow-right"></i><a
 								id="create_contentgroup" href="javascript:void(0);">&nbsp;Create
 									New Content Group</a></li>
+							<li><i class="fi-arrow-right"></i><a
+								id="restore_contentgroups" href="javascript:void(0);">&nbsp;Restore
+									Deleted Content Groups</a></li>
 						</ul>
 					</div>
 					<br> <br />
@@ -91,8 +95,8 @@
 							<div class="blog_snippet">
 								<div class="blog_details float_left">
 									<span class="title green">Enabled</span> <span class="date">Disabling
-										a content group will prevent the rich content within
-										that content group, from being downloaded</span>
+										a content group will prevent the rich content within that
+										content group, from being downloaded</span>
 								</div>
 								<div class="clearfix"></div>
 							</div>
@@ -114,37 +118,46 @@
 	<ol class="joyride-list" data-joyride>
 		<li data-id="breadcrumb_content_groups" data-text="Next"
 			data-options="tip_location: top; prev_button: false">
-			<h4>Product Tour continued...</h4>
-			<br>
-			<p>Content within an application is organized into Content Groups.</p>
-			<p>It is similar to organizing files into Folders, in Windows Explorer.</p>
+			<h4>Product Tour continued...</h4> <br>
+			<p>Content within an application is organized into Content
+				Groups.</p>
+			<p>It is similar to organizing files into Folders, in Windows
+				Explorer.</p>
 		</li>
 		<li data-id="create_contentgroup" data-class="custom so-awesome"
 			data-text="Next" data-prev-text="Prev">
-			<h4>Create a Content Group</h4>
-			<br>
+			<h4>Create a Content Group</h4> <br>
 			<p>You have the flexibility to organize your contents into any
 				number of Content Groups.</p>
 		</li>
 		<li data-id="contentgroup_tips" data-text="Next" data-prev-text="Prev">
-			<h4>Tips</h4>
-			<br>
+			<h4>Tips</h4> <br>
 			<p>This section provides you information on any questions that
 				you might have, when creating a content group.</p>
 			<p>For instance, what it means by Enabling a content group, or
 				Start and End dates.</p>
 		</li>
-		<li data-id="first_contentgroup_id" data-text="Next" data-prev-text="Prev">
-			<h4>Content Id</h4>
-			<br>
-			<p>Use the content group id within the SDK, to access all content within the content group for display on mobile devices</p>
+		<li data-id="first_contentgroup_id" data-text="Next"
+			data-prev-text="Prev">
+			<h4>Content Id</h4> <br>
+			<p>Use the content group id within the SDK, to access all content
+				within the content group for display on mobile devices</p>
 		</li>
-		<li data-id="first_content" data-text="Click on &apos;content&apos; to continue" data-prev-text="Prev">
-			<h4>Access Content</h4>
-			<br>
+		<li data-id="first_content"
+			data-text="Click on &apos;content&apos; to continue"
+			data-prev-text="Prev">
+			<h4>Access Content</h4> <br>
 			<p>You can access all the content within this content group here.</p>
 		</li>
 	</ol>
+	<div class="reveal-modal small" id="restore_modal" data-reveal>
+		<h3 class="gray" id="modalLabel">Restore Content Group</h3>
+		<div class="row">
+			<div id="select_from_deleted_list"></div>
+		</div>
+		<button id="restore_confirm_button" class="button radius btn-default">restore</button>
+		<a class="close-reveal-modal">&#215;</a>
+	</div>
 
 </body>
 </html>

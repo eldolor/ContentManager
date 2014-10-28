@@ -18,6 +18,7 @@ package com.cm.quota;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,6 +40,8 @@ import com.cm.contentmanager.application.Application;
 import com.cm.contentmanager.application.ApplicationService;
 import com.cm.contentmanager.content.Content;
 import com.cm.contentmanager.content.ContentService;
+import com.cm.contentmanager.contentgroup.ContentGroup;
+import com.cm.contentmanager.contentgroup.ContentGroupService;
 import com.cm.stripe.StripeCustomer;
 import com.cm.stripe.StripeCustomerService;
 import com.cm.usermanagement.user.User;
@@ -50,11 +53,13 @@ public class QuotaController {
 	@Autowired
 	private QuotaService quotaService;
 	@Autowired
-	private ContentService contentService;
-	@Autowired
 	private UserService userService;
 	@Autowired
 	private ApplicationService applicationService;
+	@Autowired
+	private ContentService contentService;
+	@Autowired
+	private ContentGroupService contentGroupService;
 	@Autowired
 	private StripeCustomerService stripeCustomerService;
 
@@ -350,22 +355,44 @@ public class QuotaController {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
 			List<Application> lApplications = applicationService
-					.getApplicationsByAccountId(accountId);
+					.getApplicationsByAccountId(accountId, false);
 			int lApplicationsUsed = lApplications.size();
 			quotaService.upsertApplicationUtilization(accountId,
 					lApplicationsUsed);
 			for (Application lApplication : lApplications) {
 				long lStorageUsedInBytes = 0;
-				List<Content> lContentList = contentService.get(
-						lApplication.getId(), false);
-				for (Content lContent : lContentList) {
-					// roll up size
-					lStorageUsedInBytes += lContent.getSizeInBytes();
+				// only if the application is not deleted; Deleted apps are
+				// excluded from storage quota
+				if (!lApplication.isDeleted()) {
+					// get content groups
+					List<ContentGroup> lContentGroups = contentGroupService
+							.get(lApplication.getId(), false);
+					for (ContentGroup lContentGroup : lContentGroups) {
+						// only if the content group is not deleted; Deleted
+						// content groups are
+						// excluded from storage quota
+						if (!lContentGroup.isDeleted()) {
+
+							List<Content> lContentList = contentService
+									.getByContentGroupId(lContentGroup.getId(),
+											false);
+							for (Content lContent : lContentList) {
+								// only if the content is not deleted; Deleted
+								// content are
+								// excluded from storage quota
+								if (!lContent.isDeleted()) {
+									// roll up size
+									lStorageUsedInBytes += lContent
+											.getSizeInBytes();
+								}
+							}
+						}
+					}
 				}
 				// update for each application
 				quotaService.upsertStorageUtilization(lApplication,
 						lStorageUsedInBytes);
-			}
+			}// end application
 
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -590,11 +617,13 @@ public class QuotaController {
 		lQuota.setCanonicalPlanName(pQuota.getCanonicalPlanName());
 
 		lQuota.setApplicationLimit(pQuota.getApplicationLimit());
-		lQuota.setApplicationsUsed((pApplicationQuotaUsed != null)?pApplicationQuotaUsed.getApplicationsUsed():0);
+		lQuota.setApplicationsUsed((pApplicationQuotaUsed != null) ? pApplicationQuotaUsed
+				.getApplicationsUsed() : 0);
 		try {
 
 			BigDecimal lBd1 = new BigDecimal(
-					(pApplicationQuotaUsed != null)?pApplicationQuotaUsed.getApplicationsUsed():0 * 100);
+					(pApplicationQuotaUsed != null) ? pApplicationQuotaUsed
+							.getApplicationsUsed() : 0 * 100);
 			BigDecimal lBd2 = new BigDecimal(pQuota.getApplicationLimit());
 
 			// divide bg1 with bg2 with 0 scale

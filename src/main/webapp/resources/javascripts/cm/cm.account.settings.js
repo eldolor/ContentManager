@@ -403,10 +403,11 @@ function setupAccountUsageGoogCharts() {
 							});
 
 							for (var i = 0; i < mQuota.storageQuota.length; i++) {
-								lStoragePerApplicationData
-										.addRow([
-												mQuota.storageQuota[i].trackingId,
-												mQuota.storageQuota[i].storageUsedInBytes ]);
+								var lStorageUsedInBytes = (mQuota.storageQuota[i].storageUsedInBytes != 0) ? mQuota.storageQuota[i].storageUsedInBytes
+										: 1;
+								lStoragePerApplicationData.addRow([
+										mQuota.storageQuota[i].trackingId,
+										lStorageUsedInBytes ]);
 							}
 
 							var lStoragePerApplicationChartOptions = {

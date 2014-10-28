@@ -16,6 +16,7 @@
 package com.cm.contentmanager.content;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.cm.contentmanager.application.Application;
 import com.cm.contentmanager.application.ApplicationService;
 import com.cm.usermanagement.user.UserService;
 import com.cm.util.Utils;
@@ -128,6 +130,44 @@ public class ContentController {
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting getAllContent");
+		}
+	}
+
+	@RequestMapping(value = "/secured/{applicationId}/{contentGroupId}/content/deleted", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody
+	List<Content> getDeletedContent(@PathVariable Long applicationId,
+			@PathVariable Long contentGroupId, HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			if (contentGroupId == null || contentGroupId.equals("")) {
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("No Content Group Id Found!");
+				return null;
+			}
+			List<Content> deletedContent = new ArrayList<Content>();
+
+			List<Content> content = contentService.get(applicationId,
+					contentGroupId, true);
+			for (Iterator iterator = content.iterator(); iterator.hasNext();) {
+				Content content2 = (Content) iterator.next();
+				if (content2.isDeleted()) {
+					deletedContent.add(content2);
+				}
+			}
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info(deletedContent.size() + " Content found");
+			response.setStatus(HttpServletResponse.SC_OK);
+			return deletedContent;
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
 		}
 	}
 
@@ -265,7 +305,7 @@ public class ContentController {
 			String lTrackingId = applicationService.getApplication(
 					applicationId).getTrackingId();
 			Utils.triggerChangesStagedMessage(applicationId, 0);
-			Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId, 0);
+			Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId, 3000);
 			response.setStatus(HttpServletResponse.SC_OK);
 
 		} catch (Throwable e) {
@@ -293,20 +333,59 @@ public class ContentController {
 				if (LOGGER.isLoggable(Level.INFO))
 					LOGGER.info("No Content Id Found!");
 			}
-			// Get the application id for the content that is about to be
-			// deleted
-			Long lApplicationId = contentService.get(id).getApplicationId();
 			contentService.delete(id, timeUpdatedMs,
 					timeUpdatedTimeZoneOffsetMs);
-			response.setStatus(HttpServletResponse.SC_OK);
-			String lTrackingId = applicationService.getApplication(
-					lApplicationId).getTrackingId();
-			Utils.triggerChangesStagedMessage(id, 0);
-			Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId, 0);
-			// trigger message to update quota
-			Utils.triggerUpdateQuotaUtilizationMessage(userService
-					.getLoggedInUser().getAccountId(), 0);
+			Long lApplicationId = contentService.get(id).getApplicationId();
 
+			Application lApplication = applicationService
+					.getApplication(lApplicationId);
+			Utils.triggerChangesStagedMessage(id, 0);
+			Utils.triggerUpdateLastKnownTimestampMessage(
+					lApplication.getTrackingId(), 0);
+			Utils.triggerUpdateQuotaUtilizationMessage(
+					lApplication.getAccountId(), 3000);
+
+			response.setStatus(HttpServletResponse.SC_OK);
+
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting deleteContent");
+		}
+	}
+
+	@RequestMapping(value = "/secured/content/restore/{id}/{timeUpdatedMs}/{timeUpdatedTimeZoneOffsetMs}", method = RequestMethod.PUT, produces = "application/json")
+	public void restoreContent(@PathVariable Long id,
+			@PathVariable Long timeUpdatedMs,
+			@PathVariable Long timeUpdatedTimeZoneOffsetMs,
+			HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering deleteContent");
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Content ID: " + id);
+			if (id == null || id.equals("")) {
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("No Content Id Found!");
+			}
+			contentService.restore(id, timeUpdatedMs,
+					timeUpdatedTimeZoneOffsetMs);
+
+			Long lApplicationId = contentService.get(id).getApplicationId();
+
+			Application lApplication = applicationService
+					.getApplication(lApplicationId);
+			Utils.triggerChangesStagedMessage(id, 0);
+			Utils.triggerUpdateLastKnownTimestampMessage(
+					lApplication.getTrackingId(), 0);
+			Utils.triggerUpdateQuotaUtilizationMessage(
+					lApplication.getAccountId(), 0);
+
+			response.setStatus(HttpServletResponse.SC_OK);
 		} catch (Throwable e) {
 			// handled by GcmManager
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);

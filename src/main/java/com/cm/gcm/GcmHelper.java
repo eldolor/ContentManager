@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -165,10 +166,16 @@ public class GcmHelper {
 						for (Iterator<String> iterator = lRetriableRegIds
 								.iterator(); iterator.hasNext();) {
 							String lRetriableRegId = iterator.next();
+							//over the next 
+							long lDelayInMs =  new Random().nextInt(60 * 1000);
+							if (LOGGER.isLoggable(Level.INFO))
+								LOGGER.info("Adding delay of "
+										+ lDelayInMs
+										+ " ms before attempting to process");
 							// do it one message at a time
 							Utils.triggerSendContentListMessage(
 									pContentRequest.getTrackingId(),
-									lRetriableRegId, 0);
+									lRetriableRegId, lDelayInMs);
 
 						}
 					}

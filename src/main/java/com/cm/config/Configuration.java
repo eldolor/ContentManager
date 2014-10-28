@@ -22,5 +22,7 @@ public class Configuration {
 	
 	public static final int GCM_MAX_ATTEMPTS = 10;
 	public static final int GCM_MESSAGE_SIZE_LIMIT_BYTES = 4096;
+	
+	public static final String TRACKING_ID_PREFIX = "SKOK_";
 
 }

@@ -164,6 +164,11 @@ public class UserManagementController {
 				lQuota.setTimeCreatedTimeZoneOffsetMs((long) TimeZone
 						.getDefault().getRawOffset());
 				quotaService.create(lQuota);
+				// update utilization
+				Utils.triggerUpdateQuotaUtilizationMessage(
+						lApplication.getAccountId(), 10000);
+				Utils.triggerUpdateBandwidthUtilizationMessage(
+						lApplication.getId(), 0L, 10000);
 
 				response.setStatus(HttpServletResponse.SC_CREATED);
 				return null;
@@ -357,8 +362,9 @@ public class UserManagementController {
 				List<Content> lContents = contentService.get(applicationId,
 						false);
 				for (int i = 0; i < lastNDays; i++) {
-					LOGGER.info("Processing: "
-							+ lEod.getTime().toLocaleString());
+					if (LOGGER.isLoggable(Level.INFO))
+						LOGGER.info("Processing: "
+								+ lEod.getTime().toLocaleString());
 					for (Content content : lContents) {
 						int lRandom = Utils.getRandomNumber(1, 10);
 						for (int j = 0; j < lRandom; j++) {
@@ -380,9 +386,10 @@ public class UserManagementController {
 				Calendar lSod = Utils.getStartOfDayToday(TimeZone
 						.getTimeZone("UTC"));
 				for (int i = 0; i < lastNDays; i++) {
-					LOGGER.info("Processing: "
-							+ lSod.getTime().toLocaleString() + "::"
-							+ lEod.getTime().toLocaleString());
+					if (LOGGER.isLoggable(Level.INFO))
+						LOGGER.info("Processing: "
+								+ lSod.getTime().toLocaleString() + "::"
+								+ lEod.getTime().toLocaleString());
 					// Utils.triggerRollupMessage(applicationId,
 					// lSod.getTimeInMillis(), lEod.getTimeInMillis(), 0);
 					contentStatService.rollupSummary(applicationId,
@@ -427,7 +434,7 @@ public class UserManagementController {
 			List<Application> lApplications = applicationService
 					.getApplicationsByAccountId(lAccountId, true);
 
-			String lTrackingId = "AI_" + lAccountId + "_"
+			String lTrackingId = Configuration.TRACKING_ID_PREFIX + lAccountId + "_"
 					+ (lApplications.size() + 1); // the collection will have
 													// size 0 at first
 

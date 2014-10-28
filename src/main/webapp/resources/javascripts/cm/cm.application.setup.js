@@ -60,6 +60,12 @@ function setupContextNavBar() {
 			// 'open');
 			newApplication();
 		});
+		$('#restore_applications').unbind();
+		$('#restore_applications').click(function() {
+			// $('#application_create_modal').foundation('reveal',
+			// 'open');
+			restoreApplications();
+		});
 
 	} catch (err) {
 		handleError("setupContextNavBar", err);

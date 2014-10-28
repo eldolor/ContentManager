@@ -41,10 +41,11 @@
 
 			<p class="text-center page_sub_heading">Create an application to
 				manage your content</p>
-<!-- 			<div class="line">
+			<!-- 			<div class="line">
 				<img src="/resources/images/cm/line.png" alt="line" />
 			</div>
- -->			<br />
+ -->
+			<br />
 			<div class="row">
 				<div class="large-7 columns">
 					<jsp:include page="breadcrumbs.jsp"></jsp:include>
@@ -60,6 +61,9 @@
 						<ul>
 							<li><i class="fi-arrow-right"></i><a id="create_application"
 								href="javascript:void(0);">&nbsp;Create New Application</a></li>
+							<li><i class="fi-arrow-right"></i><a
+								id="restore_applications" href="javascript:void(0);">&nbsp;Restore
+									Deleted Applications</a></li>
 						</ul>
 					</div>
 					<br> <br />
@@ -140,5 +144,15 @@
 				here.</p>
 		</li>
 	</ol>
+
+	<div class="reveal-modal small" id="restore_modal" data-reveal>
+		<h3 class="gray" id="modalLabel">Restore Application</h3>
+		<div class="row">
+			<div id="select_from_deleted_list"></div>
+		</div>
+		<button id="restore_confirm_button" class="button radius btn-default">restore</button>
+		<a class="close-reveal-modal">&#215;</a>
+	</div>
+
 </body>
 </html>

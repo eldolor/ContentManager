@@ -175,7 +175,8 @@
 		SIGN_OUT : "sign_out",
 		SIGN_UP : "sign_up",
 		PUSH_CHANGES_TO_HANDSETS : "push_changes_to_handsets",
-		DOWNLOAD : "download"
+		DOWNLOAD : "download",
+		RESTORE : "restore"
 	};
 </script>
 <!-- End Google Analytics -->

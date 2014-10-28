@@ -38,7 +38,7 @@ public class Utils {
 			.getLogger(Utils.class.getName());
 
 	public static void triggerRollupMessage(Long pApplicationId,
-			Long eventStartTimeMs, Long eventEndTimeMs, long delay) {
+			Long eventStartTimeMs, Long eventEndTimeMs, long delayInMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
@@ -53,7 +53,7 @@ public class Utils {
 					.param("id", String.valueOf(pApplicationId))
 					.param("eventStartTimeMs", String.valueOf(eventStartTimeMs))
 					.param("eventEndTimeMs", String.valueOf(eventEndTimeMs))
-					.method(Method.POST).countdownMillis(delay);
+					.method(Method.POST).countdownMillis(delayInMs);
 			queue.add(taskOptions);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -63,7 +63,7 @@ public class Utils {
 	}
 
 	public static void triggerUpdateBandwidthUtilizationMessage(String pUri,
-			long delay) {
+			long delayInMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
@@ -72,7 +72,7 @@ public class Utils {
 			TaskOptions taskOptions = TaskOptions.Builder
 					.withUrl("/tasks/bandwidth/utilization/update/" + pUri)
 					.param("uri", pUri).method(Method.POST)
-					.countdownMillis(delay);
+					.countdownMillis(delayInMs);
 			queue.add(taskOptions);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -82,7 +82,7 @@ public class Utils {
 	}
 
 	public static void triggerUpdateBandwidthUtilizationMessage(
-			Long applicationId, Long sizeInBytes, long delay) {
+			Long applicationId, Long sizeInBytes, long delayInMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
@@ -94,7 +94,7 @@ public class Utils {
 									+ applicationId + "/" + sizeInBytes)
 					.param("applicationId", String.valueOf(applicationId))
 					.param("sizeInBytes", String.valueOf(sizeInBytes))
-					.method(Method.POST).countdownMillis(delay);
+					.method(Method.POST).countdownMillis(delayInMs);
 			queue.add(taskOptions);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -104,7 +104,7 @@ public class Utils {
 	}
 
 	public static void triggerForgotPasswordEmailMessage(String pGuid,
-			long delay) {
+			long delayInMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
@@ -112,7 +112,7 @@ public class Utils {
 			TaskOptions taskOptions = TaskOptions.Builder
 					.withUrl("/tasks/email/sendforgotpasswordemail/" + pGuid)
 					.param("guid", pGuid).method(Method.POST)
-					.countdownMillis(delay);
+					.countdownMillis(delayInMs);
 			queue.add(taskOptions);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -121,7 +121,7 @@ public class Utils {
 
 	}
 
-	public static void triggerUpdateQuotaMessage(Long pAccountId, long delay) {
+	public static void triggerUpdateQuotaMessage(Long pAccountId, long delayInMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
@@ -132,7 +132,7 @@ public class Utils {
 			TaskOptions taskOptions = TaskOptions.Builder
 					.withUrl("/tasks/quota/update/" + pAccountId)
 					.param("accountId", String.valueOf(pAccountId))
-					.method(Method.POST).countdownMillis(delay);
+					.method(Method.POST).countdownMillis(delayInMs);
 			queue.add(taskOptions);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -141,7 +141,7 @@ public class Utils {
 	}
 
 	public static void triggerUpdateQuotaUtilizationMessage(Long pAccountId,
-			long delay) {
+			long delayInMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
@@ -152,7 +152,7 @@ public class Utils {
 			TaskOptions taskOptions = TaskOptions.Builder
 					.withUrl("/tasks/quota/utilization/update/" + pAccountId)
 					.param("accountId", String.valueOf(pAccountId))
-					.method(Method.POST).countdownMillis(delay);
+					.method(Method.POST).countdownMillis(delayInMs);
 			queue.add(taskOptions);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))

@@ -3,7 +3,6 @@ package com.cm.quota.transfer;
 import java.io.Serializable;
 
 public class StorageQuota implements Serializable {
-	private String canonicalPlanName;
 	private long applicationId;
 	private String trackingId;
 	private long storageUsedInBytes;
@@ -24,13 +23,6 @@ public class StorageQuota implements Serializable {
 		this.storageUsedInBytes = storageUsedInBytes;
 	}
 
-	public String getCanonicalPlanName() {
-		return canonicalPlanName;
-	}
-
-	public void setCanonicalPlanName(String canonicalPlanName) {
-		this.canonicalPlanName = canonicalPlanName;
-	}
 
 	public String getTrackingId() {
 		return trackingId;

@@ -72,6 +72,12 @@ function setupContextNavBar() {
 			$('#content_group_create').show();
 			newContentGroup();
 		});
+		$('#restore_contentgroups').unbind();
+		$('#restore_contentgroups').click(function() {
+			// $('#application_create_modal').foundation('reveal',
+			// 'open');
+			restoreContentGroups(mSelectedApplication.id);
+		});
 
 	} catch (err) {
 		handleError("setupContextNavBar", err);

@@ -188,6 +188,11 @@ public class QuotaController {
 				LOGGER.info("Entering");
 			updateQuotaUtilizaton(accountId);
 
+			response.setStatus(HttpServletResponse.SC_OK);
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting");
@@ -281,6 +286,11 @@ public class QuotaController {
 			// the DB prior to lookup
 			// TODO: Should this be removed for production environment?
 			Utils.triggerUpdateQuotaUtilizationMessage(accountId, 3000);
+			response.setStatus(HttpServletResponse.SC_OK);
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -301,6 +311,11 @@ public class QuotaController {
 			quotaService.upsertBandwidthUtilization(lApplication,
 					lContent.getSizeInBytes());
 
+			response.setStatus(HttpServletResponse.SC_OK);
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting");
@@ -318,6 +333,11 @@ public class QuotaController {
 					.getApplication(applicationId);
 			quotaService.upsertBandwidthUtilization(lApplication, sizeInBytes);
 
+			response.setStatus(HttpServletResponse.SC_OK);
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting");

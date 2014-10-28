@@ -49,6 +49,10 @@ import com.cm.usermanagement.user.transfer.ForgotPasswordRequest;
 import com.cm.usermanagement.user.transfer.PasswordChangeRequest;
 import com.cm.util.Utils;
 import com.cm.util.ValidationError;
+import com.google.appengine.api.taskqueue.Queue;
+import com.google.appengine.api.taskqueue.QueueFactory;
+import com.google.appengine.api.taskqueue.TaskOptions;
+import com.google.appengine.api.taskqueue.TaskOptions.Method;
 
 @Controller
 public class UserManagementController {
@@ -130,8 +134,21 @@ public class UserManagementController {
 						lDomainUser, lApplication);
 				Long[] lContentIds = createDemoContent(lDomainUser,
 						lApplication, lContentGroups);
-				// create demo usage reports for the last 10 days
-				createDemoUsageReports(lApplication.getId(), 10);
+				// create demo usage reports for the last 10 days;
+				// asynchronously
+				int lLastNDays = 10;
+				// createDemoUsageReports(lApplication.getId(), lLastNDays);
+				Queue queue = QueueFactory
+						.getQueue(Configuration.CONTENT_STATS_QUEUE_NAME);
+				TaskOptions taskOptions = TaskOptions.Builder
+						.withUrl(
+								"/tasks/demo/usagereports/create/"
+										+ String.valueOf(lApplication.getId())
+										+ "/" + String.valueOf(lLastNDays))
+						.param("id", String.valueOf(lApplication.getId()))
+						.param("lastNDays", String.valueOf(lLastNDays))
+						.method(Method.POST).countdownMillis(5000);
+				queue.add(taskOptions);
 
 				// assign them the free quota
 				Quota lQuota = new Quota();
@@ -327,39 +344,61 @@ public class UserManagementController {
 
 	}
 
-	private void createDemoUsageReports(long applicationId, int lastNDays) {
+	@RequestMapping(value = "/tasks/demo/usagereports/create/{applicationId}/{lastNDays}", method = RequestMethod.POST)
+	public void createDemoUsageReports(@PathVariable long applicationId,
+			@PathVariable int lastNDays, HttpServletResponse response) {
 
-		{
-			Calendar lEod = Utils.getEndOfDayToday(TimeZone.getTimeZone("UTC"));
-			List<Content> lContents = contentService.get(applicationId, false);
-			for (int i = 0; i < lastNDays; i++) {
-				LOGGER.info("Processing: " + lEod.getTime().toLocaleString());
-				for (Content content : lContents) {
-					int lRandom = Utils.getRandomNumber(1, 10);
-					for (int j = 0; j < lRandom; j++) {
-						contentStatService
-								.saveContentStat(createDemoContentStat(
-										content.getApplicationId(),
-										content.getContentGroupId(),
-										content.getId(), lEod.getTimeInMillis()));
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			{
+				Calendar lEod = Utils.getEndOfDayToday(TimeZone
+						.getTimeZone("UTC"));
+				List<Content> lContents = contentService.get(applicationId,
+						false);
+				for (int i = 0; i < lastNDays; i++) {
+					LOGGER.info("Processing: "
+							+ lEod.getTime().toLocaleString());
+					for (Content content : lContents) {
+						int lRandom = Utils.getRandomNumber(1, 10);
+						for (int j = 0; j < lRandom; j++) {
+							contentStatService
+									.saveContentStat(createDemoContentStat(
+											content.getApplicationId(),
+											content.getContentGroupId(),
+											content.getId(),
+											lEod.getTimeInMillis()));
+						}
 					}
+					lEod.add(Calendar.DATE, -1);
 				}
-				lEod.add(Calendar.DATE, -1);
 			}
-		}
 
-		{
-			Calendar lEod = Utils.getEndOfDayToday(TimeZone.getTimeZone("UTC"));
-			Calendar lSod = Utils.getStartOfDayToday(TimeZone
-					.getTimeZone("UTC"));
-			for (int i = 0; i < lastNDays; i++) {
-				LOGGER.info("Processing: " + lSod.getTime().toLocaleString()
-						+ "::" + lEod.getTime().toLocaleString());
-				Utils.triggerRollupMessage(applicationId,
-						lSod.getTimeInMillis(), lEod.getTimeInMillis(), 0);
-				lSod.add(Calendar.DATE, -1);
-				lEod.add(Calendar.DATE, -1);
+			{
+				Calendar lEod = Utils.getEndOfDayToday(TimeZone
+						.getTimeZone("UTC"));
+				Calendar lSod = Utils.getStartOfDayToday(TimeZone
+						.getTimeZone("UTC"));
+				for (int i = 0; i < lastNDays; i++) {
+					LOGGER.info("Processing: "
+							+ lSod.getTime().toLocaleString() + "::"
+							+ lEod.getTime().toLocaleString());
+					// Utils.triggerRollupMessage(applicationId,
+					// lSod.getTimeInMillis(), lEod.getTimeInMillis(), 0);
+					contentStatService.rollupSummary(applicationId,
+							lSod.getTimeInMillis(), lEod.getTimeInMillis());
+					lSod.add(Calendar.DATE, -1);
+					lEod.add(Calendar.DATE, -1);
+				}
 			}
+			response.setStatus(HttpServletResponse.SC_OK);
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
 		}
 
 	}
@@ -748,17 +787,20 @@ public class UserManagementController {
 			StringBuilder htmlBody = new StringBuilder();
 			htmlBody.append(lEmailMessage);
 			try {
-				Utils.sendEmail(
-						Configuration.FROM_EMAIL_ADDRESS,
-						Configuration.FROM_NAME,
-						lRequest.getEmail(), "", Configuration.SITE_NAME,
-						htmlBody.toString(), null);
+				Utils.sendEmail(Configuration.FROM_EMAIL_ADDRESS,
+						Configuration.FROM_NAME, lRequest.getEmail(), "",
+						Configuration.SITE_NAME, htmlBody.toString(), null);
 			} catch (UnsupportedEncodingException e) {
 				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			} catch (MessagingException e) {
 				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}
 
+			response.setStatus(HttpServletResponse.SC_OK);
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting sendForgotPasswordEmail");

@@ -161,7 +161,7 @@ public class Utils {
 	}
 
 	public static void triggerChangesStagedMessage(Long pApplicationId,
-			long delay) {
+			long delayInMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering triggerChangesStagedMessage");
@@ -174,7 +174,7 @@ public class Utils {
 							"/tasks/application/changesstaged/"
 									+ pApplicationId)
 					.param("applicationId", String.valueOf(pApplicationId))
-					.method(Method.POST).countdownMillis(delay);
+					.method(Method.POST).countdownMillis(delayInMs);
 			queue.add(taskOptions);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -183,7 +183,7 @@ public class Utils {
 	}
 
 	public static void triggerUpdateContentSizeInBytesMessage(Long pContentId,
-			String pUri, long delay) {
+			String pUri, long delayInMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering triggerUpdateContentSizeInBytesMessage");
@@ -197,7 +197,7 @@ public class Utils {
 									+ pUri)
 					.param("id", String.valueOf(pContentId))
 					.param("uri", String.valueOf(pUri)).method(Method.POST)
-					.countdownMillis(delay);
+					.countdownMillis(delayInMs);
 			queue.add(taskOptions);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -206,7 +206,7 @@ public class Utils {
 	}
 
 	public static void triggerSendContentListMessages(String pTrackingId,
-			long delay) {
+			long delayInMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering triggerSendContentListMessage");
@@ -217,7 +217,7 @@ public class Utils {
 					.withUrl(
 							"/tasks/gcm/sendcontentlistmessages/" + pTrackingId)
 					.param("trackingId", pTrackingId).method(Method.POST)
-					.countdownMillis(delay);
+					.countdownMillis(delayInMs);
 			queue.add(taskOptions);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -226,7 +226,7 @@ public class Utils {
 	}
 
 	public static void triggerSendContentListMessage(String pTrackingId,
-			String pGcmId, long delay) {
+			String pGcmId, long delayInMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering triggerSendContentListMessage");
@@ -237,7 +237,7 @@ public class Utils {
 					.withUrl(
 							"/tasks/gcm/sendcontentlistmessage/" + pTrackingId
 									+ pGcmId).param("gcmId", pGcmId)
-					.method(Method.POST).countdownMillis(delay);
+					.method(Method.POST).countdownMillis(delayInMs);
 			queue.add(taskOptions);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -246,7 +246,7 @@ public class Utils {
 	}
 
 	public static void triggerUpdateLastKnownTimestampMessage(
-			String pTrackingId, long delay) {
+			String pTrackingId, long delayInMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering triggerUpdateLastKnownTimestampMessage");
@@ -259,7 +259,7 @@ public class Utils {
 							"/tasks/contentserver/updatelastknowntimestamp/"
 									+ pTrackingId)
 					.param("trackingId", pTrackingId).method(Method.POST)
-					.countdownMillis(delay);
+					.countdownMillis(delayInMs);
 			queue.add(taskOptions);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))

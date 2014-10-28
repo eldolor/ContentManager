@@ -202,8 +202,13 @@ public class GcmController {
 			gcmHelper.sendContentListMessages(contentHelper
 					.getGenericContentRequest(trackingId));
 
+			response.setStatus(HttpServletResponse.SC_OK);
 		} catch (IOException e) {
 			LOGGER.log(Level.SEVERE, "Unable to connect with GCM servers.", e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -223,6 +228,7 @@ public class GcmController {
 			gcmHelper.sendContentListMessage(gcmId,
 					contentHelper.getGenericContentRequest(gcmId));
 
+			response.setStatus(HttpServletResponse.SC_OK);
 		} catch (DeviceHasMultipleRegistrations e) {
 			// Just log it,
 			LOGGER.log(Level.WARNING,
@@ -232,6 +238,10 @@ public class GcmController {
 			LOGGER.log(Level.WARNING, "Device not registered with GCM Servers");
 		} catch (IOException e) {
 			LOGGER.log(Level.SEVERE, "Unable to connect with GCM servers.", e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))

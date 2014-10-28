@@ -96,7 +96,8 @@ public class ContentServerController {
 				LOGGER.warning("No Content Request Found!");
 				return null;
 			}
-			if (!clientKeyService.validateClientKey(pContentRequest.getClientKey(),
+			if (!clientKeyService.validateClientKey(
+					pContentRequest.getClientKey(),
 					pContentRequest.getTrackingId())) {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				LOGGER.log(Level.SEVERE,
@@ -346,7 +347,11 @@ public class ContentServerController {
 			} catch (Throwable t) {
 				LOGGER.log(Level.SEVERE, "Unable to add to Memcache", t);
 			}
-
+			response.setStatus(HttpServletResponse.SC_OK);
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting updateLastKnownTimestamp");

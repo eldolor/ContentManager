@@ -339,6 +339,8 @@ public class ApplicationController {
 					if (LOGGER.isLoggable(Level.INFO))
 						LOGGER.info("updating memcache");
 				}
+				response.setStatus(HttpServletResponse.SC_OK);
+
 			} catch (Throwable t) {
 				LOGGER.log(Level.SEVERE, "Unable to update Memcache", t);
 			}

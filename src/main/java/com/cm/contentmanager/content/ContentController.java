@@ -262,7 +262,8 @@ public class ContentController {
 				LOGGER.info("Entering");
 			contentService.moveContentGroup(id, contentGroupId, timeUpdatedMs,
 					timeUpdatedTimeZoneOffsetMs);
-			String lTrackingId = applicationService.getApplication(applicationId).getTrackingId();
+			String lTrackingId = applicationService.getApplication(
+					applicationId).getTrackingId();
 			Utils.triggerChangesStagedMessage(applicationId, 0);
 			Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId, 0);
 			response.setStatus(HttpServletResponse.SC_OK);
@@ -396,6 +397,11 @@ public class ContentController {
 			} else {
 				LOGGER.warning("No size found for uri " + uri);
 			}
+			response.setStatus(HttpServletResponse.SC_OK);
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting updateSize");

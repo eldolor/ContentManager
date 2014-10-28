@@ -391,6 +391,7 @@ public class ContentStatController {
 							lSod.getTimeInMillis(), lEod.getTimeInMillis(), 0);
 				}
 			}
+			response.setStatus(HttpServletResponse.SC_OK);
 
 		} catch (Throwable e) {
 			// handled by GcmManager
@@ -430,6 +431,7 @@ public class ContentStatController {
 					}
 				}
 			}
+			response.setStatus(HttpServletResponse.SC_OK);
 
 		} catch (Throwable e) {
 			// handled by GcmManager
@@ -476,6 +478,7 @@ public class ContentStatController {
 					}
 				}
 			}
+			response.setStatus(HttpServletResponse.SC_OK);
 
 		} catch (Throwable e) {
 			// handled by GcmManager
@@ -518,6 +521,7 @@ public class ContentStatController {
 					}
 				}
 			}
+			response.setStatus(HttpServletResponse.SC_OK);
 
 		} catch (Throwable e) {
 			// handled by GcmManager
@@ -551,7 +555,7 @@ public class ContentStatController {
 							lSod.getTimeInMillis(), lEod.getTimeInMillis(), 0);
 				}
 			}
-
+			response.setStatus(HttpServletResponse.SC_OK);
 		} catch (Throwable e) {
 			// handled by GcmManager
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
@@ -571,6 +575,7 @@ public class ContentStatController {
 				LOGGER.info("Entering");
 			contentStatService.rollupSummary(id, eventStartTimeMs,
 					eventEndTimeMs);
+			response.setStatus(HttpServletResponse.SC_OK);
 
 		} catch (Throwable e) {
 			// handled by GcmManager

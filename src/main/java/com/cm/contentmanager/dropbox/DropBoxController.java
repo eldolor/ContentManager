@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.cm.config.Configuration;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
@@ -25,7 +26,6 @@ public class DropBoxController {
 
 	private static final Logger LOGGER = Logger
 			.getLogger(DropBoxController.class.getName());
-	private static final String GCS_STORAGE_BUCKET = "cmi-contentmanager.appspot.com/media";
 
 	@RequestMapping(value = "/secured/dropbox", method = RequestMethod.POST, produces = "application/json", headers = { "content-type=multipart/form-data" })
 	public @ResponseBody
@@ -71,7 +71,7 @@ public class DropBoxController {
 			// mBlobstoreFactory.createUploadUrl("/secured/dropbox");
 			String url = mBlobstoreFactory.createUploadUrl("/secured/dropbox",
 					UploadOptions.Builder
-							.withGoogleStorageBucketName(GCS_STORAGE_BUCKET));
+							.withGoogleStorageBucketName(Configuration.GCS_STORAGE_BUCKET));
 
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Returning Url " + url);

@@ -118,7 +118,7 @@
 				<div class="price_item " id="micro">
 					<div class="price_cost">
 						<div class="package_name">MICRO</div>
-						<h1>$7.00</h1>
+						<h1>$50.00</h1>
 						<div class="package_rate">Per month</div>
 					</div>
 				</div>
@@ -142,9 +142,9 @@
 									name="canonicalPlanName" value="${canonicalPlanNameMicro}" />
 								<script src="https://checkout.stripe.com/checkout.js"
 									class="stripe-button"
-									data-key="pk_test_4aEi34FWLvjmVHc14fQoUQPZ" data-amount="700"
+									data-key="pk_test_4aEi34FWLvjmVHc14fQoUQPZ" data-amount="5000"
 									data-name="Skok"
-									data-description="500MB Plan @ $7/month"
+									data-description="500MB Plan @ $50/month"
 									data-image="/resources/images/cm/logo-128x128.png" data-zip-code="true"
 									data-panel-label="Subscribe" data-label="Get Started">
 									
@@ -162,7 +162,7 @@
 									<a href="javascript:void(0);"
 										class="button radius small btn-default"
 										id="update_plan_button"
-										onclick="javascript: planUpdate('${canonicalPlanNameMicro}', 'progress_bar', '$7');">
+										onclick="javascript: planUpdate('${canonicalPlanNameMicro}', 'progress_bar', '$50');">
 										<c:choose>
 											<c:when
 												test="${subscribedCanonicalPlanName == canonicalPlanNameFree}">upgrade</c:when>
@@ -182,7 +182,7 @@
 				<div class="price_item" id="small">
 					<div class="price_cost">
 						<div class="package_name">SMALL</div>
-						<h1>$14.00</h1>
+						<h1>$100.00</h1>
 						<div class="package_rate">Per month</div>
 					</div>
 				</div>
@@ -206,9 +206,9 @@
 									name="canonicalPlanName" value="${canonicalPlanNameSmall}" />
 								<script src="https://checkout.stripe.com/checkout.js"
 									class="stripe-button"
-									data-key="pk_test_4aEi34FWLvjmVHc14fQoUQPZ" data-amount="1500"
+									data-key="pk_test_4aEi34FWLvjmVHc14fQoUQPZ" data-amount="10000"
 									data-name="Skok"
-									data-description="1GB Plan @ $15/month"
+									data-description="1GB Plan @ $100/month"
 									data-image="/resources/images/cm/logo-128x128.png" data-zip-code="true"
 									data-panel-label="Subscribe" data-label="Get Started">
 									
@@ -226,7 +226,7 @@
 									<a href="javascript:void(0);"
 										class="button radius small btn-default"
 										id="update_plan_button"
-										onclick="javascript: planUpdate('${canonicalPlanNameSmall}', 'progress_bar', '$15');">
+										onclick="javascript: planUpdate('${canonicalPlanNameSmall}', 'progress_bar', '$100');">
 										<c:choose>
 											<c:when
 												test="${subscribedCanonicalPlanName == canonicalPlanNameFree || subscribedCanonicalPlanName == canonicalPlanNameMicro}">upgrade</c:when>
@@ -245,7 +245,7 @@
 				<div class="price_item" id="medium">
 					<div class="price_cost">
 						<div class="package_name">MEDIUM</div>
-						<h1>$28.00</h1>
+						<h1>$150.00</h1>
 						<div class="package_rate">Per month</div>
 					</div>
 				</div>
@@ -269,9 +269,9 @@
 									name="canonicalPlanName" value="${canonicalPlanNameMedium}" />
 								<script src="https://checkout.stripe.com/checkout.js"
 									class="stripe-button"
-									data-key="pk_test_4aEi34FWLvjmVHc14fQoUQPZ" data-amount="2500"
+									data-key="pk_test_4aEi34FWLvjmVHc14fQoUQPZ" data-amount="15000"
 									data-name="Skok"
-									data-description="2GB Plan @ $25/month"
+									data-description="2GB Plan @ $150/month"
 									data-image="/resources/images/cm/logo-128x128.png" data-zip-code="true"
 									data-panel-label="Subscribe" data-label="Get Started">
 									
@@ -289,7 +289,7 @@
 									<a href="javascript:void(0);"
 										class="button radius small btn-default"
 										id="update_plan_button"
-										onclick="javascript: planUpdate('${canonicalPlanNameMedium}', 'progress_bar', '$25');">
+										onclick="javascript: planUpdate('${canonicalPlanNameMedium}', 'progress_bar', '$150');">
 										<c:choose>
 											<c:when
 												test="${subscribedCanonicalPlanName == canonicalPlanNameFree || subscribedCanonicalPlanName == canonicalPlanNameMicro  || subscribedCanonicalPlanName == canonicalPlanNameSmall}">upgrade</c:when>
@@ -308,7 +308,7 @@
 				<div class="price_item" id="large">
 					<div class="price_cost">
 						<div class="package_name">LARGE</div>
-						<h1>$56.00</h1>
+						<h1>$200.00</h1>
 						<div class="package_rate">Per month</div>
 					</div>
 				</div>
@@ -332,9 +332,9 @@
 									name="canonicalPlanName" value="${canonicalPlanNameLarge}" />
 								<script src="https://checkout.stripe.com/checkout.js"
 									class="stripe-button"
-									data-key="pk_test_4aEi34FWLvjmVHc14fQoUQPZ" data-amount="5000"
+									data-key="pk_test_4aEi34FWLvjmVHc14fQoUQPZ" data-amount="20000"
 									data-name="Skok"
-									data-description="4GB Plan @ $50/month"
+									data-description="4GB Plan @ $200/month"
 									data-image="/resources/images/cm/logo-128x128.png" data-zip-code="true"
 									data-panel-label="Subscribe" data-label="Get Started">
 									
@@ -352,7 +352,7 @@
 									<a href="javascript:void(0);"
 										class="button radius small btn-default"
 										id="update_plan_button"
-										onclick="javascript: planUpdate('${canonicalPlanNameLarge}', 'progress_bar', '$50');">upgrade</a>
+										onclick="javascript: planUpdate('${canonicalPlanNameLarge}', 'progress_bar', '$200');">upgrade</a>
 								</c:otherwise>
 
 							</c:choose>

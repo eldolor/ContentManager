@@ -94,7 +94,7 @@
 				<div class="price_item " id="micro">
 					<div class="price_cost">
 						<div class="package_name">MICRO</div>
-						<h1>$7.00</h1>
+						<h1>$50.00</h1>
 						<div class="package_rate">Per month</div>
 					</div>
 				</div>
@@ -116,7 +116,7 @@
 				<div class="price_item" id="small">
 					<div class="price_cost">
 						<div class="package_name">SMALL</div>
-						<h1>$14.00</h1>
+						<h1>$100.00</h1>
 						<div class="package_rate">Per month</div>
 					</div>
 				</div>
@@ -138,7 +138,7 @@
 				<div class="price_item" id="medium">
 					<div class="price_cost">
 						<div class="package_name">MEDIUM</div>
-						<h1>$28.00</h1>
+						<h1>$150.00</h1>
 						<div class="package_rate">Per month</div>
 					</div>
 				</div>
@@ -160,7 +160,7 @@
 				<div class="price_item" id="large">
 					<div class="price_cost">
 						<div class="package_name">LARGE</div>
-						<h1>$56.00</h1>
+						<h1>$200.00</h1>
 						<div class="package_rate">Per month</div>
 					</div>
 				</div>

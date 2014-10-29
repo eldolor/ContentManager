@@ -1,16 +1,23 @@
 package com.cm.config;
 
 public class Configuration {
+	//DEV
+	private static final String DOMAIN = "skok-dev.appspot.com";
+	//PROD
+	//private static final String DOMAIN = "skok.co";
+	
 	public static final String GOOGLE_API_KEY = "AIzaSyDmUXoFreTugYfSL5B2QvM8mUDwhCte7BM";
 	public static final String MESSAGE_TYPE = "MESSAGE_TYPE";
 	public static final String MESSAGE_TYPE_CONTENT_LIST = "MESSAGE_TYPE_CONTENT_LIST";
 	public static final String MESSAGE_TYPE_SEND_TO_SYNC = "MESSAGE_TYPE_SEND_TO_SYNC";
 	
 	public static final String SITE_NAME = "Skok";
-	public static final String FORGOT_PASSWORD_URL = "https://skok.co/forgotpassword";
+	//Dev
+	public static final String FORGOT_PASSWORD_URL = "https://"+ DOMAIN +"/forgotpassword";
 	public static final String FROM_EMAIL_ADDRESS = "anshu@skok.co";
 	public static final String FROM_NAME = "Skok";
 	
+	public static final String GCS_STORAGE_BUCKET = DOMAIN + "/media";
 	
 	public static final String STRIPE_API_KEY = "sk_test_4aEiOFaIp1sl35p1Gqjco3Is";
 	public static final String GOOGLE_API_PROJECT_NUMBER = "468566067831";

@@ -108,7 +108,7 @@
 				<a id="upload_content" href="javascript:void(0);">Click here to
 					upload content</a>
 				<div id="content_dropbox">
-					<span class="secondary radius label">Drop content here to
+					<span class="message">Drag-n-Drop content here to
 						upload</span>
 				</div>
 			</div>

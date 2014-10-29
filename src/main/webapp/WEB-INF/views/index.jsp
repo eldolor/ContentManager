@@ -61,22 +61,19 @@
  -->
 			<div class="row full-width">
 				<h2 class="text-center">Skok</h2>
-				<p class="text-left">Mobile is pushing ageing web architectures
-					to the brink. The three-tier web architecture won&apos;t deliver
-					any more. At the same time, the content requirements of your Mobile
-					Apps continue to expand. The performance unknowns of the last
-					wireless mile has further exacerbated the problem of delivering
-					rich content, images and videos, to your Mobile Apps.</p>
+				<p class="text-left">
+					Did you know that users start abandoning applications after a <a
+						target="_blank"
+						href="https://blog.kissmetrics.com/loading-time/?wide=1">3-second
+						delay</a>? Users have no patience for applications that take too long
+					to load.
+				</p>
 				<p class="text-left">Skok is an Advanced Content Management and
-					Delivery platform for your Mobile Apps. It enables you to
-					continually add, update, or remove content on your Mobile Apps,
-					without degrading the mobile experience of the users at any point,
-					or having to release a new version of your Mobile App.</p>
-				<p class="text-left">Skok streamlines content delivery to your
-					Mobile Apps, over spotty networks and dropped connections. It
-					elevates user experience by allowing users of your Mobile Apps to
-					engage with your rich content, even if they lose their data
-					connection.</p>
+					Delivery platform for your Mobile Apps. Skok elevates user
+					experience by allowing users of your Mobile Apps to engage with
+					your rich content, even if they lose their data connection.</p>
+
+
 			</div>
 			<div class="visible text-center">
 				<div class="row full-width">

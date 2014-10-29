@@ -73,7 +73,7 @@ function setup() {
 							$("#content_dropbox").empty();
 							$("#content_dropbox")
 									.html(
-											"<span class=\"message\">Drop content here to upload</span>");
+											"<span class=\"message\">Drag-n-Drop content here to upload</span>");
 						});
 
 		getContent(mSelectedApplication.id, mSelectedContentGroup.id);

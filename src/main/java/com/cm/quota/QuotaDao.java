@@ -10,12 +10,8 @@ import javax.jdo.Query;
 
 import org.springframework.stereotype.Component;
 
-import com.cm.config.CanonicalApplicationQuota;
-import com.cm.config.CanonicalBandwidthQuota;
-import com.cm.config.CanonicalPlanName;
-import com.cm.config.CanonicalStorageQuota;
+import com.cm.config.CanonicalPlan;
 import com.cm.contentmanager.application.Application;
-import com.cm.contentmanager.content.Content;
 import com.cm.util.PMF;
 import com.cm.util.Utils;
 
@@ -188,10 +184,7 @@ class QuotaDao {
 		}
 	}
 
-	void updatePlan(Long accountId, CanonicalPlanName canonicalPlanName,
-			CanonicalBandwidthQuota canonicalBandwidthQuota,
-			CanonicalStorageQuota canonicalStorageQuota,
-			CanonicalApplicationQuota canonicalApplicationQuota) {
+	void updatePlan(Long accountId, CanonicalPlan canonicalPlan) {
 		PersistenceManager pm = null;
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -204,11 +197,11 @@ class QuotaDao {
 			Quota lQuota = null;
 			if (lQuotas != null && (lQuotas.size() > 0)) {
 				lQuota = lQuotas.get(0);
-				lQuota.setCanonicalPlanName(canonicalPlanName.getValue());
-				lQuota.setBandwidthLimitInBytes(canonicalBandwidthQuota
-						.getValue());
-				lQuota.setStorageLimitInBytes(canonicalStorageQuota.getValue());
-				lQuota.setApplicationLimit(canonicalApplicationQuota.getValue());
+				lQuota.setCanonicalPlanName(canonicalPlan.getName());
+				lQuota.setBandwidthLimitInBytes(canonicalPlan
+						.getBandwidthQuota());
+				lQuota.setStorageLimitInBytes(canonicalPlan.getStorageQuota());
+				lQuota.setApplicationLimit(canonicalPlan.getApplicationQuota());
 				lQuota.setTimeUpdatedMs(System.currentTimeMillis());
 				lQuota.setTimeUpdatedTimeZoneOffsetMs((long) TimeZone
 						.getDefault().getRawOffset());
@@ -257,10 +250,11 @@ class QuotaDao {
 					long lExistingBandwidthUsed = bandwidthQuotaUsed
 							.getBandwidthUsedInBytes();
 					if (LOGGER.isLoggable(Level.INFO))
-						LOGGER.info("Updating bandwidth used to " + 
-								 (lExistingBandwidthUsed + bandwidthUsedInBytes));
+						LOGGER.info("Updating bandwidth used to "
+								+ (lExistingBandwidthUsed + bandwidthUsedInBytes));
 					bandwidthQuotaUsed
-							.setBandwidthUsedInBytes(lExistingBandwidthUsed + bandwidthUsedInBytes);
+							.setBandwidthUsedInBytes(lExistingBandwidthUsed
+									+ bandwidthUsedInBytes);
 					bandwidthQuotaUsed.setTimeUpdatedMs(System
 							.currentTimeMillis());
 					bandwidthQuotaUsed

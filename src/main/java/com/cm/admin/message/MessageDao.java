@@ -10,7 +10,6 @@ import javax.jdo.Query;
 
 import org.springframework.stereotype.Component;
 
-import com.cm.stripe.StripeCustomer;
 import com.cm.util.PMF;
 
 @Component

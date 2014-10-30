@@ -18,7 +18,6 @@ package com.cm.quota;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,10 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.cm.config.CanonicalApplicationQuota;
-import com.cm.config.CanonicalBandwidthQuota;
-import com.cm.config.CanonicalPlanName;
-import com.cm.config.CanonicalStorageQuota;
+import com.cm.config.CanonicalPlan;
 import com.cm.contentmanager.application.Application;
 import com.cm.contentmanager.application.ApplicationService;
 import com.cm.contentmanager.content.Content;
@@ -225,65 +221,50 @@ public class QuotaController {
 
 			// evaluate and update the quota allocated to the account
 			// appropriately
-			if (lNewCanonicalPlanName.equals(CanonicalPlanName.FREE.getValue())) {
-				quotaService.updatePlan(accountId, CanonicalPlanName.FREE,
-						CanonicalBandwidthQuota.FREE,
-						CanonicalStorageQuota.FREE,
-						CanonicalApplicationQuota.FREE);
+			if (lNewCanonicalPlanName.equals(CanonicalPlan.FREE.getName())) {
+				quotaService.updatePlan(accountId, CanonicalPlan.FREE);
 				if (lIsDowngrade)
 					deleteApplicationsOnPlanDowngrade(accountId,
-							CanonicalApplicationQuota.FREE.getValue());
+							CanonicalPlan.FREE.getApplicationQuota());
 				else
 					restoreApplicationsOnPlanUpgrade(accountId,
-							CanonicalApplicationQuota.FREE.getValue());
-			} else if (lNewCanonicalPlanName.equals(CanonicalPlanName.LARGE
-					.getValue())) {
-				quotaService.updatePlan(accountId, CanonicalPlanName.LARGE,
-						CanonicalBandwidthQuota.LARGE,
-						CanonicalStorageQuota.LARGE,
-						CanonicalApplicationQuota.LARGE);
+							CanonicalPlan.FREE.getApplicationQuota());
+			} else if (lNewCanonicalPlanName.equals(CanonicalPlan.LARGE
+					.getName())) {
+				quotaService.updatePlan(accountId, CanonicalPlan.LARGE);
 				if (lIsDowngrade)
 					deleteApplicationsOnPlanDowngrade(accountId,
-							CanonicalApplicationQuota.LARGE.getValue());
+							CanonicalPlan.LARGE.getApplicationQuota());
 				else
 					restoreApplicationsOnPlanUpgrade(accountId,
-							CanonicalApplicationQuota.LARGE.getValue());
-			} else if (lNewCanonicalPlanName.equals(CanonicalPlanName.MEDIUM
-					.getValue())) {
-				quotaService.updatePlan(accountId, CanonicalPlanName.MEDIUM,
-						CanonicalBandwidthQuota.MEDIUM,
-						CanonicalStorageQuota.MEDIUM,
-						CanonicalApplicationQuota.MEDIUM);
+							CanonicalPlan.LARGE.getApplicationQuota());
+			} else if (lNewCanonicalPlanName.equals(CanonicalPlan.MEDIUM
+					.getName())) {
+				quotaService.updatePlan(accountId, CanonicalPlan.MEDIUM);
 				if (lIsDowngrade)
 					deleteApplicationsOnPlanDowngrade(accountId,
-							CanonicalApplicationQuota.MEDIUM.getValue());
+							CanonicalPlan.MEDIUM.getApplicationQuota());
 				else
 					restoreApplicationsOnPlanUpgrade(accountId,
-							CanonicalApplicationQuota.MEDIUM.getValue());
-			} else if (lNewCanonicalPlanName.equals(CanonicalPlanName.MICRO
-					.getValue())) {
-				quotaService.updatePlan(accountId, CanonicalPlanName.MICRO,
-						CanonicalBandwidthQuota.MICRO,
-						CanonicalStorageQuota.MICRO,
-						CanonicalApplicationQuota.MICRO);
+							CanonicalPlan.MEDIUM.getApplicationQuota());
+			} else if (lNewCanonicalPlanName.equals(CanonicalPlan.MICRO
+					.getName())) {
+				quotaService.updatePlan(accountId, CanonicalPlan.MICRO);
 				if (lIsDowngrade)
 					deleteApplicationsOnPlanDowngrade(accountId,
-							CanonicalApplicationQuota.MICRO.getValue());
+							CanonicalPlan.MICRO.getApplicationQuota());
 				else
 					restoreApplicationsOnPlanUpgrade(accountId,
-							CanonicalApplicationQuota.MICRO.getValue());
-			} else if (lNewCanonicalPlanName.equals(CanonicalPlanName.SMALL
-					.getValue())) {
-				quotaService.updatePlan(accountId, CanonicalPlanName.SMALL,
-						CanonicalBandwidthQuota.SMALL,
-						CanonicalStorageQuota.SMALL,
-						CanonicalApplicationQuota.SMALL);
+							CanonicalPlan.MICRO.getApplicationQuota());
+			} else if (lNewCanonicalPlanName.equals(CanonicalPlan.SMALL
+					.getName())) {
+				quotaService.updatePlan(accountId, CanonicalPlan.SMALL);
 				if (lIsDowngrade)
 					deleteApplicationsOnPlanDowngrade(accountId,
-							CanonicalApplicationQuota.SMALL.getValue());
+							CanonicalPlan.SMALL.getApplicationQuota());
 				else
 					restoreApplicationsOnPlanUpgrade(accountId,
-							CanonicalApplicationQuota.SMALL.getValue());
+							CanonicalPlan.SMALL.getApplicationQuota());
 			}
 
 			// update the quota utilization; messaging will add the desired
@@ -418,20 +399,16 @@ public class QuotaController {
 	}
 
 	private int getCanonicalPlanLevel(String pCanonicalPlanName) {
-		if (pCanonicalPlanName.equals(CanonicalPlanName.FREE.getValue())) {
-			return CanonicalPlanName.FREE.getLevel();
-		} else if (pCanonicalPlanName
-				.equals(CanonicalPlanName.LARGE.getValue())) {
-			return CanonicalPlanName.LARGE.getLevel();
-		} else if (pCanonicalPlanName.equals(CanonicalPlanName.MEDIUM
-				.getValue())) {
-			return CanonicalPlanName.MEDIUM.getLevel();
-		} else if (pCanonicalPlanName
-				.equals(CanonicalPlanName.MICRO.getValue())) {
-			return CanonicalPlanName.MICRO.getLevel();
-		} else if (pCanonicalPlanName
-				.equals(CanonicalPlanName.SMALL.getValue())) {
-			return CanonicalPlanName.SMALL.getLevel();
+		if (pCanonicalPlanName.equals(CanonicalPlan.FREE.getName())) {
+			return CanonicalPlan.FREE.getLevel();
+		} else if (pCanonicalPlanName.equals(CanonicalPlan.LARGE.getName())) {
+			return CanonicalPlan.LARGE.getLevel();
+		} else if (pCanonicalPlanName.equals(CanonicalPlan.MEDIUM.getName())) {
+			return CanonicalPlan.MEDIUM.getLevel();
+		} else if (pCanonicalPlanName.equals(CanonicalPlan.MICRO.getName())) {
+			return CanonicalPlan.MICRO.getLevel();
+		} else if (pCanonicalPlanName.equals(CanonicalPlan.SMALL.getName())) {
+			return CanonicalPlan.SMALL.getLevel();
 		}
 		return -1;
 	}

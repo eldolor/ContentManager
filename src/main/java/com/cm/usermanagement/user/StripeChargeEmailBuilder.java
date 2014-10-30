@@ -5,8 +5,6 @@ import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.cm.config.Configuration;
-
 @Component
 public class StripeChargeEmailBuilder {
 	private static final Logger log = Logger

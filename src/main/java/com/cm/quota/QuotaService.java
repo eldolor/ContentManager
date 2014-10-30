@@ -7,10 +7,7 @@ import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cm.config.CanonicalApplicationQuota;
-import com.cm.config.CanonicalBandwidthQuota;
-import com.cm.config.CanonicalPlanName;
-import com.cm.config.CanonicalStorageQuota;
+import com.cm.config.CanonicalPlan;
 import com.cm.contentmanager.application.Application;
 
 @Service
@@ -145,7 +142,8 @@ public class QuotaService {
 			Quota lQuota = quotaDao.get(accountId);
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Applications used: "
-						+ ((lApplicationQuotaUsed!=null)?lApplicationQuotaUsed.getApplicationsUsed():0)
+						+ ((lApplicationQuotaUsed != null) ? lApplicationQuotaUsed
+								.getApplicationsUsed() : 0)
 						+ " Application Limit: " + lQuota.getApplicationLimit());
 
 			if (lApplicationQuotaUsed.getApplicationsUsed() < lQuota
@@ -195,16 +193,11 @@ public class QuotaService {
 
 	}
 
-	public void updatePlan(Long accountId, CanonicalPlanName canonicalPlanName,
-			CanonicalBandwidthQuota canonicalBandwidthQuota,
-			CanonicalStorageQuota canonicalStorageQuota,
-			CanonicalApplicationQuota canonicalApplicationQuota) {
+	public void updatePlan(Long accountId, CanonicalPlan canonicalPlan) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
-			quotaDao.updatePlan(accountId, canonicalPlanName,
-					canonicalBandwidthQuota, canonicalStorageQuota,
-					canonicalApplicationQuota);
+			quotaDao.updatePlan(accountId, canonicalPlan);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting");

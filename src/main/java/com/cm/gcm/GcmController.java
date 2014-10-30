@@ -16,11 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.cm.accountmanagement.account.Account;
-import com.cm.accountmanagement.account.AccountService;
 import com.cm.accountmanagement.client.key.ClientKeyService;
 import com.cm.config.CanonicalErrorCodes;
-import com.cm.contentmanager.application.Application;
 import com.cm.contentmanager.application.ApplicationService;
 import com.cm.contentmanager.content.ContentHelper;
 import com.cm.contentserver.ContentRequest;

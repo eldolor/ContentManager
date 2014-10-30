@@ -5,8 +5,6 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-import com.cm.config.CanonicalPlanName;
-
 @PersistenceCapable
 public class ClientKey {
 
@@ -84,7 +82,6 @@ public class ClientKey {
 	public void setDeleted(Boolean deleted) {
 		this.deleted = deleted;
 	}
-
 
 	public String getKey() {
 		return key;

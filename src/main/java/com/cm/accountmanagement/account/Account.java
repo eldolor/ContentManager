@@ -5,7 +5,7 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-import com.cm.config.CanonicalPlanName;
+import com.cm.config.CanonicalPlan;
 
 @PersistenceCapable
 public class Account {
@@ -16,7 +16,7 @@ public class Account {
 
 	// default to free
 	@Persistent
-	private String canonicalPlanName = CanonicalPlanName.FREE.getValue();
+	private String canonicalPlanName = CanonicalPlan.FREE.getName();
 
 	@Persistent
 	private String name;

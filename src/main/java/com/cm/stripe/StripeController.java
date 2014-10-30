@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.cm.config.CanonicalPlanName;
+import com.cm.config.CanonicalPlan;
 import com.cm.config.Configuration;
 import com.cm.stripe.transfer.StripeCard;
 import com.cm.usermanagement.user.StripeChargeEmailBuilder;
@@ -210,22 +210,22 @@ public class StripeController {
 				// Begin: copied over from
 				// UserManagementController.displayAccountSettings()
 				model.addAttribute("canonicalPlanNameFree",
-						CanonicalPlanName.FREE.getValue());
+						CanonicalPlan.FREE.getName());
 				model.addAttribute("canonicalPlanNameMicro",
-						CanonicalPlanName.MICRO.getValue());
+						CanonicalPlan.MICRO.getName());
 				model.addAttribute("canonicalPlanNameSmall",
-						CanonicalPlanName.SMALL.getValue());
+						CanonicalPlan.SMALL.getName());
 				model.addAttribute("canonicalPlanNameMedium",
-						CanonicalPlanName.MEDIUM.getValue());
+						CanonicalPlan.MEDIUM.getName());
 				model.addAttribute("canonicalPlanNameLarge",
-						CanonicalPlanName.LARGE.getValue());
+						CanonicalPlan.LARGE.getName());
 				StripeCustomer lStripeCustomer = stripeCustomerService
 						.get(lUser.getAccountId());
 				if (lStripeCustomer == null) {
 					model.addAttribute("isSubscribed", false);
 					// default to free
 					model.addAttribute("subscribedCanonicalPlanName",
-							CanonicalPlanName.FREE.getValue());
+							CanonicalPlan.FREE.getName());
 				} else {
 					model.addAttribute("isSubscribed", true);
 					model.addAttribute("subscribedCanonicalPlanName",
@@ -311,22 +311,22 @@ public class StripeController {
 				// Begin: copied over from
 				// UserManagementController.displayAccountSettings()
 				model.addAttribute("canonicalPlanNameFree",
-						CanonicalPlanName.FREE.getValue());
+						CanonicalPlan.FREE.getName());
 				model.addAttribute("canonicalPlanNameMicro",
-						CanonicalPlanName.MICRO.getValue());
+						CanonicalPlan.MICRO.getName());
 				model.addAttribute("canonicalPlanNameSmall",
-						CanonicalPlanName.SMALL.getValue());
+						CanonicalPlan.SMALL.getName());
 				model.addAttribute("canonicalPlanNameMedium",
-						CanonicalPlanName.MEDIUM.getValue());
+						CanonicalPlan.MEDIUM.getName());
 				model.addAttribute("canonicalPlanNameLarge",
-						CanonicalPlanName.LARGE.getValue());
+						CanonicalPlan.LARGE.getName());
 				lStripeCustomer = stripeCustomerService.get(lUser
 						.getAccountId());
 				if (lStripeCustomer == null) {
 					model.addAttribute("isSubscribed", false);
 					// default to free
 					model.addAttribute("subscribedCanonicalPlanName",
-							CanonicalPlanName.FREE.getValue());
+							CanonicalPlan.FREE.getName());
 				} else {
 					model.addAttribute("isSubscribed", true);
 					model.addAttribute("subscribedCanonicalPlanName",
@@ -784,7 +784,8 @@ public class StripeController {
 							+ " card ending in " + lLast4 + "</p>");
 					lHtmlFormattedMessage.append("<p>Invoice: " + lInvoice
 							+ "</p>");
-					lHtmlFormattedMessage.append("<p>&nbsp;</p><p>Thank you!</p>");
+					lHtmlFormattedMessage
+							.append("<p>&nbsp;</p><p>Thank you!</p>");
 					String lEmailTemplate = lEmailBuilder
 							.build(lHtmlFormattedMessage.toString());
 					try {
@@ -875,8 +876,7 @@ public class StripeController {
 					Utils.sendEmail(Configuration.FROM_EMAIL_ADDRESS,
 							Configuration.FROM_NAME,
 							lStripeCustomer.getUsername(), "",
-							Configuration.SITE_NAME
-									+ " Subscription Updated",
+							Configuration.SITE_NAME + " Subscription Updated",
 							lEmailTemplate, null);
 				} catch (UnsupportedEncodingException e) {
 					LOGGER.log(Level.SEVERE, e.getMessage(), e);

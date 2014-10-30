@@ -8,7 +8,6 @@
 	import="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"%>
 
 
-
 <!doctype html>
 <!--[if IE 9]><html class="lt-ie10" lang="en" > <![endif]-->
 <html class="no-js" lang="en"
@@ -59,32 +58,32 @@
 	<section id="price">
 		<h2 class="text-center gray">Plans and Pricing</h2>
 		<p class="text-center page_sub_heading">
-			Please <a
-				href="mailto:anshu@skok.co?Subject=Plans%20and%20Pricing">Contact Us</a> if you need
-			additional Storage or Bandwidth
+			Please <a href="mailto:anshu@skok.co?Subject=Plans%20and%20Pricing">Contact
+				Us</a> if you need additional Storage or Bandwidth
 		</p>
-<!-- 		<div class="line">
+		<!-- 		<div class="line">
 			<img src="/resources/images/cm/line.png" alt="line" />
 		</div>
- -->		<br>
+ -->
+		<br>
 		<div class="row full-width">
 			<div class="large-2 text-center columns" id="free_plan">
 				<div class="price_item" id="free">
 					<div class="price_cost">
 						<div class="package_name">BASIC</div>
-						<h1>FREE</h1>
+						<h1>${canonicalPlanFreePrice}</h1>
 						<div class="package_rate">Per month</div>
 					</div>
 				</div>
 				<div class="package_details">
 					<div class="package_feature">
 						<span>Bandwidth</span>
-						<div>100GB per month</div>
+						<div>${canonicalPlanFreeNetworkBandwidth}&nbsp;per month</div>
 					</div>
 					<br />
 					<div class="package_feature">
 						<span>Storage</span> <i class="fa fa-cloud"></i>
-						<div>20GB</div>
+						<div>${canonicalPlanFreeStorage}</div>
 					</div>
 					<br /> <a href="<c:url value="/signup"/>"
 						class="button radius btn-default">Sign Up </a>
@@ -94,19 +93,19 @@
 				<div class="price_item " id="micro">
 					<div class="price_cost">
 						<div class="package_name">MICRO</div>
-						<h1>$50.00</h1>
+						<h1>${canonicalPlanMicroPrice}</h1>
 						<div class="package_rate">Per month</div>
 					</div>
 				</div>
 				<div class="package_details">
 					<div class="package_feature">
 						<span>Bandwidth</span>
-						<div>500GB per month</div>
+						<div>${canonicalPlanMicroNetworkBandwidth}&nbsp;per month</div>
 					</div>
 					<br>
 					<div class="package_feature">
 						<span>Storage</span> <i class="fa fa-cloud green"></i>
-						<div>40GB</div>
+						<div>${canonicalPlanMicroStorage}</div>
 					</div>
 					<br> <a href="<c:url value="/signup"/>"
 						class="button radius btn-default">Sign Up </a>
@@ -116,19 +115,19 @@
 				<div class="price_item" id="small">
 					<div class="price_cost">
 						<div class="package_name">SMALL</div>
-						<h1>$100.00</h1>
+						<h1>${canonicalPlanSmallPrice}</h1>
 						<div class="package_rate">Per month</div>
 					</div>
 				</div>
 				<div class="package_details">
 					<div class="package_feature">
 						<span>Bandwidth</span>
-						<div>1TB per month</div>
+						<div>${canonicalPlanSmallNetworkBandwidth}&nbsp;per month</div>
 					</div>
 					<br>
 					<div class="package_feature">
 						<span>Storage</span> <i class="fa fa-cloud"></i>
-						<div>80GB</div>
+						<div>${canonicalPlanSmallStorage}</div>
 					</div>
 					<br> <a href="<c:url value="/signup"/>"
 						class="button radius btn-default">Sign Up </a>
@@ -138,19 +137,19 @@
 				<div class="price_item" id="medium">
 					<div class="price_cost">
 						<div class="package_name">MEDIUM</div>
-						<h1>$150.00</h1>
+						<h1>${canonicalPlanMediumPrice}</h1>
 						<div class="package_rate">Per month</div>
 					</div>
 				</div>
 				<div class="package_details">
 					<div class="package_feature">
 						<span>Bandwidth</span>
-						<div>1.5TB per month</div>
+						<div>${canonicalPlanMediumNetworkBandwidth}&nbsp;per month</div>
 					</div>
 					<br>
 					<div class="package_feature">
 						<span>Storage</span>
-						<div>160GB</div>
+						<div>${canonicalPlanMediumStorage}</div>
 					</div>
 					<br> <a href="<c:url value="/signup"/>"
 						class="button radius btn-default">Sign Up </a>
@@ -160,19 +159,19 @@
 				<div class="price_item" id="large">
 					<div class="price_cost">
 						<div class="package_name">LARGE</div>
-						<h1>$200.00</h1>
+						<h1>${canonicalPlanLargePrice}</h1>
 						<div class="package_rate">Per month</div>
 					</div>
 				</div>
 				<div class="package_details">
 					<div class="package_feature">
 						<span>Bandwidth</span>
-						<div>2TB per month</div>
+						<div>${canonicalPlanLargeNetworkBandwidth}&nbsp;per month</div>
 					</div>
 					<br>
 					<div class="package_feature">
 						<span>Storage</span>
-						<div>320GB</div>
+						<div>${canonicalPlanLargeStorage}</div>
 					</div>
 					<br> <a href="<c:url value="/signup"/>"
 						class="button radius btn-default">Sign Up </a>

@@ -30,6 +30,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.cm.config.CanonicalApplicationQuota;
 import com.cm.config.CanonicalContentType;
+import com.cm.config.CanonicalPlanDetails;
 import com.cm.config.CanonicalPlanName;
 import com.cm.config.CanonicalStorageQuota;
 import com.cm.config.Configuration;
@@ -434,9 +435,10 @@ public class UserManagementController {
 			List<Application> lApplications = applicationService
 					.getApplicationsByAccountId(lAccountId, true);
 
-			String lTrackingId = Configuration.TRACKING_ID_PREFIX + lAccountId + "_"
-					+ (lApplications.size() + 1); // the collection will have
-													// size 0 at first
+			String lTrackingId = Configuration.TRACKING_ID_PREFIX + lAccountId
+					+ "_" + (lApplications.size() + 1); // the collection will
+														// have
+														// size 0 at first
 
 			return lTrackingId;
 
@@ -614,16 +616,8 @@ public class UserManagementController {
 			LOGGER.info("Entering");
 		try {
 			User lUser = userService.getLoggedInUser();
-			model.addAttribute("canonicalPlanNameFree",
-					CanonicalPlanName.FREE.getValue());
-			model.addAttribute("canonicalPlanNameMicro",
-					CanonicalPlanName.MICRO.getValue());
-			model.addAttribute("canonicalPlanNameSmall",
-					CanonicalPlanName.SMALL.getValue());
-			model.addAttribute("canonicalPlanNameMedium",
-					CanonicalPlanName.MEDIUM.getValue());
-			model.addAttribute("canonicalPlanNameLarge",
-					CanonicalPlanName.LARGE.getValue());
+			setupPlanAndPricing(model);
+
 			StripeCustomer lStripeCustomer = stripeCustomerService.get(lUser
 					.getAccountId());
 			boolean lIsUpdateCCInfo = false;
@@ -657,11 +651,69 @@ public class UserManagementController {
 		}
 	}
 
+	private void setupPlanAndPricing(ModelMap model) {
+		model.addAttribute("canonicalPlanNameFree",
+				CanonicalPlanName.FREE.getValue());
+		model.addAttribute("canonicalPlanFreeNetworkBandwidth",
+				CanonicalPlanDetails.FREE.getNetworkBandwidth());
+		model.addAttribute("canonicalPlanFreeStorage",
+				CanonicalPlanDetails.FREE.getStorage());
+		model.addAttribute("canonicalPlanFreePrice",
+				CanonicalPlanDetails.FREE.getPrice());
+		model.addAttribute("canonicalPlanFreePriceInCents",
+				CanonicalPlanDetails.FREE.getPriceInCents());
+
+		model.addAttribute("canonicalPlanNameMicro",
+				CanonicalPlanName.MICRO.getValue());
+		model.addAttribute("canonicalPlanMicroNetworkBandwidth",
+				CanonicalPlanDetails.MICRO.getNetworkBandwidth());
+		model.addAttribute("canonicalPlanMicroStorage",
+				CanonicalPlanDetails.MICRO.getStorage());
+		model.addAttribute("canonicalPlanMicroPrice",
+				CanonicalPlanDetails.MICRO.getPrice());
+		model.addAttribute("canonicalPlanMicroPriceInCents",
+				CanonicalPlanDetails.MICRO.getPriceInCents());
+
+		model.addAttribute("canonicalPlanNameSmall",
+				CanonicalPlanName.SMALL.getValue());
+		model.addAttribute("canonicalPlanSmallNetworkBandwidth",
+				CanonicalPlanDetails.SMALL.getNetworkBandwidth());
+		model.addAttribute("canonicalPlanSmallStorage",
+				CanonicalPlanDetails.SMALL.getStorage());
+		model.addAttribute("canonicalPlanSmallPrice",
+				CanonicalPlanDetails.SMALL.getPrice());
+		model.addAttribute("canonicalPlanSmallPriceInCents",
+				CanonicalPlanDetails.SMALL.getPriceInCents());
+
+		model.addAttribute("canonicalPlanNameMedium",
+				CanonicalPlanName.MEDIUM.getValue());
+		model.addAttribute("canonicalPlanMediumNetworkBandwidth",
+				CanonicalPlanDetails.MEDIUM.getNetworkBandwidth());
+		model.addAttribute("canonicalPlanMediumStorage",
+				CanonicalPlanDetails.MEDIUM.getStorage());
+		model.addAttribute("canonicalPlanMediumPrice",
+				CanonicalPlanDetails.MEDIUM.getPrice());
+		model.addAttribute("canonicalPlanMediumPriceInCents",
+				CanonicalPlanDetails.MEDIUM.getPriceInCents());
+
+		model.addAttribute("canonicalPlanNameLarge",
+				CanonicalPlanName.LARGE.getValue());
+		model.addAttribute("canonicalPlanLargeNetworkBandwidth",
+				CanonicalPlanDetails.LARGE.getNetworkBandwidth());
+		model.addAttribute("canonicalPlanLargeStorage",
+				CanonicalPlanDetails.LARGE.getStorage());
+		model.addAttribute("canonicalPlanLargePrice",
+				CanonicalPlanDetails.LARGE.getPrice());
+		model.addAttribute("canonicalPlanLargePriceInCents",
+				CanonicalPlanDetails.LARGE.getPriceInCents());
+	}
+
 	@RequestMapping(value = "/plans", method = RequestMethod.GET)
 	public ModelAndView displayPlansAndPricingUnsecured(ModelMap model) {
 		if (LOGGER.isLoggable(Level.INFO))
 			LOGGER.info("Entering");
 		try {
+			setupPlanAndPricing(model);
 			return new ModelAndView("settings_plans_and_pricing_no_login",
 					model);
 		} finally {

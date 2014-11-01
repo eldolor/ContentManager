@@ -6,6 +6,8 @@ public class Configuration {
 	//PROD
 	//private static final String DOMAIN = "skok.co";
 	
+	public static final String CURRENT_SDK_VERSION = "1.1";
+	
 	public static final String GOOGLE_API_KEY = "AIzaSyDmUXoFreTugYfSL5B2QvM8mUDwhCte7BM";
 	public static final String MESSAGE_TYPE = "MESSAGE_TYPE";
 	public static final String MESSAGE_TYPE_CONTENT_LIST = "MESSAGE_TYPE_CONTENT_LIST";

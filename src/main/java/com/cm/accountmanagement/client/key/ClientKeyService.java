@@ -13,6 +13,7 @@ import com.cm.accountmanagement.account.Account;
 import com.cm.accountmanagement.account.AccountService;
 import com.cm.contentmanager.application.Application;
 import com.cm.contentmanager.application.ApplicationService;
+import com.cm.util.Utils;
 
 @Service
 public class ClientKeyService {
@@ -66,8 +67,18 @@ public class ClientKeyService {
 	}
 
 	public boolean validateClientKey(String pClientKey, String pTrackingId) {
+		if (Utils.isEmpty(pClientKey) || Utils.isEmpty(pTrackingId)) {
+			LOGGER.log(Level.SEVERE,
+					"Either the Client Key or the Tracking id is Null");
+			return false;
+		}
 		Application pApplication = applicationService
 				.getApplicationByTrackingId(pTrackingId, false);
+		if (pApplication == null) {
+			LOGGER.log(Level.SEVERE, "No application found for Tracking Id: "
+					+ pTrackingId);
+			return false;
+		}
 		long lAccountId = pApplication.getAccountId();
 		List<ClientKey> lClientKeys = clientKeyDao.getClientKeys(lAccountId);
 		for (ClientKey clientKey : lClientKeys) {

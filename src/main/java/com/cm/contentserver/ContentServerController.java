@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cm.accountmanagement.client.key.ClientKeyService;
 import com.cm.config.CanonicalErrorCodes;
+import com.cm.config.Configuration;
 import com.cm.contentmanager.application.Application;
 import com.cm.contentmanager.application.ApplicationService;
 import com.cm.contentmanager.content.Content;
@@ -164,8 +165,9 @@ public class ContentServerController {
 					lHandshake.getTrackingId())) {
 				List<ValidationError> lErrors = new ArrayList<ValidationError>();
 				ValidationError lError = new ValidationError();
-				lError.setDescription(CanonicalErrorCodes.INVALID_CLIENT_KEY
+				lError.setCode(CanonicalErrorCodes.INVALID_CLIENT_KEY
 						.getValue());
+				lError.setDescription("Client Key is Invalid!");
 				lErrors.add(lError);
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				LOGGER.log(Level.SEVERE,
@@ -290,6 +292,24 @@ public class ContentServerController {
 							lHandshake.getTrackingId(), 0);
 				}
 			}
+
+			// perform this as the last action, as its just a warning
+			if (!pHandshake.getCurrentSdkVersion().equals(
+					Configuration.CURRENT_SDK_VERSION)) {
+				List<ValidationError> lErrors = new ArrayList<ValidationError>();
+				ValidationError lError = new ValidationError();
+				lError.setCode(CanonicalErrorCodes.UPDATED_SDK_AVAILABLE
+						.getValue());
+				lError.setDescription("An update for Skok Android API Library is now available.");
+				lError.setCategory(ValidationError.CATEGORY_WARNING);
+				lErrors.add(lError);
+				response.setStatus(HttpServletResponse.SC_OK);
+				LOGGER.log(Level.WARNING,
+						CanonicalErrorCodes.UPDATED_SDK_AVAILABLE.getValue()
+								+ lHandshake.getClientKey());
+				return lErrors;
+			}
+
 			// always
 			response.setStatus(HttpServletResponse.SC_OK);
 			return null;

@@ -14,6 +14,7 @@ import com.cm.contentmanager.content.Content;
 import com.cm.contentmanager.content.ContentService;
 import com.cm.contentmanager.contentgroup.ContentGroup;
 import com.cm.contentmanager.contentgroup.ContentGroupService;
+import com.cm.util.Utils;
 
 @Service
 public class ContentServerService {
@@ -135,10 +136,13 @@ public class ContentServerService {
 	private List<Content> validateContent(List<Content> pContents) {
 		List<Content> lValidatedContent = new ArrayList<Content>();
 		for (Content lContent : pContents) {
+			//effective date
 			if (isEffectiveDateValid(lContent.getStartDateMs(),
 					lContent.getEndDateMs())) {
-
-				lValidatedContent.add(lContent);
+				// URI not empty
+				if (!Utils.isEmpty(lContent.getUri())) {
+					lValidatedContent.add(lContent);
+				}
 			}
 		}
 

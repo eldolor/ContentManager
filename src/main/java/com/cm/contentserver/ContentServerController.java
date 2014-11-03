@@ -409,8 +409,8 @@ public class ContentServerController {
 				// && lRangeRequestedHeader.contains("0-")) {
 				// Utils.triggerUpdateBandwidthUtilizationMessage(key, 0);
 				// }
-				response.setHeader("Content-Disposition",
-						"attachment; filename=" + blobInfo.getFilename());
+//				response.setHeader("Content-Disposition",
+//						"attachment; filename=" + blobInfo.getFilename());
 				response.setHeader("Cache-Control", "max-age=86400");
 				BlobstoreServiceFactory.getBlobstoreService().serve(blobKey,
 						response);
@@ -462,8 +462,8 @@ public class ContentServerController {
 				// && lRangeRequestedHeader.contains("0-")) {
 				// Utils.triggerUpdateBandwidthUtilizationMessage(key, 0);
 				// }
-				response.setHeader("Content-Disposition",
-						"attachment; filename=" + blobInfo.getFilename());
+//				response.setHeader("Content-Disposition",
+//						"attachment; filename=" + blobInfo.getFilename());
 				response.setHeader("Cache-Control", "max-age=86400");
 				BlobstoreServiceFactory.getBlobstoreService().serve(blobKey,
 						response);

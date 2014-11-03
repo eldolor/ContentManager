@@ -8,7 +8,8 @@ public class ValidationError implements Serializable {
 
 	private String code;
 	private String description;
-	private String category;
+	//default
+	private String category = CATEGORY_ERROR;
 
 	public void setDescription(String description) {
 		this.description = description;

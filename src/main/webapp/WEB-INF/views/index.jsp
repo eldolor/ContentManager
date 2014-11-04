@@ -69,9 +69,11 @@
 					to load.
 				</p>
 				<p class="text-left">Skok is an Advanced Content Management and
-					Delivery platform for your Mobile Apps. Skok elevates user
-					experience by allowing users of your Mobile Apps to engage with
-					your rich content, even if they lose their data connection.</p>
+					Delivery platform for your Mobile Apps. Skok delivers rich content
+					to your Mobile Apps, and stores it locally on mobile devices. This
+					elevates user experience of your Mobile Apps. Your content loads
+					much faster, and users can engage with your rich content, even if
+					they lose their data connection.</p>
 
 
 			</div>

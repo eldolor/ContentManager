@@ -304,7 +304,7 @@ public class ContentServerController {
 				lError.setCategory(ValidationError.CATEGORY_WARNING);
 				lErrors.add(lError);
 				response.setStatus(HttpServletResponse.SC_OK);
-				LOGGER.log(Level.WARNING,
+				LOGGER.log(Level.INFO,
 						CanonicalErrorCodes.UPDATED_SDK_AVAILABLE.getValue()
 								+ lHandshake.getClientKey());
 				return lErrors;

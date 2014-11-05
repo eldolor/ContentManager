@@ -288,8 +288,9 @@ public class ContentServerController {
 				// in
 				// case both values are zero (uninitialized)
 				if (lLastKnownTimestamp >= lHandshake.getLastKnownTimestamp()) {
-					Utils.triggerSendContentListMessages(
-							lHandshake.getTrackingId(), 0);
+					Utils.triggerSendContentListMessage(
+							lHandshake.getTrackingId(),
+							lHandshake.getGcmRegistrationId(), 0L);
 				}
 			}
 

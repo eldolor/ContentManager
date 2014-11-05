@@ -378,6 +378,40 @@ public class ContentServerController {
 		}
 	}
 
+	@Deprecated
+	@RequestMapping(value = "/tasks/contentserver/updatelastknowntimestamp/{trackingId}/{timestamp}", method = RequestMethod.POST)
+	public void updateLastKnownTimestamp(@PathVariable String trackingId,
+			long timestamp, HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering updateLastKnownTimestamp");
+
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("updateLastKnownTimestamp: Tracking Id: "
+						+ trackingId);
+			if (timestamp == 0L)
+				LOGGER.warning("Last known timestamp for tracking id "
+						+ trackingId + "  is ZERO");
+			try {
+				if (mCache != null) {
+					mCache.put(trackingId, timestamp);
+					if (LOGGER.isLoggable(Level.INFO))
+						LOGGER.info("Added to Memcache: " + timestamp);
+				}
+			} catch (Throwable t) {
+				LOGGER.log(Level.SEVERE, "Unable to add to Memcache", t);
+			}
+			response.setStatus(HttpServletResponse.SC_OK);
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting updateLastKnownTimestamp");
+		}
+	}
+
 	/**
 	 * 
 	 * @param key
@@ -409,8 +443,8 @@ public class ContentServerController {
 				// && lRangeRequestedHeader.contains("0-")) {
 				// Utils.triggerUpdateBandwidthUtilizationMessage(key, 0);
 				// }
-//				response.setHeader("Content-Disposition",
-//						"attachment; filename=" + blobInfo.getFilename());
+				// response.setHeader("Content-Disposition",
+				// "attachment; filename=" + blobInfo.getFilename());
 				response.setHeader("Cache-Control", "max-age=86400");
 				BlobstoreServiceFactory.getBlobstoreService().serve(blobKey,
 						response);
@@ -462,8 +496,8 @@ public class ContentServerController {
 				// && lRangeRequestedHeader.contains("0-")) {
 				// Utils.triggerUpdateBandwidthUtilizationMessage(key, 0);
 				// }
-//				response.setHeader("Content-Disposition",
-//						"attachment; filename=" + blobInfo.getFilename());
+				// response.setHeader("Content-Disposition",
+				// "attachment; filename=" + blobInfo.getFilename());
 				response.setHeader("Cache-Control", "max-age=86400");
 				BlobstoreServiceFactory.getBlobstoreService().serve(blobKey,
 						response);

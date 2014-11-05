@@ -230,7 +230,8 @@ public class ContentController {
 				String lTrackingId = applicationService.getApplication(
 						content.getApplicationId()).getTrackingId();
 				Utils.triggerChangesStagedMessage(content.getApplicationId(), 0);
-				Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId, 0);
+				Utils.updateLastKnownTimestamp(lTrackingId,
+						lContent.getTimeUpdatedMs(), 0);
 				if (!Utils.isEmpty(content.getId())
 						&& (!Utils.isEmpty(content.getUri())))
 					Utils.triggerUpdateContentSizeInBytesMessage(
@@ -263,13 +264,14 @@ public class ContentController {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return errors;
 			} else {
-				contentService.update(content);
+				Content lContent = contentService.update(content);
 				response.setStatus(HttpServletResponse.SC_OK);
 
 				String lTrackingId = applicationService.getApplication(
 						content.getApplicationId()).getTrackingId();
 				Utils.triggerChangesStagedMessage(content.getApplicationId(), 0);
-				Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId, 0);
+				Utils.updateLastKnownTimestamp(lTrackingId,
+						lContent.getTimeUpdatedMs(), 0);
 				if (!Utils.isEmpty(content.getId())
 						&& (!Utils.isEmpty(content.getUri())))
 					Utils.triggerUpdateContentSizeInBytesMessage(
@@ -305,7 +307,7 @@ public class ContentController {
 			String lTrackingId = applicationService.getApplication(
 					applicationId).getTrackingId();
 			Utils.triggerChangesStagedMessage(applicationId, 0);
-			Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId, 3000);
+			Utils.updateLastKnownTimestamp(lTrackingId, timeUpdatedMs, 0);
 			response.setStatus(HttpServletResponse.SC_OK);
 
 		} catch (Throwable e) {
@@ -340,8 +342,8 @@ public class ContentController {
 			Application lApplication = applicationService
 					.getApplication(lApplicationId);
 			Utils.triggerChangesStagedMessage(id, 0);
-			Utils.triggerUpdateLastKnownTimestampMessage(
-					lApplication.getTrackingId(), 0);
+			Utils.updateLastKnownTimestamp(lApplication.getTrackingId(),
+					timeUpdatedMs, 0);
 			Utils.triggerUpdateQuotaUtilizationMessage(
 					lApplication.getAccountId(), 3000);
 
@@ -380,8 +382,8 @@ public class ContentController {
 			Application lApplication = applicationService
 					.getApplication(lApplicationId);
 			Utils.triggerChangesStagedMessage(id, 0);
-			Utils.triggerUpdateLastKnownTimestampMessage(
-					lApplication.getTrackingId(), 0);
+			Utils.updateLastKnownTimestamp(lApplication.getTrackingId(),
+					timeUpdatedMs, 0);
 			Utils.triggerUpdateQuotaUtilizationMessage(
 					lApplication.getAccountId(), 0);
 

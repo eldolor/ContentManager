@@ -208,8 +208,8 @@ public class ContentGroupController {
 			Application lApplication = applicationService
 					.getApplication(lApplicationId);
 			Utils.triggerChangesStagedMessage(id, 0);
-			Utils.triggerUpdateLastKnownTimestampMessage(
-					lApplication.getTrackingId(), 0);
+			Utils.updateLastKnownTimestamp(lApplication.getTrackingId(),
+					timeUpdatedMs, 0);
 			Utils.triggerUpdateQuotaUtilizationMessage(
 					lApplication.getAccountId(), 3000);
 
@@ -244,8 +244,8 @@ public class ContentGroupController {
 			Application lApplication = applicationService
 					.getApplication(lApplicationId);
 			Utils.triggerChangesStagedMessage(id, 0);
-			Utils.triggerUpdateLastKnownTimestampMessage(
-					lApplication.getTrackingId(), 0);
+			Utils.updateLastKnownTimestamp(lApplication.getTrackingId(),
+					timeUpdatedMs, 0);
 			Utils.triggerUpdateQuotaUtilizationMessage(
 					lApplication.getAccountId(), 3000);
 
@@ -278,12 +278,13 @@ public class ContentGroupController {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return errors;
 			} else {
-				contentGroupService.save(userService.getLoggedInUser(),
-						contentGroup);
+				ContentGroup lContentGroup = contentGroupService.save(
+						userService.getLoggedInUser(), contentGroup);
 				response.setStatus(HttpServletResponse.SC_CREATED);
 				String lTrackingId = applicationService.getApplication(
 						contentGroup.getApplicationId()).getTrackingId();
-				Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId, 0);
+				Utils.updateLastKnownTimestamp(lTrackingId,
+						lContentGroup.getTimeUpdatedMs(), 0);
 				return null;
 			}
 		} catch (Throwable e) {
@@ -313,13 +314,15 @@ public class ContentGroupController {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return errors;
 			} else {
-				contentGroupService.update(contentGroup);
+				ContentGroup lContentGroup = contentGroupService
+						.update(contentGroup);
 				response.setStatus(HttpServletResponse.SC_OK);
 				String lTrackingId = applicationService.getApplication(
 						contentGroup.getApplicationId()).getTrackingId();
 				Utils.triggerChangesStagedMessage(
 						contentGroup.getApplicationId(), 0);
-				Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId, 0);
+				Utils.updateLastKnownTimestamp(lTrackingId,
+						lContentGroup.getTimeUpdatedMs(), 0);
 
 				return null;
 			}

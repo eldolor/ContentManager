@@ -3,6 +3,7 @@ package com.cm.util;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -20,6 +21,10 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+
+import net.sf.jsr107cache.Cache;
+import net.sf.jsr107cache.CacheFactory;
+import net.sf.jsr107cache.CacheManager;
 
 import com.cm.config.Configuration;
 import com.cm.contentmanager.application.Application;
@@ -245,6 +250,7 @@ public class Utils {
 		}
 	}
 
+	@Deprecated
 	public static void triggerUpdateLastKnownTimestampMessage(
 			String pTrackingId, long delayInMs) {
 		try {
@@ -261,6 +267,29 @@ public class Utils {
 					.param("trackingId", pTrackingId).method(Method.POST)
 					.countdownMillis(delayInMs);
 			queue.add(taskOptions);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting triggerUpdateLastKnownTimestampMessage");
+		}
+	}
+
+	public static void updateLastKnownTimestamp(
+			String pTrackingId, long pTimestamp, long delayInMs) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering triggerUpdateLastKnownTimestampMessage");
+			try {
+				CacheFactory cacheFactory = CacheManager.getInstance()
+						.getCacheFactory();
+				Cache lCache = cacheFactory.createCache(Collections.emptyMap());
+				if (lCache != null) {
+					lCache.put(pTrackingId, pTimestamp);
+					if (LOGGER.isLoggable(Level.INFO))
+						LOGGER.info("Added to Memcache: " + pTimestamp);
+				}
+			} catch (Throwable t) {
+				LOGGER.log(Level.SEVERE, "Unable to add to Memcache", t);
+			}
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting triggerUpdateLastKnownTimestampMessage");
@@ -365,7 +394,7 @@ public class Utils {
 		lContent.setUri(pContent.getUri());
 		lContent.setSizeInBytes(pContent.getSizeInBytes());
 		lContent.setTags(pContent.getTags());
-		
+
 		return lContent;
 
 	}

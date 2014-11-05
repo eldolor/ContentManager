@@ -253,7 +253,7 @@ public class ContentGroupDao {
 		}
 	}
 
-	void update(ContentGroup contentGroup) {
+	ContentGroup update(ContentGroup contentGroup) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering update");
@@ -286,7 +286,7 @@ public class ContentGroupDao {
 				_contentGroup.setTimeUpdatedMs(contentGroup.getTimeUpdatedMs());
 				_contentGroup.setTimeUpdatedTimeZoneOffsetMs(contentGroup
 						.getTimeUpdatedTimeZoneOffsetMs());
-
+				return _contentGroup;
 			} finally {
 				if (pm != null) {
 					pm.close();

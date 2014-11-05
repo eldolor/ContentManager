@@ -463,7 +463,7 @@ class ContentDao {
 		}
 	}
 
-	void update(Content content) {
+	Content update(Content content) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering update");
@@ -501,6 +501,8 @@ class ContentDao {
 				_content.setSizeInBytes(content.getSizeInBytes());
 				_content.setUri(content.getUri());
 				_content.setType(content.getType());
+
+				return _content;
 			} finally {
 				if (pm != null) {
 					pm.close();

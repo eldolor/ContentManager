@@ -151,7 +151,7 @@ public class ContentGroupService {
 
 	}
 
-	public void update(ContentGroup contentGroup) {
+	public ContentGroup update(ContentGroup contentGroup) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering update");
@@ -167,7 +167,7 @@ public class ContentGroupService {
 			else
 				// set high date
 				contentGroup.setEndDateMs(Long.MAX_VALUE);
-			contentGroupDao.update(contentGroup);
+			return contentGroupDao.update(contentGroup);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting update");

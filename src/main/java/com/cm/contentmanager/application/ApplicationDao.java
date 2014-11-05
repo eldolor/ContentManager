@@ -526,7 +526,7 @@ class ApplicationDao {
 		}
 	}
 
-	void update(Application pApplication) {
+	Application update(Application pApplication) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering update");
@@ -557,6 +557,8 @@ class ApplicationDao {
 				lApplication.setTimeUpdatedMs(pApplication.getTimeUpdatedMs());
 				lApplication.setTimeUpdatedTimeZoneOffsetMs(pApplication
 						.getTimeUpdatedTimeZoneOffsetMs());
+				
+				return lApplication;
 
 			} finally {
 				if (pm != null) {

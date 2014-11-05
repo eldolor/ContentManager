@@ -237,7 +237,7 @@ public class ContentService {
 
 	}
 
-	public void update(Content content) {
+	public Content update(Content content) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering update");
@@ -253,7 +253,8 @@ public class ContentService {
 			else
 				// set high date
 				content.setEndDateMs(Long.MAX_VALUE);
-			contentDao.update(content);
+			return contentDao.update(content);
+			
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting update");

@@ -226,8 +226,8 @@ public class ApplicationController {
 
 			Application lApplication = applicationService.getApplication(id);
 			Utils.triggerChangesStagedMessage(id, 0);
-			Utils.triggerUpdateLastKnownTimestampMessage(
-					lApplication.getTrackingId(), 0);
+			Utils.updateLastKnownTimestamp(lApplication.getTrackingId(),
+					timeUpdatedMs, 0);
 			Utils.triggerUpdateQuotaUtilizationMessage(
 					lApplication.getAccountId(), 3000);
 
@@ -257,8 +257,8 @@ public class ApplicationController {
 
 			Application lApplication = applicationService.getApplication(id);
 			Utils.triggerChangesStagedMessage(id, 0);
-			Utils.triggerUpdateLastKnownTimestampMessage(
-					lApplication.getTrackingId(), 0);
+			Utils.updateLastKnownTimestamp(lApplication.getTrackingId(),
+					lApplication.getTimeUpdatedMs(), 0);
 			Utils.triggerUpdateQuotaUtilizationMessage(
 					lApplication.getAccountId(), 3000);
 
@@ -309,7 +309,9 @@ public class ApplicationController {
 				Application lApplication = applicationService
 						.saveApplication(userService.getLoggedInUser(),
 								lTrackingId, application);
-				Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId, 0);
+				Utils.updateLastKnownTimestamp(lTrackingId,
+						lApplication.getTimeUpdatedMs(), 0);
+
 				// trigger message to update quota
 				Utils.triggerUpdateQuotaUtilizationMessage(userService
 						.getLoggedInUser().getAccountId(), 0);
@@ -370,11 +372,13 @@ public class ApplicationController {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return errors;
 			} else {
-				applicationService.updateApplication(application);
+				Application lApplication = applicationService
+						.updateApplication(application);
 				String lTrackingId = applicationService.getApplication(
 						application.getId()).getTrackingId();
 				Utils.triggerChangesStagedMessage(application.getId(), 0);
-				Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId, 0);
+				Utils.updateLastKnownTimestamp(lTrackingId,
+						lApplication.getTimeUpdatedMs(), 0);
 
 				response.setStatus(HttpServletResponse.SC_OK);
 

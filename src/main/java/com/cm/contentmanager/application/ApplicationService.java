@@ -262,11 +262,11 @@ public class ApplicationService {
 
 	}
 
-	public void updateApplication(Application application) {
+	public Application updateApplication(Application application) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering updateApplication");
-			applicationDao.update(application);
+			return applicationDao.update(application);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting updateApplication");

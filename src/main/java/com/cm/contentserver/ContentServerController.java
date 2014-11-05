@@ -288,6 +288,8 @@ public class ContentServerController {
 				// in
 				// case both values are zero (uninitialized)
 				if (lLastKnownTimestamp >= lHandshake.getLastKnownTimestamp()) {
+					if (LOGGER.isLoggable(Level.INFO))
+						LOGGER.info("Last known timestamp does not match. Triggering content list message...");
 					Utils.triggerSendContentListMessage(
 							lHandshake.getTrackingId(),
 							lHandshake.getGcmRegistrationId(), 0L);

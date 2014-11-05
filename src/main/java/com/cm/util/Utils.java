@@ -241,7 +241,7 @@ public class Utils {
 			TaskOptions taskOptions = TaskOptions.Builder
 					.withUrl(
 							"/tasks/gcm/sendcontentlistmessage/" + pTrackingId
-									+ pGcmId).param("gcmId", pGcmId)
+									+ "/" + pGcmId).param("gcmId", pGcmId)
 					.method(Method.POST).countdownMillis(delayInMs);
 			queue.add(taskOptions);
 		} finally {
@@ -273,8 +273,8 @@ public class Utils {
 		}
 	}
 
-	public static void updateLastKnownTimestamp(
-			String pTrackingId, long pTimestamp, long delayInMs) {
+	public static void updateLastKnownTimestamp(String pTrackingId,
+			long pTimestamp, long delayInMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering triggerUpdateLastKnownTimestampMessage");

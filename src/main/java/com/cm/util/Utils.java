@@ -242,7 +242,8 @@ public class Utils {
 					.withUrl(
 							"/tasks/gcm/sendcontentlistmessage/" + pTrackingId
 									+ "/" + pGcmId).param("gcmId", pGcmId)
-					.method(Method.POST).countdownMillis(delayInMs);
+					.param("trackingId", pTrackingId).method(Method.POST)
+					.countdownMillis(delayInMs);
 			queue.add(taskOptions);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))

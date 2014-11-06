@@ -184,6 +184,7 @@ class ContentStatDao {
 					q.setFilter("applicationId == applicationIdParam && eventTimeMs >= eventTimeMsParam");
 					q.declareParameters("Long applicationIdParam, Long eventTimeMsParam");
 					q.setOrdering("eventTimeMs desc");
+					q.getFetchPlan().setFetchSize(500);
 					List<ContentStat> lList = (List<ContentStat>) q.execute(
 							applicationId, eventStartTimeMs);
 

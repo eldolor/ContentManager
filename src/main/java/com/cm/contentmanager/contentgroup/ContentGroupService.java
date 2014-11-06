@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cm.contentmanager.content.Content;
 import com.cm.usermanagement.user.User;
 import com.cm.util.Utils;
 
@@ -18,12 +19,12 @@ public class ContentGroupService {
 	private static final Logger LOGGER = Logger
 			.getLogger(ContentGroupService.class.getName());
 
-
 	public List<ContentGroup> search(String searchTerm) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
-			List<ContentGroup> applications = contentGroupDao.search(searchTerm);
+			List<ContentGroup> applications = contentGroupDao
+					.search(searchTerm);
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Returning " + applications.size()
 						+ " applications");
@@ -38,7 +39,8 @@ public class ContentGroupService {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
-			List<ContentGroup> applications = contentGroupDao.searchByUserId(userId ,searchTerm);
+			List<ContentGroup> applications = contentGroupDao.searchByUserId(
+					userId, searchTerm);
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Returning " + applications.size()
 						+ " applications");
@@ -49,11 +51,13 @@ public class ContentGroupService {
 		}
 	}
 
-	public List<ContentGroup> searchByAccountId(Long accountId, String searchTerm) {
+	public List<ContentGroup> searchByAccountId(Long accountId,
+			String searchTerm) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
-			List<ContentGroup> applications = contentGroupDao.searchByAccountId(accountId, searchTerm);
+			List<ContentGroup> applications = contentGroupDao
+					.searchByAccountId(accountId, searchTerm);
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Returning " + applications.size()
 						+ " applications");
@@ -61,6 +65,23 @@ public class ContentGroupService {
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting");
+		}
+	}
+
+	public List<ContentGroup> get(Long applicationId, boolean includeDeleted,
+			boolean enabled) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering get");
+			List<ContentGroup> contentGroups = contentGroupDao.get(
+					applicationId, includeDeleted, enabled);
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Returning " + contentGroups.size()
+						+ " content groups");
+			return contentGroups;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting get");
 		}
 	}
 

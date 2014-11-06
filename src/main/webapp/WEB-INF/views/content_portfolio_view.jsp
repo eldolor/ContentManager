@@ -28,7 +28,7 @@
 <script type="text/javascript">
 setSelectedApplication(${applicationId});
 setSelectedContentGroup(${contentGroupId});
-var mDisplayAsGrid = false;
+var mDisplayAsGrid = true;
 
 </script>
 
@@ -36,14 +36,14 @@ var mDisplayAsGrid = false;
 <body>
 	<jsp:include page="common.jsp"></jsp:include>
 	<jsp:include page="top_bar.jsp"></jsp:include>
-	<section id="blog">
+	<section id="portfolio_page">
 		<div class="row full-width">
 			<h2 class="text-center gray">Content</h2>
 
 			<p class="text-center page_sub_heading">Manage your rich content
 				here</p>
 			<!-- 			<div class="line">
-				<img src="/resources/images/cm/line.png" alt="line" />
+				<img src="/resources//resources/images/box/cm/line.png" alt="line" />
 			</div>
  -->
 			<br />
@@ -52,7 +52,50 @@ var mDisplayAsGrid = false;
 					<jsp:include page="breadcrumbs.jsp"></jsp:include>
 					<div class="clearfix"></div>
 					<jsp:include page="progress_bar.jsp"></jsp:include>
-					<div id="content_list"></div>
+					<div id="our_work">
+						<div>
+							<ul>
+								<li class="filter active gray" data-filter="image video">All
+									/</li>
+								<li class="filter gray" data-filter="image">Images /</li>
+								<li class="filter gray" data-filter="video">Videos</li>
+							</ul>
+							<div class="clearfix"></div>
+
+							<div id="content_list" class="row"></div>
+
+							<!-- <div id="anshu" class="row">
+
+								<ul id='Grid'>
+									<li class='mix large-4 medium-4 columns video'><div>
+											<img src='/resources/images/box/portfolio1.jpg'
+												alt='Demo Video - with no attached video'>
+											<div class='green detail text-center'>
+												Test<br> <i class='fa fa-clock-o green'></i><span
+													class='white' id='first_content_id'>Content Id:
+													5587992970264576</span>|<i class='fa fa-mobile green'></i><span
+													class='white'><a id='first_content'
+													class='small green' href='javascript:void(0)'
+													onclick='viewContent(5587992970264576)'><i
+														class='fi-page light_gray'></i>&nbsp;view</a></span>|<i
+													class='fa fa-mobile green'></i><span class='white'><a
+													class='small' href='javascript:void(0)'
+													onclick='editContent(5587992970264576)'><i
+														class='fi-page-edit light_gray'></i>&nbsp;edit</a></span>|<i
+													class='fa fa-mobile green'></i><span class='white'><a
+													class='small' href='javascript:void(0)'
+													onclick='deleteContent(5587992970264576)'><i
+														class='fi-page-delete light_gray'></i>&nbsp;delete</a></span><i
+													class='fa fa-mobile green'></i><span class='white'><a
+													class='small' href='javascript:void(0)'
+													onclick='moveContent(5587992970264576, 5306517993553920)'><i
+														class='fi-eject light_gray'></i>&nbsp;move</a></span>
+											</div>
+										</div></li>
+								</ul>
+							</div> -->
+						</div>
+					</div>
 					<jsp:include page="create_content.jsp"></jsp:include>
 
 				</div>
@@ -133,6 +176,8 @@ var mDisplayAsGrid = false;
 	</section>
 	<br>
 	<br>
+
+
 	<section id="footer">
 
 		<jsp:include page="footer.jsp"></jsp:include>
@@ -185,6 +230,15 @@ var mDisplayAsGrid = false;
 		<button id="restore_confirm_button" class="button radius btn-default">restore</button>
 		<a class="close-reveal-modal">&#215;</a>
 	</div>
+	<script>
+        $(function () {
+            $("#portfolio_page .container").addClass("fadeInUp animated");
+            $('#Grid').mixitup(); // needed for our work section
+            $(".btn").addClass("bounceInUp animated");
+        });
+		
+		$(document).foundation();
+    </script>
 
 </body>
 </html>

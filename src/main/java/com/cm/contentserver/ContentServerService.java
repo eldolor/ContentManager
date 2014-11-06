@@ -47,11 +47,12 @@ public class ContentServerService {
 			if (lApplication != null && (!lApplication.isDeleted())
 					&& (!lApplication.isDeletedOnPlanDowngrade())
 					&& (lApplication.isEnabled())) {
-				//
+				//not deleted & enabled groups only
 				List<ContentGroup> lContentGroups = filterContentGroupByEffectiveDate(contentGroupService
-						.get(lApplicationId, false));
+						.get(lApplicationId, false, true));
 
 				for (ContentGroup lContentGroup : lContentGroups) {
+					//not deleted & enabled content only
 					lContents
 							.addAll(validateContent(contentService.get(
 									lApplicationId, lContentGroup.getId(),

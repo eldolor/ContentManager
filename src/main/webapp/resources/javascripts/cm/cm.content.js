@@ -150,7 +150,11 @@ function getContent(pApplicationId, pContentGroupId) {
 					async : true,
 					statusCode : {
 						200 : function(content) {
-							handleDisplayContent_Callback(content);
+							if (mDisplayAsGrid) {
+								handleDisplayContentAsGrid_Callback(content);
+							} else {
+								handleDisplayContent_Callback(content);
+							}
 							// Google Analytics
 							ga('send', {
 								'hitType' : 'pageview',
@@ -256,6 +260,82 @@ function handleDisplayContent_Callback(pContent) {
 	} finally {
 
 		log("handleDisplayContent_Callback", "Exiting");
+	}
+}
+
+function handleDisplayContentAsGrid_Callback(pContent) {
+	log("handleDisplayContentAsGrid_Callback", "Entering");
+	try {
+		var lInnerHtml = '';
+		lInnerHtml += "<ul id='Grid'> ";
+		for (var int = 0; int < pContent.length; int++) {
+			var lContent = pContent[int];
+
+			lInnerHtml += "<li class='mix large-4 medium-4 columns "
+					+ lContent.type + "'>";
+			lInnerHtml += "<div>";
+			if (lContent.type == 'image' && (lContent.uri)) {
+				lInnerHtml += "<img src='/contentserver/dropbox/"
+						+ lContent.uri + "' alt='" + lContent.name + "'>";
+			} else if (lContent.type == 'image' && (!lContent.uri)) {
+				lInnerHtml += "<img src='/resources/images/cm/image_icon_2.png' alt='"
+						+ lContent.name + "'>";
+			} else if (lContent.type == 'video') {
+				lInnerHtml += "<img src='/resources/images/cm/video_icon.jpg' alt='"
+						+ lContent.name + "'>";
+			}
+			lInnerHtml += "<div class='green detail text-center'>";
+			lInnerHtml += lContent.name;
+			lInnerHtml += "<br>";
+			if (int == 0) {
+				// lInnerHtml += "<i class='fa fa-clock-o green'></i><span
+				// class='white' id='first_content_id'>Content Id: "
+				// + lContent.id + "</span>&nbsp;";
+				lInnerHtml += "<i class='fa fa-mobile green'></i><span class='white'><a id='first_content' class='small green' href='javascript:void(0)' onclick='viewContent(";
+			} else {
+				// lInnerHtml += "<i class='fa fa-clock-o green'></i><span
+				// class='white' >Content Id: "
+				// + lContent.id + "</span>&nbsp;";
+				lInnerHtml += "<i class='fa fa-mobile green'></i><span class='white'><a class='small green' href='javascript:void(0)' onclick='viewContent(";
+			}
+			lInnerHtml += lContent.id;
+			lInnerHtml += ")'><i class='fi-page light_gray'></i>&nbsp;view</a></span>&nbsp;<i class='fa fa-mobile green'></i><span class='white'><a class='small' href='javascript:void(0)' onclick='editContent("
+					+ lContent.id
+					+ ")'><i class='fi-page-edit light_gray'></i>&nbsp;edit</a></span>&nbsp;<i class='fa fa-mobile green'></i><span class='white'><a class='small' href='javascript:void(0)' onclick='deleteContent("
+					+ lContent.id
+					+ ")'><i class='fi-page-delete light_gray'></i>&nbsp;delete</a></span>"
+					+ "<i class='fa fa-mobile green'></i><span class='white'><a class='small' href='javascript:void(0)' onclick='moveContent("
+					+ lContent.id
+					+ ", "
+					+ lContent.applicationId
+					+ ")'><i class='fi-eject light_gray'></i>&nbsp;move</a></span>";
+			lInnerHtml += "</div>";
+			lInnerHtml += "</div>";
+			lInnerHtml += "</li>";
+
+		}
+		lInnerHtml += "</ul>";
+		// log("handleDisplayContentAsGrid_Callback", lInnerHtml);
+		$('#content_list').empty().html(lInnerHtml);
+		// progress bar
+		$('#content_progress_bar').css("width", "100%");
+		$('#content_progress_bar').hide();
+		$("#portfolio_page .container").addClass("fadeInUp animated");
+		$('#Grid').mixitup(); // needed for our work section
+		$(".btn").addClass("bounceInUp animated");
+
+		$('#our_work').waypoint(function() {
+			$("#our_work .visible").css('visibility', 'visible');
+			$("#our_work .visible").addClass("fadeInUp animated");
+		}, {
+			offset : 335
+		});
+
+	} catch (err) {
+		handleError("handleDisplayContentAsGrid_Callback", err);
+	} finally {
+
+		log("handleDisplayContentAsGrid_Callback", "Exiting");
 	}
 }
 

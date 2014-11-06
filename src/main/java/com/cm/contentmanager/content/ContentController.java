@@ -69,7 +69,7 @@ public class ContentController {
 		try {
 			// pass it along to the view
 			// model.addAttribute("contentGroupId", contentGroupId);
-			return new ModelAndView("content", model);
+			return new ModelAndView("content_portfolio_view", model);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting displayContent");

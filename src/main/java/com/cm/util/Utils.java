@@ -241,9 +241,9 @@ public class Utils {
 			TaskOptions taskOptions = TaskOptions.Builder
 					.withUrl(
 							"/tasks/gcm/sendcontentlistmessage/" + pTrackingId
-									+ "/" + pGcmId).param("gcmId", pGcmId)
-					.param("trackingId", pTrackingId).method(Method.POST)
-					.countdownMillis(delayInMs);
+									+ "/" + pGcmId)
+					.param("trackingId", pTrackingId).param("gcmId", pGcmId)
+					.method(Method.POST).countdownMillis(delayInMs);
 			queue.add(taskOptions);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))

@@ -36,6 +36,9 @@ public class ContentServerService {
 				LOGGER.info("Entering getContent");
 			Long lApplicationId = this.resolveApplicationId(pContentRequest
 					.getTrackingId());
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Application Id is " + lApplicationId
+						+ " for Tracking Id " + pContentRequest.getTrackingId());
 			List<Content> lContents = new ArrayList<Content>();
 
 			Application lApplication = applicationService
@@ -136,7 +139,7 @@ public class ContentServerService {
 	private List<Content> validateContent(List<Content> pContents) {
 		List<Content> lValidatedContent = new ArrayList<Content>();
 		for (Content lContent : pContents) {
-			//effective date
+			// effective date
 			if (isEffectiveDateValid(lContent.getStartDateMs(),
 					lContent.getEndDateMs())) {
 				// URI not empty

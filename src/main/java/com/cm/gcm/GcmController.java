@@ -218,12 +218,15 @@ public class GcmController {
 	public void sendContentListMessage(@PathVariable String trackingId,
 			@PathVariable String gcmId, HttpServletResponse response) {
 		try {
-			if (LOGGER.isLoggable(Level.INFO))
+			if (LOGGER.isLoggable(Level.INFO)) {
 				LOGGER.info("Entering sendContentListMessage");
+				LOGGER.info("Tracking Id: " + trackingId);
+				LOGGER.info("Gcm Id: " + gcmId);
+			}
 
 			// send the new content list to a single device
 			gcmHelper.sendContentListMessage(gcmId,
-					contentHelper.getGenericContentRequest(gcmId));
+					contentHelper.getGenericContentRequest(trackingId));
 
 			response.setStatus(HttpServletResponse.SC_OK);
 		} catch (DeviceHasMultipleRegistrations e) {

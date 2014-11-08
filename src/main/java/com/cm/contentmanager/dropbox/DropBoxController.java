@@ -17,11 +17,12 @@ import com.cm.config.Configuration;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
+import com.google.appengine.api.blobstore.FileInfo;
 import com.google.appengine.api.blobstore.UploadOptions;
 
 @Controller
 public class DropBoxController {
-	private BlobstoreService mBlobstoreFactory = BlobstoreServiceFactory
+	private BlobstoreService mBlobstoreService = BlobstoreServiceFactory
 			.getBlobstoreService();
 
 	private static final Logger LOGGER = Logger
@@ -33,17 +34,27 @@ public class DropBoxController {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering doUpload");
-			Map<String, List<BlobKey>> blobs = mBlobstoreFactory
-					.getUploads(req);
-			List<BlobKey> keys = blobs.get("file");
+			// Map<String, List<BlobKey>> blobs = mBlobstoreService
+			// .getUploads(req);
+			// List<BlobKey> keys = blobs.get("file");
+			// if (keys != null && keys.size() > 0) {
+			// response.setStatus(HttpServletResponse.SC_CREATED);
+			// String lKeyString = keys.get(0).getKeyString();
+			//
+			// if (LOGGER.isLoggable(Level.INFO))
+			// LOGGER.info("Returning Key " + lKeyString);
+			// return "{\"uri\":\"" + lKeyString + "\"}";
 
-			if (keys != null && keys.size() > 0) {
+			Map<String, List<FileInfo>> lFileInfoMap = mBlobstoreService
+					.getFileInfos(req);
+			List<FileInfo> lFileInfoList = lFileInfoMap.get("file");
+			if (lFileInfoList != null && lFileInfoList.size() > 0) {
 				response.setStatus(HttpServletResponse.SC_CREATED);
-				String _keyString = keys.get(0).getKeyString().trim();
+				String lGsObjectName = lFileInfoList.get(0).getGsObjectName();
 
 				if (LOGGER.isLoggable(Level.INFO))
-					LOGGER.info("Returning Key " + _keyString);
-				return "{\"uri\":\"" + _keyString + "\"}";
+					LOGGER.info("Returning Key " + lGsObjectName);
+				return "{\"uri\":\"" + lGsObjectName + "\"}";
 			} else {
 				LOGGER.log(Level.SEVERE, "Unable to upload file!");
 				response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
@@ -67,11 +78,11 @@ public class DropBoxController {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getDropboxUrl");
-			// String url =
-			// mBlobstoreFactory.createUploadUrl("/secured/dropbox");
-			String url = mBlobstoreFactory.createUploadUrl("/secured/dropbox",
-					UploadOptions.Builder
-							.withGoogleStorageBucketName(Configuration.GCS_STORAGE_BUCKET));
+			String url = mBlobstoreService
+					.createUploadUrl(
+							"/secured/dropbox",
+							UploadOptions.Builder
+									.withGoogleStorageBucketName(Configuration.GCS_STORAGE_BUCKET));
 
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Returning Url " + url);

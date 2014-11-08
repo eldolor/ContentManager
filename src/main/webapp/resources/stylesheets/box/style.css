@@ -1355,14 +1355,22 @@ a {
 
 
 #our_work {
-    margin-top: 80px;
+    margin-top: 10px;
 }
 
 #Grid .mix {
     opacity: 0;
     display: none;
 }
-
+.thumb {
+    display: inline-block;
+    width: 200px;
+    height: 200px;
+    margin: 5px;
+    border: 1px solid #1fad9d;
+    background-position: center center;
+    background-size: cover;
+}
 .filter {
     float: left;
     list-style: none;

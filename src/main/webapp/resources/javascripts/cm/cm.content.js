@@ -270,45 +270,56 @@ function handleDisplayContentAsGrid_Callback(pContent) {
 		lInnerHtml += "<ul id='Grid'> ";
 		for (var int = 0; int < pContent.length; int++) {
 			var lContent = pContent[int];
+			var lContentName = lContent.name;
+			lContentName = lContentName.trunc(11, true);
 
 			lInnerHtml += "<li class='mix large-4 medium-4 columns "
 					+ lContent.type + "'>";
 			lInnerHtml += "<div>";
+			var lImgId = lContent.id + "_img";
 			if (lContent.type == 'image' && (lContent.uri)) {
-				lInnerHtml += "<img src='/contentserver/dropbox/"
-						+ lContent.uri + "' alt='" + lContent.name + "'>";
+				displayThumbnailImage(lImgId, lContent.id, function(pImgId,
+						pUrl) {
+					$('#' + pImgId).attr('src', pUrl + "=s200-c");
+				}, true);
+
+				lInnerHtml += "<img  class='thumb' src='/resources/images/cm/page-loader.gif' alt='"
+						+ lContent.name
+						+ "' id='"
+						+ lImgId
+						+ "' onclick='viewContent(" + lContent.id + ")'>";
 			} else if (lContent.type == 'image' && (!lContent.uri)) {
-				lInnerHtml += "<img src='/resources/images/cm/image_icon_2.png' alt='"
+				lInnerHtml += "<img  class='thumb' src='/resources/images/cm/image_icon_2.png' alt='"
 						+ lContent.name + "'>";
 			} else if (lContent.type == 'video') {
-				lInnerHtml += "<img src='/resources/images/cm/video_icon.jpg' alt='"
-						+ lContent.name + "'>";
+				lInnerHtml += "<img class='thumb' src='/resources/images/cm/video_icon.jpg' alt='"
+						+ lContent.name
+						+ "' onclick='viewContent("
+						+ lContent.id + ")'>";
+				// lInnerHtml += "<video width='320' height='240' controls>";
+				// lInnerHtml += " <source
+				// src='https://00e9e64bac197ada5c32f2fd799f3f31a46040011bc915d504-apidata.googleusercontent.com/download/storage/v1_internal/b/skok-dev.appspot.com/o/media%2FL2FwcGhvc3RpbmdfcHJvZC9ibG9icy9BRW5CMlVxMlNCdzI3NzlNOHdHRXc1WktETUZlS0UxTHM5SUtZY1VtQzlnMTRxaUwtbk5JT3Jua180cW1UU0JxSHhqWXducXBybjVsWWRBRVU4ckdEU3hHUjl1bEZlQUhudy5pNzczOTY2eWFUM2pfbXhJ?qk=AD5uMEsYaw8KgTxfq81u9tSEnxt9Syi4RGOVNBEsxLh_g1KfRL-mIjuGK0g9QSTIAOyXv5VTED_B-jMlI6iTarANypTpLqgUqtterWs7xbhLLFcpkX8G9gnRkl3dAIF_08R8_kmILgJk_gVm6eMWflIr6ZDyPypBuKUIAZaXrWI8H4zGD1cEcR4ZZAcy4ShQfHWK6DJJU2z0pZkA5a_QfFz1iJXZXtuSF8jvVWUp0vZt_r-Jo2u-z_tpVeq5qYhVgiqFSMeh4oOVp_1nw9zasFfszauDKUmUsskj5ngC0IDMt8w5rKBGRQV9VUXd0f3d56Pif-FURdj6sffGmBSBrmms56Ukc4AMmfe52-8aO3ILWjtEcClmr5cLLIESlX9N-Pwq2g_aSxeay0May4ZcGFdU8nSe_yMjtLPBj0GJIZ8aLBAjTBaoBmOzl1X7OP4cS7mkSzgpvrDEBThHtAdUFHA3hkvrXag38J90UtAo3arSPb1ujoqAHGcaFgTffnorUfG5JeenJlQX_ta2Hvr8U9Etz7Sp0yHY4svUi-s957TwYcjf7zZq6CoGu9QfM85RMyffZRqAHb0KZK_L_kNTr0N9dzj3TwyjRxBc3sZn0dZO_pflzokiAGtlp-OE0iuCe_GM3OTRdAwkU_YNKfnZx3jrVsO_2tdGk0_EtccFyG0MYBO5yWv2SPvF-VRgqBEe-eummDwukeVkOKP32Ehb7B8_8apL371yOAi6z0sMTW3cdUs3bzlVYkoGWfo0nAxMlR-N957UN7RoU56SGyt6yMKjDBpxKufFCCsqmSmLAD6L1A1pgfkYBLOVbA0GhLQ0CdlkChYuzlk1GUYYU6C7sP_s8QFFQm_m4taYH1BqQsSOQIyhWG_wxhq0hZfh8FBCP0mHdpXqQXjwOlcFFsiFw4lWNkETBaOjJ4zxlEbSi802kLGZJZAle3PjUU_OxZBCQkC_u6o1aVeg'
+				// type='video/mp4'>";
+				// lInnerHtml += "Your browser does not support the video tag.";
+				// lInnerHtml += "</video>"
 			}
 			lInnerHtml += "<div class='green detail text-center'>";
-			lInnerHtml += lContent.name;
+			lInnerHtml += lContentName;
 			lInnerHtml += "<br>";
 			if (int == 0) {
-				// lInnerHtml += "<i class='fa fa-clock-o green'></i><span
-				// class='white' id='first_content_id'>Content Id: "
-				// + lContent.id + "</span>&nbsp;";
-				lInnerHtml += "<i class='fa fa-mobile green'></i><span class='white'><a id='first_content' class='small green' href='javascript:void(0)' onclick='viewContent(";
+				lInnerHtml += "<span class='white'><a id='first_content' class='small' href='javascript:void(0)' onclick='editContent("
 			} else {
-				// lInnerHtml += "<i class='fa fa-clock-o green'></i><span
-				// class='white' >Content Id: "
-				// + lContent.id + "</span>&nbsp;";
-				lInnerHtml += "<i class='fa fa-mobile green'></i><span class='white'><a class='small green' href='javascript:void(0)' onclick='viewContent(";
+				lInnerHtml += "<span class='white'><a class='small' href='javascript:void(0)' onclick='editContent("
 			}
 			lInnerHtml += lContent.id;
-			lInnerHtml += ")'><i class='fi-page light_gray'></i>&nbsp;view</a></span>&nbsp;<i class='fa fa-mobile green'></i><span class='white'><a class='small' href='javascript:void(0)' onclick='editContent("
+			lInnerHtml += ")'>&nbsp;edit</a></span>&nbsp;<span class='white'><a class='small' href='javascript:void(0)' onclick='deleteContent("
 					+ lContent.id
-					+ ")'><i class='fi-page-edit light_gray'></i>&nbsp;edit</a></span>&nbsp;<i class='fa fa-mobile green'></i><span class='white'><a class='small' href='javascript:void(0)' onclick='deleteContent("
-					+ lContent.id
-					+ ")'><i class='fi-page-delete light_gray'></i>&nbsp;delete</a></span>"
-					+ "<i class='fa fa-mobile green'></i><span class='white'><a class='small' href='javascript:void(0)' onclick='moveContent("
+					+ ")'>&nbsp;delete</a></span>"
+					+ "<span class='white'><a class='small' href='javascript:void(0)' onclick='moveContent("
 					+ lContent.id
 					+ ", "
 					+ lContent.applicationId
-					+ ")'><i class='fi-eject light_gray'></i>&nbsp;move</a></span>";
+					+ ")'></i>&nbsp;move</a></span>";
 			lInnerHtml += "</div>";
 			lInnerHtml += "</div>";
 			lInnerHtml += "</li>";
@@ -677,6 +688,169 @@ function selectedContent(id) {
 		log("selectedContent", "Entering");
 	}
 }
+
+function displayThumbnailImage(pImgId, pContentId, pCallbackFunction, pIsAsync) {
+	// load entry info via ajax
+	log("displayThumbnailImage", "Entering");
+	try {
+
+		var url = "/contentserver/servingurl/" + pContentId;
+		var jqxhr = $
+				.ajax({
+					url : url,
+					type : "GET",
+					async : pIsAsync,
+					contentType : "application/json",
+					statusCode : {
+						200 : function(response) {
+							if (response) {
+								var lResponseJson = JSON.parse(response);
+								;
+								if (!lResponseJson.servingUrl) {
+									log('The content has no image or video attached');
+									return;
+								}
+								log("servingUrl", lResponseJson.servingUrl);
+								// call the callback
+								if ($.isFunction(pCallbackFunction)) {
+									pCallbackFunction.apply(null, [ pImgId,
+											lResponseJson.servingUrl ]);
+								} else {
+									return lResponseJson.servingUrl;
+								}
+							}
+
+						},
+						503 : function() {
+							$('#content_errors')
+									.html(
+											'Unable to process the request. Please try again later');
+							$('#cm_errors_container').show();
+						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						log(errorThrown);
+						$('#content_errors')
+								.html(
+										'Unable to process the request. Please try again later');
+						$('#cm_errors_container').show();
+					}
+				});
+	} catch (err) {
+		handleError("displayThumbnailImage", err);
+	} finally {
+
+		log("displayThumbnailImage", "Exiting");
+	}
+}
+
+function displayContent(pContent) {
+	// load entry info via ajax
+	log("displayContent", "Entering");
+	try {
+
+		var url = "/contentserver/servingurl/" + pContent.id;
+		var jqxhr = $
+				.ajax({
+					url : url,
+					type : "GET",
+					contentType : "application/json",
+					statusCode : {
+						200 : function(response) {
+							var lUrl = null;
+
+							if (response) {
+								var lResponseJson = JSON.parse(response);
+								;
+								if (!lResponseJson.servingUrl) {
+									displayMessage('The content has no image or video attached');
+									return;
+								}
+								lUrl = lResponseJson.servingUrl;
+							}
+							log("servingUrl", lUrl);
+
+							// Google Analytics
+							ga('send', 'event', Category.CONTENT, Action.VIEW);
+							// End Google Analytics
+
+							if (pContent.type == 'image') {
+								$("#image_widget").attr("src", lUrl);
+								// close wait div
+
+								$('#view_image_label').html(pContent.name);
+								$('#view_image_done_button').unbind();
+								$('#view_image_done_button').one(
+										'click',
+										function() {
+											try {
+												$('#view_image_container')
+														.foundation('reveal',
+																'close');
+											} catch (err) {
+												handleError("viewVideo", err);
+											}
+										});
+
+								$('#view_image_container').foundation('reveal',
+										'open');
+							} else if (pContent.type == 'video') {
+								// reset
+								$("#jquery_jplayer_1").jPlayer("clearMedia");
+								$("#jquery_jplayer_1")
+										.jPlayer(
+												"setMedia",
+												{
+													m4v : lUrl,
+													ogv : lUrl,
+													webmv : lUrl,
+													poster : "/resources/images/cm/logo-512x512.png"
+												});
+
+								$('#view_video_title').html(pContent.name);
+								$('#view_video_label').html(pContent.name);
+
+								$('#view_video_done_button').unbind();
+								$('#view_video_done_button').one(
+										'click',
+										function() {
+											try {
+												$("#jquery_jplayer_1").jPlayer(
+														"stop");
+												$('#jp_container_1')
+														.foundation('reveal',
+																'close');
+											} catch (err) {
+												handleError("viewVideo", err);
+											}
+										});
+								$('#jp_container_1').foundation('reveal',
+										'open');
+							}
+
+						},
+						503 : function() {
+							$('#content_errors')
+									.html(
+											'Unable to process the request. Please try again later');
+							$('#cm_errors_container').show();
+						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						log(errorThrown);
+						$('#content_errors')
+								.html(
+										'Unable to process the request. Please try again later');
+						$('#cm_errors_container').show();
+					}
+				});
+	} catch (err) {
+		handleError("displayContent", err);
+	} finally {
+
+		log("displayContent", "Exiting");
+	}
+}
 function viewContent(pContentId) {
 	// load entry info via ajax
 	log("viewContent", "Entering");
@@ -689,84 +863,14 @@ function viewContent(pContentId) {
 					type : "GET",
 					contentType : "application/json",
 					statusCode : {
-						200 : function(content) {
-							// Google Analytics
-							ga('send', 'event', Category.CONTENT, Action.VIEW);
-							// End Google Analytics
-
-							if (content.type == 'image') {
-								var _url = "/contentserver/dropbox/"
-										+ content.uri;
-								log("viewImage", _url);
-								if (content.uri) {
-									$("#image_widget").attr("src", _url);
-									// close wait div
-
-									$('#view_image_label').html(content.name);
-									$('#view_image_done_button').unbind();
-									$('#view_image_done_button').one(
-											'click',
-											function() {
-												try {
-													$('#view_image_container')
-															.foundation(
-																	'reveal',
-																	'close');
-												} catch (err) {
-													handleError("viewVideo",
-															err);
-												}
-											});
-
-									$('#view_image_container').foundation(
-											'reveal', 'open');
-								} else {
-									displayMessage('The content has no image or video attached');
-								}
-							} else if (content.type == 'video') {
-								var _url = "/contentserver/dropbox/"
-										+ content.uri;
-								log("viewVideo", _url);
-								if (content.uri) {
-									// reset
-									$("#jquery_jplayer_1")
-											.jPlayer("clearMedia");
-									$("#jquery_jplayer_1")
-											.jPlayer(
-													"setMedia",
-													{
-														m4v : _url,
-														ogv : _url,
-														webmv : _url,
-														poster : "/resources/images/mavin_logo_orange_on_white_480x271.jpg"
-													});
-
-									$('#view_video_title').html(content.name);
-									$('#view_video_label').html(content.name);
-
-									$('#view_video_done_button').unbind();
-									$('#view_video_done_button').one(
-											'click',
-											function() {
-												try {
-													$("#jquery_jplayer_1")
-															.jPlayer("stop");
-													$('#jp_container_1')
-															.foundation(
-																	'reveal',
-																	'close');
-												} catch (err) {
-													handleError("viewVideo",
-															err);
-												}
-											});
-									$('#jp_container_1').foundation('reveal',
-											'open');
-								} else {
-									displayMessage('The content has no image or video attached');
-								}
+						200 : function(pContent) {
+							if ((pContent) && (pContent.uri)) {
+								displayContent(pContent);
+							} else {
+								log("Either the content does not exist or the URI is null")
+								displayMessage('The content has no image or video attached');
+								return;
 							}
-
 						},
 						503 : function() {
 							$('#content_errors')

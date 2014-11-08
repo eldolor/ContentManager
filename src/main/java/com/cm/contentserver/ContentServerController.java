@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cm.accountmanagement.client.key.ClientKeyService;
+import com.cm.config.CanonicalContentType;
 import com.cm.config.CanonicalErrorCodes;
 import com.cm.config.Configuration;
 import com.cm.contentmanager.application.Application;
@@ -38,11 +39,19 @@ import com.cm.util.ValidationError;
 import com.google.appengine.api.blobstore.BlobInfo;
 import com.google.appengine.api.blobstore.BlobInfoFactory;
 import com.google.appengine.api.blobstore.BlobKey;
+import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
+import com.google.appengine.api.images.ImagesService;
+import com.google.appengine.api.images.ImagesServiceFactory;
+import com.google.appengine.api.images.ServingUrlOptions;
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.appengine.api.taskqueue.TaskOptions.Method;
+import com.google.appengine.tools.cloudstorage.GcsFilename;
+import com.google.appengine.tools.cloudstorage.GcsService;
+import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
+import com.google.appengine.tools.cloudstorage.RetryParams;
 
 @Controller
 public class ContentServerController {
@@ -61,8 +70,13 @@ public class ContentServerController {
 	@Autowired
 	private ClientKeyService clientKeyService;
 
+	private BlobstoreService mBlobstoreService = BlobstoreServiceFactory
+			.getBlobstoreService();
 	private final BlobInfoFactory mBlobInfoFactory = new BlobInfoFactory();
-
+	private final ImagesService mImagesService = ImagesServiceFactory
+			.getImagesService();
+	private final GcsService mGcsService = GcsServiceFactory
+			.createGcsService(RetryParams.getDefaultInstance());
 	private Cache mCache;
 
 	private static final Logger LOGGER = Logger
@@ -422,6 +436,7 @@ public class ContentServerController {
 	 * @param response
 	 * @return
 	 */
+	@Deprecated
 	@RequestMapping(value = "/contentserver/dropbox/{key}", method = RequestMethod.GET)
 	public @ResponseBody
 	String doServeGet(@PathVariable String key, HttpServletRequest request,
@@ -474,6 +489,7 @@ public class ContentServerController {
 	 * @param response
 	 * @return
 	 */
+	@Deprecated
 	@RequestMapping(value = "/contentserver/dropbox/{key}/{keyWithExtension}", method = RequestMethod.GET)
 	public @ResponseBody
 	String doServeGetWithExtension(@PathVariable String key,
@@ -517,6 +533,170 @@ public class ContentServerController {
 		}
 		return null;
 	}
+
+	@RequestMapping(value = "/contentserver/servingurl/{contentId}", method = RequestMethod.GET)
+	public @ResponseBody
+	String getServingUrl(@PathVariable Long contentId,
+			HttpServletRequest request, HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			if (Utils.isEmpty(contentId)) {
+				LOGGER.warning("No content id provided");
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				return null;
+			}
+			String lServingUrl = null;
+
+			Content lContent = contentService.get(contentId);
+			if (lContent.getType()
+					.equals(CanonicalContentType.IMAGE.getValue())) {
+				// String lUri[] = lContent.getUri().split("/");
+				// BlobKey blob_key = BlobstoreServiceFactory
+				// .getBlobstoreService().createGsBlobKey(lContent.getUri());
+				// ServingUrlOptions serving_options = ServingUrlOptions.Builder
+				// .withBlobKey(blob_key);
+				// lServingUrl = ImagesServiceFactory.getImagesService()
+				// .getServingUrl(serving_options);
+				// if (LOGGER.isLoggable(Level.INFO))
+				// LOGGER.info(lServingUrl);
+				// ServingUrlOptions lServingUrlOptions =
+				// ServingUrlOptions.Builder
+				// .withBlobKey(mBlobstoreService.createGsBlobKey(lContent
+				// .getUri()));
+				// lServingUrlOptions.secureUrl(true);
+				// lServingUrl =
+				// mImagesService.getServingUrl(lServingUrlOptions);
+
+				// ServingUrlOptions lServingUrlOptions =
+				// ServingUrlOptions.Builder
+				// .withBlobKey(new BlobKey(lContent.getUri()));
+				// lServingUrlOptions.secureUrl(true);
+				// lServingUrl =
+				// mImagesService.getServingUrl(lServingUrlOptions);
+
+				ServingUrlOptions lServingUrlOptions = ServingUrlOptions.Builder
+						.withGoogleStorageFileName(lContent.getUri());
+				lServingUrlOptions.secureUrl(true);
+				lServingUrl = mImagesService.getServingUrl(lServingUrlOptions);
+
+				// GcsFilename gcsFilename = new
+				// GcsFilename("skok-dev.appspot.com/media",
+				// lContent.getUri());
+				// String filename = String.format("/gs/%s/%s",
+				// gcsFilename.getBucketName(),
+				// gcsFilename.getObjectName());
+				// ServingUrlOptions lServingUrlOptions =
+				// ServingUrlOptions.Builder
+				// .withGoogleStorageFileName(filename);
+				// lServingUrl = mImagesService
+				// .getServingUrl(ServingUrlOptions.Builder
+				// .withGoogleStorageFileName(filename));
+
+			} else if (lContent.getType().equals(
+					CanonicalContentType.VIDEO.getValue())) {
+				// lServingUrl = "https://storage.googleapis.com/"
+				// + Configuration.GCS_STORAGE_BUCKET + "/"
+				// + lContent.getUri();
+				String lUri[] = lContent.getUri().split("/gs");
+				lServingUrl = "https://storage.googleapis.com" + lUri[1];
+			}
+
+			if (Utils.isEmpty(lServingUrl)) {
+				LOGGER.info("No content found for content id " + contentId);
+				response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+				return null;
+			}
+
+			response.setStatus(HttpServletResponse.SC_OK);
+			return "{ \"servingUrl\" : \"" + lServingUrl + "\" }";
+		} catch (IllegalArgumentException e) {
+			LOGGER.log(Level.WARNING, e.getMessage());
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+		} catch (Throwable e) {
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+		return null;
+	}
+
+	// @Deprecated
+	// @RequestMapping(value =
+	// "/contentserver/servingurl/image/{gs}/{bucket}/{folder}/{gsBlobKey}",
+	// method = RequestMethod.GET)
+	// public @ResponseBody
+	// String getServingUrlForImage(@PathVariable String gsObjectName,
+	// HttpServletRequest request, HttpServletResponse response) {
+	// try {
+	// if (LOGGER.isLoggable(Level.INFO))
+	// LOGGER.info("Entering");
+	// if (Utils.isEmpty(gsObjectName)) {
+	// LOGGER.warning("No key provided");
+	// response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+	// return null;
+	// }
+	// ServingUrlOptions lServingUrlOptions = ServingUrlOptions.Builder
+	// .withGoogleStorageFileName(gsObjectName);
+	// lServingUrlOptions.secureUrl(true);
+	//
+	// String lServingUrl = mImagesService
+	// .getServingUrl(lServingUrlOptions);
+	//
+	// if (Utils.isEmpty(lServingUrl)) {
+	// LOGGER.info("No content found for key " + gsObjectName);
+	// response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+	// return null;
+	// }
+	//
+	// response.setStatus(HttpServletResponse.SC_OK);
+	// return "{ \"servingUrl\" : \"" + lServingUrl + "\" }";
+	// } catch (IllegalArgumentException e) {
+	// LOGGER.log(Level.WARNING, e.getMessage());
+	// response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+	// } catch (Throwable e) {
+	// LOGGER.log(Level.SEVERE, e.getMessage(), e);
+	// response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+	// } finally {
+	// if (LOGGER.isLoggable(Level.INFO))
+	// LOGGER.info("Exiting");
+	// }
+	// return null;
+	// }
+	//
+	// @Deprecated
+	// @RequestMapping(value = "/contentserver/servingurl/video/{gsObjectName}",
+	// method = RequestMethod.GET)
+	// public @ResponseBody
+	// String getServingUrlForVideo(@PathVariable String gsObjectName,
+	// HttpServletRequest request, HttpServletResponse response) {
+	// try {
+	// if (LOGGER.isLoggable(Level.INFO))
+	// LOGGER.info("Entering");
+	// if (Utils.isEmpty(gsObjectName)) {
+	// LOGGER.warning("No key provided");
+	// response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+	// return null;
+	// }
+	// String lServingUrl = "https://storage.googleapis.com/"
+	// + Configuration.GCS_STORAGE_BUCKET + "/" + gsObjectName;
+	//
+	// response.setStatus(HttpServletResponse.SC_OK);
+	// return "{ \"servingUrl\" : \"" + lServingUrl + "\" }";
+	// } catch (IllegalArgumentException e) {
+	// LOGGER.log(Level.WARNING, e.getMessage());
+	// response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+	// } catch (Throwable e) {
+	// LOGGER.log(Level.SEVERE, e.getMessage(), e);
+	// response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+	// } finally {
+	// if (LOGGER.isLoggable(Level.INFO))
+	// LOGGER.info("Exiting");
+	// }
+	// return null;
+	// }
 
 	private ContentRequest convertToDomainFormat(
 			com.cm.contentserver.transfer.ContentRequest pContentRequest) {

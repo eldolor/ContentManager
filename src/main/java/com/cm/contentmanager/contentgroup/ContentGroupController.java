@@ -207,7 +207,7 @@ public class ContentGroupController {
 
 			Application lApplication = applicationService
 					.getApplication(lApplicationId);
-			Utils.triggerChangesStagedMessage(id, 0);
+			Utils.triggerChangesStagedMessage(lApplication.getId(), 0);
 			Utils.updateLastKnownTimestamp(lApplication.getTrackingId(),
 					timeUpdatedMs, 0);
 			Utils.triggerUpdateQuotaUtilizationMessage(
@@ -243,7 +243,7 @@ public class ContentGroupController {
 
 			Application lApplication = applicationService
 					.getApplication(lApplicationId);
-			Utils.triggerChangesStagedMessage(id, 0);
+			Utils.triggerChangesStagedMessage(lApplication.getId(), 0);
 			Utils.updateLastKnownTimestamp(lApplication.getTrackingId(),
 					timeUpdatedMs, 0);
 			Utils.triggerUpdateQuotaUtilizationMessage(

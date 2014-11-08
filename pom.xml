@@ -200,6 +200,13 @@
 			<artifactId>jsr107cache</artifactId>
 			<version>1.1</version>
 		</dependency>
+
+		<!-- GCS -->
+		<dependency>
+			<groupId>com.google.appengine.tools</groupId>
+			<artifactId>appengine-gcs-client</artifactId>
+			<version>RELEASE</version>
+		</dependency>
 	</dependencies>
 
 	<build>

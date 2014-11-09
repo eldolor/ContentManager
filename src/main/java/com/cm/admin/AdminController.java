@@ -572,8 +572,7 @@ public class AdminController {
 								LOGGER.info("Adding delay of " + lDelayInMs
 										+ " ms before attempting to process");
 							Utils.triggerUpdateContentSizeInBytesMessage(
-									lContent.getId(), lContent.getUri(),
-									lDelayInMs);
+									lContent.getId(), lDelayInMs);
 						}
 					}
 				}

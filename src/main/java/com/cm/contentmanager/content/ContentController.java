@@ -235,7 +235,7 @@ public class ContentController {
 				if (!Utils.isEmpty(content.getId())
 						&& (!Utils.isEmpty(content.getUri())))
 					Utils.triggerUpdateContentSizeInBytesMessage(
-							lContent.getId(), lContent.getUri(), 0);
+							lContent.getId(), 0);
 				// trigger message to update quota
 				Utils.triggerUpdateQuotaUtilizationMessage(userService
 						.getLoggedInUser().getAccountId(), 0);
@@ -275,7 +275,7 @@ public class ContentController {
 				if (!Utils.isEmpty(content.getId())
 						&& (!Utils.isEmpty(content.getUri())))
 					Utils.triggerUpdateContentSizeInBytesMessage(
-							content.getId(), content.getUri(), 0);
+							content.getId(), 0);
 				// trigger message to update quota
 				// TODO: added artificial delay. Should this be removed in prod?
 				Utils.triggerUpdateQuotaUtilizationMessage(userService
@@ -457,26 +457,25 @@ public class ContentController {
 		return errors;
 	}
 
-	@RequestMapping(value = "/tasks/content/updatesize/{id}/{uri}", method = RequestMethod.POST)
-	public void updateSize(@PathVariable Long id, @PathVariable String uri,
-			HttpServletResponse response) {
+	@RequestMapping(value = "/tasks/content/updatesize/{id}", method = RequestMethod.POST)
+	public void updateSize(@PathVariable Long id, HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering updateSize");
-			if (Utils.isEmpty(uri)) {
+			Content lContent = contentService.get(id);
+			if (Utils.isEmpty(lContent.getUri())) {
 				if (LOGGER.isLoggable(Level.INFO))
 					LOGGER.info("URI is null. Skipping...");
 				return;
 			}
-
-			BlobKey blobKey = new BlobKey(uri);
+			BlobKey blobKey = new BlobKey(lContent.getUri());
 			final BlobInfo blobInfo = mBlobInfoFactory.loadBlobInfo(blobKey);
 			if (blobInfo != null) {
 				if (LOGGER.isLoggable(Level.INFO))
 					LOGGER.info("Content size is " + blobInfo.getSize());
 				contentService.updateContentSize(id, blobInfo.getSize());
 			} else {
-				LOGGER.warning("No size found for uri " + uri);
+				LOGGER.warning("No size found for id " + id);
 			}
 			response.setStatus(HttpServletResponse.SC_OK);
 		} catch (Throwable e) {

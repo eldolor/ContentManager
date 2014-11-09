@@ -67,7 +67,7 @@ public class Utils {
 
 	}
 
-	public static void triggerUpdateBandwidthUtilizationMessage(String pUri,
+	public static void triggerUpdateBandwidthUtilizationMessage(Long pId,
 			long delayInMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -75,8 +75,8 @@ public class Utils {
 			Queue queue = QueueFactory
 					.getQueue(Configuration.CONTENT_QUEUE_NAME);
 			TaskOptions taskOptions = TaskOptions.Builder
-					.withUrl("/tasks/bandwidth/utilization/update/" + pUri)
-					.param("uri", pUri).method(Method.POST)
+					.withUrl("/tasks/bandwidth/utilization/update/" + pId)
+					.param("id", String.valueOf(pId)).method(Method.POST)
 					.countdownMillis(delayInMs);
 			queue.add(taskOptions);
 		} finally {
@@ -188,7 +188,7 @@ public class Utils {
 	}
 
 	public static void triggerUpdateContentSizeInBytesMessage(Long pContentId,
-			String pUri, long delayInMs) {
+			long delayInMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering triggerUpdateContentSizeInBytesMessage");
@@ -197,12 +197,9 @@ public class Utils {
 			Queue queue = QueueFactory
 					.getQueue(Configuration.CONTENT_QUEUE_NAME);
 			TaskOptions taskOptions = TaskOptions.Builder
-					.withUrl(
-							"/tasks/content/updatesize/" + pContentId + "/"
-									+ pUri)
+					.withUrl("/tasks/content/updatesize/" + pContentId)
 					.param("id", String.valueOf(pContentId))
-					.param("uri", String.valueOf(pUri)).method(Method.POST)
-					.countdownMillis(delayInMs);
+					.method(Method.POST).countdownMillis(delayInMs);
 			queue.add(taskOptions);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))

@@ -1,10 +1,15 @@
 package com.cm.config;
 
 public class Configuration {
+	public static final String STRIPE_API_KEY_TEST = "sk_test_4aEiOFaIp1sl35p1Gqjco3Is";
+	public static final String STRIPE_API_KEY_PROD = "sk_live_4aEirz6nwUZNsh7DggmeHREZ";
+
 	//DEV
 	private static final String DOMAIN = "skok-dev.appspot.com";
+	public static final String STRIPE_API_KEY = STRIPE_API_KEY_TEST;
 	//PROD
 	//private static final String DOMAIN = "skok.co";
+	//public static final String STRIPE_API_KEY = STRIPE_API_KEY_PROD;
 	
 	public static final String CURRENT_SDK_VERSION = "1.1";
 	
@@ -21,7 +26,6 @@ public class Configuration {
 	
 	public static final String GCS_STORAGE_BUCKET = DOMAIN + "/media";
 	
-	public static final String STRIPE_API_KEY = "sk_test_4aEiOFaIp1sl35p1Gqjco3Is";
 	public static final String GOOGLE_API_PROJECT_NUMBER = "468566067831";
 
 	public static final String CONTENT_STATS_QUEUE_NAME = "contentstatsqueue";

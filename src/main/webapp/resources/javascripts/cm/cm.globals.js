@@ -10,6 +10,7 @@ var mLoggedInUser;
 var mIsNewCard;
 var mStripeCustomer;
 var mStripeKey = 'pk_test_4aEi34FWLvjmVHc14fQoUQPZ'
+// var mStripeKey = 'pk_live_4aEivQL4zUHiFxj5UiYDC2OT'
 
 /** ***************************** */
 $.ajaxSetup({

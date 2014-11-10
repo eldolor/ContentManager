@@ -122,9 +122,13 @@ public class AdminController {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
-			Result lResult = this.cleanupBlobStore(response);
+			//Result lResult = this.cleanupBlobStore(response);
+//			if (LOGGER.isLoggable(Level.INFO))
+//				LOGGER.info(lResult.toString());
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info(lResult.toString());
+				LOGGER.warning("CLEANUP HAS BEEN DISABLED FOR NOW");
+			response.setStatus(HttpServletResponse.SC_OK);
+			
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting");

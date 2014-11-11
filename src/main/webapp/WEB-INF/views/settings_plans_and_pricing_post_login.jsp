@@ -29,8 +29,11 @@
 
 <title>Skok</title>
 <jsp:include page="resources.jsp" flush="true"></jsp:include>
-
 <!-- Begin Custom -->
+<script type="text/javascript">
+	//utilized in cm.account.settings.js
+	var mStripeKey = ${stripePublicKey};
+</script>
 <script type="text/javascript"
 	src="/resources/javascripts/cm/cm.account.settings.js"></script>
 <!-- End Custom -->
@@ -142,7 +145,7 @@
 									name="canonicalPlanName" value="${canonicalPlanNameMicro}" />
 								<script src="https://checkout.stripe.com/checkout.js"
 									class="stripe-button"
-									data-key="pk_test_4aEi34FWLvjmVHc14fQoUQPZ" data-amount="${canonicalPlanMicroPriceInCents}"
+									data-key="${stripePublicKey}" data-amount="${canonicalPlanMicroPriceInCents}"
 									data-name="Skok"
 									data-description="${canonicalPlanMicroNetworkBandwidth}&nbsp;Plan @ ${canonicalPlanMicroPrice}/month"
 									data-image="/resources/images/cm/logo-128x128.png" data-zip-code="true"
@@ -206,7 +209,7 @@
 									name="canonicalPlanName" value="${canonicalPlanNameSmall}" />
 								<script src="https://checkout.stripe.com/checkout.js"
 									class="stripe-button"
-									data-key="pk_test_4aEi34FWLvjmVHc14fQoUQPZ" data-amount="${canonicalPlanSmallPriceInCents}"
+									data-key="${stripePublicKey}" data-amount="${canonicalPlanSmallPriceInCents}"
 									data-name="Skok"
 									data-description="${canonicalPlanSmallNetworkBandwidth}&nbsp;Plan @ ${canonicalPlanSmallPrice}/month"
 									data-image="/resources/images/cm/logo-128x128.png" data-zip-code="true"
@@ -269,7 +272,7 @@
 									name="canonicalPlanName" value="${canonicalPlanNameMedium}" />
 								<script src="https://checkout.stripe.com/checkout.js"
 									class="stripe-button"
-									data-key="pk_test_4aEi34FWLvjmVHc14fQoUQPZ" data-amount="${canonicalPlanMediumPriceInCents}"
+									data-key="${stripePublicKey}" data-amount="${canonicalPlanMediumPriceInCents}"
 									data-name="Skok"
 									data-description="${canonicalPlanMediumNetworkBandwidth}&nbsp;Plan @ ${canonicalPlanMediumPrice}/month"
 									data-image="/resources/images/cm/logo-128x128.png" data-zip-code="true"
@@ -332,7 +335,7 @@
 									name="canonicalPlanName" value="${canonicalPlanNameLarge}" />
 								<script src="https://checkout.stripe.com/checkout.js"
 									class="stripe-button"
-									data-key="pk_test_4aEi34FWLvjmVHc14fQoUQPZ" data-amount="${canonicalPlanLargePriceInCents}"
+									data-key="${stripePublicKey}" data-amount="${canonicalPlanLargePriceInCents}"
 									data-name="Skok"
 									data-description="${canonicalPlanLargeNetworkBandwidth}&nbsp;Plan @ ${canonicalPlanLargePrice}/month"
 									data-image="/resources/images/cm/logo-128x128.png" data-zip-code="true"

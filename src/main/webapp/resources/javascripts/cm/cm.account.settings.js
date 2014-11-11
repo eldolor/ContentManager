@@ -99,7 +99,7 @@ function setup() {
 		});
 		$('#payment_info_update_errors').hide();
 
-		// defined in Globals
+		// defined in the JSP
 		Stripe.setPublishableKey(mStripeKey);
 		$("#cm_errors_container").addClass("fadeInUp animated");
 		$("#user_forgot_password_errors_container").addClass(

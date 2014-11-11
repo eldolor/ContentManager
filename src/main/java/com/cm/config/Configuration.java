@@ -1,8 +1,8 @@
 package com.cm.config;
 
 public class Configuration {
-	public static final String STRIPE_API_KEY_TEST = "sk_test_4aEiOFaIp1sl35p1Gqjco3Is";
-	public static final String STRIPE_API_KEY_PROD = "sk_live_4aEirz6nwUZNsh7DggmeHREZ";
+	private static final String STRIPE_API_KEY_TEST = "sk_test_4aEiOFaIp1sl35p1Gqjco3Is";
+	private static final String STRIPE_API_KEY_PROD = "sk_live_4aEirz6nwUZNsh7DggmeHREZ";
 
 	//DEV
 	private static final String DOMAIN = "skok-dev.appspot.com";

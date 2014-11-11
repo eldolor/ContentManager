@@ -119,17 +119,26 @@ function setupBreadcrumbs() {
 	log("setupBreadcrumbs", "Entering");
 	try {
 		var lHtml = $('#breadcrumbs').html();
-		$('#breadcrumbs')
-				.html(
-						lHtml
-								+ "<a id=\"breadcrumb_applications\" href=\"/applications\">Applications</a>"
-								+ "<a id=\"breadcrumb_content_groups\" href=\"/"
-								+ mSelectedApplication.id
-								+ "/contentgroups\">Content Groups</a>"
-								+ "<a id=\"breadcrumb_content\" href=\"/"
-								+ mSelectedApplication.id + "/"
-								+ mSelectedContentGroup.id
-								+ "/content\">Content</a>");
+		lHtml += "<a id=\"breadcrumb_applications\" href=\"/applications\">Applications</a>"
+				+ "<a id=\"breadcrumb_content_groups\" href=\"/"
+				+ mSelectedApplication.id
+				+ "/contentgroups\">Content Groups</a>"
+				+ "<a id=\"breadcrumb_content\" href=\"/"
+				+ mSelectedApplication.id
+				+ "/"
+				+ mSelectedContentGroup.id
+				+ "/content\">Content</a>";
+
+		if (mDisplayAsGrid) {
+			lHtml += "<a id=\"list_view_option\" href=\"/"
+					+ mSelectedApplication.id + "/" + mSelectedContentGroup.id
+					+ "/content/list\">List View</a>";
+		} else {
+			lHtml += "<a id=\"grid_view_option\" href=\"/"
+					+ mSelectedApplication.id + "/" + mSelectedContentGroup.id
+					+ "/content\">Grid View</a>";
+		}
+		$('#breadcrumbs').html(lHtml);
 
 	} catch (err) {
 		handleError("setupBreadcrumbs", err);

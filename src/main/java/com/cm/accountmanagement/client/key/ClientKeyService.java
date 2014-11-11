@@ -31,9 +31,18 @@ public class ClientKeyService {
 		return clientKeyDao.getClientKeys(accountId);
 	}
 
+	public List<ClientKey> getClientKeys(Long accountId, boolean includeDeleted) {
+		return clientKeyDao.getClientKeys(accountId, includeDeleted);
+	}
+
 	public void deleteClientKey(Long id, Long timeUpdatedMs,
 			Long timeUpdatedTimeZoneOffsetMs) {
 		clientKeyDao.delete(id, timeUpdatedMs, timeUpdatedTimeZoneOffsetMs);
+	}
+
+	public void restoreClientKey(Long id, Long timeUpdatedMs,
+			Long timeUpdatedTimeZoneOffsetMs) {
+		clientKeyDao.restore(id, timeUpdatedMs, timeUpdatedTimeZoneOffsetMs);
 	}
 
 	public ClientKey generateClientKey(Long accountId) {

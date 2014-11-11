@@ -312,14 +312,14 @@ function handleDisplayContentAsGrid_Callback(pContent) {
 				lInnerHtml += "<span class='white'><a class='small' href='javascript:void(0)' onclick='editContent("
 			}
 			lInnerHtml += lContent.id;
-			lInnerHtml += ")'>&nbsp;edit</a></span>&nbsp;<span class='white'><a class='small' href='javascript:void(0)' onclick='deleteContent("
+			lInnerHtml += ")'><i class='fi-page-edit light_gray'></i>&nbsp;edit</a></span>&nbsp;<span class='white'><a class='small' href='javascript:void(0)' onclick='deleteContent("
 					+ lContent.id
-					+ ")'>&nbsp;delete</a></span>"
+					+ ")'><i class='fi-page-delete light_gray'></i>&nbsp;delete</a></span>"
 					+ "<span class='white'><a class='small' href='javascript:void(0)' onclick='moveContent("
 					+ lContent.id
 					+ ", "
 					+ lContent.applicationId
-					+ ")'></i>&nbsp;move</a></span>";
+					+ ")'><i class='fi-eject light_gray'></i>&nbsp;move</a></span>";
 			lInnerHtml += "</div>";
 			lInnerHtml += "</div>";
 			lInnerHtml += "</li>";
@@ -554,12 +554,12 @@ function editContent(id) {
 										dropBoxUrl,
 										(lStorageQuota.storageLimitInBytes - lStorageQuota.storageUsedInBytes),
 										getDisplayUpgradeMessage(lStorageQuota));
-							$("#content_dropbox").hide();
+							//$("#content_dropbox").hide();
 							// reset
-							$('#upload_content').unbind();
-							$('#upload_content').bind('click', function() {
-								$("#content_dropbox").slideToggle();
-							});
+//							$('#upload_content').unbind();
+//							$('#upload_content').bind('click', function() {
+//								$("#content_dropbox").slideToggle();
+//							});
 
 							log("editContent", "Content enabled: "
 									+ content.enabled);
@@ -961,12 +961,12 @@ function newContent() {
 		// $('#view_ad_video').hide();
 		// $('#view_video').hide();
 
-		$("#content_dropbox").hide();
+		//$("#content_dropbox").hide();
 		// reset
-		$('#upload_content').unbind();
-		$('#upload_content').bind('click', function() {
-			$("#content_dropbox").slideToggle();
-		});
+//		$('#upload_content').unbind();
+//		$('#upload_content').bind('click', function() {
+//			$("#content_dropbox").slideToggle();
+//		});
 
 		$('#content_errors').empty();
 

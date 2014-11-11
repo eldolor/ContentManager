@@ -39,6 +39,35 @@ class ClientKeyDao {
 		}
 	}
 
+	List<ClientKey> getClientKeys(Long accountId, boolean includeDeleted) {
+		PersistenceManager pm = null;
+
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			pm = PMF.get().getPersistenceManager();
+			Query q = pm.newQuery(ClientKey.class);
+			if (includeDeleted) {
+				q.setFilter("accountId == accountIdParam");
+				q.declareParameters("String accountIdParam");
+				q.setOrdering("timeCreatedMs desc");
+				return (List<ClientKey>) q.execute(accountId);
+			} else {
+				q.setFilter("accountId == accountIdParam && deleted == deletedParam");
+				q.declareParameters("String accountIdParam, Boolean deletedParam");
+				q.setOrdering("timeCreatedMs desc");
+				return (List<ClientKey>) q.execute(accountId,
+						Boolean.valueOf(false));
+			}
+		} finally {
+			if (pm != null) {
+				pm.close();
+			}
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
 	ClientKey add(ClientKey clientKey) {
 		PersistenceManager pm = null;
 		try {
@@ -106,6 +135,37 @@ class ClientKeyDao {
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting delete");
+		}
+	}
+
+	void restore(Long id, Long timeUpdatedMs, Long timeUpdatedTimeZoneOffsetMs) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				ClientKey lClientKey = pm.getObjectById(ClientKey.class, id);
+				if (lClientKey != null) {
+					lClientKey.setDeleted(false);
+					lClientKey.setTimeUpdatedMs(timeUpdatedMs);
+					lClientKey
+							.setTimeUpdatedTimeZoneOffsetMs(timeUpdatedTimeZoneOffsetMs);
+					if (LOGGER.isLoggable(Level.INFO))
+						LOGGER.info(id + " ClientKey restored");
+				} else {
+					LOGGER.log(Level.WARNING, id + "  CLIENT KEY NOT FOUND!");
+				}
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
 		}
 	}
 

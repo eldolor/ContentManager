@@ -64,36 +64,6 @@ var mDisplayAsGrid = true;
 
 							<div id="content_list" class="row"></div>
 
-							<!-- <div id="anshu" class="row">
-
-								<ul id='Grid'>
-									<li class='mix large-4 medium-4 columns video'><div>
-											<img src='/resources/images/box/portfolio1.jpg'
-												alt='Demo Video - with no attached video'>
-											<div class='green detail text-center'>
-												Test<br> <i class='fa fa-clock-o green'></i><span
-													class='white' id='first_content_id'>Content Id:
-													5587992970264576</span>|<i class='fa fa-mobile green'></i><span
-													class='white'><a id='first_content'
-													class='small green' href='javascript:void(0)'
-													onclick='viewContent(5587992970264576)'><i
-														class='fi-page light_gray'></i>&nbsp;view</a></span>|<i
-													class='fa fa-mobile green'></i><span class='white'><a
-													class='small' href='javascript:void(0)'
-													onclick='editContent(5587992970264576)'><i
-														class='fi-page-edit light_gray'></i>&nbsp;edit</a></span>|<i
-													class='fa fa-mobile green'></i><span class='white'><a
-													class='small' href='javascript:void(0)'
-													onclick='deleteContent(5587992970264576)'><i
-														class='fi-page-delete light_gray'></i>&nbsp;delete</a></span><i
-													class='fa fa-mobile green'></i><span class='white'><a
-													class='small' href='javascript:void(0)'
-													onclick='moveContent(5587992970264576, 5306517993553920)'><i
-														class='fi-eject light_gray'></i>&nbsp;move</a></span>
-											</div>
-										</div></li>
-								</ul>
-							</div> -->
 						</div>
 					</div>
 					<jsp:include page="create_content.jsp"></jsp:include>
@@ -187,7 +157,11 @@ var mDisplayAsGrid = true;
 		<li data-id="breadcrumb_content" data-text="Next"
 			data-options="tip_location: top; prev_button: false">
 			<h4>Product Tour continued...</h4> <br>
-			<p>We currently support only images and videos</p>
+			<p>We currently support images and videos</p>
+		</li>
+		<li data-id="list_view_option" data-text="Next" data-prev-text="Prev">
+			<h4>List View</h4> <br>
+			<p>Click here to view contents as a List</p>
 		</li>
 		<li data-id="create_content" data-class="custom so-awesome"
 			data-text="Next" data-prev-text="Prev">
@@ -206,9 +180,9 @@ var mDisplayAsGrid = true;
 			<p>Use the content id with the SDK, to access this content for
 				display on mobile devices</p>
 		</li>
-		<li data-id="first_content" data-button="End" data-prev-text="Prev">
+		<li data-button="End" data-prev-text="Prev">
 			<h4>Access Content</h4> <br>
-			<p>You can click here to view this image or video</p>
+			<p>You can click on any image or video to view it.</p>
 			<p>Please check out the documentation for more information.</p>
 		</li>
 	</ol>

@@ -253,7 +253,8 @@ public class ApplicationController {
 				LOGGER.info("Entering");
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Content Group ID: " + id);
-			applicationService.restoreApplication(id);
+			applicationService.restoreApplication(id, timeUpdatedMs,
+					timeUpdatedTimeZoneOffsetMs);
 
 			Application lApplication = applicationService.getApplication(id);
 			Utils.triggerChangesStagedMessage(id, 0);

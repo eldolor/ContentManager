@@ -21,6 +21,10 @@ function setupContextNavBar() {
 		$('#create_client_key').click(function() {
 			createClientKey()
 		});
+		$('#restore_clientkeys').unbind();
+		$('#restore_clientkeys').click(function() {
+			restoreClientKeys();
+		});
 
 	} catch (err) {
 		handleError("setupContextNavBar", err);
@@ -220,4 +224,127 @@ function createClientKey() {
 	} finally {
 		log("createClientKey", "Exiting");
 	}
+}
+
+function restoreClientKeys() {
+	log("restoreClientKeys", "Entering");
+	try {
+		getDeletedClientKeys();
+
+	} catch (err) {
+		handleError("restoreClientKeys", err);
+	} finally {
+		log("restoreClientKeys", "Exiting");
+	}
+
+}
+
+function getDeletedClientKeys() {
+	log("getDeletedClientKeys", "Entering");
+	try {
+
+		var jqxhr = $.ajax({
+			url : "/secured/clientkeys/deleted",
+			type : "GET",
+			contentType : "application/json",
+			async : false,
+			statusCode : {
+				200 : function(lListItems) {
+					buildList(lListItems);
+				},
+				503 : function() {
+				}
+			},
+			error : function(xhr, textStatus, errorThrown) {
+				log(errorThrown);
+			}
+		});
+
+	} catch (err) {
+		handleError("getDeletedClientKeys", err);
+		// close wait div
+		;
+	} finally {
+		log("getDeletedClientKeys", "Exiting");
+	}
+}
+function buildList(pListItems) {
+	log("buildList", "Entering");
+	try {
+		var lList = '<label>Please select a Client Key<select id="select_from_deleted">';
+		if (pListItems) {
+			for (var int = 0; int < pListItems.length; int++) {
+				var lItem = pListItems[int];
+				lList += '<option value="';
+				lList += lItem.id;
+				lList += '">';
+				lList += lItem.key;
+				lList += '</option>';
+			}
+		}
+		lList += '</select></label>';
+		var _date = new Date();
+		var _timeUpdatedMs = _date.getTime();
+		var _timeUpdatedTimeZoneOffsetMs = (_date.getTimezoneOffset() * 60 * 1000);
+
+		displayRestoreConfirm(lList, function() {
+			var lSelected = $('#select_from_deleted').val();
+
+			if (lSelected) {
+				var url = "/secured/clientkey/restore/" + lSelected + "/"
+						+ _timeUpdatedMs + "/" + _timeUpdatedTimeZoneOffsetMs;
+				var jqxhr = $.ajax({
+					url : url,
+					type : "PUT",
+					contentType : "application/json",
+					statusCode : {
+						200 : function() {
+							// Google Analytics
+							ga('send', 'event', Category.CLIENT_KEYS,
+									Action.RESTORE);
+							// End Google Analytics
+							location.reload();
+						},
+						503 : function() {
+						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						log(errorThrown);
+					}
+				});
+				jqxhr.always(function(msg) {
+				});
+			}
+		});
+
+	} catch (err) {
+		handleError("buildList", err);
+		// close wait div
+		;
+	} finally {
+		log("buildList", "Exiting");
+	}
+
+}
+function displayRestoreConfirm(pList, pCallback) {
+	log("displayRestoreConfirm", "Entering");
+	try {
+		$("#select_from_deleted_list").html(pList);
+		// if the user clicks "yes"
+		$('#restore_confirm_button').bind('click', function() {
+			// call the callback
+			if ($.isFunction(pCallback)) {
+				pCallback.apply();
+			}
+			$('#restore_modal').foundation('reveal', 'close');
+		});
+		$('#restore_modal').foundation('reveal', 'open');
+	} catch (err) {
+		handleError("displayRestoreConfirm", err);
+		// close wait div
+		;
+	} finally {
+		log("displayRestoreConfirm", "Exiting");
+	}
+
 }

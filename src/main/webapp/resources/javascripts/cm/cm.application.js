@@ -270,8 +270,13 @@ function displayContentGroups(pApplicationId) {
 	// load entry info via ajax
 	log("displayContentGroups", "Entering");
 	try {
+		var lPathName = window.location.pathname;
 
-		window.location.href = '/' + pApplicationId + '/contentgroups';
+		if (lPathName.lastIndexOf("tour") != -1) {
+			window.location.href = '/' + pApplicationId + '/contentgroups/tour';
+		} else {
+			window.location.href = '/' + pApplicationId + '/contentgroups';
+		}
 	} catch (err) {
 		handleError("displayContent", err);
 	} finally {

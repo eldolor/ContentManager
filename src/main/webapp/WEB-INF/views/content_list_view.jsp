@@ -142,7 +142,11 @@ var mDisplayAsGrid = false;
 		<li data-id="breadcrumb_content" data-text="Next"
 			data-options="tip_location: top; prev_button: false">
 			<h4>Product Tour continued...</h4> <br>
-			<p>We currently support only images and videos</p>
+			<p>We currently support images and videos</p>
+		</li>
+		<li data-id="grid_view_option" data-text="Next" data-prev-text="Prev">
+			<h4>Grid View</h4> <br>
+			<p>Click here to view contents as a Grid</p>
 		</li>
 		<li data-id="create_content" data-class="custom so-awesome"
 			data-text="Next" data-prev-text="Prev">

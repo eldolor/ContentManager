@@ -152,8 +152,15 @@ function displayContent(pApplicationId, pContentGroupId) {
 	log("displayContent", "Entering");
 	try {
 
-		window.location.href = '/' + pApplicationId + '/' + pContentGroupId
-				+ '/content';
+		var lPathName = window.location.pathname;
+
+		if (lPathName.lastIndexOf("tour") != -1) {
+			window.location.href = '/' + pApplicationId + '/' + pContentGroupId
+					+ '/content/tour';
+		} else {
+			window.location.href = '/' + pApplicationId + '/' + pContentGroupId
+			+ '/content';
+		}
 	} catch (err) {
 		handleError("displayContent", err);
 	} finally {

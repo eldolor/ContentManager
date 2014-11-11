@@ -62,7 +62,7 @@ public class ContentController {
 	 * @return
 	 */
 	@RequestMapping(value = "/{applicationId}/{contentGroupId}/content", method = RequestMethod.GET)
-	public ModelAndView displayContent(@PathVariable Long applicationId,
+	public ModelAndView displayContentAsGrid(@PathVariable Long applicationId,
 			@PathVariable Long contentGroupId, ModelMap model) {
 		if (LOGGER.isLoggable(Level.INFO))
 			LOGGER.info("Entering displayContent");
@@ -70,6 +70,20 @@ public class ContentController {
 			// pass it along to the view
 			// model.addAttribute("contentGroupId", contentGroupId);
 			return new ModelAndView("content_portfolio_view", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting displayContent");
+		}
+	}
+	@RequestMapping(value = "/{applicationId}/{contentGroupId}/content/list", method = RequestMethod.GET)
+	public ModelAndView displayContentAsList(@PathVariable Long applicationId,
+			@PathVariable Long contentGroupId, ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering displayContent");
+		try {
+			// pass it along to the view
+			// model.addAttribute("contentGroupId", contentGroupId);
+			return new ModelAndView("content_list_view", model);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting displayContent");
@@ -85,7 +99,7 @@ public class ContentController {
 		try {
 			// pass it along to the view
 			model.addAttribute("tour", tour);
-			return new ModelAndView("content", model);
+			return new ModelAndView("content_portfolio_view", model);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting displayContent");

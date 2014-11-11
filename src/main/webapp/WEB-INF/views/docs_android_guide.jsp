@@ -351,7 +351,7 @@
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		...
-		mContentManager = ContentManagerFactory.getInstance(this, your_client_key, your_application_id);
+		mContentManager = ContentManagerFactory.getInstance(this, "your_client_key", "your_application_id");
 	}
 </code>
 					</pre>
@@ -382,7 +382,7 @@
 	...
 	private void loadContent() {
 
-		mContentList = mContentManager.getAllContentsByTag(String tag);
+		mContentList = mContentManager.getAllContentsByTag("your_tag");
 		
 		//Iterate through the content list
 		Content lContent = mContentList.get(position);

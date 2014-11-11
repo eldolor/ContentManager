@@ -15,6 +15,8 @@
 
 package com.cm.accountmanagement.client.key;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.cm.contentmanager.application.Application;
 import com.cm.usermanagement.user.User;
 import com.cm.usermanagement.user.UserService;
 
@@ -145,5 +148,64 @@ public class ClientKeyController {
 				LOGGER.info("Exiting");
 		}
 	}
+
+	@RequestMapping(value = "/secured/clientkey/restore/{id}/{timeUpdatedMs}/{timeUpdatedTimeZoneOffsetMs}", method = RequestMethod.PUT)
+	public void restoreClientKey(@PathVariable Long id,
+			@PathVariable Long timeUpdatedMs,
+			@PathVariable Long timeUpdatedTimeZoneOffsetMs,
+			HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			clientKeyService.restoreClientKey(id, timeUpdatedMs, timeUpdatedTimeZoneOffsetMs);
+
+			response.setStatus(HttpServletResponse.SC_OK);
+
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+	
+	@RequestMapping(value = "/secured/clientkeys/deleted", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody
+	List<ClientKey> getDeletedClientKeys(HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			User user = userService.getLoggedInUser();
+			List<ClientKey> lDeletedClientKeys = new ArrayList<ClientKey>();
+			List<ClientKey> lClientKeys = null;
+
+			lClientKeys = clientKeyService.getClientKeys(user.getAccountId(), true);
+			for (ClientKey clientKey : lClientKeys) {
+				if(clientKey.isDeleted()){
+					lDeletedClientKeys.add(clientKey);
+				}
+			}
+			if (lClientKeys != null) {
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info(lDeletedClientKeys.size() + " keys found");
+			} else {
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("No client keys Found!");
+			}
+			response.setStatus(HttpServletResponse.SC_OK);
+			return lDeletedClientKeys;
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
 
 }

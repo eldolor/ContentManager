@@ -36,7 +36,8 @@ public class ApplicationService {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
-			List<Application> applications = applicationDao.searchByUserId(userId ,searchTerm);
+			List<Application> applications = applicationDao.searchByUserId(
+					userId, searchTerm);
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Returning " + applications.size()
 						+ " applications");
@@ -51,7 +52,8 @@ public class ApplicationService {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
-			List<Application> applications = applicationDao.searchByAccountId(accountId, searchTerm);
+			List<Application> applications = applicationDao.searchByAccountId(
+					accountId, searchTerm);
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Returning " + applications.size()
 						+ " applications");
@@ -250,11 +252,14 @@ public class ApplicationService {
 		}
 
 	}
-	public void restoreApplication(Long id) {
+
+	public void restoreApplication(Long id, Long timeUpdatedMs,
+			Long timeUpdatedTimeZoneOffsetMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
-			applicationDao.restoreApplication(id);
+			applicationDao.restoreApplication(id, timeUpdatedMs,
+					timeUpdatedTimeZoneOffsetMs);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting");

@@ -35,10 +35,11 @@
 		<div class="row full-width">
 
 			<h2 class="text-center gray">Client Keys in Use</h2>
-<!-- 			<div class="line">
+			<!-- 			<div class="line">
 				<img src="/resources/images/cm/line.png" alt="line" />
 			</div>
- -->			<br />
+ -->
+			<br />
 			<div class="row">
 				<div class="large-7 columns">
 					<jsp:include page="progress_bar.jsp"></jsp:include>
@@ -50,6 +51,8 @@
 						<ul>
 							<li><i class="fi-arrow-right"></i><a id="create_client_key"
 								href="javascript:void(0);">&nbsp;Create New Client Key</a></li>
+							<li><i class="fi-arrow-right"></i><a id="restore_clientkeys"
+								href="javascript:void(0);">&nbsp;Restore Deleted Client Keys</a></li>
 						</ul>
 					</div>
 					<br> <br />
@@ -62,13 +65,19 @@
 						<div class="content active" id="panel2-1">
 							<div class="blog_snippet">
 								<div class="blog_details float_left">
-									<span class="title green">Creation</span> <span class="date"></span>
+									<span class="title green">Creation</span> <span class="date">We
+										highly recommend that you create a new Client Key for each
+										Application.</span>
 								</div>
 								<div class="clearfix"></div>
 							</div>
 							<div class="blog_snippet">
 								<div class="blog_details float_left">
-									<span class="title green">Deletion</span> <span class="date"></span>
+									<span class="title green">Deletion</span> <span class="date">Be
+										careful when deleting Client Keys. Deleting a Client Key will
+										block the corresponding application from downloading content.
+										If needed, you can always restore a key that was previously
+										deleted.</span>
 								</div>
 								<div class="clearfix"></div>
 							</div>
@@ -87,6 +96,14 @@
 		<jsp:include page="footer.jsp"></jsp:include>
 	</section>
 
+	<div class="reveal-modal small" id="restore_modal" data-reveal>
+		<h3 class="gray" id="modalLabel">Restore Client Key</h3>
+		<div class="row">
+			<div id="select_from_deleted_list"></div>
+		</div>
+		<button id="restore_confirm_button" class="button radius btn-default">restore</button>
+		<a class="close-reveal-modal">&#215;</a>
+	</div>
 
 </body>
 </html>

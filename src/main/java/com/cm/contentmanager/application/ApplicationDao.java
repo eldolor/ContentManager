@@ -494,7 +494,8 @@ class ApplicationDao {
 		}
 	}
 
-	void restoreApplication(Long id) {
+	void restoreApplication(Long id, Long timeUpdatedMs,
+			Long timeUpdatedTimeZoneOffsetMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
@@ -506,9 +507,8 @@ class ApplicationDao {
 						id);
 				if (lApplication != null) {
 					lApplication.setDeleted(false);
-					lApplication.setTimeUpdatedMs(System.currentTimeMillis());
-					lApplication.setTimeUpdatedTimeZoneOffsetMs((long) TimeZone
-							.getDefault().getRawOffset());
+					lApplication.setTimeUpdatedMs(timeUpdatedMs);
+					lApplication.setTimeUpdatedTimeZoneOffsetMs(timeUpdatedTimeZoneOffsetMs);
 					if (LOGGER.isLoggable(Level.INFO))
 						LOGGER.info(id + " application restored");
 				} else {

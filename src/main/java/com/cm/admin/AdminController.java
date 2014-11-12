@@ -251,6 +251,7 @@ public class AdminController {
 		}
 	}
 
+	@Deprecated
 	@RequestMapping(value = "/admin/create/default/plans", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody
 	Result createPlans(HttpServletResponse response) {
@@ -260,21 +261,21 @@ public class AdminController {
 			long lTime = System.currentTimeMillis();
 			long lTimezoneOffset = (long) TimeZone.getTimeZone("UTC")
 					.getRawOffset();
-			CanonicalPlan[] lCanonicalPlanNames = CanonicalPlan.values();
-			for (int i = 0; i < lCanonicalPlanNames.length; i++) {
+			CanonicalPlan[] lCanonicalPlans = CanonicalPlan.values();
+			for (int i = 0; i < lCanonicalPlans.length; i++) {
 				Plan lPlan = new Plan();
-				lPlan.setCanonicalPlanName(lCanonicalPlanNames[i].getName());
+				lPlan.setCanonicalPlanId(lCanonicalPlans[i].getId());
 				lPlan.setCurrency("usd");
 				long lAmountInCents = 0;
-				if (lCanonicalPlanNames[i].equals(CanonicalPlan.FREE))
+				if (lCanonicalPlans[i].equals(CanonicalPlan.FREE))
 					lAmountInCents = 0;
-				else if (lCanonicalPlanNames[i].equals(CanonicalPlan.LARGE))
+				else if (lCanonicalPlans[i].equals(CanonicalPlan.LARGE))
 					lAmountInCents = 5000;
-				else if (lCanonicalPlanNames[i].equals(CanonicalPlan.MEDIUM))
+				else if (lCanonicalPlans[i].equals(CanonicalPlan.MEDIUM))
 					lAmountInCents = 2500;
-				else if (lCanonicalPlanNames[i].equals(CanonicalPlan.MICRO))
+				else if (lCanonicalPlans[i].equals(CanonicalPlan.MICRO))
 					lAmountInCents = 1500;
-				else if (lCanonicalPlanNames[i].equals(CanonicalPlan.SMALL))
+				else if (lCanonicalPlans[i].equals(CanonicalPlan.SMALL))
 					lAmountInCents = 700;
 				lPlan.setAmountInCents(lAmountInCents);
 				lPlan.setTimeCreatedMs(lTime);
@@ -350,36 +351,36 @@ public class AdminController {
 				List<Quota> lList = (List<Quota>) q.execute();
 				for (Quota lQuota : lList) {
 
-					String lPlanName = lQuota.getCanonicalPlanName();
-					if (lPlanName.equals(CanonicalPlan.FREE.getName())) {
+					String lPlanId = lQuota.getCanonicalPlanId();
+					if (lPlanId.equals(CanonicalPlan.FREE.getId())) {
 						lQuota.setBandwidthLimitInBytes(CanonicalPlan.FREE
 								.getBandwidthQuota());
 						lQuota.setStorageLimitInBytes(CanonicalPlan.FREE
 								.getStorageQuota());
 						lQuota.setApplicationLimit(CanonicalPlan.FREE
 								.getApplicationQuota());
-					} else if (lPlanName.equals(CanonicalPlan.LARGE.getName())) {
+					} else if (lPlanId.equals(CanonicalPlan.LARGE.getId())) {
 						lQuota.setBandwidthLimitInBytes(CanonicalPlan.LARGE
 								.getBandwidthQuota());
 						lQuota.setStorageLimitInBytes(CanonicalPlan.LARGE
 								.getStorageQuota());
 						lQuota.setApplicationLimit(CanonicalPlan.LARGE
 								.getApplicationQuota());
-					} else if (lPlanName.equals(CanonicalPlan.MEDIUM.getName())) {
+					} else if (lPlanId.equals(CanonicalPlan.MEDIUM.getId())) {
 						lQuota.setBandwidthLimitInBytes(CanonicalPlan.MEDIUM
 								.getBandwidthQuota());
 						lQuota.setStorageLimitInBytes(CanonicalPlan.MEDIUM
 								.getStorageQuota());
 						lQuota.setApplicationLimit(CanonicalPlan.MEDIUM
 								.getApplicationQuota());
-					} else if (lPlanName.equals(CanonicalPlan.MICRO.getName())) {
+					} else if (lPlanId.equals(CanonicalPlan.MICRO.getId())) {
 						lQuota.setBandwidthLimitInBytes(CanonicalPlan.MICRO
 								.getBandwidthQuota());
 						lQuota.setStorageLimitInBytes(CanonicalPlan.MICRO
 								.getStorageQuota());
 						lQuota.setApplicationLimit(CanonicalPlan.MICRO
 								.getApplicationQuota());
-					} else if (lPlanName.equals(CanonicalPlan.SMALL.getName())) {
+					} else if (lPlanId.equals(CanonicalPlan.SMALL.getId())) {
 						lQuota.setBandwidthLimitInBytes(CanonicalPlan.SMALL
 								.getBandwidthQuota());
 						lQuota.setStorageLimitInBytes(CanonicalPlan.SMALL
@@ -429,8 +430,8 @@ public class AdminController {
 						Quota lQuota = new Quota();
 						lQuota.setAccountId(lAccount.getId());
 						// default to free
-						lQuota.setCanonicalPlanName(CanonicalPlan.FREE
-								.getName());
+						lQuota.setCanonicalPlanId(CanonicalPlan.FREE
+								.getId());
 						lQuota.setStorageLimitInBytes(CanonicalPlan.FREE
 								.getStorageQuota());
 						lQuota.setApplicationLimit(CanonicalPlan.FREE

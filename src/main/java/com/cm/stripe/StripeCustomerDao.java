@@ -113,8 +113,10 @@ public class StripeCustomerDao {
 				StripeCustomer lStripeCustomer = pm.getObjectById(
 						StripeCustomer.class, pCustomer.getId());
 				// only update the following fields
-				lStripeCustomer.setCanonicalPlanName(pCustomer
-						.getCanonicalPlanName());
+				lStripeCustomer.setCanonicalPlanId(pCustomer
+						.getCanonicalPlanId());
+//				lStripeCustomer.setCanonicalPlanName(pCustomer
+//						.getCanonicalPlanName());
 				lStripeCustomer
 						.setSubscriptionId(pCustomer.getSubscriptionId());
 				lStripeCustomer

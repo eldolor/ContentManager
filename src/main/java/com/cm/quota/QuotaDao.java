@@ -197,7 +197,7 @@ class QuotaDao {
 			Quota lQuota = null;
 			if (lQuotas != null && (lQuotas.size() > 0)) {
 				lQuota = lQuotas.get(0);
-				lQuota.setCanonicalPlanName(canonicalPlan.getName());
+				lQuota.setCanonicalPlanId(canonicalPlan.getId());
 				lQuota.setBandwidthLimitInBytes(canonicalPlan
 						.getBandwidthQuota());
 				lQuota.setStorageLimitInBytes(canonicalPlan.getStorageQuota());

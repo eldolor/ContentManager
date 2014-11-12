@@ -54,7 +54,7 @@ public class StripeCustomer {
 	private String cardFunding;
 
 	@Persistent
-	private String canonicalPlanName;
+	private String canonicalPlanId;
 	@Persistent
 	private Long timeCreatedMs;
 	@Persistent
@@ -64,12 +64,12 @@ public class StripeCustomer {
 	@Persistent
 	private Long timeUpdatedTimeZoneOffsetMs;
 
-	public String getCanonicalPlanName() {
-		return canonicalPlanName;
+	public String getCanonicalPlanId() {
+		return canonicalPlanId;
 	}
 
-	public void setCanonicalPlanName(String canonicalPlanName) {
-		this.canonicalPlanName = canonicalPlanName;
+	public void setCanonicalPlanId(String canonicalPlanId) {
+		this.canonicalPlanId = canonicalPlanId;
 	}
 
 	public String getStripeId() {

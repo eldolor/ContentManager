@@ -19,7 +19,7 @@ public class Quota {
 
 	// default to free
 	@Persistent
-	private String canonicalPlanName = CanonicalPlan.FREE.getName();
+	private String canonicalPlanId = CanonicalPlan.FREE.getId();
 	// default to free
 	@Persistent
 	private Long storageLimitInBytes = CanonicalPlan.FREE.getStorageQuota();
@@ -82,12 +82,12 @@ public class Quota {
 		this.timeUpdatedTimeZoneOffsetMs = timeUpdatedTimeZoneOffsetMs;
 	}
 
-	public String getCanonicalPlanName() {
-		return canonicalPlanName;
+	public String getCanonicalPlanId() {
+		return canonicalPlanId;
 	}
 
-	public void setCanonicalPlanName(String canonicalPlanName) {
-		this.canonicalPlanName = canonicalPlanName;
+	public void setCanonicalPlanId(String canonicalPlanId) {
+		this.canonicalPlanId = canonicalPlanId;
 	}
 
 	public Long getAccountId() {

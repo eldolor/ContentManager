@@ -152,7 +152,7 @@ public class UserManagementController {
 				Quota lQuota = new Quota();
 				lQuota.setAccountId(lUser.getAccountId());
 				// default to free
-				lQuota.setCanonicalPlanName(CanonicalPlan.FREE.getName());
+				lQuota.setCanonicalPlanId(CanonicalPlan.FREE.getId());
 				lQuota.setStorageLimitInBytes(CanonicalPlan.FREE
 						.getStorageQuota());
 				lQuota.setApplicationLimit(CanonicalPlan.FREE
@@ -456,16 +456,16 @@ public class UserManagementController {
 		if (LOGGER.isLoggable(Level.INFO))
 			LOGGER.info("Entering displayAccountSettings");
 		try {
-			model.addAttribute("canonicalPlanNameFree",
-					CanonicalPlan.FREE.getName());
-			model.addAttribute("canonicalPlanNameMicro",
-					CanonicalPlan.MICRO.getName());
-			model.addAttribute("canonicalPlanNameSmall",
-					CanonicalPlan.SMALL.getName());
-			model.addAttribute("canonicalPlanNameMedium",
-					CanonicalPlan.MEDIUM.getName());
-			model.addAttribute("canonicalPlanNameLarge",
-					CanonicalPlan.LARGE.getName());
+			model.addAttribute("canonicalPlanIdFree",
+					CanonicalPlan.FREE.getId());
+			model.addAttribute("canonicalPlanIdMicro",
+					CanonicalPlan.MICRO.getId());
+			model.addAttribute("canonicalPlanIdSmall",
+					CanonicalPlan.SMALL.getId());
+			model.addAttribute("canonicalPlanIdMedium",
+					CanonicalPlan.MEDIUM.getId());
+			model.addAttribute("canonicalPlanIdLarge",
+					CanonicalPlan.LARGE.getId());
 			User lUser = userService.getLoggedInUser();
 			StripeCustomer lStripeCustomer = stripeCustomerService.get(lUser
 					.getAccountId());
@@ -474,8 +474,8 @@ public class UserManagementController {
 			if (lStripeCustomer == null) {
 				model.addAttribute("isSubscribed", false);
 				// default to free
-				model.addAttribute("subscribedCanonicalPlanName",
-						CanonicalPlan.FREE.getName());
+				model.addAttribute("subscribedCanonicalPlanId",
+						CanonicalPlan.FREE.getId());
 			} else {
 				// check to see if the user's CC is expiring or has expired
 				if (Utils.isCCExpired(lStripeCustomer.getCardExpYear(),
@@ -485,8 +485,8 @@ public class UserManagementController {
 					lIsUpdateCCInfo = true;
 				}
 				model.addAttribute("isSubscribed", true);
-				model.addAttribute("subscribedCanonicalPlanName",
-						lStripeCustomer.getCanonicalPlanName());
+				model.addAttribute("subscribedCanonicalPlanId",
+						lStripeCustomer.getCanonicalPlanId());
 			}
 			model.addAttribute("isUpdateCCInfo", lIsUpdateCCInfo);
 			model.addAttribute("isError", false);
@@ -508,16 +508,16 @@ public class UserManagementController {
 		if (LOGGER.isLoggable(Level.INFO))
 			LOGGER.info("Entering");
 		try {
-			model.addAttribute("canonicalPlanNameFree",
-					CanonicalPlan.FREE.getName());
-			model.addAttribute("canonicalPlanNameMicro",
-					CanonicalPlan.MICRO.getName());
-			model.addAttribute("canonicalPlanNameSmall",
-					CanonicalPlan.SMALL.getName());
-			model.addAttribute("canonicalPlanNameMedium",
-					CanonicalPlan.MEDIUM.getName());
-			model.addAttribute("canonicalPlanNameLarge",
-					CanonicalPlan.LARGE.getName());
+			model.addAttribute("canonicalPlanIdFree",
+					CanonicalPlan.FREE.getId());
+			model.addAttribute("canonicalPlanIdMicro",
+					CanonicalPlan.MICRO.getId());
+			model.addAttribute("canonicalPlanIdSmall",
+					CanonicalPlan.SMALL.getId());
+			model.addAttribute("canonicalPlanIdMedium",
+					CanonicalPlan.MEDIUM.getId());
+			model.addAttribute("canonicalPlanIdLarge",
+					CanonicalPlan.LARGE.getId());
 			User lUser = userService.getLoggedInUser();
 			StripeCustomer lStripeCustomer = stripeCustomerService.get(lUser
 					.getAccountId());
@@ -526,8 +526,8 @@ public class UserManagementController {
 			if (lStripeCustomer == null) {
 				model.addAttribute("isSubscribed", false);
 				// default to free
-				model.addAttribute("subscribedCanonicalPlanName",
-						CanonicalPlan.FREE.getName());
+				model.addAttribute("subscribedCanonicalPlanId",
+						CanonicalPlan.FREE.getId());
 			} else {
 				// check to see if the user's CC is expiring or has expired
 				if (Utils.isCCExpired(lStripeCustomer.getCardExpYear(),
@@ -537,8 +537,8 @@ public class UserManagementController {
 					lIsUpdateCCInfo = true;
 				}
 				model.addAttribute("isSubscribed", true);
-				model.addAttribute("subscribedCanonicalPlanName",
-						lStripeCustomer.getCanonicalPlanName());
+				model.addAttribute("subscribedCanonicalPlanId",
+						lStripeCustomer.getCanonicalPlanId());
 			}
 			model.addAttribute("isUpdateCCInfo", lIsUpdateCCInfo);
 			model.addAttribute("isError", false);
@@ -560,16 +560,16 @@ public class UserManagementController {
 		if (LOGGER.isLoggable(Level.INFO))
 			LOGGER.info("Entering");
 		try {
-			model.addAttribute("canonicalPlanNameFree",
-					CanonicalPlan.FREE.getName());
-			model.addAttribute("canonicalPlanNameMicro",
-					CanonicalPlan.MICRO.getName());
-			model.addAttribute("canonicalPlanNameSmall",
-					CanonicalPlan.SMALL.getName());
-			model.addAttribute("canonicalPlanNameMedium",
-					CanonicalPlan.MEDIUM.getName());
-			model.addAttribute("canonicalPlanNameLarge",
-					CanonicalPlan.LARGE.getName());
+			model.addAttribute("canonicalPlanIdFree",
+					CanonicalPlan.FREE.getId());
+			model.addAttribute("canonicalPlanIdMicro",
+					CanonicalPlan.MICRO.getId());
+			model.addAttribute("canonicalPlanIdSmall",
+					CanonicalPlan.SMALL.getId());
+			model.addAttribute("canonicalPlanIdMedium",
+					CanonicalPlan.MEDIUM.getId());
+			model.addAttribute("canonicalPlanIdLarge",
+					CanonicalPlan.LARGE.getId());
 			User lUser = userService.getLoggedInUser();
 			StripeCustomer lStripeCustomer = stripeCustomerService.get(lUser
 					.getAccountId());
@@ -578,8 +578,8 @@ public class UserManagementController {
 			if (lStripeCustomer == null) {
 				model.addAttribute("isSubscribed", false);
 				// default to free
-				model.addAttribute("subscribedCanonicalPlanName",
-						CanonicalPlan.FREE.getName());
+				model.addAttribute("subscribedCanonicalPlanId",
+						CanonicalPlan.FREE.getId());
 			} else {
 				// check to see if the user's CC is expiring or has expired
 				if (Utils.isCCExpired(lStripeCustomer.getCardExpYear(),
@@ -589,8 +589,8 @@ public class UserManagementController {
 					lIsUpdateCCInfo = true;
 				}
 				model.addAttribute("isSubscribed", true);
-				model.addAttribute("subscribedCanonicalPlanName",
-						lStripeCustomer.getCanonicalPlanName());
+				model.addAttribute("subscribedCanonicalPlanId",
+						lStripeCustomer.getCanonicalPlanId());
 			}
 			model.addAttribute("isUpdateCCInfo", lIsUpdateCCInfo);
 			model.addAttribute("isError", false);
@@ -623,8 +623,8 @@ public class UserManagementController {
 			if (lStripeCustomer == null) {
 				model.addAttribute("isSubscribed", false);
 				// default to free
-				model.addAttribute("subscribedCanonicalPlanName",
-						CanonicalPlan.FREE.getName());
+				model.addAttribute("subscribedCanonicalPlanId",
+						CanonicalPlan.FREE.getId());
 			} else {
 				// check to see if the user's CC is expiring or has expired
 				if (Utils.isCCExpired(lStripeCustomer.getCardExpYear(),
@@ -634,8 +634,8 @@ public class UserManagementController {
 					lIsUpdateCCInfo = true;
 				}
 				model.addAttribute("isSubscribed", true);
-				model.addAttribute("subscribedCanonicalPlanName",
-						lStripeCustomer.getCanonicalPlanName());
+				model.addAttribute("subscribedCanonicalPlanId",
+						lStripeCustomer.getCanonicalPlanId());
 			}
 			model.addAttribute("isUpdateCCInfo", lIsUpdateCCInfo);
 			model.addAttribute("isError", false);
@@ -653,8 +653,8 @@ public class UserManagementController {
 				Configuration.STRIPE_PUBLIC_API_KEY);
 
 		
-		model.addAttribute("canonicalPlanNameFree",
-				CanonicalPlan.FREE.getName());
+		model.addAttribute("canonicalPlanIdFree",
+				CanonicalPlan.FREE.getId());
 		model.addAttribute("canonicalPlanFreeNetworkBandwidth",
 				CanonicalPlan.FREE.getDisplayNetworkBandwidth());
 		model.addAttribute("canonicalPlanFreeStorage",
@@ -664,8 +664,8 @@ public class UserManagementController {
 		model.addAttribute("canonicalPlanFreePriceInCents",
 				CanonicalPlan.FREE.getPriceInCents());
 
-		model.addAttribute("canonicalPlanNameMicro",
-				CanonicalPlan.MICRO.getName());
+		model.addAttribute("canonicalPlanIdMicro",
+				CanonicalPlan.MICRO.getId());
 		model.addAttribute("canonicalPlanMicroNetworkBandwidth",
 				CanonicalPlan.MICRO.getDisplayNetworkBandwidth());
 		model.addAttribute("canonicalPlanMicroStorage",
@@ -675,8 +675,8 @@ public class UserManagementController {
 		model.addAttribute("canonicalPlanMicroPriceInCents",
 				CanonicalPlan.MICRO.getPriceInCents());
 
-		model.addAttribute("canonicalPlanNameSmall",
-				CanonicalPlan.SMALL.getName());
+		model.addAttribute("canonicalPlanIdSmall",
+				CanonicalPlan.SMALL.getId());
 		model.addAttribute("canonicalPlanSmallNetworkBandwidth",
 				CanonicalPlan.SMALL.getDisplayNetworkBandwidth());
 		model.addAttribute("canonicalPlanSmallStorage",
@@ -686,8 +686,8 @@ public class UserManagementController {
 		model.addAttribute("canonicalPlanSmallPriceInCents",
 				CanonicalPlan.SMALL.getPriceInCents());
 
-		model.addAttribute("canonicalPlanNameMedium",
-				CanonicalPlan.MEDIUM.getName());
+		model.addAttribute("canonicalPlanIdMedium",
+				CanonicalPlan.MEDIUM.getId());
 		model.addAttribute("canonicalPlanMediumNetworkBandwidth",
 				CanonicalPlan.MEDIUM.getDisplayNetworkBandwidth());
 		model.addAttribute("canonicalPlanMediumStorage",
@@ -697,8 +697,8 @@ public class UserManagementController {
 		model.addAttribute("canonicalPlanMediumPriceInCents",
 				CanonicalPlan.MEDIUM.getPriceInCents());
 
-		model.addAttribute("canonicalPlanNameLarge",
-				CanonicalPlan.LARGE.getName());
+		model.addAttribute("canonicalPlanIdLarge",
+				CanonicalPlan.LARGE.getId());
 		model.addAttribute("canonicalPlanLargeNetworkBandwidth",
 				CanonicalPlan.LARGE.getDisplayNetworkBandwidth());
 		model.addAttribute("canonicalPlanLargeStorage",
@@ -734,16 +734,16 @@ public class UserManagementController {
 		if (LOGGER.isLoggable(Level.INFO))
 			LOGGER.info("Entering");
 		try {
-			model.addAttribute("canonicalPlanNameFree",
-					CanonicalPlan.FREE.getName());
-			model.addAttribute("canonicalPlanNameMicro",
-					CanonicalPlan.MICRO.getName());
-			model.addAttribute("canonicalPlanNameSmall",
-					CanonicalPlan.SMALL.getName());
-			model.addAttribute("canonicalPlanNameMedium",
-					CanonicalPlan.MEDIUM.getName());
-			model.addAttribute("canonicalPlanNameLarge",
-					CanonicalPlan.LARGE.getName());
+			model.addAttribute("canonicalPlanIdFree",
+					CanonicalPlan.FREE.getId());
+			model.addAttribute("canonicalPlanIdMicro",
+					CanonicalPlan.MICRO.getId());
+			model.addAttribute("canonicalPlanIdSmall",
+					CanonicalPlan.SMALL.getId());
+			model.addAttribute("canonicalPlanIdMedium",
+					CanonicalPlan.MEDIUM.getId());
+			model.addAttribute("canonicalPlanIdLarge",
+					CanonicalPlan.LARGE.getId());
 			User lUser = userService.getLoggedInUser();
 			StripeCustomer lStripeCustomer = stripeCustomerService.get(lUser
 					.getAccountId());
@@ -752,8 +752,8 @@ public class UserManagementController {
 			if (lStripeCustomer == null) {
 				model.addAttribute("isSubscribed", false);
 				// default to free
-				model.addAttribute("subscribedCanonicalPlanName",
-						CanonicalPlan.FREE.getName());
+				model.addAttribute("subscribedCanonicalPlanId",
+						CanonicalPlan.FREE.getId());
 			} else {
 				// check to see if the user's CC is expiring or has expired
 				if (Utils.isCCExpired(lStripeCustomer.getCardExpYear(),
@@ -763,8 +763,8 @@ public class UserManagementController {
 					lIsUpdateCCInfo = true;
 				}
 				model.addAttribute("isSubscribed", true);
-				model.addAttribute("subscribedCanonicalPlanName",
-						lStripeCustomer.getCanonicalPlanName());
+				model.addAttribute("subscribedCanonicalPlanId",
+						lStripeCustomer.getCanonicalPlanId());
 			}
 			model.addAttribute("isUpdateCCInfo", lIsUpdateCCInfo);
 			model.addAttribute("isError", false);

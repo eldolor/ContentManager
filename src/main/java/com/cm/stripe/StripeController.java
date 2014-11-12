@@ -58,13 +58,13 @@ public class StripeController {
 	 * secured uri
 	 * 
 	 * @param stripeToken
-	 * @param canonicalPlanName
+	 * @param canonicalPlanId
 	 * @param model
 	 * @return
 	 */
 	@RequestMapping(value = "/stripe/subscribe", method = RequestMethod.POST)
 	public ModelAndView subscribe(@RequestParam String stripeToken,
-			@RequestParam String canonicalPlanName, ModelMap model) {
+			@RequestParam String canonicalPlanId, ModelMap model) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering subscribe");
@@ -107,7 +107,7 @@ public class StripeController {
 					lCustomerParams.put("metadata", lCustomerMetadata);
 
 					// subscribe to the new plan selected
-					lSubscriptionParams.put("plan", canonicalPlanName);
+					lSubscriptionParams.put("plan", canonicalPlanId);
 
 					Customer lCustomer = null;
 					Subscription lSubscription = null;
@@ -136,7 +136,7 @@ public class StripeController {
 						lStripeCustomer = lStoredStripeCustomer;
 
 					lStripeCustomer.setAccountId(lUser.getAccountId());
-					lStripeCustomer.setCanonicalPlanName(canonicalPlanName);
+					lStripeCustomer.setCanonicalPlanId(canonicalPlanId);
 					lStripeCustomer.setUserId(lUser.getId());
 					lStripeCustomer.setUsername(lUser.getUsername());
 
@@ -209,27 +209,27 @@ public class StripeController {
 			if (!errors.isEmpty()) {
 				// Begin: copied over from
 				// UserManagementController.displayAccountSettings()
-				model.addAttribute("canonicalPlanNameFree",
-						CanonicalPlan.FREE.getName());
-				model.addAttribute("canonicalPlanNameMicro",
-						CanonicalPlan.MICRO.getName());
-				model.addAttribute("canonicalPlanNameSmall",
-						CanonicalPlan.SMALL.getName());
-				model.addAttribute("canonicalPlanNameMedium",
-						CanonicalPlan.MEDIUM.getName());
-				model.addAttribute("canonicalPlanNameLarge",
-						CanonicalPlan.LARGE.getName());
+				model.addAttribute("canonicalPlanIdFree",
+						CanonicalPlan.FREE.getId());
+				model.addAttribute("canonicalPlanIdMicro",
+						CanonicalPlan.MICRO.getId());
+				model.addAttribute("canonicalPlanIdSmall",
+						CanonicalPlan.SMALL.getId());
+				model.addAttribute("canonicalPlanIdMedium",
+						CanonicalPlan.MEDIUM.getId());
+				model.addAttribute("canonicalPlanIdLarge",
+						CanonicalPlan.LARGE.getId());
 				StripeCustomer lStripeCustomer = stripeCustomerService
 						.get(lUser.getAccountId());
 				if (lStripeCustomer == null) {
 					model.addAttribute("isSubscribed", false);
 					// default to free
-					model.addAttribute("subscribedCanonicalPlanName",
-							CanonicalPlan.FREE.getName());
+					model.addAttribute("subscribedCanonicalPlanId",
+							CanonicalPlan.FREE.getId());
 				} else {
 					model.addAttribute("isSubscribed", true);
-					model.addAttribute("subscribedCanonicalPlanName",
-							lStripeCustomer.getCanonicalPlanName());
+					model.addAttribute("subscribedCanonicalPlanId",
+							lStripeCustomer.getCanonicalPlanId());
 				}
 				// End: copied over from
 				// UserManagementController.displayAccountSettings()
@@ -255,7 +255,7 @@ public class StripeController {
 	@Deprecated
 	@RequestMapping(value = "/stripe/subscribe/update", method = RequestMethod.POST)
 	public ModelAndView updateSubscription(
-			@RequestParam("canonicalPlanName") String canonicalPlanName,
+			@RequestParam("canonicalPlanId") String canonicalPlanId,
 			ModelMap model) {
 		List<ValidationError> errors = new ArrayList<ValidationError>();
 		try {
@@ -275,7 +275,7 @@ public class StripeController {
 
 					Map<String, Object> lSubscriptionParams = new HashMap<String, Object>();
 					// subscribe to the new plan selected
-					lSubscriptionParams.put("plan", canonicalPlanName);
+					lSubscriptionParams.put("plan", canonicalPlanId);
 					lSubscriptionParams.put("prorate", false);
 					Subscription lSubscription = lCustomer
 							.updateSubscription(lSubscriptionParams);
@@ -283,7 +283,7 @@ public class StripeController {
 					// update StripeCustomer and save locally
 					// TODO: handle scenario where update subscription succeed
 					// but saving StripeCustomer to DB fails
-					lStripeCustomer.setCanonicalPlanName(canonicalPlanName);
+					lStripeCustomer.setCanonicalPlanId(canonicalPlanId);
 					lStripeCustomer.setSubscriptionId(lSubscription.getId());
 					lStripeCustomer
 							.setTimeUpdatedMs(System.currentTimeMillis());
@@ -310,27 +310,27 @@ public class StripeController {
 			if (!errors.isEmpty()) {
 				// Begin: copied over from
 				// UserManagementController.displayAccountSettings()
-				model.addAttribute("canonicalPlanNameFree",
-						CanonicalPlan.FREE.getName());
-				model.addAttribute("canonicalPlanNameMicro",
-						CanonicalPlan.MICRO.getName());
-				model.addAttribute("canonicalPlanNameSmall",
-						CanonicalPlan.SMALL.getName());
-				model.addAttribute("canonicalPlanNameMedium",
-						CanonicalPlan.MEDIUM.getName());
-				model.addAttribute("canonicalPlanNameLarge",
-						CanonicalPlan.LARGE.getName());
+				model.addAttribute("canonicalPlanIdFree",
+						CanonicalPlan.FREE.getId());
+				model.addAttribute("canonicalPlanIdMicro",
+						CanonicalPlan.MICRO.getId());
+				model.addAttribute("canonicalPlanIdSmall",
+						CanonicalPlan.SMALL.getId());
+				model.addAttribute("canonicalPlanIdMedium",
+						CanonicalPlan.MEDIUM.getId());
+				model.addAttribute("canonicalPlanIdLarge",
+						CanonicalPlan.LARGE.getId());
 				lStripeCustomer = stripeCustomerService.get(lUser
 						.getAccountId());
 				if (lStripeCustomer == null) {
 					model.addAttribute("isSubscribed", false);
 					// default to free
-					model.addAttribute("subscribedCanonicalPlanName",
-							CanonicalPlan.FREE.getName());
+					model.addAttribute("subscribedCanonicalPlanId",
+							CanonicalPlan.FREE.getId());
 				} else {
 					model.addAttribute("isSubscribed", true);
-					model.addAttribute("subscribedCanonicalPlanName",
-							lStripeCustomer.getCanonicalPlanName());
+					model.addAttribute("subscribedCanonicalPlanId",
+							lStripeCustomer.getCanonicalPlanId());
 				}
 				// End: copied over from
 				// UserManagementController.displayAccountSettings()
@@ -353,9 +353,9 @@ public class StripeController {
 		}
 	}
 
-	@RequestMapping(value = "/stripe/subscribe/update/{canonicalPlanName}", method = RequestMethod.POST, produces = "application/json")
+	@RequestMapping(value = "/stripe/subscribe/update/{canonicalPlanId}", method = RequestMethod.POST, produces = "application/json")
 	public @ResponseBody
-	List<ValidationError> updatePlan(@PathVariable String canonicalPlanName,
+	List<ValidationError> updatePlan(@PathVariable String canonicalPlanId,
 			HttpServletResponse response) {
 		List<ValidationError> errors = new ArrayList<ValidationError>();
 		try {
@@ -375,7 +375,7 @@ public class StripeController {
 
 					Map<String, Object> lSubscriptionParams = new HashMap<String, Object>();
 					// subscribe to the new plan selected
-					lSubscriptionParams.put("plan", canonicalPlanName);
+					lSubscriptionParams.put("plan", canonicalPlanId);
 					// the quota related changes come into
 					// effect right away
 					lSubscriptionParams.put("prorate", true);
@@ -385,7 +385,7 @@ public class StripeController {
 					// update StripeCustomer and save locally
 					// TODO: handle scenario where update subscription succeed
 					// but saving StripeCustomer to DB fails
-					lStripeCustomer.setCanonicalPlanName(canonicalPlanName);
+					lStripeCustomer.setCanonicalPlanId(canonicalPlanId);
 					{
 						lStripeCustomer
 								.setSubscriptionId(lSubscription.getId());
@@ -707,7 +707,7 @@ public class StripeController {
 						.append("<p class=\"lead\">We have received your payment for your Skok subscription. You can keep this receipt for your records. Feel free to reach out to us at anshu@skok.co.</p>");
 				lHtmlFormattedMessage.append("<p><b>Skok Receipt</b></p>");
 				lHtmlFormattedMessage.append("<p>Plan: "
-						+ lStripeCustomer.getCanonicalPlanName() + "</p>");
+						+ lStripeCustomer.getCanonicalPlanId() + "</p>");
 
 				lHtmlFormattedMessage.append("<p>Amount: $" + bg3 + "USD</p>");
 				lHtmlFormattedMessage.append("<p>Charged to: " + lBrand
@@ -717,17 +717,18 @@ public class StripeController {
 				lHtmlFormattedMessage.append("<p>&nbsp;</p><p>Thank you!</p>");
 				String lEmailTemplate = lEmailBuilder
 						.build(lHtmlFormattedMessage.toString());
-				try {
-					Utils.sendEmail(Configuration.FROM_EMAIL_ADDRESS,
-							Configuration.FROM_NAME,
-							lStripeCustomer.getUsername(), "",
-							Configuration.SITE_NAME + " Payment Receipt",
-							lEmailTemplate, null);
-				} catch (UnsupportedEncodingException e) {
-					LOGGER.log(Level.SEVERE, e.getMessage(), e);
-				} catch (MessagingException e) {
-					LOGGER.log(Level.SEVERE, e.getMessage(), e);
-				}
+				// Email sent by SKOK
+				// try {
+				// Utils.sendEmail(Configuration.FROM_EMAIL_ADDRESS,
+				// Configuration.FROM_NAME,
+				// lStripeCustomer.getUsername(), "",
+				// Configuration.SITE_NAME + " Payment Receipt",
+				// lEmailTemplate, null);
+				// } catch (UnsupportedEncodingException e) {
+				// LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				// } catch (MessagingException e) {
+				// LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				// }
 
 			} else if (lType.equals("charge.failed")) {
 				// TODO: send out an email
@@ -775,8 +776,11 @@ public class StripeController {
 
 					lHtmlFormattedMessage
 							.append("<p>Please login to http://skok.co and update your Billing information.</p>");
+					CanonicalPlan lPlan = CanonicalPlan
+							.findById(lStripeCustomer.getCanonicalPlanId());
+
 					lHtmlFormattedMessage.append("<p>Plan: "
-							+ lStripeCustomer.getCanonicalPlanName() + "</p>");
+							+ lPlan.getPlanName() + "</p>");
 
 					lHtmlFormattedMessage.append("<p>Amount: $" + bg3
 							+ "USD</p>");
@@ -823,9 +827,11 @@ public class StripeController {
 				lHtmlFormattedMessage.append("<p>Hi,</p>");
 				lHtmlFormattedMessage
 						.append("<p class=\"lead\">You have successfully updated your payment information for your Skok subscription.</p>");
+				CanonicalPlan lPlan = CanonicalPlan.findById(lStripeCustomer
+						.getCanonicalPlanId());
 
-				lHtmlFormattedMessage.append("<p>Plan: "
-						+ lStripeCustomer.getCanonicalPlanName() + "</p>");
+				lHtmlFormattedMessage.append("<p>Plan: " + lPlan.getPlanName()
+						+ "</p>");
 
 				lHtmlFormattedMessage.append("<p>Card: " + lBrand
 						+ " card ending in " + lLast4 + "</p>");
@@ -865,9 +871,13 @@ public class StripeController {
 				lHtmlFormattedMessage.append("<p>Hi,</p>");
 				lHtmlFormattedMessage
 						.append("<p class=\"lead\">You have successfully subscribed to the following plan.</p>");
+				CanonicalPlan lPlan = CanonicalPlan.findById(lStripeCustomer
+						.getCanonicalPlanId());
 
-				lHtmlFormattedMessage.append("<p>Plan: "
-						+ lStripeCustomer.getCanonicalPlanName() + "</p>");
+				lHtmlFormattedMessage.append("<p>Plan: " + lPlan.getPlanName()
+						+ "</p>");
+				lHtmlFormattedMessage.append("<p>Amount: " + lPlan.getDisplayPrice()
+						+ "</p>");
 
 				lHtmlFormattedMessage.append("<p>&nbsp;</p><p>Thank you!</p>");
 				String lEmailTemplate = lEmailBuilder

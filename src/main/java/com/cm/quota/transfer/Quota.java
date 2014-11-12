@@ -6,7 +6,7 @@ import java.util.List;
 
 public class Quota implements Serializable {
 
-	private String canonicalPlanName;
+	private String canonicalPlanId;
 	private int applicationLimit;
 	private int applicationsUsed;
 	private long bandwidthUsed;
@@ -20,12 +20,12 @@ public class Quota implements Serializable {
 	private List<StorageQuota> storageQuota;
 
 
-	public String getCanonicalPlanName() {
-		return canonicalPlanName;
+	public String getCanonicalPlanId() {
+		return canonicalPlanId;
 	}
 
-	public void setCanonicalPlanName(String canonicalPlanName) {
-		this.canonicalPlanName = canonicalPlanName;
+	public void setCanonicalPlanId(String canonicalPlanId) {
+		this.canonicalPlanId = canonicalPlanId;
 	}
 
 	public int getApplicationLimit() {

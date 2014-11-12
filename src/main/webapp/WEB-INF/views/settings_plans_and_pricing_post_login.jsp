@@ -97,14 +97,14 @@
 					<br />
 					<c:choose>
 						<c:when
-							test="${isSubscribed == false || subscribedCanonicalPlanName == canonicalPlanNameFree}">
+							test="${isSubscribed == false || subscribedCanonicalPlanId == canonicalPlanIdFree}">
 							<img alt="free" src="/resources/images/cm/done.png" />
 						</c:when>
 						<c:otherwise>
 							<!-- display the button-->
 							<a href="javascript:void(0);"
 								class="button radius small btn-default" id="update_plan_button"
-								onclick="javascript: planUpdate('${canonicalPlanNameFree}', 'progress_bar', '$0');">downgrade</a>
+								onclick="javascript: planUpdate('${canonicalPlanIdFree}', 'progress_bar', '$0');">downgrade</a>
 						</c:otherwise>
 					</c:choose>
 					<div class="row" id="plan_progress_bar_free" style="display: none;">
@@ -141,8 +141,8 @@
 							<form id="subscribePlanForm" name="subscribePlanForm"
 								action="/stripe/subscribe" method="POST"
 								onclick="javascript: $('#plan_progress_bar_micro').show(); return true;">
-								<input type="hidden" id="canonicalPlanName"
-									name="canonicalPlanName" value="${canonicalPlanNameMicro}" />
+								<input type="hidden" id="canonicalPlanId"
+									name="canonicalPlanId" value="${canonicalPlanIdMicro}" />
 								<script src="https://checkout.stripe.com/checkout.js"
 									class="stripe-button"
 									data-key="${stripePublicKey}" data-amount="${canonicalPlanMicroPriceInCents}"
@@ -157,7 +157,7 @@
 						<c:otherwise>
 							<c:choose>
 								<c:when
-									test="${subscribedCanonicalPlanName == canonicalPlanNameMicro}">
+									test="${subscribedCanonicalPlanId == canonicalPlanIdMicro}">
 									<img alt="free" src="/resources/images/cm/done.png" />
 								</c:when>
 								<c:otherwise>
@@ -165,10 +165,10 @@
 									<a href="javascript:void(0);"
 										class="button radius small btn-default"
 										id="update_plan_button"
-										onclick="javascript: planUpdate('${canonicalPlanNameMicro}', 'progress_bar', '${canonicalPlanMicroPrice}');">
+										onclick="javascript: planUpdate('${canonicalPlanIdMicro}', 'progress_bar', '${canonicalPlanMicroPrice}');">
 										<c:choose>
 											<c:when
-												test="${subscribedCanonicalPlanName == canonicalPlanNameFree}">upgrade</c:when>
+												test="${subscribedCanonicalPlanId == canonicalPlanIdFree}">upgrade</c:when>
 											<c:otherwise>downgrade</c:otherwise>
 										</c:choose>
 									</a>
@@ -205,8 +205,8 @@
 							<form id="subscribePlanForm" name="subscribePlanForm"
 								action="/stripe/subscribe" method="POST"
 								onclick="javascript: $('#plan_progress_bar_small').show(); return true;">
-								<input type="hidden" id="canonicalPlanName"
-									name="canonicalPlanName" value="${canonicalPlanNameSmall}" />
+								<input type="hidden" id="canonicalPlanId"
+									name="canonicalPlanId" value="${canonicalPlanIdSmall}" />
 								<script src="https://checkout.stripe.com/checkout.js"
 									class="stripe-button"
 									data-key="${stripePublicKey}" data-amount="${canonicalPlanSmallPriceInCents}"
@@ -221,7 +221,7 @@
 						<c:otherwise>
 							<c:choose>
 								<c:when
-									test="${subscribedCanonicalPlanName == canonicalPlanNameSmall}">
+									test="${subscribedCanonicalPlanId == canonicalPlanIdSmall}">
 									<img alt="free" src="/resources/images/cm/done.png" />
 								</c:when>
 								<c:otherwise>
@@ -229,10 +229,10 @@
 									<a href="javascript:void(0);"
 										class="button radius small btn-default"
 										id="update_plan_button"
-										onclick="javascript: planUpdate('${canonicalPlanNameSmall}', 'progress_bar', '${canonicalPlanSmallPrice}');">
+										onclick="javascript: planUpdate('${canonicalPlanIdSmall}', 'progress_bar', '${canonicalPlanSmallPrice}');">
 										<c:choose>
 											<c:when
-												test="${subscribedCanonicalPlanName == canonicalPlanNameFree || subscribedCanonicalPlanName == canonicalPlanNameMicro}">upgrade</c:when>
+												test="${subscribedCanonicalPlanId == canonicalPlanIdFree || subscribedCanonicalPlanId == canonicalPlanIdMicro}">upgrade</c:when>
 											<c:otherwise>downgrade</c:otherwise>
 										</c:choose>
 									</a>
@@ -268,8 +268,8 @@
 							<form id="subscribePlanForm" name="subscribePlanForm"
 								action="/stripe/subscribe" method="POST"
 								onclick="javascript: $('#plan_progress_bar_medium').show(); return true;">
-								<input type="hidden" id="canonicalPlanName"
-									name="canonicalPlanName" value="${canonicalPlanNameMedium}" />
+								<input type="hidden" id="canonicalPlanId"
+									name="canonicalPlanId" value="${canonicalPlanIdMedium}" />
 								<script src="https://checkout.stripe.com/checkout.js"
 									class="stripe-button"
 									data-key="${stripePublicKey}" data-amount="${canonicalPlanMediumPriceInCents}"
@@ -284,7 +284,7 @@
 						<c:otherwise>
 							<c:choose>
 								<c:when
-									test="${subscribedCanonicalPlanName == canonicalPlanNameMedium}">
+									test="${subscribedCanonicalPlanId == canonicalPlanIdMedium}">
 									<img alt="free" src="/resources/images/cm/done.png" />
 								</c:when>
 								<c:otherwise>
@@ -292,10 +292,10 @@
 									<a href="javascript:void(0);"
 										class="button radius small btn-default"
 										id="update_plan_button"
-										onclick="javascript: planUpdate('${canonicalPlanNameMedium}', 'progress_bar', '${canonicalPlanMediumPrice}');">
+										onclick="javascript: planUpdate('${canonicalPlanIdMedium}', 'progress_bar', '${canonicalPlanMediumPrice}');">
 										<c:choose>
 											<c:when
-												test="${subscribedCanonicalPlanName == canonicalPlanNameFree || subscribedCanonicalPlanName == canonicalPlanNameMicro  || subscribedCanonicalPlanName == canonicalPlanNameSmall}">upgrade</c:when>
+												test="${subscribedCanonicalPlanId == canonicalPlanIdFree || subscribedCanonicalPlanId == canonicalPlanIdMicro  || subscribedCanonicalPlanId == canonicalPlanIdSmall}">upgrade</c:when>
 											<c:otherwise>downgrade</c:otherwise>
 										</c:choose>
 									</a>
@@ -331,8 +331,8 @@
 							<form id="subscribePlanForm" name="subscribePlanForm"
 								action="/stripe/subscribe" method="POST"
 								onclick="javascript: $('#plan_progress_bar_large').show(); return true;">
-								<input type="hidden" id="canonicalPlanName"
-									name="canonicalPlanName" value="${canonicalPlanNameLarge}" />
+								<input type="hidden" id="canonicalPlanId"
+									name="canonicalPlanId" value="${canonicalPlanIdLarge}" />
 								<script src="https://checkout.stripe.com/checkout.js"
 									class="stripe-button"
 									data-key="${stripePublicKey}" data-amount="${canonicalPlanLargePriceInCents}"
@@ -347,7 +347,7 @@
 						<c:otherwise>
 							<c:choose>
 								<c:when
-									test="${subscribedCanonicalPlanName == canonicalPlanNameLarge}">
+									test="${subscribedCanonicalPlanId == canonicalPlanIdLarge}">
 									<img alt="free" src="/resources/images/cm/done.png" />
 								</c:when>
 								<c:otherwise>
@@ -355,7 +355,7 @@
 									<a href="javascript:void(0);"
 										class="button radius small btn-default"
 										id="update_plan_button"
-										onclick="javascript: planUpdate('${canonicalPlanNameLarge}', 'progress_bar', '${canonicalPlanLargePrice}');">upgrade</a>
+										onclick="javascript: planUpdate('${canonicalPlanIdLarge}', 'progress_bar', '${canonicalPlanLargePrice}');">upgrade</a>
 								</c:otherwise>
 
 							</c:choose>
@@ -376,21 +376,21 @@
 	</section>
 
 	<script type="text/javascript">
-		var lSubscribedCanonicalPlanName = ${subscribedCanonicalPlanName};
-		var lCanonicalPlanNameLarge = ${canonicalPlanNameLarge};
-		var lCanonicalPlanNameMedium = ${canonicalPlanNameMedium};
-		var lCanonicalPlanNameSmall = ${canonicalPlanNameSmall};
-		var lCanonicalPlanNameMicro = ${canonicalPlanNameMicro};
-		var lCanonicalPlanNameFree = ${canonicalPlanNameFree};
-		if (lSubscribedCanonicalPlanName == lCanonicalPlanNameLarge) {
+		var lSubscribedCanonicalPlanId = ${subscribedCanonicalPlanId};
+		var lCanonicalPlanIdLarge = ${canonicalPlanIdLarge};
+		var lCanonicalPlanIdMedium = ${canonicalPlanIdMedium};
+		var lCanonicalPlanIdSmall = ${canonicalPlanIdSmall};
+		var lCanonicalPlanIdMicro = ${canonicalPlanIdMicro};
+		var lCanonicalPlanIdFree = ${canonicalPlanIdFree};
+		if (lSubscribedCanonicalPlanId == lCanonicalPlanIdLarge) {
 			$('#large_plan').addClass('recommended');
-		} else if (lSubscribedCanonicalPlanName == lCanonicalPlanNameMedium) {
+		} else if (lSubscribedCanonicalPlanId == lCanonicalPlanIdMedium) {
 			$('#medium_plan').addClass('recommended');
-		} else if (lSubscribedCanonicalPlanName == lCanonicalPlanNameSmall) {
+		} else if (lSubscribedCanonicalPlanId == lCanonicalPlanIdSmall) {
 			$('#small_plan').addClass('recommended');
-		} else if (lSubscribedCanonicalPlanName == lCanonicalPlanNameMicro) {
+		} else if (lSubscribedCanonicalPlanId == lCanonicalPlanIdMicro) {
 			$('#micro_plan').addClass('recommended');
-		} else if (lSubscribedCanonicalPlanName == lCanonicalPlanNameFree) {
+		} else if (lSubscribedCanonicalPlanId == lCanonicalPlanIdFree) {
 			$('#free_plan').addClass('recommended');
 		}
 	</script>

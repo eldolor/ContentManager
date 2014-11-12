@@ -15,9 +15,9 @@ public class Account {
 	private Long id;
 
 	// default to free
-	@Persistent
-	private String canonicalPlanName = CanonicalPlan.FREE.getName();
-
+//	@Persistent
+//	private String canonicalPlanId = CanonicalPlan.FREE.getId();
+	
 	@Persistent
 	private String name;
 	@Persistent
@@ -102,12 +102,12 @@ public class Account {
 		this.enabled = enabled;
 	}
 
-	public String getCanonicalPlanName() {
-		return canonicalPlanName;
-	}
-
-	public void setCanonicalPlanName(String canonicalPlanName) {
-		this.canonicalPlanName = canonicalPlanName;
-	}
+//	public String getCanonicalPlanId() {
+//		return canonicalPlanId;
+//	}
+//
+//	public void setCanonicalPlanId(String canonicalPlanId) {
+//		this.canonicalPlanId = canonicalPlanId;
+//	}
 
 }

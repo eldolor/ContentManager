@@ -613,7 +613,7 @@ function submitForgotPasswordRequest() {
 	}
 }
 
-function planUpdate(pPlanName, pProgressBarName, pPlanCharge) {
+function planUpdate(pPlanId, pProgressBarName, pPlanCharge) {
 	// subscriptionCurrentPeriodEnd is in seconds
 	var lSubscriptionChangeDate = new Date(
 			mStripeCustomer.subscriptionCurrentPeriodEnd * 1000);
@@ -625,7 +625,7 @@ function planUpdate(pPlanName, pProgressBarName, pPlanCharge) {
 		$('.button').addClass('disabled');
 		// create via sync call
 		var jqxhr = $.ajax({
-			url : "/stripe/subscribe/update/" + pPlanName,
+			url : "/stripe/subscribe/update/" + pPlanId,
 			type : "POST",
 			async : true,
 			statusCode : {

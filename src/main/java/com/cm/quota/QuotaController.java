@@ -210,18 +210,16 @@ public class QuotaController {
 
 			StripeCustomer lStripeCustomer = stripeCustomerService
 					.get(accountId);
-			String lNewCanonicalPlanName = lStripeCustomer
-					.getCanonicalPlanName();
+			String lNewCanonicalPlanId = lStripeCustomer.getCanonicalPlanId();
 
 			Quota lExistingQuota = quotaService.get(accountId);
 
 			boolean lIsDowngrade = isDowngrade(
-					lExistingQuota.getCanonicalPlanName(),
-					lNewCanonicalPlanName);
+					lExistingQuota.getCanonicalPlanId(), lNewCanonicalPlanId);
 
 			// evaluate and update the quota allocated to the account
 			// appropriately
-			if (lNewCanonicalPlanName.equals(CanonicalPlan.FREE.getName())) {
+			if (lNewCanonicalPlanId.equals(CanonicalPlan.FREE.getId())) {
 				quotaService.updatePlan(accountId, CanonicalPlan.FREE);
 				if (lIsDowngrade)
 					deleteApplicationsOnPlanDowngrade(accountId,
@@ -229,8 +227,7 @@ public class QuotaController {
 				else
 					restoreApplicationsOnPlanUpgrade(accountId,
 							CanonicalPlan.FREE.getApplicationQuota());
-			} else if (lNewCanonicalPlanName.equals(CanonicalPlan.LARGE
-					.getName())) {
+			} else if (lNewCanonicalPlanId.equals(CanonicalPlan.LARGE.getId())) {
 				quotaService.updatePlan(accountId, CanonicalPlan.LARGE);
 				if (lIsDowngrade)
 					deleteApplicationsOnPlanDowngrade(accountId,
@@ -238,8 +235,7 @@ public class QuotaController {
 				else
 					restoreApplicationsOnPlanUpgrade(accountId,
 							CanonicalPlan.LARGE.getApplicationQuota());
-			} else if (lNewCanonicalPlanName.equals(CanonicalPlan.MEDIUM
-					.getName())) {
+			} else if (lNewCanonicalPlanId.equals(CanonicalPlan.MEDIUM.getId())) {
 				quotaService.updatePlan(accountId, CanonicalPlan.MEDIUM);
 				if (lIsDowngrade)
 					deleteApplicationsOnPlanDowngrade(accountId,
@@ -247,8 +243,7 @@ public class QuotaController {
 				else
 					restoreApplicationsOnPlanUpgrade(accountId,
 							CanonicalPlan.MEDIUM.getApplicationQuota());
-			} else if (lNewCanonicalPlanName.equals(CanonicalPlan.MICRO
-					.getName())) {
+			} else if (lNewCanonicalPlanId.equals(CanonicalPlan.MICRO.getId())) {
 				quotaService.updatePlan(accountId, CanonicalPlan.MICRO);
 				if (lIsDowngrade)
 					deleteApplicationsOnPlanDowngrade(accountId,
@@ -256,8 +251,7 @@ public class QuotaController {
 				else
 					restoreApplicationsOnPlanUpgrade(accountId,
 							CanonicalPlan.MICRO.getApplicationQuota());
-			} else if (lNewCanonicalPlanName.equals(CanonicalPlan.SMALL
-					.getName())) {
+			} else if (lNewCanonicalPlanId.equals(CanonicalPlan.SMALL.getId())) {
 				quotaService.updatePlan(accountId, CanonicalPlan.SMALL);
 				if (lIsDowngrade)
 					deleteApplicationsOnPlanDowngrade(accountId,
@@ -382,12 +376,16 @@ public class QuotaController {
 		}
 	}
 
-	private boolean isDowngrade(String pExistingPlanName,
-			String pNewCanonicalPlanName) {
+	private boolean isDowngrade(String pExistingPlanId,
+			String pNewCanonicalPlanId) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
-			if (getCanonicalPlanLevel(pExistingPlanName) > getCanonicalPlanLevel(pNewCanonicalPlanName)) {
+			//default to free
+			if (pExistingPlanId == null)
+				pExistingPlanId = CanonicalPlan.FREE.getId();
+
+			if (getCanonicalPlanLevel(pExistingPlanId) > getCanonicalPlanLevel(pNewCanonicalPlanId)) {
 				return true;
 			}
 			return false;
@@ -398,16 +396,16 @@ public class QuotaController {
 		}
 	}
 
-	private int getCanonicalPlanLevel(String pCanonicalPlanName) {
-		if (pCanonicalPlanName.equals(CanonicalPlan.FREE.getName())) {
+	private int getCanonicalPlanLevel(String pCanonicalPlanId) {
+		if (pCanonicalPlanId.equals(CanonicalPlan.FREE.getId())) {
 			return CanonicalPlan.FREE.getLevel();
-		} else if (pCanonicalPlanName.equals(CanonicalPlan.LARGE.getName())) {
+		} else if (pCanonicalPlanId.equals(CanonicalPlan.LARGE.getId())) {
 			return CanonicalPlan.LARGE.getLevel();
-		} else if (pCanonicalPlanName.equals(CanonicalPlan.MEDIUM.getName())) {
+		} else if (pCanonicalPlanId.equals(CanonicalPlan.MEDIUM.getId())) {
 			return CanonicalPlan.MEDIUM.getLevel();
-		} else if (pCanonicalPlanName.equals(CanonicalPlan.MICRO.getName())) {
+		} else if (pCanonicalPlanId.equals(CanonicalPlan.MICRO.getId())) {
 			return CanonicalPlan.MICRO.getLevel();
-		} else if (pCanonicalPlanName.equals(CanonicalPlan.SMALL.getName())) {
+		} else if (pCanonicalPlanId.equals(CanonicalPlan.SMALL.getId())) {
 			return CanonicalPlan.SMALL.getLevel();
 		}
 		return -1;
@@ -478,7 +476,7 @@ public class QuotaController {
 			BandwidthQuotaUsed pBandwidthQuotaUsed) {
 		List<com.cm.quota.transfer.StorageQuota> lList = new ArrayList<com.cm.quota.transfer.StorageQuota>();
 		com.cm.quota.transfer.Quota lQuota = new com.cm.quota.transfer.Quota();
-		lQuota.setCanonicalPlanName(pQuota.getCanonicalPlanName());
+		lQuota.setCanonicalPlanId(pQuota.getCanonicalPlanId());
 
 		lQuota.setApplicationLimit(pQuota.getApplicationLimit());
 		lQuota.setApplicationsUsed(pApplicationQuotaUsed.getApplicationsUsed());
@@ -591,7 +589,7 @@ public class QuotaController {
 			StorageQuotaUsed pStorageQuotaUsed,
 			BandwidthQuotaUsed pBandwidthQuotaUsed) {
 		com.cm.quota.transfer.Quota lQuota = new com.cm.quota.transfer.Quota();
-		lQuota.setCanonicalPlanName(pQuota.getCanonicalPlanName());
+		lQuota.setCanonicalPlanId(pQuota.getCanonicalPlanId());
 
 		lQuota.setApplicationLimit(pQuota.getApplicationLimit());
 		lQuota.setApplicationsUsed((pApplicationQuotaUsed != null) ? pApplicationQuotaUsed

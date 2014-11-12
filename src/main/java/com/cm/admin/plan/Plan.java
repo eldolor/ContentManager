@@ -5,6 +5,7 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+@Deprecated
 @PersistenceCapable
 public class Plan {
 
@@ -13,7 +14,7 @@ public class Plan {
 	private Long id;
 
 	@Persistent
-	private String canonicalPlanName;
+	private String canonicalPlanId;
 	@Persistent
 	private String description;
 	@Persistent
@@ -93,12 +94,12 @@ public class Plan {
 		this.enabled = enabled;
 	}
 
-	public String getCanonicalPlanName() {
-		return canonicalPlanName;
+	public String getCanonicalPlanId() {
+		return canonicalPlanId;
 	}
 
-	public void setCanonicalPlanName(String canonicalPlanName) {
-		this.canonicalPlanName = canonicalPlanName;
+	public void setCanonicalPlanId(String canonicalPlanId) {
+		this.canonicalPlanId = canonicalPlanId;
 	}
 
 	public Long getAmountInCents() {

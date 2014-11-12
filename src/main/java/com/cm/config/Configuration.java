@@ -1,15 +1,21 @@
 package com.cm.config;
 
 public class Configuration {
-	private static final String STRIPE_API_KEY_TEST = "sk_test_4aEiOFaIp1sl35p1Gqjco3Is";
-	private static final String STRIPE_API_KEY_PROD = "sk_live_4aEirz6nwUZNsh7DggmeHREZ";
+	private static final String STRIPE_PRIVATE_API_KEY_TEST = "sk_test_4aEiOFaIp1sl35p1Gqjco3Is";
+	private static final String STRIPE_PUBLIC_API_KEY_TEST = "pk_test_4aEi34FWLvjmVHc14fQoUQPZ";
 
+	private static final String STRIPE_PUBLIC_API_KEY_PROD = "pk_live_4aEivQL4zUHiFxj5UiYDC2OT";
+	private static final String STRIPE_PRIVATE_API_KEY_PROD = "sk_live_4aEirz6nwUZNsh7DggmeHREZ";
+	
 	//DEV
 	private static final String DOMAIN = "skok-dev.appspot.com";
-	public static final String STRIPE_API_KEY = STRIPE_API_KEY_TEST;
+	public static final String STRIPE_PRIVATE_API_KEY = STRIPE_PRIVATE_API_KEY_TEST;
+	public static final String STRIPE_PUBLIC_API_KEY = STRIPE_PUBLIC_API_KEY_TEST;
+	
 	//PROD
-	//private static final String DOMAIN = "skok.co";
-	//public static final String STRIPE_API_KEY = STRIPE_API_KEY_PROD;
+//	private static final String DOMAIN = "skok.co";
+//	public static final String STRIPE_PRIVATE_API_KEY = STRIPE_PRIVATE_API_KEY_PROD;
+//	public static final String STRIPE_PUBLIC_API_KEY = STRIPE_PUBLIC_API_KEY_PROD;
 	
 	public static final String CURRENT_SDK_VERSION = "1.1";
 	

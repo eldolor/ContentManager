@@ -650,7 +650,7 @@ public class UserManagementController {
 
 	private void setupPlanAndPricing(ModelMap model) {
 		model.addAttribute("stripePublicKey",
-				Configuration.STRIPE_API_KEY);
+				Configuration.STRIPE_PUBLIC_API_KEY);
 
 		
 		model.addAttribute("canonicalPlanNameFree",

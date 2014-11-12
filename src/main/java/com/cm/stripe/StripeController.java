@@ -75,7 +75,7 @@ public class StripeController {
 				LOGGER.info("Received token: " + stripeToken + " for user "
 						+ lUser.getUsername());
 			try {
-				Stripe.apiKey = Configuration.STRIPE_API_KEY;
+				Stripe.apiKey = Configuration.STRIPE_PRIVATE_API_KEY;
 
 				StripeCustomer lStoredStripeCustomer = stripeCustomerService
 						.get(lUser.getAccountId());
@@ -263,7 +263,7 @@ public class StripeController {
 				LOGGER.info("Entering updateSubscription");
 
 			User lUser = userService.getLoggedInUser();
-			Stripe.apiKey = Configuration.STRIPE_API_KEY;
+			Stripe.apiKey = Configuration.STRIPE_PRIVATE_API_KEY;
 			StripeCustomer lStripeCustomer = stripeCustomerService.get(lUser
 					.getAccountId());
 
@@ -363,7 +363,7 @@ public class StripeController {
 				LOGGER.info("Entering ");
 
 			User lUser = userService.getLoggedInUser();
-			Stripe.apiKey = Configuration.STRIPE_API_KEY;
+			Stripe.apiKey = Configuration.STRIPE_PRIVATE_API_KEY;
 			StripeCustomer lStripeCustomer = stripeCustomerService.get(lUser
 					.getAccountId());
 
@@ -446,7 +446,7 @@ public class StripeController {
 				LOGGER.info("Entering ");
 
 			User lUser = userService.getLoggedInUser();
-			Stripe.apiKey = Configuration.STRIPE_API_KEY;
+			Stripe.apiKey = Configuration.STRIPE_PRIVATE_API_KEY;
 			StripeCustomer lStripeCustomer = stripeCustomerService.get(lUser
 					.getAccountId());
 			if (lStripeCustomer != null) {
@@ -479,7 +479,7 @@ public class StripeController {
 			List<ValidationError> errors = new ArrayList<ValidationError>();
 			User lUser = userService.getLoggedInUser();
 			try {
-				Stripe.apiKey = Configuration.STRIPE_API_KEY;
+				Stripe.apiKey = Configuration.STRIPE_PRIVATE_API_KEY;
 
 				StripeCustomer lStoredStripeCustomer = stripeCustomerService
 						.get(lUser.getAccountId());
@@ -591,7 +591,7 @@ public class StripeController {
 			List<ValidationError> errors = new ArrayList<ValidationError>();
 			User lUser = userService.getLoggedInUser();
 			try {
-				Stripe.apiKey = Configuration.STRIPE_API_KEY;
+				Stripe.apiKey = Configuration.STRIPE_PRIVATE_API_KEY;
 
 				StripeCustomer lStoredStripeCustomer = stripeCustomerService
 						.get(lUser.getAccountId());

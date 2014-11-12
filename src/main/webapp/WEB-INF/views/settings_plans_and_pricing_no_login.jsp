@@ -58,7 +58,8 @@
 	<section id="price">
 		<h2 class="text-center gray">Plans and Pricing</h2>
 		<p class="text-center page_sub_heading">
-			Please <a href="mailto:anshu@skok.co?Subject=Plans%20and%20Pricing">Contact
+			Try paid plans FREE for 30 days. Please <a
+				href="mailto:support@skok.co?Subject=Plans%20and%20Pricing">Contact
 				Us</a> if you need additional Storage or Bandwidth
 		</p>
 		<!-- 		<div class="line">
@@ -77,8 +78,12 @@
 				</div>
 				<div class="package_details">
 					<div class="package_feature">
+						<span>FREE</span>
+						<div>&nbsp;</div>
+					</div>
+					<div class="package_feature">
 						<span>Bandwidth</span>
-						<div>${canonicalPlanFreeNetworkBandwidth}&nbsp;per month</div>
+						<div>${canonicalPlanFreeNetworkBandwidth}&nbsp;permonth</div>
 					</div>
 					<br />
 					<div class="package_feature">
@@ -99,8 +104,12 @@
 				</div>
 				<div class="package_details">
 					<div class="package_feature">
+						<span>FREE for 30 days</span>
+						<div>&nbsp;</div>
+					</div>
+					<div class="package_feature">
 						<span>Bandwidth</span>
-						<div>${canonicalPlanMicroNetworkBandwidth}&nbsp;per month</div>
+						<div>${canonicalPlanMicroNetworkBandwidth}&nbsp;permonth</div>
 					</div>
 					<br>
 					<div class="package_feature">
@@ -121,8 +130,12 @@
 				</div>
 				<div class="package_details">
 					<div class="package_feature">
+						<span>FREE for 30 days</span>
+						<div>&nbsp;</div>
+					</div>
+					<div class="package_feature">
 						<span>Bandwidth</span>
-						<div>${canonicalPlanSmallNetworkBandwidth}&nbsp;per month</div>
+						<div>${canonicalPlanSmallNetworkBandwidth}&nbsp;permonth</div>
 					</div>
 					<br>
 					<div class="package_feature">
@@ -143,8 +156,12 @@
 				</div>
 				<div class="package_details">
 					<div class="package_feature">
+						<span>FREE for 30 days</span>
+						<div>&nbsp;</div>
+					</div>
+					<div class="package_feature">
 						<span>Bandwidth</span>
-						<div>${canonicalPlanMediumNetworkBandwidth}&nbsp;per month</div>
+						<div>${canonicalPlanMediumNetworkBandwidth}&nbsp;permonth</div>
 					</div>
 					<br>
 					<div class="package_feature">
@@ -165,8 +182,12 @@
 				</div>
 				<div class="package_details">
 					<div class="package_feature">
+						<span>FREE for 30 days</span>
+						<div>&nbsp;</div>
+					</div>
+					<div class="package_feature">
 						<span>Bandwidth</span>
-						<div>${canonicalPlanLargeNetworkBandwidth}&nbsp;per month</div>
+						<div>${canonicalPlanLargeNetworkBandwidth}&nbsp;permonth</div>
 					</div>
 					<br>
 					<div class="package_feature">

@@ -704,7 +704,7 @@ public class StripeController {
 
 				lHtmlFormattedMessage.append("<p>Hi,</p>");
 				lHtmlFormattedMessage
-						.append("<p class=\"lead\">We have received your payment for your Skok subscription. You can keep this receipt for your records. Feel free to reach out to us at anshu@skok.co.</p>");
+						.append("<p class=\"lead\">We have received your payment for your Skok subscription. You can keep this receipt for your records. Feel free to reach out to us at support@skok.co.</p>");
 				lHtmlFormattedMessage.append("<p><b>Skok Receipt</b></p>");
 				lHtmlFormattedMessage.append("<p>Plan: "
 						+ lStripeCustomer.getCanonicalPlanId() + "</p>");

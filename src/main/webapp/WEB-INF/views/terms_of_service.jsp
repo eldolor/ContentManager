@@ -493,7 +493,7 @@
 
 
 				<label>16. Questions about the Terms of Service should be
-					sent to anshu@skok.co.</label>
+					sent to support@skok.co.</label>
 			</div>
 
 

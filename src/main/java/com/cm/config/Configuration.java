@@ -8,14 +8,14 @@ public class Configuration {
 	private static final String STRIPE_PRIVATE_API_KEY_PROD = "sk_live_4aEirz6nwUZNsh7DggmeHREZ";
 	
 	//DEV
-	private static final String DOMAIN = "skok-dev.appspot.com";
-	public static final String STRIPE_PRIVATE_API_KEY = STRIPE_PRIVATE_API_KEY_TEST;
-	public static final String STRIPE_PUBLIC_API_KEY = STRIPE_PUBLIC_API_KEY_TEST;
+//	private static final String DOMAIN = "skok-dev.appspot.com";
+//	public static final String STRIPE_PRIVATE_API_KEY = STRIPE_PRIVATE_API_KEY_TEST;
+//	public static final String STRIPE_PUBLIC_API_KEY = STRIPE_PUBLIC_API_KEY_TEST;
 	
 	//PROD
-//	private static final String DOMAIN = "skok.co";
-//	public static final String STRIPE_PRIVATE_API_KEY = STRIPE_PRIVATE_API_KEY_PROD;
-//	public static final String STRIPE_PUBLIC_API_KEY = STRIPE_PUBLIC_API_KEY_PROD;
+	private static final String DOMAIN = "skok.co";
+	public static final String STRIPE_PRIVATE_API_KEY = STRIPE_PRIVATE_API_KEY_PROD;
+	public static final String STRIPE_PUBLIC_API_KEY = STRIPE_PUBLIC_API_KEY_PROD;
 	
 	public static final String CURRENT_SDK_VERSION = "1.1";
 	
@@ -27,7 +27,7 @@ public class Configuration {
 	public static final String SITE_NAME = "Skok";
 	//Dev
 	public static final String FORGOT_PASSWORD_URL = "https://"+ DOMAIN +"/forgotpassword";
-	public static final String FROM_EMAIL_ADDRESS = "anshu@skok.co";
+	public static final String FROM_EMAIL_ADDRESS = "support@skok.co";
 	public static final String FROM_NAME = "Skok";
 	
 	public static final String GCS_STORAGE_BUCKET = DOMAIN + "/media";

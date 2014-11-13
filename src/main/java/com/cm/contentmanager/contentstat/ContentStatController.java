@@ -66,8 +66,10 @@ public class ContentStatController {
 				LOGGER.info("Exiting");
 		}
 	}
+
 	@RequestMapping(value = "/analytics/applications/{tour}", method = RequestMethod.GET)
-	public ModelAndView displayApplications(@PathVariable String tour, ModelMap model) {
+	public ModelAndView displayApplications(@PathVariable String tour,
+			ModelMap model) {
 		if (LOGGER.isLoggable(Level.INFO))
 			LOGGER.info("Entering");
 		try {
@@ -388,14 +390,14 @@ public class ContentStatController {
 						.getApplicationsByAccountId(account.getId(), false);
 				// for each application in the account
 				for (Application application : lApplications) {
-					//over the next 
-					long lDelayInMs =  new Random().nextInt(60 * 1000);
+					// over the next
+					long lDelayInMs = new Random().nextInt(60 * 1000);
 					if (LOGGER.isLoggable(Level.INFO))
-						LOGGER.info("Adding delay of "
-								+ lDelayInMs
+						LOGGER.info("Adding delay of " + lDelayInMs
 								+ " ms before attempting to process");
 					Utils.triggerRollupMessage(application.getId(),
-							lSod.getTimeInMillis(), lEod.getTimeInMillis(), lDelayInMs);
+							lSod.getTimeInMillis(), lEod.getTimeInMillis(),
+							lDelayInMs);
 				}
 			}
 			response.setStatus(HttpServletResponse.SC_OK);
@@ -519,11 +521,10 @@ public class ContentStatController {
 						LOGGER.info("Processing: "
 								+ lSod.getTime().toLocaleString() + "::"
 								+ lEod.getTime().toLocaleString());
-						//over the next 
-						long lDelayInMs =  new Random().nextInt(60 * 1000);
+						// over the next
+						long lDelayInMs = new Random().nextInt(60 * 1000);
 						if (LOGGER.isLoggable(Level.INFO))
-							LOGGER.info("Adding delay of "
-									+ lDelayInMs
+							LOGGER.info("Adding delay of " + lDelayInMs
 									+ " ms before attempting to process");
 						Utils.triggerRollupMessage(application.getId(),
 								lSod.getTimeInMillis(), lEod.getTimeInMillis(),
@@ -564,14 +565,16 @@ public class ContentStatController {
 						.getApplicationsByAccountId(account.getId(), false);
 				// for each application in the account
 				for (Application application : lApplications) {
-					//over the next 1 hr
-					long lDelayInMs =  new Random().nextInt(60 *60 * 1000);
+					// over the next 1 hr
+					long lDelayInMs = new Random().nextInt(60 * 60 * 1000);
 					if (LOGGER.isLoggable(Level.INFO))
 						LOGGER.info("Adding delay of "
 								+ lDelayInMs
-								+ " ms before attempting to rollup daily summary for application " + application.getId());
+								+ " ms before attempting to rollup daily summary for application "
+								+ application.getId());
 					Utils.triggerRollupMessage(application.getId(),
-							lSod.getTimeInMillis(), lEod.getTimeInMillis(), lDelayInMs);
+							lSod.getTimeInMillis(), lEod.getTimeInMillis(),
+							lDelayInMs);
 				}
 			}
 			response.setStatus(HttpServletResponse.SC_OK);
@@ -632,6 +635,16 @@ public class ContentStatController {
 			lContentStat.setApplicationId(pContentStat.getApplicationId());
 			lContentStat.setContentGroupId(pContentStat.getContentGroupId());
 			lContentStat.setContentId(pContentStat.getContentId());
+
+			lContentStat.setAccuracy(pContentStat.getAccuracy());
+			lContentStat.setAltitude(pContentStat.getAltitude());
+			lContentStat.setBearing(pContentStat.getBearing());
+			lContentStat.setDeviceId(pContentStat.getDeviceId());
+			lContentStat.setLatitude(pContentStat.getLatitude());
+			lContentStat.setLongitude(pContentStat.getLongitude());
+			lContentStat.setProvider(pContentStat.getProvider());
+			lContentStat.setSpeed(pContentStat.getSpeed());
+
 			lContentStat.setEventTimeMs(pContentStat.getEventTimeMs());
 			lContentStat.setEventTimeZoneOffsetMs(pContentStat
 					.getEventTimeZoneOffsetMs());
@@ -680,6 +693,16 @@ public class ContentStatController {
 					.getEventTimeZoneOffsetMs());
 			lContentDownloadStat.setSizeInBytes(pContentDownloadStat
 					.getSizeInBytes());
+			
+			lContentDownloadStat.setAccuracy(pContentDownloadStat.getAccuracy());
+			lContentDownloadStat.setAltitude(pContentDownloadStat.getAltitude());
+			lContentDownloadStat.setBearing(pContentDownloadStat.getBearing());
+			lContentDownloadStat.setDeviceId(pContentDownloadStat.getDeviceId());
+			lContentDownloadStat.setLatitude(pContentDownloadStat.getLatitude());
+			lContentDownloadStat.setLongitude(pContentDownloadStat.getLongitude());
+			lContentDownloadStat.setProvider(pContentDownloadStat.getProvider());
+			lContentDownloadStat.setSpeed(pContentDownloadStat.getSpeed());
+
 			return lContentDownloadStat;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -695,7 +718,7 @@ public class ContentStatController {
 		lContentStat.setContentGroupId(contentGroupId);
 		lContentStat.setContentId(contentId);
 		lContentStat.setEventTimeMs(eventTime);
-		lContentStat.setEventTimeZoneOffsetMs((long)TimeZone
+		lContentStat.setEventTimeZoneOffsetMs((long) TimeZone
 				.getTimeZone("UTC").getRawOffset());
 		lContentStat.setEventType("impression");
 		return lContentStat;

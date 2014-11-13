@@ -163,14 +163,14 @@
    <code>&lt;uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /&gt;</code>
     &lt;!-- Required to capture the usage statistics of the content --&gt;
     <code>&lt;uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /&gt;
-    &lt;uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /&gt;
     &lt;uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /&gt;</code>
 
     &lt;!-- Required to poll the state of the network connection  and respond to changes --&gt;
     <code>&lt;uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /&gt;</code>
 
     &lt;!-- Required to check whether Wi-Fi is enabled --&gt;
-    <code>&lt;uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /&gt;</code>
+    <code>&lt;uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /&gt; 
+    &lt;uses-permission android:name="android.permission.READ_PHONE_STATE" /&gt;</code>
     &lt;!-- End: SDK related --&gt;
 
 					</pre>

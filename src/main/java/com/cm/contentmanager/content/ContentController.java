@@ -41,6 +41,8 @@ import com.cm.util.ValidationError;
 import com.google.appengine.api.blobstore.BlobInfo;
 import com.google.appengine.api.blobstore.BlobInfoFactory;
 import com.google.appengine.api.blobstore.BlobKey;
+import com.google.appengine.api.blobstore.BlobstoreService;
+import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 
 @Controller
 public class ContentController {
@@ -55,6 +57,8 @@ public class ContentController {
 
 	private static final Logger LOGGER = Logger
 			.getLogger(ContentController.class.getName());
+	private BlobstoreService mBlobstoreService = BlobstoreServiceFactory
+			.getBlobstoreService();
 	private final BlobInfoFactory mBlobInfoFactory = new BlobInfoFactory();
 
 	/**
@@ -482,8 +486,11 @@ public class ContentController {
 					LOGGER.info("URI is null. Skipping...");
 				return;
 			}
-			BlobKey blobKey = new BlobKey(lContent.getUri());
-			final BlobInfo blobInfo = mBlobInfoFactory.loadBlobInfo(blobKey);
+			BlobKey lGsBlobKey = mBlobstoreService
+					.createGsBlobKey(lContent.getUri());
+			
+			//BlobKey blobKey = new BlobKey(lContent.getUri());
+			final BlobInfo blobInfo = mBlobInfoFactory.loadBlobInfo(lGsBlobKey);
 			if (blobInfo != null) {
 				if (LOGGER.isLoggable(Level.INFO))
 					LOGGER.info("Content size is " + blobInfo.getSize());

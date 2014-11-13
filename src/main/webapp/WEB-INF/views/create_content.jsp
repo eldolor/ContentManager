@@ -49,7 +49,15 @@
 					<ul class="inline-list">
 						<!-- Using radio buttons each switch turns off the other -->
 						<li><fieldset>
-								<legend>Image</legend>
+								<legend>
+									Image<span data-tooltip class="has-tip"
+										title="Skok auto-sizes your images, to match the
+										screen dimensions of the mobile device, before being
+										downloaded. This greatly reduces the storage and memory
+										footprint on mobile devices, allows for faster downloads, and
+										saves bandwidth utilization.">&nbsp;<i
+										class="fi-info light_gray"></i></span>
+								</legend>
 								<div class="switch radius">
 									<input id="content_type_image" type="radio" checked="checked"
 										class="form-control" name="content_type_group"> <label
@@ -105,11 +113,11 @@
 				</div>
 			</div>
 			<div>
-<!-- 				<a id="upload_content" href="javascript:void(0);">Click here to
+				<!-- 				<a id="upload_content" href="javascript:void(0);">Click here to
 					upload content</a>
- -->				<div id="content_dropbox">
-					<span class="message">Drag-n-Drop content here to
-						upload</span>
+ -->
+				<div id="content_dropbox">
+					<span class="message">Drag-n-Drop content here to upload</span>
 				</div>
 			</div>
 			<div id="cm_errors_container" style="display: none">

@@ -316,8 +316,8 @@ public class ApplicationController {
 				// trigger message to update quota
 				Utils.triggerUpdateQuotaUtilizationMessage(userService
 						.getLoggedInUser().getAccountId(), 0);
-				Utils.triggerUpdateBandwidthUtilizationMessage(
-						lApplication.getId(), 0L, 0);
+//				Utils.triggerUpdateBandwidthUtilizationMessage(
+//						lApplication.getId(), 0L, 0);
 
 				response.setStatus(HttpServletResponse.SC_CREATED);
 				return null;

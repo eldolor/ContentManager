@@ -160,9 +160,9 @@ public class ContentStatController {
 				}
 				lTotalSizeInBytes += lContentDownloadStat.getSizeInBytes();
 			}
+			//gather bandwidth consumed upfront, instead of reading from the datastore
 			Utils.triggerUpdateBandwidthUtilizationMessage(lApplicationId,
 					lTotalSizeInBytes, 0);
-			response.setStatus(HttpServletResponse.SC_CREATED);
 
 			Result lResult = new Result();
 			lResult.setResult(Result.SUCCESS);

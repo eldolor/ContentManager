@@ -429,13 +429,13 @@ public class Utils {
 				LOGGER.info("sendEmail: Html body part: " + htmlBody);
 		}
 
-		MimeBodyPart textPart = new MimeBodyPart();
-		if (textBody != null) {
-			textPart.setContent(textBody, "text/plain");
-			mp.addBodyPart(textPart);
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("sendEmail: Text body part: " + textBody);
-		}
+//		MimeBodyPart textPart = new MimeBodyPart();
+//		if (textBody != null) {
+//			textPart.setContent(textBody, "text/plain");
+//			mp.addBodyPart(textPart);
+//			if (LOGGER.isLoggable(Level.INFO))
+//				LOGGER.info("sendEmail: Text body part: " + textBody);
+//		}
 
 		Properties props = new Properties();
 		Session session = Session.getDefaultInstance(props, null);

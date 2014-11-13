@@ -130,7 +130,7 @@
 				<div class="visible">
 					<h2 class="white">Sign Up Now! It's easy and free.</h2>
 					<br> <a href="<c:url value="/signup"/>"
-						class="button radius btn-default">Sign Up </a>
+						class="button radius btn-default">Get Started</a>
 				</div>
 			</div>
 		</div>
@@ -147,9 +147,10 @@
 			<div class="item">
 				<img src="/resources/images/cm/Letter-C-orange-icon.png" alt="owl" />
 				<h3 class="gray">Cloud-driven Architecture</h3>
-				<div class="gray ">Cloud-driven architecture that is more
-					efficient and cost-effective. Powered by Google AppEngine and
-					Amazon Web Services</div>
+				<div class="gray ">Powered by Google Cloud Platform, which
+					provides very high levels of reliability, performance and
+					availability. Content is delivered by a globally distributed
+					network of Google servers.</div>
 			</div>
 
 			<div class="item">
@@ -160,6 +161,16 @@
 					experience by allowing users of your Mobile Apps to engage with
 					your rich content, even if they lose their data connection.</div>
 			</div>
+			<div class="item">
+				<img src="/resources/images/cm/Letter-A-orange-icon.png" alt="img" />
+				<h3 class="gray">Auto-sizing of Images</h3>
+				<div class="gray ">Skok auto-sizes your images, to match the
+					screen dimensions of the mobile device, before being downloaded.
+					This greatly reduces the storage and memory footprint on mobile
+					devices, allows for faster downloads, and saves bandwidth
+					utilization.</div>
+			</div>
+
 
 			<div class="item">
 				<img src="/resources/images/cm/Letter-G-orange-icon.png" alt="img" />

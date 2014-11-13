@@ -37,7 +37,7 @@
 				<h2 class="text-center">Overview</h2>
 				<p class="text-center page_sub_heading">Advanced Content
 					Management and Delivery platform for your Mobile Apps</p>
-<!-- 				<div class="line">
+				<!-- 				<div class="line">
 					<img src="/resources/images/cm/line.png" alt="line" />
 				</div>
  -->
@@ -47,10 +47,10 @@
 						<h3 class="gray">Mobile Content Requirements</h3>
 						<p>Mobile is pushing ageing web architectures to the brink.
 							The three-tier web architecture won&apos;t deliver any more. At
-							the same time, the content requirements of your Mobile Apps continue
-							to expand. The performance unknowns of the last wireless mile has
-							further exacerbated the problem of delivering rich content,
-							images and videos, to your Mobile Apps.</p>
+							the same time, the content requirements of your Mobile Apps
+							continue to expand. The performance unknowns of the last wireless
+							mile has further exacerbated the problem of delivering rich
+							content, images and videos, to your Mobile Apps.</p>
 						<br>
 					</div>
 					<div>
@@ -62,6 +62,15 @@
 						<p>This elevates the user experience of your Mobile Apps, by
 							allowing users to engage with your rich content, even if they
 							lose their data connection.</p>
+						<p>
+					</div>
+					<p class="clearfix"></p>
+					<div>
+						<h3 class="gray">Auto-sizing of Images</h3>
+						<p>Skok auto-sizes your images, to match the screen dimensions
+							of the mobile device, before being downloaded. This greatly
+							reduces the storage and memory footprint on mobile devices,
+							allows for faster downloads, and saves bandwidth utilization.</p>
 						<p>
 					</div>
 					<p class="clearfix"></p>
@@ -81,8 +90,8 @@
 					<p class="clearfix"></p>
 					<div>
 						<h3 class="gray">No Extra Coding Required</h3>
-						<p>The platform downloads and stores content on
-							your Mobile Apps, without requiring to write any code.</p>
+						<p>The platform downloads and stores content on your Mobile
+							Apps, without requiring to write any code.</p>
 						<p>In contrast, Google Play requires application hooks within
 							your Mobile Apps, to handle situations where expansion files have
 							not yet been downloaded and processed.</p>
@@ -90,7 +99,8 @@
 					<p class="clearfix"></p>
 					<div>
 						<h3 class="gray">Easily-pluggable &amp; Feature-rich SDK</h3>
-						<p>SDK that provides a simple API to access content within your Mobile Apps</p>
+						<p>SDK that provides a simple API to access content within
+							your Mobile Apps</p>
 					</div>
 					<p class="clearfix"></p>
 					<div>
@@ -153,6 +163,13 @@
 							</div> <span>Streamlined Content Delivery</span>
 							<p class="clearfix"></p>
 						</li>
+						<li>
+							<div>
+								<i class="fi-checkbox"></i>
+							</div> <span>Auto-sizing of Images</span>
+							<p class="clearfix"></p>
+						</li>
+
 						<li>
 							<div>
 								<i class="fi-checkbox"></i>

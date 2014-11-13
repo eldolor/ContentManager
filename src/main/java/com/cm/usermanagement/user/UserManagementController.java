@@ -165,8 +165,8 @@ public class UserManagementController {
 				// update utilization
 				Utils.triggerUpdateQuotaUtilizationMessage(
 						lApplication.getAccountId(), 10000);
-				Utils.triggerUpdateBandwidthUtilizationMessage(
-						lApplication.getId(), 0L, 10000);
+//				Utils.triggerUpdateBandwidthUtilizationMessage(
+//						lApplication.getId(), 0L, 10000);
 
 				response.setStatus(HttpServletResponse.SC_CREATED);
 				return null;

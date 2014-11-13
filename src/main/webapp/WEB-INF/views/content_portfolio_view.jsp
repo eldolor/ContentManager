@@ -96,6 +96,17 @@ var mDisplayAsGrid = true;
 							</div>
 							<div class="blog_snippet">
 								<div class="blog_details float_left">
+									<span class="title green">Auto-sizing of Images</span> <span
+										class="date">Skok auto-sizes your images, to match the
+										screen dimensions of the mobile device, before being
+										downloaded. This greatly reduces the storage and memory
+										footprint on mobile devices, allows for faster downloads, and
+										saves bandwidth utilization.</span>
+								</div>
+								<div class="clearfix"></div>
+							</div>
+							<div class="blog_snippet">
+								<div class="blog_details float_left">
 									<span class="title green">Tags</span> <span class="date">You
 										can tag your content by creating custom tags. The tags are
 										used within the SDK, to access this content for display on

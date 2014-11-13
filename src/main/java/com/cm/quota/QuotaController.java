@@ -279,29 +279,29 @@ public class QuotaController {
 		}
 	}
 
-	@RequestMapping(value = "/tasks/bandwidth/utilization/update/{id}", method = RequestMethod.POST)
-	public void updateBandwidthUtilizaton(@PathVariable Long id,
-			HttpServletResponse response) {
-		try {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering");
-			Content lContent = contentService.get(id);
-			Application lApplication = applicationService
-					.getApplication(lContent.getApplicationId());
-			quotaService.upsertBandwidthUtilization(lApplication,
-					lContent.getSizeInBytes());
-
-			response.setStatus(HttpServletResponse.SC_OK);
-		} catch (Throwable e) {
-			// handled by GcmManager
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
-			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-		} finally {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting");
-
-		}
-	}
+//	@RequestMapping(value = "/tasks/bandwidth/utilization/update/{id}", method = RequestMethod.POST)
+//	public void updateBandwidthUtilizaton(@PathVariable Long id,
+//			HttpServletResponse response) {
+//		try {
+//			if (LOGGER.isLoggable(Level.INFO))
+//				LOGGER.info("Entering");
+//			Content lContent = contentService.get(id);
+//			Application lApplication = applicationService
+//					.getApplication(lContent.getApplicationId());
+//			quotaService.upsertBandwidthUtilization(lApplication,
+//					lContent.getSizeInBytes());
+//
+//			response.setStatus(HttpServletResponse.SC_OK);
+//		} catch (Throwable e) {
+//			// handled by GcmManager
+//			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+//			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+//		} finally {
+//			if (LOGGER.isLoggable(Level.INFO))
+//				LOGGER.info("Exiting");
+//
+//		}
+//	}
 
 	@RequestMapping(value = "/tasks/bandwidth/utilization/update/{applicationId}/{sizeInBytes}", method = RequestMethod.POST)
 	public void updateBandwidthUtilizaton2(@PathVariable Long applicationId,

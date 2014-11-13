@@ -72,12 +72,24 @@ var mDisplayAsGrid = false;
 							<a id="content_tips" href="#panel2-1">Content Tips</a>
 						</dd>
 					</dl>
+
 					<div class="tabs-content">
 						<div class="content active" id="panel2-1">
 							<div class="blog_snippet">
 								<div class="blog_details float_left">
 									<span class="title green">Content Types</span> <span
 										class="date">We currently support images and videos</span>
+								</div>
+								<div class="clearfix"></div>
+							</div>
+							<div class="blog_snippet">
+								<div class="blog_details float_left">
+									<span class="title green">Auto-sizing of Images</span> <span
+										class="date">Skok auto-sizes your images, to match the
+										screen dimensions of the mobile device, before being
+										downloaded. This greatly reduces the storage and memory
+										footprint on mobile devices, allows for faster downloads, and
+										saves bandwidth utilization.</span>
 								</div>
 								<div class="clearfix"></div>
 							</div>

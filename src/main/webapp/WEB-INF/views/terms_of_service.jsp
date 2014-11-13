@@ -56,7 +56,7 @@
 					Continued use of the Service after any such changes shall
 					constitute your consent to such changes. You can review the most
 					current version of the Terms of Service at any time at:
-					https://skok.co/site/terms </label>
+					http://skok.co/site/terms </label>
 			</div>
 			<div class="clearfix"></div>
 			<div class="separator"></div>

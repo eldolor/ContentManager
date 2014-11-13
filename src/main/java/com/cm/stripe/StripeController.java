@@ -700,23 +700,28 @@ public class StripeController {
 					return;
 				}
 				String lInvoice = (String) lCharge.get("invoice");
-				StringBuilder lHtmlFormattedMessage = new StringBuilder();
+				StringBuilder lHtmlFormattedHeader = new StringBuilder();
 
-				lHtmlFormattedMessage.append("<p>Hi,</p>");
-				lHtmlFormattedMessage
-						.append("<p class=\"lead\">We have received your payment for your Skok subscription. You can keep this receipt for your records. Feel free to reach out to us at support@skok.co.</p>");
-				lHtmlFormattedMessage.append("<p><b>Skok Receipt</b></p>");
-				lHtmlFormattedMessage.append("<p>Plan: "
+				lHtmlFormattedHeader.append("<p class=\"lead\">Hi,</p>");
+				lHtmlFormattedHeader
+						.append("<p class=\"lead\">We have received your payment for your Skok subscription. You can keep this receipt for your records.</p>");
+				lHtmlFormattedHeader
+						.append("<p>&nbsp;</p><p class=\"lead\">Thank you!</p>");
+
+				StringBuilder lHtmlFormattedCallout = new StringBuilder();
+				lHtmlFormattedCallout
+						.append("<p><b><u>Skok Receipt</u></b></p>");
+				lHtmlFormattedCallout.append("<p>Plan: "
 						+ lStripeCustomer.getCanonicalPlanId() + "</p>");
 
-				lHtmlFormattedMessage.append("<p>Amount: $" + bg3 + "USD</p>");
-				lHtmlFormattedMessage.append("<p>Charged to: " + lBrand
+				lHtmlFormattedCallout.append("<p>Amount: $" + bg3 + "USD</p>");
+				lHtmlFormattedCallout.append("<p>Charged to: " + lBrand
 						+ " card ending in " + lLast4 + "</p>");
-				lHtmlFormattedMessage
+				lHtmlFormattedCallout
 						.append("<p>Invoice: " + lInvoice + "</p>");
-				lHtmlFormattedMessage.append("<p>&nbsp;</p><p>Thank you!</p>");
-				String lEmailTemplate = lEmailBuilder
-						.build(lHtmlFormattedMessage.toString());
+				String lEmailTemplate = lEmailBuilder.build(
+						lHtmlFormattedHeader.toString(),
+						lHtmlFormattedCallout.toString());
 				// Email sent by SKOK
 				// try {
 				// Utils.sendEmail(Configuration.FROM_EMAIL_ADDRESS,
@@ -768,30 +773,33 @@ public class StripeController {
 						return;
 					}
 					String lInvoice = (String) lCharge.get("invoice");
-					StringBuilder lHtmlFormattedMessage = new StringBuilder();
+					StringBuilder lHtmlFormattedHeader = new StringBuilder();
 
-					lHtmlFormattedMessage.append("<p>Hi,</p>");
-					lHtmlFormattedMessage
+					lHtmlFormattedHeader.append("<p class=\"lead\">Hi,</p>");
+					lHtmlFormattedHeader
 							.append("<p class=\"lead\">We were unable to process your payment for your Skok subscription.</p>");
 
-					lHtmlFormattedMessage
-							.append("<p>Please login to http://skok.co and update your Billing information.</p>");
+					lHtmlFormattedHeader
+							.append("<p class=\"lead\">Please login to http://skok.co and update your Billing information.</p>");
+					lHtmlFormattedHeader
+							.append("<p>&nbsp;</p><p class=\"lead\">Thank you!</p>");
+
+					StringBuilder lHtmlFormattedCallout = new StringBuilder();
 					CanonicalPlan lPlan = CanonicalPlan
 							.findById(lStripeCustomer.getCanonicalPlanId());
 
-					lHtmlFormattedMessage.append("<p>Plan: "
+					lHtmlFormattedCallout.append("<p>Plan: "
 							+ lPlan.getPlanName() + "</p>");
 
-					lHtmlFormattedMessage.append("<p>Amount: $" + bg3
+					lHtmlFormattedCallout.append("<p>Amount: $" + bg3
 							+ "USD</p>");
-					lHtmlFormattedMessage.append("<p>Charged to: " + lBrand
+					lHtmlFormattedCallout.append("<p>Charged to: " + lBrand
 							+ " card ending in " + lLast4 + "</p>");
-					lHtmlFormattedMessage.append("<p>Invoice: " + lInvoice
+					lHtmlFormattedCallout.append("<p>Invoice: " + lInvoice
 							+ "</p>");
-					lHtmlFormattedMessage
-							.append("<p>&nbsp;</p><p>Thank you!</p>");
-					String lEmailTemplate = lEmailBuilder
-							.build(lHtmlFormattedMessage.toString());
+					String lEmailTemplate = lEmailBuilder.build(
+							lHtmlFormattedHeader.toString(),
+							lHtmlFormattedCallout.toString());
 					try {
 						Utils.sendEmail(Configuration.FROM_EMAIL_ADDRESS,
 								Configuration.FROM_NAME,
@@ -822,22 +830,26 @@ public class StripeController {
 					response.setStatus(HttpServletResponse.SC_OK);
 					return;
 				}
-				StringBuilder lHtmlFormattedMessage = new StringBuilder();
+				StringBuilder lHtmlFormattedHeader = new StringBuilder();
 
-				lHtmlFormattedMessage.append("<p>Hi,</p>");
-				lHtmlFormattedMessage
+				lHtmlFormattedHeader.append("<p class=\"lead\">Hi,</p>");
+				lHtmlFormattedHeader
 						.append("<p class=\"lead\">You have successfully updated your payment information for your Skok subscription.</p>");
+				lHtmlFormattedHeader
+						.append("<p>&nbsp;</p><p class=\"lead\">Thank you!</p>");
+
+				StringBuilder lHtmlFormattedCallout = new StringBuilder();
 				CanonicalPlan lPlan = CanonicalPlan.findById(lStripeCustomer
 						.getCanonicalPlanId());
 
-				lHtmlFormattedMessage.append("<p>Plan: " + lPlan.getPlanName()
+				lHtmlFormattedCallout.append("<p>Plan: " + lPlan.getPlanName()
 						+ "</p>");
 
-				lHtmlFormattedMessage.append("<p>Card: " + lBrand
+				lHtmlFormattedCallout.append("<p>Card: " + lBrand
 						+ " card ending in " + lLast4 + "</p>");
-				lHtmlFormattedMessage.append("<p>&nbsp;</p><p>Thank you!</p>");
-				String lEmailTemplate = lEmailBuilder
-						.build(lHtmlFormattedMessage.toString());
+				String lEmailTemplate = lEmailBuilder.build(
+						lHtmlFormattedHeader.toString(),
+						lHtmlFormattedCallout.toString());
 				try {
 					Utils.sendEmail(Configuration.FROM_EMAIL_ADDRESS,
 							Configuration.FROM_NAME,
@@ -866,22 +878,26 @@ public class StripeController {
 					response.setStatus(HttpServletResponse.SC_OK);
 					return;
 				}
-				StringBuilder lHtmlFormattedMessage = new StringBuilder();
+				StringBuilder lHtmlFormattedHeader = new StringBuilder();
 
-				lHtmlFormattedMessage.append("<p>Hi,</p>");
-				lHtmlFormattedMessage
+				lHtmlFormattedHeader.append("<p class=\"lead\">Hi,</p>");
+				lHtmlFormattedHeader
 						.append("<p class=\"lead\">You have successfully subscribed to the following plan.</p>");
+				lHtmlFormattedHeader
+						.append("<p>&nbsp;</p><p class=\"lead\">Thank you!</p>");
+
+				StringBuilder lHtmlFormattedCallout = new StringBuilder();
 				CanonicalPlan lPlan = CanonicalPlan.findById(lStripeCustomer
 						.getCanonicalPlanId());
 
-				lHtmlFormattedMessage.append("<p>Plan: " + lPlan.getPlanName()
+				lHtmlFormattedCallout.append("<p>Plan: " + lPlan.getPlanName()
 						+ "</p>");
-				lHtmlFormattedMessage.append("<p>Amount: " + lPlan.getDisplayPrice()
-						+ "</p>");
+				lHtmlFormattedCallout.append("<p>Amount: "
+						+ lPlan.getDisplayPrice() + "</p>");
 
-				lHtmlFormattedMessage.append("<p>&nbsp;</p><p>Thank you!</p>");
-				String lEmailTemplate = lEmailBuilder
-						.build(lHtmlFormattedMessage.toString());
+				String lEmailTemplate = lEmailBuilder.build(
+						lHtmlFormattedHeader.toString(),
+						lHtmlFormattedCallout.toString());
 				try {
 					Utils.sendEmail(Configuration.FROM_EMAIL_ADDRESS,
 							Configuration.FROM_NAME,

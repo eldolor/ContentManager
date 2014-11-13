@@ -67,24 +67,24 @@ public class Utils {
 
 	}
 
-	public static void triggerUpdateBandwidthUtilizationMessage(Long pId,
-			long delayInMs) {
-		try {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering");
-			Queue queue = QueueFactory
-					.getQueue(Configuration.CONTENT_QUEUE_NAME);
-			TaskOptions taskOptions = TaskOptions.Builder
-					.withUrl("/tasks/bandwidth/utilization/update/" + pId)
-					.param("id", String.valueOf(pId)).method(Method.POST)
-					.countdownMillis(delayInMs);
-			queue.add(taskOptions);
-		} finally {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting");
-		}
-
-	}
+//	public static void triggerUpdateBandwidthUtilizationMessage(Long pId,
+//			long delayInMs) {
+//		try {
+//			if (LOGGER.isLoggable(Level.INFO))
+//				LOGGER.info("Entering");
+//			Queue queue = QueueFactory
+//					.getQueue(Configuration.CONTENT_QUEUE_NAME);
+//			TaskOptions taskOptions = TaskOptions.Builder
+//					.withUrl("/tasks/bandwidth/utilization/update/" + pId)
+//					.param("id", String.valueOf(pId)).method(Method.POST)
+//					.countdownMillis(delayInMs);
+//			queue.add(taskOptions);
+//		} finally {
+//			if (LOGGER.isLoggable(Level.INFO))
+//				LOGGER.info("Exiting");
+//		}
+//
+//	}
 
 	public static void triggerUpdateBandwidthUtilizationMessage(
 			Long applicationId, Long sizeInBytes, long delayInMs) {

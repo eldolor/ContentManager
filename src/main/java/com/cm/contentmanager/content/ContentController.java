@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.cm.config.Configuration;
 import com.cm.contentmanager.application.Application;
 import com.cm.contentmanager.application.ApplicationService;
 import com.cm.usermanagement.user.UserService;
@@ -43,6 +44,10 @@ import com.google.appengine.api.blobstore.BlobInfoFactory;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
+import com.google.appengine.tools.cloudstorage.GcsFilename;
+import com.google.appengine.tools.cloudstorage.GcsService;
+import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
+import com.google.appengine.tools.cloudstorage.RetryParams;
 
 @Controller
 public class ContentController {
@@ -60,6 +65,8 @@ public class ContentController {
 	private BlobstoreService mBlobstoreService = BlobstoreServiceFactory
 			.getBlobstoreService();
 	private final BlobInfoFactory mBlobInfoFactory = new BlobInfoFactory();
+	private final GcsService mGcsService = GcsServiceFactory
+			.createGcsService(RetryParams.getDefaultInstance());
 
 	/**
 	 * @param model
@@ -79,6 +86,7 @@ public class ContentController {
 				LOGGER.info("Exiting displayContent");
 		}
 	}
+
 	@RequestMapping(value = "/{applicationId}/{contentGroupId}/content/list", method = RequestMethod.GET)
 	public ModelAndView displayContentAsList(@PathVariable Long applicationId,
 			@PathVariable Long contentGroupId, ModelMap model) {
@@ -486,18 +494,29 @@ public class ContentController {
 					LOGGER.info("URI is null. Skipping...");
 				return;
 			}
-			BlobKey lGsBlobKey = mBlobstoreService
-					.createGsBlobKey(lContent.getUri());
-			
-			//BlobKey blobKey = new BlobKey(lContent.getUri());
-			final BlobInfo blobInfo = mBlobInfoFactory.loadBlobInfo(lGsBlobKey);
-			if (blobInfo != null) {
-				if (LOGGER.isLoggable(Level.INFO))
-					LOGGER.info("Content size is " + blobInfo.getSize());
-				contentService.updateContentSize(id, blobInfo.getSize());
-			} else {
-				LOGGER.warning("No size found for id " + id);
-			}
+			String lUri[] = lContent.getUri().split(
+					"/gs/" + Configuration.GCS_STORAGE_BUCKET + "/");
+			GcsFilename lGcsFilename = new GcsFilename(
+					Configuration.GCS_STORAGE_BUCKET, lUri[1]);
+
+			long lFileSize = mGcsService.getMetadata(lGcsFilename).getLength();
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Content size is " + lFileSize + " bytes");
+			contentService.updateContentSize(id, lFileSize);
+
+			// BlobKey lGsBlobKey = mBlobstoreService.createGsBlobKey(lContent
+			// .getUri());
+			//
+			// // BlobKey blobKey = new BlobKey(lContent.getUri());
+			// final BlobInfo blobInfo =
+			// mBlobInfoFactory.loadBlobInfo(lGsBlobKey);
+			// if (blobInfo != null) {
+			// if (LOGGER.isLoggable(Level.INFO))
+			// LOGGER.info("Content size is " + blobInfo.getSize());
+			// contentService.updateContentSize(id, blobInfo.getSize());
+			// } else {
+			// LOGGER.warning("No size found for id " + id);
+			// }
 			response.setStatus(HttpServletResponse.SC_OK);
 		} catch (Throwable e) {
 			// handled by GcmManager

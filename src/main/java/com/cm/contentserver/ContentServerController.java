@@ -75,8 +75,6 @@ public class ContentServerController {
 	private final BlobInfoFactory mBlobInfoFactory = new BlobInfoFactory();
 	private final ImagesService mImagesService = ImagesServiceFactory
 			.getImagesService();
-	private final GcsService mGcsService = GcsServiceFactory
-			.createGcsService(RetryParams.getDefaultInstance());
 	private Cache mCache;
 
 	private static final Logger LOGGER = Logger

@@ -47,6 +47,7 @@ import com.stripe.model.Subscription;
 @Controller
 public class StripeController {
 
+	private static final String TEXT_HTML_CHARSET_UTF_8 = "text/html; charset=utf-8";
 	private static final Logger LOGGER = Logger
 			.getLogger(StripeController.class.getName());
 	@Autowired
@@ -702,11 +703,11 @@ public class StripeController {
 				String lInvoice = (String) lCharge.get("invoice");
 				StringBuilder lHtmlFormattedHeader = new StringBuilder();
 
-				lHtmlFormattedHeader.append("<p class=\"lead\">Hi,</p>");
+				lHtmlFormattedHeader.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">Hi,</p>");
 				lHtmlFormattedHeader
-						.append("<p class=\"lead\">We have received your payment for your Skok subscription. You can keep this receipt for your records.</p>");
+						.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">We have received your payment for your Skok subscription. You can keep this receipt for your records.</p>");
 				lHtmlFormattedHeader
-						.append("<p>&nbsp;</p><p class=\"lead\">Thank you!</p>");
+						.append("<p>&nbsp;</p><p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">Thank you!</p>");
 
 				StringBuilder lHtmlFormattedCallout = new StringBuilder();
 				lHtmlFormattedCallout
@@ -775,14 +776,14 @@ public class StripeController {
 					String lInvoice = (String) lCharge.get("invoice");
 					StringBuilder lHtmlFormattedHeader = new StringBuilder();
 
-					lHtmlFormattedHeader.append("<p class=\"lead\">Hi,</p>");
+					lHtmlFormattedHeader.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">Hi,</p>");
 					lHtmlFormattedHeader
-							.append("<p class=\"lead\">We were unable to process your payment for your Skok subscription.</p>");
+							.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">We were unable to process your payment for your Skok subscription.</p>");
 
 					lHtmlFormattedHeader
-							.append("<p class=\"lead\">Please login to http://skok.co and update your Billing information.</p>");
+							.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">Please login to http://skok.co and update your Billing information.</p>");
 					lHtmlFormattedHeader
-							.append("<p>&nbsp;</p><p class=\"lead\">Thank you!</p>");
+							.append("<p>&nbsp;</p><p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">Thank you!</p>");
 
 					StringBuilder lHtmlFormattedCallout = new StringBuilder();
 					CanonicalPlan lPlan = CanonicalPlan
@@ -801,11 +802,17 @@ public class StripeController {
 							lHtmlFormattedHeader.toString(),
 							lHtmlFormattedCallout.toString());
 					try {
-						Utils.sendEmail(Configuration.FROM_EMAIL_ADDRESS,
+						// Utils.sendEmail(Configuration.FROM_EMAIL_ADDRESS,
+						// Configuration.FROM_NAME,
+						// lStripeCustomer.getUsername(), "",
+						// Configuration.SITE_NAME + " Payment Failure",
+						// lEmailTemplate, TEXT_HTML_CHARSET_UTF_8);
+						Utils.sendMultipartEmail(
+								Configuration.FROM_EMAIL_ADDRESS,
 								Configuration.FROM_NAME,
 								lStripeCustomer.getUsername(), "",
 								Configuration.SITE_NAME + " Payment Failure",
-								lEmailTemplate, null);
+								lEmailTemplate, "");
 					} catch (UnsupportedEncodingException e) {
 						LOGGER.log(Level.SEVERE, e.getMessage(), e);
 					} catch (MessagingException e) {
@@ -832,11 +839,11 @@ public class StripeController {
 				}
 				StringBuilder lHtmlFormattedHeader = new StringBuilder();
 
-				lHtmlFormattedHeader.append("<p class=\"lead\">Hi,</p>");
+				lHtmlFormattedHeader.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">Hi,</p>");
 				lHtmlFormattedHeader
-						.append("<p class=\"lead\">You have successfully updated your payment information for your Skok subscription.</p>");
+						.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">You have successfully updated your payment information for your Skok subscription.</p>");
 				lHtmlFormattedHeader
-						.append("<p>&nbsp;</p><p class=\"lead\">Thank you!</p>");
+						.append("<p>&nbsp;</p><p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">Thank you!</p>");
 
 				StringBuilder lHtmlFormattedCallout = new StringBuilder();
 				CanonicalPlan lPlan = CanonicalPlan.findById(lStripeCustomer
@@ -851,12 +858,18 @@ public class StripeController {
 						lHtmlFormattedHeader.toString(),
 						lHtmlFormattedCallout.toString());
 				try {
-					Utils.sendEmail(Configuration.FROM_EMAIL_ADDRESS,
+					// Utils.sendEmail(Configuration.FROM_EMAIL_ADDRESS,
+					// Configuration.FROM_NAME,
+					// lStripeCustomer.getUsername(), "",
+					// Configuration.SITE_NAME
+					// + " Payment Information Updated",
+					// lEmailTemplate, TEXT_HTML_CHARSET_UTF_8);
+					Utils.sendMultipartEmail(Configuration.FROM_EMAIL_ADDRESS,
 							Configuration.FROM_NAME,
 							lStripeCustomer.getUsername(), "",
 							Configuration.SITE_NAME
 									+ " Payment Information Updated",
-							lEmailTemplate, null);
+							lEmailTemplate, "");
 				} catch (UnsupportedEncodingException e) {
 					LOGGER.log(Level.SEVERE, e.getMessage(), e);
 				} catch (MessagingException e) {
@@ -880,11 +893,11 @@ public class StripeController {
 				}
 				StringBuilder lHtmlFormattedHeader = new StringBuilder();
 
-				lHtmlFormattedHeader.append("<p class=\"lead\">Hi,</p>");
+				lHtmlFormattedHeader.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">Hi,</p>");
 				lHtmlFormattedHeader
-						.append("<p class=\"lead\">You have successfully subscribed to the following plan.</p>");
+						.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">You have successfully subscribed to the following plan.</p>");
 				lHtmlFormattedHeader
-						.append("<p>&nbsp;</p><p class=\"lead\">Thank you!</p>");
+						.append("<p>&nbsp;</p><p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">Thank you!</p>");
 
 				StringBuilder lHtmlFormattedCallout = new StringBuilder();
 				CanonicalPlan lPlan = CanonicalPlan.findById(lStripeCustomer
@@ -899,11 +912,16 @@ public class StripeController {
 						lHtmlFormattedHeader.toString(),
 						lHtmlFormattedCallout.toString());
 				try {
-					Utils.sendEmail(Configuration.FROM_EMAIL_ADDRESS,
+					// Utils.sendEmail(Configuration.FROM_EMAIL_ADDRESS,
+					// Configuration.FROM_NAME,
+					// lStripeCustomer.getUsername(), "",
+					// Configuration.SITE_NAME + " Subscription Updated",
+					// lEmailTemplate, TEXT_HTML_CHARSET_UTF_8);
+					Utils.sendMultipartEmail(Configuration.FROM_EMAIL_ADDRESS,
 							Configuration.FROM_NAME,
 							lStripeCustomer.getUsername(), "",
 							Configuration.SITE_NAME + " Subscription Updated",
-							lEmailTemplate, null);
+							lEmailTemplate, "");
 				} catch (UnsupportedEncodingException e) {
 					LOGGER.log(Level.SEVERE, e.getMessage(), e);
 				} catch (MessagingException e) {

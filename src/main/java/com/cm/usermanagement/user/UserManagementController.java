@@ -73,6 +73,7 @@ public class UserManagementController {
 
 	private static final Logger LOGGER = Logger
 			.getLogger(UserManagementController.class.getName());
+	private static final String TEXT_HTML_CHARSET_UTF_8 = "text/html; charset=utf-8";
 
 	/**
 	 * @param model
@@ -165,9 +166,9 @@ public class UserManagementController {
 				// update utilization
 				Utils.triggerUpdateQuotaUtilizationMessage(
 						lApplication.getAccountId(), 10000);
-//				Utils.triggerUpdateBandwidthUtilizationMessage(
-//						lApplication.getId(), 0L, 10000);
-
+				// Utils.triggerUpdateBandwidthUtilizationMessage(
+				// lApplication.getId(), 0L, 10000);
+				sendWelcomeEmail(lDomainUser);
 				response.setStatus(HttpServletResponse.SC_CREATED);
 				return null;
 			}
@@ -181,6 +182,64 @@ public class UserManagementController {
 				LOGGER.info("Exiting doSignup");
 		}
 
+	}
+
+	private void sendWelcomeEmail(User pUser) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			StringBuilder lHtmlFormattedHeader = new StringBuilder();
+
+			lHtmlFormattedHeader
+					.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">Welcome to Skok.</p>");
+			lHtmlFormattedHeader
+					.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">Skok is an Advanced Content Management and  Delivery platform for your Mobile Apps. Skok delivers rich content to your Mobile Apps, and stores it locally on mobile devices.</p>");
+			lHtmlFormattedHeader
+					.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">This elevates user experience of your Mobile Apps. Your content loads much faster, and users can engage with your rich content, even if they lose their data connection.</p>");
+
+			lHtmlFormattedHeader
+					.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">You can find out more at <a href=\"http://skok.co/docs/overview\">Skok</a> </p>");
+
+			StringBuilder lHtmlFormattedCallout = new StringBuilder();
+			lHtmlFormattedCallout.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\"><b>Powerful New Features</b></p>");
+			lHtmlFormattedCallout.append("<ol>");
+			lHtmlFormattedCallout.append("<li>Cloud-driven Architecture</li>");
+			lHtmlFormattedCallout
+					.append("<li>Advanced Content Management Platform</li>");
+			lHtmlFormattedCallout
+					.append("<li>Streamlined Content Delivery</li>");
+			lHtmlFormattedCallout.append("<li>Auto-sizing of Images</li>");
+			lHtmlFormattedCallout
+					.append("<li>Say Goodbye to Google Play APK Expansion Files</li>");
+			lHtmlFormattedCallout.append("<li>Continuous Content Updates</li>");
+			lHtmlFormattedCallout.append("<li>No Extra Coding Required</li>");
+			lHtmlFormattedCallout
+					.append("<li>Easily-pluggable &amp; Feature-rich SDK</li>");
+			lHtmlFormattedCallout.append("<li>Mobile Device Storage</li>");
+			lHtmlFormattedCallout.append("<li>Advanced Caching on Device</li>");
+			lHtmlFormattedCallout
+					.append("<li>Non-Blocking Content Downloads</li>");
+			lHtmlFormattedCallout
+					.append("<li>Manages Content Downloads over Spotty Networks</li>");
+			lHtmlFormattedCallout.append("<li>Download Notifications</li>");
+			lHtmlFormattedCallout
+					.append("<li>Analytics to Track Usage Statistics of your Content</li>");
+			lHtmlFormattedCallout.append("</ol>");
+			String lEmailTemplate = new StripeChargeEmailBuilder().build(
+					lHtmlFormattedHeader.toString(),
+					lHtmlFormattedCallout.toString());
+			Utils.sendEmail(Configuration.FROM_EMAIL_ADDRESS,
+					Configuration.FROM_NAME, pUser.getUsername(), "",
+					"Welcome to " + Configuration.SITE_NAME, lEmailTemplate,
+					TEXT_HTML_CHARSET_UTF_8);
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
 	}
 
 	private Application createDemoApplication(User pUser) {
@@ -652,9 +711,7 @@ public class UserManagementController {
 		model.addAttribute("stripePublicKey",
 				Configuration.STRIPE_PUBLIC_API_KEY);
 
-		
-		model.addAttribute("canonicalPlanIdFree",
-				CanonicalPlan.FREE.getId());
+		model.addAttribute("canonicalPlanIdFree", CanonicalPlan.FREE.getId());
 		model.addAttribute("canonicalPlanFreeNetworkBandwidth",
 				CanonicalPlan.FREE.getDisplayNetworkBandwidth());
 		model.addAttribute("canonicalPlanFreeStorage",
@@ -664,8 +721,7 @@ public class UserManagementController {
 		model.addAttribute("canonicalPlanFreePriceInCents",
 				CanonicalPlan.FREE.getPriceInCents());
 
-		model.addAttribute("canonicalPlanIdMicro",
-				CanonicalPlan.MICRO.getId());
+		model.addAttribute("canonicalPlanIdMicro", CanonicalPlan.MICRO.getId());
 		model.addAttribute("canonicalPlanMicroNetworkBandwidth",
 				CanonicalPlan.MICRO.getDisplayNetworkBandwidth());
 		model.addAttribute("canonicalPlanMicroStorage",
@@ -675,8 +731,7 @@ public class UserManagementController {
 		model.addAttribute("canonicalPlanMicroPriceInCents",
 				CanonicalPlan.MICRO.getPriceInCents());
 
-		model.addAttribute("canonicalPlanIdSmall",
-				CanonicalPlan.SMALL.getId());
+		model.addAttribute("canonicalPlanIdSmall", CanonicalPlan.SMALL.getId());
 		model.addAttribute("canonicalPlanSmallNetworkBandwidth",
 				CanonicalPlan.SMALL.getDisplayNetworkBandwidth());
 		model.addAttribute("canonicalPlanSmallStorage",
@@ -697,8 +752,7 @@ public class UserManagementController {
 		model.addAttribute("canonicalPlanMediumPriceInCents",
 				CanonicalPlan.MEDIUM.getPriceInCents());
 
-		model.addAttribute("canonicalPlanIdLarge",
-				CanonicalPlan.LARGE.getId());
+		model.addAttribute("canonicalPlanIdLarge", CanonicalPlan.LARGE.getId());
 		model.addAttribute("canonicalPlanLargeNetworkBandwidth",
 				CanonicalPlan.LARGE.getDisplayNetworkBandwidth());
 		model.addAttribute("canonicalPlanLargeStorage",
@@ -849,7 +903,8 @@ public class UserManagementController {
 			try {
 				Utils.sendEmail(Configuration.FROM_EMAIL_ADDRESS,
 						Configuration.FROM_NAME, lRequest.getEmail(), "",
-						Configuration.SITE_NAME, htmlBody.toString(), null);
+						Configuration.SITE_NAME, htmlBody.toString(),
+						TEXT_HTML_CHARSET_UTF_8);
 			} catch (UnsupportedEncodingException e) {
 				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			} catch (MessagingException e) {

@@ -27,7 +27,7 @@ public class Configuration {
 	public static final String SITE_NAME = "Skok";
 	//Dev
 	public static final String FORGOT_PASSWORD_URL = "https://"+ DOMAIN +"/forgotpassword";
-	public static final String FROM_EMAIL_ADDRESS = "support@skok.co";
+	public static final String FROM_EMAIL_ADDRESS = "anshu@skok.co";
 	public static final String FROM_NAME = "Skok";
 	
 	public static final String GCS_STORAGE_BUCKET = DOMAIN + "/media";

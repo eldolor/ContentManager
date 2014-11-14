@@ -67,24 +67,24 @@ public class Utils {
 
 	}
 
-//	public static void triggerUpdateBandwidthUtilizationMessage(Long pId,
-//			long delayInMs) {
-//		try {
-//			if (LOGGER.isLoggable(Level.INFO))
-//				LOGGER.info("Entering");
-//			Queue queue = QueueFactory
-//					.getQueue(Configuration.CONTENT_QUEUE_NAME);
-//			TaskOptions taskOptions = TaskOptions.Builder
-//					.withUrl("/tasks/bandwidth/utilization/update/" + pId)
-//					.param("id", String.valueOf(pId)).method(Method.POST)
-//					.countdownMillis(delayInMs);
-//			queue.add(taskOptions);
-//		} finally {
-//			if (LOGGER.isLoggable(Level.INFO))
-//				LOGGER.info("Exiting");
-//		}
-//
-//	}
+	// public static void triggerUpdateBandwidthUtilizationMessage(Long pId,
+	// long delayInMs) {
+	// try {
+	// if (LOGGER.isLoggable(Level.INFO))
+	// LOGGER.info("Entering");
+	// Queue queue = QueueFactory
+	// .getQueue(Configuration.CONTENT_QUEUE_NAME);
+	// TaskOptions taskOptions = TaskOptions.Builder
+	// .withUrl("/tasks/bandwidth/utilization/update/" + pId)
+	// .param("id", String.valueOf(pId)).method(Method.POST)
+	// .countdownMillis(delayInMs);
+	// queue.add(taskOptions);
+	// } finally {
+	// if (LOGGER.isLoggable(Level.INFO))
+	// LOGGER.info("Exiting");
+	// }
+	//
+	// }
 
 	public static void triggerUpdateBandwidthUtilizationMessage(
 			Long applicationId, Long sizeInBytes, long delayInMs) {
@@ -414,28 +414,33 @@ public class Utils {
 	 * @throws MessagingException
 	 * @throws UnsupportedEncodingException
 	 */
-	public static void sendEmail(String fromEmailAddress, String fromName,
-			String toEmailAddress, String toName, String subject,
-			String htmlBody, String textBody) throws MessagingException,
-			UnsupportedEncodingException {
+	public static void sendMultipartEmail(String fromEmailAddress,
+			String fromName, String toEmailAddress, String toName,
+			String subject, String htmlBody, String textBody)
+			throws MessagingException, UnsupportedEncodingException {
 		if (LOGGER.isLoggable(Level.INFO))
-			LOGGER.info("Entering sendEmail");
-		Multipart mp = new MimeMultipart();
-		MimeBodyPart htmlPart = new MimeBodyPart();
-		if (htmlBody != null) {
-			htmlPart.setContent(htmlBody, "text/html");
-			mp.addBodyPart(htmlPart);
+			LOGGER.info("Entering");
+		Multipart lMultipart = new MimeMultipart();
+
+		// according to the multipart MIME spec, the order of the parts are
+		// important. They should be added in order from low fidelity to high
+		// fidelity.
+		// add text part first
+		if (textBody != null) {
+			MimeBodyPart textPart = new MimeBodyPart();
+			textPart.setText(textBody, "utf-8");
+			lMultipart.addBodyPart(textPart);
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("sendEmail: Html body part: " + htmlBody);
+				LOGGER.info("Text body part: " + textBody);
 		}
 
-//		MimeBodyPart textPart = new MimeBodyPart();
-//		if (textBody != null) {
-//			textPart.setContent(textBody, "text/plain");
-//			mp.addBodyPart(textPart);
-//			if (LOGGER.isLoggable(Level.INFO))
-//				LOGGER.info("sendEmail: Text body part: " + textBody);
-//		}
+		if (htmlBody != null) {
+			MimeBodyPart htmlPart = new MimeBodyPart();
+			htmlPart.setContent(htmlBody, "text/html; charset=utf-8");
+			lMultipart.addBodyPart(htmlPart);
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Html body part: " + htmlBody);
+		}
 
 		Properties props = new Properties();
 		Session session = Session.getDefaultInstance(props, null);
@@ -444,10 +449,41 @@ public class Utils {
 		msg.addRecipient(Message.RecipientType.TO, new InternetAddress(
 				toEmailAddress, toName));
 		msg.setSubject(subject);
-		msg.setContent(mp);
+		msg.setContent(lMultipart);
 		Transport.send(msg);
 		if (LOGGER.isLoggable(Level.INFO))
-			LOGGER.info("Exiting sendEmail");
+			LOGGER.info("Exiting");
+	}
+
+	/**
+	 * 
+	 * @param fromEmailAddress
+	 * @param fromName
+	 * @param toEmailAddress
+	 * @param toName
+	 * @param subject
+	 * @param messageBody
+	 * @param charset
+	 * @throws MessagingException
+	 * @throws UnsupportedEncodingException
+	 */
+	public static void sendEmail(String fromEmailAddress, String fromName,
+			String toEmailAddress, String toName, String subject,
+			String messageBody, String charset) throws MessagingException,
+			UnsupportedEncodingException {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering");
+		Properties props = new Properties();
+		Session lSession = Session.getDefaultInstance(props, null);
+		MimeMessage lMesssage = new MimeMessage(lSession);
+		lMesssage.setContent(messageBody, charset);
+		lMesssage.setFrom(new InternetAddress(fromEmailAddress, fromName));
+		lMesssage.addRecipient(Message.RecipientType.TO, new InternetAddress(
+				toEmailAddress, toName));
+		lMesssage.setSubject(subject);
+		Transport.send(lMesssage);
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Exiting");
 	}
 
 	/**

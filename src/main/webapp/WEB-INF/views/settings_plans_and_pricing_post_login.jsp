@@ -33,6 +33,8 @@
 <script type="text/javascript">
 	//utilized in cm.account.settings.js
 	var mStripeKey = ${stripePublicKey};
+	Stripe.setPublishableKey(mStripeKey);
+
 </script>
 <script type="text/javascript"
 	src="/resources/javascripts/cm/cm.account.settings.js"></script>

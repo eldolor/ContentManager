@@ -50,10 +50,11 @@
 
 		<h2 class="text-center gray">SDK Guide</h2>
 
-<!-- 		<div class="line">
+		<!-- 		<div class="line">
 			<img src="/resources/images/cm/line.png" alt="line" />
 		</div>
- -->		<br />
+ -->
+		<br />
 		<div class="row">
 			<div class="large-12 columns">
 				<div data-magellan-expedition="fixed">
@@ -119,7 +120,8 @@
 				<a name="project_setup"></a>
 				<ol>
 					<li>Download the latest Android <a
-						href="/resources/api/current/skok_sdk_1_1.jar">Skok API</a> library.
+						href="/resources/api/current/skok_sdk_1_1.jar">Skok API</a>
+						library.
 					</li>
 					<li><a href="/resources/api/current/javadoc/index.html"
 						target="_blank">Android API Reference</a></li>
@@ -361,13 +363,106 @@
 				<div class="clearfix"></div>
 				<div class="clearfix"></div>
 				<h3 data-magellan-destination="access_contents"
-					class="text-left gray">Access Contents</h3>
+					class="text-left gray">Accessing Managed and Unmanaged Content</h3>
 				<a name="access_contents"></a>
 				<p class="text-left"></p>
+
+				<h4>Managed Content</h4>
+				<p>
+					Content is organized into Applications and Content Groups. Skok
+					provides <a href="/docs/overview">powerful new features</a> to
+					managed content. The ContentManager class provides several
+					different methods to access your managed content. Content can be
+					accessed by:
+				</p>
+				<ol>
+					<li>Tag</li>
+					<li>Type</li>
+					<li>Entire content list</li>
+					<li>List of content within a Content Group</li>
+					<li>List of content within a Content Group, of a particular
+						Type</li>
+					<li>Specific content by Content Id</li>
+					<li>Any random image or video</li>
+					<li>Convenience methods to Scale Images</li>
+					<li>Convenience methods to Create Image and Video Thumbnails</li>
+				</ol>
+				<h4>Unmanaged Content</h4>
+				<p>Skok SDK provides the capability to download and cache
+					External or Unmanaged content, where the content is directly
+					downloaded from third party servers, to mobile devices. Usage of
+					unmanaged content does not count towards storage or bandwitdh
+					utilization.Skok provides some basic features that include:</p>
+				<ol>
+					<li>Caching of content on mobile devices for faster subsequent
+						loading</li>
+					<li>Wait and retry mechanism for content download</li>
+					<li>Supports downloads over HTTP and HTTPS only, using HTTP
+						GET</li>
+				</ol>
+				<p>However it does not support the following, which are
+					available for Managed Content:</p>
+				<ol>
+					<li>Support for partial content download. Entire content is
+						downloaded again, on failure, which results in longer download
+						times.</li>
+					<li>Support to download content over WiFi only. Content will
+						be downloaded over any available network; WiFi or Cellular</li>
+					<li>Display of Notifications</li>
+				</ol>
+				<div class="clearfix"></div>
 				<div class="panel radius">
-					<h4>ContentManager</h4>
-					<p>The ContentManager class provides several different methods
-						to access your contents.</p>
+					<h4>Unmanaged Content</h4>
+				</div>
+				<div class="panel radius">
+					<h4>getUnmanagedImageAsync(String url, ImageView imageView,
+						BitmapFactory.Options options)</h4>
+					<p>Downloads and sets an unmanaged image, on the provided
+						ImageView, in the background. The image is cached locally on the
+						device. Please note that unlike managed content, partial downloads
+						are not supported for unmanaged content. Also, unlike managed
+						content,, unmanaged content cannot be restricted to be downloaded
+						over WiFi Only. Content will be downloaded over any available
+						network; WiFi or Cellular</p>
+					<pre>
+<code>
+	Private ContentManager mContentManager;
+	...
+	
+	private void loadContent() {
+		...
+		mContentManager.getUnmanagedImageAsync(lUrl, lImageView, lOptions);
+		...
+	}
+</code>
+					</pre>
+				</div>
+				<div class="panel radius">
+					<h4>getUnmanagedVideoAsync(String url, VideoView videoView)</h4>
+					<p>Downloads and sets an unmanaged video, on the provided
+						VideoView, in the background. The video is cached locally on the
+						device. Please note that unlike managed content, partial downloads
+						are not supported for unmanaged content. Also, unlike managed
+						content,, unmanaged content cannot be restricted to be downloaded
+						over WiFi Only. Content will be downloaded over any available
+						network; WiFi or Cellular</p>
+					<pre>
+<code>
+	Private ContentManager mContentManager;
+	...
+	
+	private void loadContent() {
+		...
+		mContentManager.getUnmanagedVideoAsync(lUrl, lVideoView);
+		...
+	}
+</code>
+					</pre>
+				</div>
+
+				<div class="clearfix"></div>
+				<div class="panel radius">
+					<h4>Managed Content</h4>
 				</div>
 				<div class="panel radius">
 					<h4>getAllContentsByTag(String tag)</h4>
@@ -406,6 +501,16 @@
 		
 	}
 
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
 						
 						
 						
@@ -449,6 +554,16 @@
 
 	}
 
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
 						
 						
 						
@@ -494,6 +609,16 @@
 						
 						
 						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
 						</code>
 					</pre>
 				</div>
@@ -523,6 +648,16 @@
 		
 	}
 
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
 						
 						
 						
@@ -570,6 +705,16 @@
 						
 						
 						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
 						</code>
 					</pre>
 				</div>
@@ -601,6 +746,16 @@
 
 	}
 
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
 						
 						
 						

@@ -43,7 +43,7 @@
 </head>
 <body>
 	<jsp:include page="common.jsp"></jsp:include>
-	<jsp:include page="top_bar.jsp"></jsp:include>
+	<jsp:include page="top_bar.jsp"><jsp:param name="sticky" value="false" /></jsp:include>
 
 	<section id="blog">
 	<div class="row full-width">
@@ -514,6 +514,7 @@
 						
 						
 						
+						
 						</code>
 					</pre>
 				</div>
@@ -554,6 +555,7 @@
 
 	}
 
+						
 						
 						
 						
@@ -619,6 +621,7 @@
 						
 						
 						
+						
 						</code>
 					</pre>
 				</div>
@@ -648,6 +651,7 @@
 		
 	}
 
+						
 						
 						
 						
@@ -715,6 +719,7 @@
 						
 						
 						
+						
 						</code>
 					</pre>
 				</div>
@@ -746,6 +751,7 @@
 
 	}
 
+						
 						
 						
 						

@@ -18,7 +18,21 @@
 <jsp:include page="meta_tags.jsp"></jsp:include>
 <title>Skok</title>
 <jsp:include page="resources.jsp" flush="true"></jsp:include>
+<script type="text/javascript">
+	jQuery(function($) {
+		try {
+			log("function($)", "Entering");
+			$(document).foundation();
 
+			var doc = document.documentElement;
+			doc.setAttribute('data-useragent', navigator.userAgent);
+		} catch (err) {
+			handleError("function($)", err);
+		} finally {
+			log("function($)", "Exiting");
+		}
+	});
+</script>
 
 </head>
 <body>

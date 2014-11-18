@@ -36,13 +36,19 @@
 				}
 			};
 
+			var lSticky = <c:out value="${param.sticky}" >true</c:out>;
+			
 			// run our function on load
-			sticky_navigation();
+			if(lSticky){
+				sticky_navigation();
+			}
 
 			// and run it again every time you scroll
-			$(window).scroll(function() {
-				sticky_navigation();
-			});
+			if(lSticky){
+				$(window).scroll(function() {
+					sticky_navigation();
+				});
+			}
 
 			$('#searchForm').unbind();
 			$('#searchForm').submit(function() {

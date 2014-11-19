@@ -42,6 +42,47 @@ public class Utils {
 	private static final Logger LOGGER = Logger
 			.getLogger(Utils.class.getName());
 
+	public static void triggerSendNotificationMessages(String pTrackingId,
+			String pMessage, long delayInMs) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Triggering message to send notification messages to handsets");
+			Queue queue = QueueFactory.getQueue(Configuration.GCM_QUEUE_NAME);
+			TaskOptions taskOptions = TaskOptions.Builder
+					.withUrl(
+							"/tasks/gcm/sendnotificationmessages/"
+									+ pTrackingId)
+					.param("trackingId", pTrackingId)
+					.param("message", pMessage).method(Method.POST)
+					.countdownMillis(delayInMs);
+			queue.add(taskOptions);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	public static void triggerSendNotificationMessage(String pGcmId,
+			String pMessage, long delayInMs) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Triggering message to send notification message to a single handset");
+			Queue queue = QueueFactory.getQueue(Configuration.GCM_QUEUE_NAME);
+			TaskOptions taskOptions = TaskOptions.Builder
+					.withUrl("/tasks/gcm/sendnotificationmessage/" + pGcmId)
+					.param("gcmId", pGcmId).param("message", pMessage)
+					.method(Method.POST).countdownMillis(delayInMs);
+			queue.add(taskOptions);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
 	public static void triggerRollupMessage(Long pApplicationId,
 			Long eventStartTimeMs, Long eventEndTimeMs, long delayInMs) {
 		try {

@@ -200,16 +200,20 @@ function handleDisplayContent_Callback(pContent) {
 			lInnerHtml += lContent.name;
 			lInnerHtml += "</h3>";
 			lInnerHtml += "<div class='blog_content_details float_left'>";
+			var lId = '';
 			if (int == 0) {
-				lInnerHtml += "<ul> <li id='first_content_id' class='green'>Content Id: "
-						+ lContent.id
-						+ " </li><li>|</li><li class='light_gray'>";
-				lInnerHtml += "<a id='first_content' class='small green' href='javascript:void(0)' onclick='viewContent(";
+				lId += " id='first_content_id' ";
+			}
+
+			lInnerHtml += "<h7 class='gray' " + lId + ">Id: "
+					+ lContent.id + " </h7>";
+
+			lInnerHtml += "<ul>";
+
+			if (int == 0) {
+				lInnerHtml += "<li class='light_gray'><a id='first_content' class='small green' href='javascript:void(0)' onclick='viewContent(";
 			} else {
-				lInnerHtml += "<ul> <li class='green'>Content Id: "
-						+ lContent.id
-						+ " </li><li>|</li><li class='light_gray'>";
-				lInnerHtml += "<a class='small green' href='javascript:void(0)' onclick='viewContent(";
+				lInnerHtml += "<li class='light_gray'><a class='small green' href='javascript:void(0)' onclick='viewContent(";
 			}
 			lInnerHtml += lContent.id;
 			lInnerHtml += ")'><i class='fi-page light_gray'></i>&nbsp;view</a></li> <li>|</li><li class='light_gray'><a class='small' href='javascript:void(0)' onclick='editContent("
@@ -243,7 +247,7 @@ function handleDisplayContent_Callback(pContent) {
 			lInnerHtml += "<div class='blog_comments text_center green'>";
 			lInnerHtml += lYear;
 			lInnerHtml += "</div>";
-			lInnerHtml += "<div class='blog_content_details float_left'><p class='light_gray'>"
+			lInnerHtml += "<div class='clearfix'></div><div class='blog_content_details float_left'><p class='light_gray'>"
 					+ lContent.description + "</p>";
 			lInnerHtml += "</div>";
 			lInnerHtml += "<div class='clearfix'></div><div class='separator'></div>";
@@ -554,12 +558,12 @@ function editContent(id) {
 										dropBoxUrl,
 										(lStorageQuota.storageLimitInBytes - lStorageQuota.storageUsedInBytes),
 										getDisplayUpgradeMessage(lStorageQuota));
-							//$("#content_dropbox").hide();
+							// $("#content_dropbox").hide();
 							// reset
-//							$('#upload_content').unbind();
-//							$('#upload_content').bind('click', function() {
-//								$("#content_dropbox").slideToggle();
-//							});
+							// $('#upload_content').unbind();
+							// $('#upload_content').bind('click', function() {
+							// $("#content_dropbox").slideToggle();
+							// });
 
 							log("editContent", "Content enabled: "
 									+ content.enabled);
@@ -961,12 +965,12 @@ function newContent() {
 		// $('#view_ad_video').hide();
 		// $('#view_video').hide();
 
-		//$("#content_dropbox").hide();
+		// $("#content_dropbox").hide();
 		// reset
-//		$('#upload_content').unbind();
-//		$('#upload_content').bind('click', function() {
-//			$("#content_dropbox").slideToggle();
-//		});
+		// $('#upload_content').unbind();
+		// $('#upload_content').bind('click', function() {
+		// $("#content_dropbox").slideToggle();
+		// });
 
 		$('#content_errors').empty();
 
@@ -1483,6 +1487,7 @@ function displayRestoreConfirm(pList, pCallback) {
 	log("displayRestoreConfirm", "Entering");
 	try {
 		$("#select_from_deleted_list").html(pList);
+		$('#restore_confirm_button').unbind();
 		// if the user clicks "yes"
 		$('#restore_confirm_button').bind('click', function() {
 			// call the callback

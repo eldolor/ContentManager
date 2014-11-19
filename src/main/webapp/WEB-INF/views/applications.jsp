@@ -76,6 +76,14 @@
 						<div class="content active" id="panel2-1">
 							<div class="blog_snippet">
 								<div class="blog_details float_left">
+									<span class="title green">Notifications</span> <span
+										class="date">You can send messages that will be
+										displayed as Notifications on mobile devices.</span>
+								</div>
+								<div class="clearfix"></div>
+							</div>
+							<div class="blog_snippet">
+								<div class="blog_details float_left">
 									<span class="title green">Wi-Fi</span> <span class="date">You
 										can restrict the rich content to be auto-updated to devices
 										over Wi-Fi Only. This helps conserve the cellular data usage.
@@ -132,9 +140,15 @@
 		</li>
 		<li data-id="first_application_id" data-text="Next"
 			data-prev-text="Prev">
-			<h4>Content Id</h4> <br>
+			<h4>Application Id</h4> <br>
 			<p>Use the application id to initialize the SDK, and to access
 				any content for display on mobile devices</p>
+		</li>
+		<li data-id="first_application_id_send_notification" data-text="Next"
+			data-prev-text="Prev">
+			<h4>Notifications</h4> <br>
+			<p>You can send messages that will be displayed as Notifications
+				on mobile devices</p>
 		</li>
 		<li data-id="first_contentgroup"
 			data-text="Click on &apos;content groups&apos; to continue"
@@ -151,6 +165,22 @@
 			<div id="select_from_deleted_list"></div>
 		</div>
 		<button id="restore_confirm_button" class="button radius btn-default">restore</button>
+		<a class="close-reveal-modal">&#215;</a>
+	</div>
+	<div class="reveal-modal small" id="send_notification_messages_modal"
+		data-reveal>
+		<h3 class="gray" id="modalLabel">Send Notification to All Devices</h3>
+		<input type="hidden" id="send_notification_messages_tracking_id"
+			name="send_notification_messages_tracking_id" /> <input
+			type="hidden" />
+		<div class="row">
+			<textarea rows="5" class="form-control"
+				id="send_notification_messages_message"
+				name="send_notification_messages_message"
+				placeholder="Enter the message that will be displayed as a Notification on mobile devices"></textarea>
+		</div>
+		<button id="send_notification_messages_confirm_button"
+			class="button radius btn-default">send</button>
 		<a class="close-reveal-modal">&#215;</a>
 	</div>
 

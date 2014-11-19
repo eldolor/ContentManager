@@ -151,24 +151,37 @@ function handleDisplayApplications_Callback(pApplications) {
 			lInnerHtml += lApplication.name;
 			lInnerHtml += "</h3>";
 			lInnerHtml += "<div class='blog_content_details float_left'>";
+			var lId = '';
 			if (int == 0) {
-				lInnerHtml += "<ul> <li id='first_application_id' class='green'>Application Id: "
-						+ lApplication.trackingId
-						+ " </li><li>|</li><li class='light_gray'>";
-				lInnerHtml += "<a id='first_contentgroup' class='small green' href='javascript:void(0)' onclick='displayContentGroups(";
+				lId += " id='first_application_id' ";
+			}
+			lInnerHtml += "<h7 class='gray' " + lId + ">Id: "
+					+ lApplication.trackingId + " </h7>";
+
+			lInnerHtml += "<ul>";
+			if (int == 0) {
+				lInnerHtml += "<li class='light_gray'><a id='first_contentgroup' class='small green' href='javascript:void(0)' onclick='displayContentGroups(";
 			} else {
-				lInnerHtml += "<ul> <li class='green'>Application Id: "
-						+ lApplication.trackingId
-						+ " </li><li>|</li><li class='light_gray'>";
-				lInnerHtml += "<a class='small green' href='javascript:void(0)' onclick='displayContentGroups(";
+				lInnerHtml += "<li class='light_gray'><a class='small green' href='javascript:void(0)' onclick='displayContentGroups(";
 			}
 			lInnerHtml += lApplication.id
 					+ ")'><i class='fi-list-number light_gray'></i>&nbsp;content groups</a></li> <li>|</li><li class='light_gray'><a class='small' href='javascript:void(0)' onclick='editApplication("
 					+ lApplication.id
 					+ ")'><i class='fi-page-edit light_gray'></i>&nbsp;edit</a></li><li>|</li> <li class='light_gray'><a class='small' href='javascript:void(0)' onclick='deleteApplication("
 					+ lApplication.id
-					+ ")'><i class='fi-page-delete light_gray'></i>&nbsp;delete</a></li>";
+					+ ")'><i class='fi-page-delete light_gray'></i>&nbsp;delete</a></li> <li>|</li>"
+			if (int == 0) {
+				lInnerHtml += "<li class='light_gray'><a id='first_application_id_send_notification' class='small' href='javascript:void(0)' onclick='sendNotificationMessages(\""
+			} else {
+				lInnerHtml += "<li class='light_gray'><a class='small' href='javascript:void(0)' onclick='sendNotificationMessages(\""
+			}
+
+			lInnerHtml += lApplication.trackingId
+					+ "\")'><i class='fi-page-edit light_gray'></i>&nbsp;send notification</a></li>";
+			
 			lInnerHtml += "</ul>";
+			// 
+
 			lInnerHtml += "</div>";
 			var lEpochDate = (lApplication.timeUpdatedMs == null) ? lApplication.timeCreatedMs
 					: lApplication.timeUpdatedMs;
@@ -189,7 +202,7 @@ function handleDisplayApplications_Callback(pApplications) {
 			lInnerHtml += "<div class='blog_comments text_center green'>";
 			lInnerHtml += lYear;
 			lInnerHtml += "</div>";
-			lInnerHtml += "<div class='blog_content_details float_left'><p class='light_gray'>"
+			lInnerHtml += "<div class='clearfix'></div><div class='blog_content_details float_left'><p class='light_gray'>"
 					+ lApplication.description + "</p>";
 			if (lApplication.changesStaged) {
 				lInnerHtml += "<a href='javascript:void(0);' onclick='pushChangestoHandsets("
@@ -965,6 +978,7 @@ function displayRestoreConfirm(pList, pCallback) {
 	log("displayRestoreConfirm", "Entering");
 	try {
 		$("#select_from_deleted_list").html(pList);
+		$('#restore_confirm_button').unbind();
 		// if the user clicks "yes"
 		$('#restore_confirm_button').bind('click', function() {
 			// call the callback
@@ -980,6 +994,102 @@ function displayRestoreConfirm(pList, pCallback) {
 		;
 	} finally {
 		log("displayRestoreConfirm", "Exiting");
+	}
+
+}
+
+function sendNotificationMessages(pTrackingId) {
+
+	log("sendNotificationMessages", "Entering");
+	displaySendNotificationsModal(
+			pTrackingId,
+			function() {
+				try {
+					var applicationObj = {
+						trackingId : $(
+								'#send_notification_messages_tracking_id')
+								.val(),
+						message : $('#send_notification_messages_message')
+								.val()
+					};
+					var applicationObjString = JSON.stringify(applicationObj,
+							null, 2);
+					//alert(applicationObjString);
+					var jqxhr = $
+							.ajax({
+								url : "/secured/gcm/sendnotificationmessages",
+								type : "POST",
+								data : applicationObjString,
+								processData : false,
+								dataType : "json",
+								contentType : "application/json",
+								async : true,
+								statusCode : {
+									200 : function() {
+									},
+									400 : function(text) {
+										try {
+											$('#application_errors').html(
+													getErrorMessages(text));
+											$('#cm_errors_container').show();
+										} catch (err) {
+											handleError("updateApplication",
+													err);
+										}
+									},
+									503 : function() {
+										$('#application_errors')
+												.html(
+														'Unable to process the request. Please try again later');
+										$('#cm_errors_container').show();
+									}
+								},
+								error : function(xhr, textStatus, errorThrown) {
+									log(errorThrown);
+									$('#application_errors')
+											.html(
+													'Unable to process the request. Please try again later');
+									$('#cm_errors_container').show();
+								},
+								complete : function(xhr, textStatus) {
+									$('#progress_bar_top, #progress_bar_bottom')
+											.css("width", "100%");
+									$('.button').removeClass('disabled');
+									log(xhr.status);
+								}
+							});
+
+					return false;
+				} catch (err) {
+					handleError("sendNotificationMessages", err);
+				} finally {
+					log("sendNotificationMessages", "Exiting");
+				}
+			});
+}
+function displaySendNotificationsModal(pTrackingId, pCallback) {
+	log("displaySendNotificationsModal", "Entering");
+	try {
+		$('#send_notification_messages_tracking_id').val(pTrackingId);
+		$('#send_notification_messages_confirm_button').unbind();
+		// if the user clicks "yes"
+		$('#send_notification_messages_confirm_button').bind(
+				'click',
+				function() {
+					// call the callback
+					if ($.isFunction(pCallback)) {
+						pCallback.apply();
+					}
+					$('#send_notification_messages_modal').foundation('reveal',
+							'close');
+				});
+		$('#send_notification_messages_modal').foundation('reveal', 'open');
+	} catch (err) {
+		handleError("displaySendNotificationsModal", err);
+		// close wait div
+		;
+	} finally {
+		log("displaySendNotificationsModal", "Exiting");
 	}
 
 }

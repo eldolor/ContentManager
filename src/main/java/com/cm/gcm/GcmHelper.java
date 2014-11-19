@@ -23,11 +23,13 @@ import com.google.android.gcm.server.Message.Builder;
 import com.google.android.gcm.server.MulticastResult;
 import com.google.android.gcm.server.Result;
 import com.google.android.gcm.server.Sender;
+import com.google.appengine.labs.repackaged.org.json.JSONException;
+import com.google.appengine.labs.repackaged.org.json.JSONObject;
 
 @Component
 public class GcmHelper {
 	public Sender mSender;
-	private static final String GOOGLE_API_KEY = Configuration.GOOGLE_API_KEY ;
+	private static final String GOOGLE_API_KEY = Configuration.GOOGLE_API_KEY;
 	private static final int GCM_MESSAGE_SIZE_LIMIT_BYTES = Integer
 			.valueOf(Configuration.GCM_MESSAGE_SIZE_LIMIT_BYTES);
 
@@ -55,7 +57,7 @@ public class GcmHelper {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
-			
+
 			String lJsonArrayString = contentHelper.getContent(pContentRequest);
 			if (lJsonArrayString != null) {
 				HashMap<String, String> lValues = new HashMap<String, String>();
@@ -64,14 +66,12 @@ public class GcmHelper {
 					if (LOGGER.isLoggable(Level.INFO))
 						// send the gcm message to the device
 						lValues.put(Configuration.MESSAGE_TYPE,
-								Configuration.MESSAGE_TYPE_CONTENT_LIST
-										);
-					lValues.put(
-							Configuration.MESSAGE_TYPE_CONTENT_LIST,
+								Configuration.MESSAGE_TYPE_CONTENT_LIST);
+					lValues.put(Configuration.MESSAGE_TYPE_CONTENT_LIST,
 							lJsonArrayString);
 					LOGGER.info("Sending "
 							+ Configuration.MESSAGE_TYPE_CONTENT_LIST
-									 + " message to device");
+							+ " message to device");
 				} else {
 					// Payload size is greater than the GCM limit; send an
 					// SEND_TO_SYNC message to the device
@@ -79,7 +79,7 @@ public class GcmHelper {
 							Configuration.MESSAGE_TYPE_SEND_TO_SYNC);
 					LOGGER.info("Sending "
 							+ Configuration.MESSAGE_TYPE_SEND_TO_SYNC
-									 + " message to device");
+							+ " message to device");
 				}
 				try {
 					this.sendMessage(pGcmId, lValues);
@@ -141,22 +141,20 @@ public class GcmHelper {
 					if (lJsonArrayString.getBytes().length < GCM_MESSAGE_SIZE_LIMIT_BYTES) {
 						// send the gcm message to the device
 						lValues.put(Configuration.MESSAGE_TYPE,
-								Configuration.MESSAGE_TYPE_CONTENT_LIST
-										);
-						lValues.put(Configuration.MESSAGE_TYPE_CONTENT_LIST
-								, lJsonArrayString);
+								Configuration.MESSAGE_TYPE_CONTENT_LIST);
+						lValues.put(Configuration.MESSAGE_TYPE_CONTENT_LIST,
+								lJsonArrayString);
 						LOGGER.info("Sending "
 								+ Configuration.MESSAGE_TYPE_CONTENT_LIST
-										 + " message to device");
+								+ " message to device");
 					} else {
 						// Payload size is greater than the GCM limit; send an
 						// SEND_TO_SYNC message to the device
 						lValues.put(Configuration.MESSAGE_TYPE,
-								Configuration.MESSAGE_TYPE_SEND_TO_SYNC
-										);
+								Configuration.MESSAGE_TYPE_SEND_TO_SYNC);
 						LOGGER.info("Sending "
 								+ Configuration.MESSAGE_TYPE_SEND_TO_SYNC
-										 + " message to device");
+								+ " message to device");
 					}
 
 					List<String> lRetriableRegIds = this.sendMulticastMessage(
@@ -166,11 +164,10 @@ public class GcmHelper {
 						for (Iterator<String> iterator = lRetriableRegIds
 								.iterator(); iterator.hasNext();) {
 							String lRetriableRegId = iterator.next();
-							//over the next 
-							long lDelayInMs =  new Random().nextInt(60 * 1000);
+							// over the next
+							long lDelayInMs = new Random().nextInt(60 * 1000);
 							if (LOGGER.isLoggable(Level.INFO))
-								LOGGER.info("Adding delay of "
-										+ lDelayInMs
+								LOGGER.info("Adding delay of " + lDelayInMs
 										+ " ms before attempting to process");
 							// do it one message at a time
 							Utils.triggerSendContentListMessage(
@@ -185,6 +182,102 @@ public class GcmHelper {
 				}
 			}
 
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	public void sendNotificationMessages(String pTrackingId, String pMessage)
+			throws IOException, JSONException {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			// TODO: send multicast
+			// GCMReqistrationRequest ties the applicationId to all GCM Ids. The
+			// issue is how to retrieve a list of active GcmIds. There are no
+			// additional attributes that make a GcmRegistrationRequest unique
+			// per device. There might be a way of leveraging
+			// DeviceAlreadyRegisteredException to use the Canonical
+			// registration id, as unique. Maybe we could delete the
+			// registration id that's failed, from the database, and insert the
+			// canonical registration id
+
+			List<GcmRegistrationRequest> lGcmRegistrationRequests = gcmService
+					.getGcmRegistrationRequests(pTrackingId);
+			if (lGcmRegistrationRequests != null
+					&& lGcmRegistrationRequests.size() > 0) {
+				List<String> lGcmRegIds = new ArrayList<String>();
+				for (GcmRegistrationRequest lGcmRegistrationRequest : lGcmRegistrationRequests) {
+					lGcmRegIds.add(lGcmRegistrationRequest.getGcmId());
+				}
+				JSONObject lNotificationMessage = new JSONObject();
+				lNotificationMessage.put("message", pMessage);
+				String lMessage = lNotificationMessage.toString();
+
+				HashMap<String, String> lValues = new HashMap<String, String>();
+				lValues.put(Configuration.MESSAGE_TYPE,
+						Configuration.MESSAGE_TYPE_DISPLAY_NOTIFICATION);
+				lValues.put(Configuration.MESSAGE_TYPE_DISPLAY_NOTIFICATION,
+						lMessage);
+
+				LOGGER.info("Sending "
+						+ Configuration.MESSAGE_TYPE_DISPLAY_NOTIFICATION
+						+ " message to device");
+
+				List<String> lRetriableRegIds = this.sendMulticastMessage(
+						lGcmRegIds, lValues);
+				if (!lRetriableRegIds.isEmpty()) {
+					// TODO: Queue the messages for retry
+					for (Iterator<String> iterator = lRetriableRegIds
+							.iterator(); iterator.hasNext();) {
+						String lRetriableRegId = iterator.next();
+						// over the next
+						long lDelayInMs = new Random().nextInt(60 * 1000);
+						if (LOGGER.isLoggable(Level.INFO))
+							LOGGER.info("Adding delay of " + lDelayInMs
+									+ " ms before attempting to process");
+						// do it one message at a time
+						Utils.triggerSendNotificationMessage(lRetriableRegId,
+								lMessage, lDelayInMs);
+
+					}
+				}
+			} else {
+				LOGGER.log(Level.SEVERE, "No GCM registration requests found");
+			}
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	public boolean sendNotificationMessage(String pGcmId, String pMessage)
+			throws IOException, DeviceNotRegisteredException,
+			DeviceHasMultipleRegistrations {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+
+			HashMap<String, String> lValues = new HashMap<String, String>();
+			lValues.put(Configuration.MESSAGE_TYPE,
+					Configuration.MESSAGE_TYPE_DISPLAY_NOTIFICATION);
+			lValues.put(Configuration.MESSAGE_TYPE_DISPLAY_NOTIFICATION,
+					pMessage);
+			try {
+				this.sendMessage(pGcmId, lValues);
+			} catch (DeviceNotRegisteredException e) {
+				LOGGER.warning("Device was never registered");
+				handleDeviceNotRegistered(pGcmId);
+				throw e;
+			} catch (DeviceHasMultipleRegistrations e) {
+				LOGGER.warning("Device has more than one registration");
+				handleDeviceHasMultipleRegistrations(pGcmId,
+						e.getCanonicalRegistrationId());
+				throw e;
+			}
+			return true;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting");

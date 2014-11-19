@@ -87,16 +87,19 @@ function handleDisplayContentGroups_Callback(pContentGroups) {
 			lInnerHtml += lContentGroup.name;
 			lInnerHtml += "</h3>";
 			lInnerHtml += "<div class='blog_content_details float_left'>";
+			var lId = '';
 			if (int == 0) {
-				lInnerHtml += "<ul> <li id='first_contentgroup_id' class='green'>Content Group Id: "
-						+ lContentGroup.id
-						+ " </li><li>|</li><li class='light_gray'>";
-				lInnerHtml += "<a id='first_content' class='small green' href='javascript:void(0)' onclick='displayContent(";
+				lId += " id='first_contentgroup_id' ";
+			}
+
+			lInnerHtml += "<h7 class='gray' " + lId + ">Id: "
+					+ lContentGroup.id + " </h7>";
+
+			lInnerHtml += "<ul>";
+			if (int == 0) {
+				lInnerHtml += "<li class='light_gray'><a id='first_content' class='small green' href='javascript:void(0)' onclick='displayContent(";
 			} else {
-				lInnerHtml += "<ul> <li class='green'>Content Group Id: "
-						+ lContentGroup.id
-						+ " </li><li>|</li><li class='light_gray'>";
-				lInnerHtml += "<a class='small green' href='javascript:void(0)' onclick='displayContent(";
+				lInnerHtml += "<li class='light_gray'><a class='small green' href='javascript:void(0)' onclick='displayContent(";
 			}
 
 			lInnerHtml += lContentGroup.applicationId;
@@ -128,7 +131,7 @@ function handleDisplayContentGroups_Callback(pContentGroups) {
 			lInnerHtml += "<div class='blog_comments text_center green'>";
 			lInnerHtml += lYear;
 			lInnerHtml += "</div>";
-			lInnerHtml += "<div class='blog_content_details float_left'><p class='light_gray'>"
+			lInnerHtml += "<div class='clearfix'></div><div class='blog_content_details float_left'><p class='light_gray'>"
 					+ lContentGroup.description + "</p>";
 			lInnerHtml += "</div>";
 			lInnerHtml += "<div class='clearfix'></div><div class='separator'></div>";
@@ -159,7 +162,7 @@ function displayContent(pApplicationId, pContentGroupId) {
 					+ '/content/tour';
 		} else {
 			window.location.href = '/' + pApplicationId + '/' + pContentGroupId
-			+ '/content';
+					+ '/content';
 		}
 	} catch (err) {
 		handleError("displayContent", err);
@@ -796,6 +799,7 @@ function displayRestoreConfirm(pList, pCallback) {
 	log("displayRestoreConfirm", "Entering");
 	try {
 		$("#select_from_deleted_list").html(pList);
+		$('#restore_confirm_button').unbind();
 		// if the user clicks "yes"
 		$('#restore_confirm_button').bind('click', function() {
 			// call the callback

@@ -23,7 +23,9 @@ public class Configuration {
 	public static final String MESSAGE_TYPE = "MESSAGE_TYPE";
 	public static final String MESSAGE_TYPE_CONTENT_LIST = "MESSAGE_TYPE_CONTENT_LIST";
 	public static final String MESSAGE_TYPE_SEND_TO_SYNC = "MESSAGE_TYPE_SEND_TO_SYNC";
+	public static final String MESSAGE_TYPE_DISPLAY_NOTIFICATION = "MESSAGE_TYPE_DISPLAY_NOTIFICATION";
 	
+
 	public static final String SITE_NAME = "Skok";
 	//Dev
 	public static final String FORGOT_PASSWORD_URL = "https://"+ DOMAIN +"/forgotpassword";

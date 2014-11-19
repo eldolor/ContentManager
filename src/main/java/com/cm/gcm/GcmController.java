@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cm.accountmanagement.client.key.ClientKeyService;
@@ -22,6 +23,7 @@ import com.cm.contentmanager.application.ApplicationService;
 import com.cm.contentmanager.content.ContentHelper;
 import com.cm.contentserver.ContentRequest;
 import com.cm.gcm.transfer.GcmRegistrationRequest;
+import com.cm.gcm.transfer.NotificationMessage;
 import com.cm.usermanagement.user.UserService;
 import com.cm.util.Utils;
 import com.cm.util.ValidationError;
@@ -246,6 +248,77 @@ public class GcmController {
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting sendContentListMessage");
+
+		}
+	}
+
+	@RequestMapping(value = "/secured/gcm/sendnotificationmessages", method = RequestMethod.POST, consumes = "application/json")
+	public void triggerNotificationMessages(@RequestBody NotificationMessage notificationMessage,
+	HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+
+			Utils.triggerSendNotificationMessages(notificationMessage.getTrackingId(), notificationMessage.getMessage(), 0);
+
+			response.setStatus(HttpServletResponse.SC_OK);
+		} catch (Throwable e) {
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+
+		}
+	}
+
+	@RequestMapping(value = "/tasks/gcm/sendnotificationmessages/{trackingId}", method = RequestMethod.POST)
+	public void sendNotificationMessages(@PathVariable String trackingId,
+			@RequestParam String message, HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+
+			// send the new content list to the affected devices
+			gcmHelper.sendNotificationMessages(trackingId, message);
+
+			response.setStatus(HttpServletResponse.SC_OK);
+		} catch (IOException e) {
+			LOGGER.log(Level.SEVERE, "Unable to connect with GCM servers.", e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+
+		}
+	}
+
+	@RequestMapping(value = "/tasks/gcm/sendnotificationmessage/{trackingId}/{gcmId}", method = RequestMethod.POST)
+	public void sendNotificationMessage(@PathVariable String trackingId,
+			@PathVariable String gcmId, @RequestParam String message,
+			HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+
+			// send the new content list to the affected devices
+			gcmHelper.sendNotificationMessages(trackingId, message);
+
+			response.setStatus(HttpServletResponse.SC_OK);
+		} catch (IOException e) {
+			LOGGER.log(Level.SEVERE, "Unable to connect with GCM servers.", e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
 
 		}
 	}

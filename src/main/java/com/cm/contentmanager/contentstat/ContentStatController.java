@@ -140,6 +140,59 @@ public class ContentStatController {
 		}
 	}
 
+	@RequestMapping(value = "/contentstats/unmanaged", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	public @ResponseBody
+	Result doCreateUnmanagedContentStat(
+			@RequestBody List<com.cm.contentmanager.contentstat.transfer.UnmanagedContentStat> contentStats,
+			HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+
+			List<UnmanagedContentStat> lContentStats = convertToUnmanagedDomainObject(contentStats);
+			Application lApplication = null;
+
+			for (UnmanagedContentStat lContentStat : lContentStats) {
+				if (lApplication == null) {
+					String lTrackingId = contentStats.get(0).getTrackingId();
+					// get from the transfer object
+					lApplication = applicationService
+							.getApplicationByTrackingId(lTrackingId, true/**
+							 * 
+							 * include deleted applications, as that might have
+							 * been the change
+							 **/
+							);
+					if (lApplication == null) {
+						LOGGER.log(Level.SEVERE,
+								"No application id found for tracking id: "
+										+ lTrackingId);
+						Result lResult = new Result();
+						lResult.setResult(Result.FAILURE);
+						response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+						return lResult;
+					}
+
+				}
+				contentStatService.saveUnmanagedContentStat(lContentStat);
+			}
+
+			Result lResult = new Result();
+			lResult.setResult(Result.SUCCESS);
+			response.setStatus(HttpServletResponse.SC_CREATED);
+			return lResult;
+
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
 	@RequestMapping(value = "/contentdownloadstats", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	public @ResponseBody
 	Result doCreateContentDownloadStat(
@@ -160,7 +213,8 @@ public class ContentStatController {
 				}
 				lTotalSizeInBytes += lContentDownloadStat.getSizeInBytes();
 			}
-			//gather bandwidth consumed upfront, instead of reading from the datastore
+			// gather bandwidth consumed upfront, instead of reading from the
+			// datastore
 			Utils.triggerUpdateBandwidthUtilizationMessage(lApplicationId,
 					lTotalSizeInBytes, 0);
 
@@ -626,6 +680,23 @@ public class ContentStatController {
 
 	}
 
+	private List<UnmanagedContentStat> convertToUnmanagedDomainObject(
+			List<com.cm.contentmanager.contentstat.transfer.UnmanagedContentStat> pContentStats) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			List<UnmanagedContentStat> lContentStats = new ArrayList<UnmanagedContentStat>();
+			for (com.cm.contentmanager.contentstat.transfer.UnmanagedContentStat lContentStat : pContentStats) {
+				lContentStats.add(convertToUnmanagedDomainObject(lContentStat));
+			}
+			return lContentStats;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+
+	}
+
 	private ContentStat convertToDomainObject(
 			com.cm.contentmanager.contentstat.transfer.ContentStat pContentStat) {
 		try {
@@ -635,6 +706,36 @@ public class ContentStatController {
 			lContentStat.setApplicationId(pContentStat.getApplicationId());
 			lContentStat.setContentGroupId(pContentStat.getContentGroupId());
 			lContentStat.setContentId(pContentStat.getContentId());
+
+			lContentStat.setAccuracy(pContentStat.getAccuracy());
+			lContentStat.setAltitude(pContentStat.getAltitude());
+			lContentStat.setBearing(pContentStat.getBearing());
+			lContentStat.setDeviceId(pContentStat.getDeviceId());
+			lContentStat.setLatitude(pContentStat.getLatitude());
+			lContentStat.setLongitude(pContentStat.getLongitude());
+			lContentStat.setProvider(pContentStat.getProvider());
+			lContentStat.setSpeed(pContentStat.getSpeed());
+
+			lContentStat.setEventTimeMs(pContentStat.getEventTimeMs());
+			lContentStat.setEventTimeZoneOffsetMs(pContentStat
+					.getEventTimeZoneOffsetMs());
+			lContentStat.setEventType(pContentStat.getEventType());
+			return lContentStat;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+
+	}
+
+	private UnmanagedContentStat convertToUnmanagedDomainObject(
+			com.cm.contentmanager.contentstat.transfer.UnmanagedContentStat pContentStat) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			UnmanagedContentStat lContentStat = new UnmanagedContentStat();
+			lContentStat.setUrl(pContentStat.getUrl());
+			lContentStat.setUrlHash(pContentStat.getUrlHash());
 
 			lContentStat.setAccuracy(pContentStat.getAccuracy());
 			lContentStat.setAltitude(pContentStat.getAltitude());
@@ -693,14 +794,20 @@ public class ContentStatController {
 					.getEventTimeZoneOffsetMs());
 			lContentDownloadStat.setSizeInBytes(pContentDownloadStat
 					.getSizeInBytes());
-			
-			lContentDownloadStat.setAccuracy(pContentDownloadStat.getAccuracy());
-			lContentDownloadStat.setAltitude(pContentDownloadStat.getAltitude());
+
+			lContentDownloadStat
+					.setAccuracy(pContentDownloadStat.getAccuracy());
+			lContentDownloadStat
+					.setAltitude(pContentDownloadStat.getAltitude());
 			lContentDownloadStat.setBearing(pContentDownloadStat.getBearing());
-			lContentDownloadStat.setDeviceId(pContentDownloadStat.getDeviceId());
-			lContentDownloadStat.setLatitude(pContentDownloadStat.getLatitude());
-			lContentDownloadStat.setLongitude(pContentDownloadStat.getLongitude());
-			lContentDownloadStat.setProvider(pContentDownloadStat.getProvider());
+			lContentDownloadStat
+					.setDeviceId(pContentDownloadStat.getDeviceId());
+			lContentDownloadStat
+					.setLatitude(pContentDownloadStat.getLatitude());
+			lContentDownloadStat.setLongitude(pContentDownloadStat
+					.getLongitude());
+			lContentDownloadStat
+					.setProvider(pContentDownloadStat.getProvider());
 			lContentDownloadStat.setSpeed(pContentDownloadStat.getSpeed());
 
 			return lContentDownloadStat;

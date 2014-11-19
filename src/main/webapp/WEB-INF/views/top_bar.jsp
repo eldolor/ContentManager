@@ -150,7 +150,7 @@
 			<li class="has-dropdown"><a href="#">Downloads</a>
 				<ul class="dropdown">
 					<li><a onclick="sendGAStatsDownloadAndroidSdk();"
-						href="/resources/api/current/skok_sdk_1_1.jar">Android SDK</a></li>
+						href="/resources/api/current/skok_sdk_1_2.jar">Android SDK</a></li>
 				</ul></li>
 			<sec:authorize ifAnyGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">
 				<li><a href="<c:url value="/j_spring_security_logout"/>">Sign

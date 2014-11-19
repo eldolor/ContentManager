@@ -60,6 +60,26 @@ class ContentStatDao {
 		}
 	}
 
+	void saveUnmanagedContentStat(UnmanagedContentStat contentStat) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			PersistenceManager pm = null;
+			try {
+				pm = PMF.get().getPersistenceManager();
+				pm.makePersistent(contentStat);
+
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
 	List<ContentStatByApplicationSummary> getSummaryByApplication(
 			Long applicationId, Long eventStartTimeMs, Long eventEndTimeMs) {
 		try {

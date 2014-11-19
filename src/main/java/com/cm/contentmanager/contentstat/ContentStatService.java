@@ -37,7 +37,17 @@ public class ContentStatService {
 				LOGGER.info("Exiting ");
 		}
 	}
+	public void saveUnmanagedContentStat(UnmanagedContentStat contentStat) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
 
+			contentStatDao.saveUnmanagedContentStat(contentStat);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
 	public List<ContentStatByApplicationSummary> getSummaryByApplication(Long applicationId, Long eventStartTimeMs, Long eventEndTimeMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))

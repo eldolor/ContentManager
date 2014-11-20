@@ -169,7 +169,7 @@
 	</div>
 	<div class="reveal-modal small" id="send_notification_messages_modal"
 		data-reveal>
-		<h3 class="gray" id="modalLabel">Send Notification to All Devices</h3>
+		<h3 class="gray" id="modalLabel">Send Notification to All Users</h3>
 		<input type="hidden" id="send_notification_messages_tracking_id"
 			name="send_notification_messages_tracking_id" /> <input
 			type="hidden" />

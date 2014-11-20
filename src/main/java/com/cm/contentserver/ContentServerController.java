@@ -192,6 +192,20 @@ public class ContentServerController {
 				GcmRegistrationRequest lGcmRegistrationRequest = gcmService
 						.getGcmRegistrationRequest(pHandshake
 								.getGcmRegistrationId());
+				//
+				if (lGcmRegistrationRequest == null) {
+					List<ValidationError> lErrors = new ArrayList<ValidationError>();
+					ValidationError lError = new ValidationError();
+					lError.setCode(CanonicalErrorCodes.INVALID_REQUEST
+							.getValue());
+					lError.setDescription("Request is Invalid!");
+					lErrors.add(lError);
+					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+					LOGGER.log(Level.SEVERE,
+							CanonicalErrorCodes.INVALID_REQUEST.getValue()
+									+ lHandshake.getClientKey());
+					return lErrors;
+				}
 				// validate GCM registration id
 				List<ValidationError> lErrors = gcmService
 						.evaluateGcmRegistrationStatus(lGcmRegistrationRequest);

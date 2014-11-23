@@ -26,6 +26,7 @@ public class ContentStatService {
 				LOGGER.info("Exiting saveContent");
 		}
 	}
+
 	public void saveContentDownloadStat(ContentDownloadStat contentDownloadStat) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -37,6 +38,7 @@ public class ContentStatService {
 				LOGGER.info("Exiting ");
 		}
 	}
+
 	public void saveUnmanagedContentStat(UnmanagedContentStat contentStat) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -48,18 +50,23 @@ public class ContentStatService {
 				LOGGER.info("Exiting");
 		}
 	}
-	public List<ContentStatByApplicationSummary> getSummaryByApplication(Long applicationId, Long eventStartTimeMs, Long eventEndTimeMs) {
+
+	public List<ContentStatByApplicationSummary> getSummaryByApplication(
+			Long applicationId, Long eventStartTimeMs, Long eventEndTimeMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
 
-			return contentStatDao.getSummaryByApplication(applicationId, eventStartTimeMs, eventEndTimeMs);
+			return contentStatDao.getSummaryByApplication(applicationId,
+					eventStartTimeMs, eventEndTimeMs);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting");
 		}
 	}
-	public List<ContentStatByApplicationSummary> getSummaryByApplication(Long applicationId) {
+
+	public List<ContentStatByApplicationSummary> getSummaryByApplication(
+			Long applicationId) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
@@ -70,7 +77,9 @@ public class ContentStatService {
 				LOGGER.info("Exiting");
 		}
 	}
-	public List<ContentStatByContentGroupSummary> getSummaryByContentGroup(Long contentGroupId) {
+
+	public List<ContentStatByContentGroupSummary> getSummaryByContentGroup(
+			Long contentGroupId) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
@@ -81,6 +90,7 @@ public class ContentStatService {
 				LOGGER.info("Exiting");
 		}
 	}
+
 	public List<ContentStatByContentSummary> getSummaryByContent(Long contentId) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -92,17 +102,33 @@ public class ContentStatService {
 				LOGGER.info("Exiting");
 		}
 	}
-		
-	public void rollupSummary(Long applicationId, Long eventStartTimeMs, Long eventEndTimeMs){
+
+	public void rollupSummary(Long applicationId, Long eventStartTimeMs,
+			Long eventEndTimeMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
 
-			contentStatDao.rollupSummary(applicationId, eventStartTimeMs, eventEndTimeMs);
+			contentStatDao.rollupSummary(applicationId, eventStartTimeMs,
+					eventEndTimeMs);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting");
 		}
-		
+
 	}
+
+	public void rollupSummaryRealTime(List<ContentStat> pContentStats) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+
+			contentStatDao.rollupSummaryRealTime(pContentStats);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+
+	}
+
 }

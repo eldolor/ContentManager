@@ -201,7 +201,8 @@ public class UserManagementController {
 					.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">You can find out more at <a href=\"http://skok.co/docs/overview\">Skok</a> </p>");
 
 			StringBuilder lHtmlFormattedCallout = new StringBuilder();
-			lHtmlFormattedCallout.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\"><b>Powerful New Features</b></p>");
+			lHtmlFormattedCallout
+					.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\"><b>Powerful New Features</b></p>");
 			lHtmlFormattedCallout.append("<ol>");
 			lHtmlFormattedCallout.append("<li>Cloud-driven Architecture</li>");
 			lHtmlFormattedCallout
@@ -455,6 +456,48 @@ public class UserManagementController {
 					lEod.add(Calendar.DATE, -1);
 				}
 			}
+			response.setStatus(HttpServletResponse.SC_OK);
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+
+	}
+
+	@RequestMapping(value = "/test/rollupsummaryrealtime/{applicationId}/{lastNDays}", method = RequestMethod.GET)
+	public void testRollupSummaryRealTime(@PathVariable long applicationId,
+			@PathVariable int lastNDays, HttpServletResponse response) {
+
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			{
+				List<Content> lContents = contentService.get(applicationId,
+						false);
+				List<ContentStat> lContentStats = new ArrayList<ContentStat>();
+
+				for (int i = 0; i < lastNDays; i++) {
+					long lEod = Utils.getEndOfDayMinusDays(i,
+							TimeZone.getTimeZone("UTC"));
+					if (LOGGER.isLoggable(Level.INFO))
+						LOGGER.info("Processing: " + lEod);
+					for (Content content : lContents) {
+						int lRandom = Utils.getRandomNumber(1, 2);
+						for (int j = 0; j < lRandom; j++) {
+							lContentStats.add(createDemoContentStat(
+									content.getApplicationId(),
+									content.getContentGroupId(),
+									content.getId(), lEod));
+						}
+					}
+				}
+				contentStatService.rollupSummaryRealTime(lContentStats);
+			}
+
 			response.setStatus(HttpServletResponse.SC_OK);
 		} catch (Throwable e) {
 			// handled by GcmManager

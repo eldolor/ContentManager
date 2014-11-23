@@ -122,6 +122,9 @@ public class ContentStatController {
 			for (ContentStat lContentStat : lContentStats) {
 				contentStatService.saveContentStat(lContentStat);
 			}
+			//rollup real time
+			contentStatService.rollupSummaryRealTime(lContentStats);
+
 			response.setStatus(HttpServletResponse.SC_CREATED);
 
 			Result lResult = new Result();
@@ -158,6 +161,7 @@ public class ContentStatController {
 					// get from the transfer object
 					lApplication = applicationService
 							.getApplicationByTrackingId(lTrackingId, true/**
+							 * 
 							 * 
 							 * include deleted applications, as that might have
 							 * been the change

@@ -26,6 +26,10 @@ import net.sf.jsr107cache.Cache;
 import net.sf.jsr107cache.CacheFactory;
 import net.sf.jsr107cache.CacheManager;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.Days;
+
 import com.cm.config.Configuration;
 import com.cm.contentmanager.application.Application;
 import com.cm.contentmanager.content.Content;
@@ -637,4 +641,51 @@ public class Utils {
 		return r.nextInt(rangeEnd - rangeBegin) + rangeBegin;
 	}
 
+	public static int getDaysBetweenTodayAndTimestamp(long timeInMs,
+			TimeZone timeZone) {
+		Calendar calendarToday = getEndOfDayToday(timeZone);
+
+		return Days.daysBetween(new DateTime(timeInMs),
+				new DateTime(calendarToday)).getDays();
+	}
+
+	public static long getEndOfDayMinusDays(int days, TimeZone timeZone) {
+		DateTime lEod = DateTime.now(DateTimeZone.forTimeZone(timeZone));
+		lEod = lEod.withTimeAtStartOfDay();
+		// roll over to next day
+		lEod = lEod.plusDays(1);
+		// roll back 1 millisec to bring it to EOD time
+		lEod = lEod.minus(1);
+		// do the math
+		lEod = lEod.minusDays(days);
+		return lEod.getMillis();
+	}
+
+	public static long getEndOfDayPlusDays(int days, TimeZone timeZone) {
+		DateTime lEod = DateTime.now(DateTimeZone.forTimeZone(timeZone));
+		lEod = lEod.withTimeAtStartOfDay();
+		// roll over to next day
+		lEod = lEod.plusDays(1);
+		// roll back 1 millisec to bring it to EOD time
+		lEod = lEod.minus(1);
+		// do the math
+		lEod = lEod.plusDays(days);
+		return lEod.getMillis();
+	}
+
+	public static long getStartOfDayMinusDays(int days, TimeZone timeZone) {
+		DateTime lSod = DateTime.now(DateTimeZone.forTimeZone(timeZone));
+		lSod = lSod.withTimeAtStartOfDay();
+		// do the math
+		lSod = lSod.minusDays(days);
+		return lSod.getMillis();
+	}
+
+	public static long getStartOfDayPlusDays(int days, TimeZone timeZone) {
+		DateTime lSod = DateTime.now(DateTimeZone.forTimeZone(timeZone));
+		lSod = lSod.withTimeAtStartOfDay();
+		// do the math
+		lSod = lSod.plusDays(days);
+		return lSod.getMillis();
+	}
 }

@@ -39,6 +39,7 @@ import com.cm.contentmanager.contentgroup.ContentGroup;
 import com.cm.contentmanager.contentgroup.ContentGroupService;
 import com.cm.contentmanager.contentstat.ContentStat;
 import com.cm.contentmanager.contentstat.ContentStatService;
+import com.cm.contentmanager.contentstat.UnmanagedContentStat;
 import com.cm.quota.Quota;
 import com.cm.quota.QuotaService;
 import com.cm.stripe.StripeCustomer;
@@ -516,6 +517,54 @@ public class UserManagementController {
 		lContentStat.setApplicationId(applicationId);
 		lContentStat.setContentGroupId(contentGroupId);
 		lContentStat.setContentId(contentId);
+		lContentStat.setEventTimeMs(eventTime);
+		lContentStat.setEventTimeZoneOffsetMs((long) TimeZone
+				.getTimeZone("UTC").getRawOffset());
+		lContentStat.setEventType("impression");
+		return lContentStat;
+	}
+
+	@RequestMapping(value = "/test/rollupunmanagedsummaryrealtime/{applicationId}/{lastNDays}", method = RequestMethod.GET)
+	public void testRollupUnmanagedSummaryRealTime(
+			@PathVariable long applicationId, @PathVariable int lastNDays,
+			HttpServletResponse response) {
+
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+
+			List<UnmanagedContentStat> lContentStats = new ArrayList<UnmanagedContentStat>();
+
+			for (int i = 0; i < lastNDays; i++) {
+				long lEod = Utils.getEndOfDayMinusDays(i,
+						TimeZone.getTimeZone("UTC"));
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("Processing: " + lEod);
+				lContentStats.add(createDemoUnmanagedContentStat(applicationId,
+						"738ddf35b3a85a7a6ba7b232bd3d5f1e4d284ad1",
+						"http://www.google.com", lEod));
+
+			}
+			contentStatService.rollupUnmanagedSummaryRealTime(lContentStats);
+
+			response.setStatus(HttpServletResponse.SC_OK);
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+
+	}
+
+	private UnmanagedContentStat createDemoUnmanagedContentStat(
+			long applicationId, String urlHash, String url, long eventTime) {
+		UnmanagedContentStat lContentStat = new UnmanagedContentStat();
+		lContentStat.setApplicationId(applicationId);
+		lContentStat.setUrlHash(urlHash);
+		lContentStat.setUrl(url);
 		lContentStat.setEventTimeMs(eventTime);
 		lContentStat.setEventTimeZoneOffsetMs((long) TimeZone
 				.getTimeZone("UTC").getRawOffset());

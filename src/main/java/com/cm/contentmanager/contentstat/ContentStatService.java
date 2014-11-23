@@ -130,5 +130,17 @@ public class ContentStatService {
 		}
 
 	}
+	public void rollupUnmanagedSummaryRealTime(List<UnmanagedContentStat> pContentStats) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+
+			contentStatDao.rollupUnmanagedSummaryRealTime(pContentStats);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+
+	}
 
 }

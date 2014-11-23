@@ -2,7 +2,6 @@ package com.cm.contentmanager.contentstat;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -14,6 +13,7 @@ import javax.jdo.Query;
 
 import org.springframework.stereotype.Component;
 
+import com.cm.contentmanager.contentstat.transfer.UnmanagedContentStatByApplicationSummary;
 import com.cm.util.PMF;
 import com.cm.util.Utils;
 
@@ -391,10 +391,9 @@ class ContentStatDao {
 					if (lApplicationId == null) {
 						lApplicationId = contentStat.getApplicationId();
 					}
-					int lDayBucket = Utils
-							.getDaysBetweenTodayAndTimestamp(
-									contentStat.getEventTimeMs(),
-									TimeZone.getTimeZone("UTC"));
+					int lDayBucket = Utils.getDaysBetweenTodayAndTimestamp(
+							contentStat.getEventTimeMs(),
+							TimeZone.getTimeZone("UTC"));
 					// if it does not contain; initialize
 					if (!lApplicationCountsByDay.containsKey(lDayBucket)) {
 						lApplicationCountsByDay.put(
@@ -457,8 +456,8 @@ class ContentStatDao {
 					long lEndOfDayMs = Utils.getEndOfDayMinusDays(lDayNumber,
 							TimeZone.getTimeZone("UTC"));
 
-					long lStartOfDayMs = Utils.getStartOfDayMinusDays(lDayNumber,
-							TimeZone.getTimeZone("UTC"));
+					long lStartOfDayMs = Utils.getStartOfDayMinusDays(
+							lDayNumber, TimeZone.getTimeZone("UTC"));
 
 					Query q = pm
 							.newQuery(ContentStatByApplicationSummary.class);
@@ -495,8 +494,8 @@ class ContentStatDao {
 
 						int lDayNumber = entry.getKey();
 						// get
-						long lEndOfDayMs = Utils.getEndOfDayMinusDays(lDayNumber,
-								TimeZone.getTimeZone("UTC"));
+						long lEndOfDayMs = Utils.getEndOfDayMinusDays(
+								lDayNumber, TimeZone.getTimeZone("UTC"));
 
 						long lStartOfDayMs = Utils.getStartOfDayMinusDays(
 								lDayNumber, TimeZone.getTimeZone("UTC"));
@@ -552,8 +551,8 @@ class ContentStatDao {
 
 						int lDayNumber = entry.getKey();
 						// get
-						long lEndOfDayMs = Utils.getEndOfDayMinusDays(lDayNumber,
-								TimeZone.getTimeZone("UTC"));
+						long lEndOfDayMs = Utils.getEndOfDayMinusDays(
+								lDayNumber, TimeZone.getTimeZone("UTC"));
 
 						long lStartOfDayMs = Utils.getStartOfDayMinusDays(
 								lDayNumber, TimeZone.getTimeZone("UTC"));
@@ -607,5 +606,187 @@ class ContentStatDao {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting");
 		}
+	}
+
+	void rollupUnmanagedSummaryRealTime(List<UnmanagedContentStat> pContentStats) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			PersistenceManager pm = null;
+			Map<Integer, Long> lApplicationCountsByDay = new HashMap<Integer, Long>();
+			Map<Integer, HashMap<String, UnmanagedContentStatContainer>> lUrlCountsByDay = new HashMap<Integer, HashMap<String, UnmanagedContentStatContainer>>();
+			Long lApplicationId = null;
+
+			try {
+
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("Received "
+							+ ((pContentStats != null) ? pContentStats.size()
+									: 0) + " content stats");
+				for (UnmanagedContentStat contentStat : pContentStats) {
+					// all content stats are for the same application
+					if (lApplicationId == null) {
+						lApplicationId = contentStat.getApplicationId();
+					}
+					int lDayBucket = Utils.getDaysBetweenTodayAndTimestamp(
+							contentStat.getEventTimeMs(),
+							TimeZone.getTimeZone("UTC"));
+					// if it does not contain; initialize
+					if (!lApplicationCountsByDay.containsKey(lDayBucket)) {
+						lApplicationCountsByDay.put(
+								Integer.valueOf(lDayBucket), 0L);
+					}
+					if (!lUrlCountsByDay.containsKey(lDayBucket)) {
+						lUrlCountsByDay
+								.put(Integer.valueOf(lDayBucket),
+										new HashMap<String, UnmanagedContentStatContainer>());
+					}
+
+					// get
+					Long lApplicationCount = lApplicationCountsByDay
+							.get(lDayBucket);
+					lApplicationCountsByDay
+							.put(lDayBucket, ++lApplicationCount);
+
+					// get the right Map
+					Map<String, UnmanagedContentStatContainer> lUrlCounts = lUrlCountsByDay
+							.get(lDayBucket);
+					// check to see if it exists
+					if (lUrlCounts.containsKey(contentStat.getUrlHash())) {
+						UnmanagedContentStatContainer lContainer = lUrlCounts
+								.get(contentStat.getUrlHash());
+						Long lCount = lContainer.mCount;
+						++lCount;
+						lContainer.mCount = ++lCount;
+
+						lContainer.mUnmanagedContentStat = contentStat;
+
+						lUrlCounts.put(contentStat.getUrlHash(), lContainer);
+					} else {
+						UnmanagedContentStatContainer lContainer = new UnmanagedContentStatContainer();
+						lContainer.mCount = 1L;
+						lContainer.mUnmanagedContentStat = contentStat;
+						lUrlCounts.put(contentStat.getUrlHash(), lContainer);
+					}
+
+				}
+
+				// update the datastore
+				pm = PMF.get().getPersistenceManager();
+
+				for (Map.Entry<Integer, Long> entry : lApplicationCountsByDay
+						.entrySet()) {
+					int lDayNumber = entry.getKey();
+					long lApplicationIdCount = lApplicationCountsByDay
+							.get(lDayNumber);
+
+					// get
+					long lEndOfDayMs = Utils.getEndOfDayMinusDays(lDayNumber,
+							TimeZone.getTimeZone("UTC"));
+
+					long lStartOfDayMs = Utils.getStartOfDayMinusDays(
+							lDayNumber, TimeZone.getTimeZone("UTC"));
+
+					Query q = pm
+							.newQuery(UnmanagedContentStatByApplicationSummary.class);
+					q.setFilter("applicationId == applicationIdParam && eventEndTimeMs == eventEndTimeMsParam");
+					q.declareParameters("Long applicationIdParam, Long eventEndTimeMsParam");
+					List<UnmanagedContentStatByApplicationSummary> lList = (List<UnmanagedContentStatByApplicationSummary>) q
+							.execute(lApplicationId, lEndOfDayMs);
+
+					if (lList != null && (!lList.isEmpty())) {
+						// update
+						UnmanagedContentStatByApplicationSummary lSummary = lList
+								.get(0);
+						lSummary.setCount(lApplicationIdCount);
+
+					} else {
+						// create new
+						UnmanagedContentStatByApplicationSummary lSummary = new UnmanagedContentStatByApplicationSummary();
+						lSummary.setApplicationId(lApplicationId);
+						lSummary.setCount(lApplicationIdCount);
+						// timestamp
+						lSummary.setEventStartTimeMs(lStartOfDayMs);
+						lSummary.setEventEndTimeMs(lEndOfDayMs);
+						lSummary.setEventTimeZoneOffsetMs((long) TimeZone
+								.getDefault().getRawOffset());
+						pm.makePersistent(lSummary);
+					}
+				}
+
+				{
+					// By content group Id
+					for (Map.Entry<Integer, HashMap<String, UnmanagedContentStatContainer>> entry : lUrlCountsByDay
+							.entrySet()) {
+						HashMap<String, UnmanagedContentStatContainer> lContentGroupCountsForADay = entry
+								.getValue();
+
+						int lDayNumber = entry.getKey();
+						// get
+						long lEndOfDayMs = Utils.getEndOfDayMinusDays(
+								lDayNumber, TimeZone.getTimeZone("UTC"));
+
+						long lStartOfDayMs = Utils.getStartOfDayMinusDays(
+								lDayNumber, TimeZone.getTimeZone("UTC"));
+
+						for (Map.Entry<String, UnmanagedContentStatContainer> entry2 : lContentGroupCountsForADay
+								.entrySet()) {
+							UnmanagedContentStatContainer lContainer = entry2.getValue();
+							if ( lContainer != null) {
+								if (LOGGER.isLoggable(Level.INFO))
+									LOGGER.info("Processing url: "
+											+ entry.getKey());
+								long lApplicationIdCount = lApplicationCountsByDay
+										.get(lDayNumber);
+
+								Query q = pm
+										.newQuery(UnmanagedContentStatByUrlSummary.class);
+								q.setFilter("urlHash == urlHashParam && eventEndTimeMs == eventEndTimeMsParam");
+								q.declareParameters("String urlHashParam, Long eventEndTimeMsParam");
+								List<UnmanagedContentStatByUrlSummary> lList = (List<UnmanagedContentStatByUrlSummary>) q
+										.execute(entry.getKey(), lEndOfDayMs);
+								if (lList != null && (!lList.isEmpty())) {
+									// update
+									UnmanagedContentStatByUrlSummary lSummary = lList
+											.get(0);
+									lSummary.setCount(lContainer.mCount);
+
+								} else {
+									// create new
+									UnmanagedContentStatByUrlSummary lSummary = new UnmanagedContentStatByUrlSummary();
+									lSummary.setUrlHash(entry2.getKey());
+									lSummary.setUrl(lContainer.mUnmanagedContentStat.getUrl());
+									lSummary.setCount(lContainer.mCount);
+									lSummary.setEventStartTimeMs(lStartOfDayMs);
+									lSummary.setEventEndTimeMs(lEndOfDayMs);
+									lSummary.setEventTimeZoneOffsetMs((long) TimeZone
+											.getDefault().getRawOffset());
+									pm.makePersistent(lSummary);
+								}
+							} else {
+								if (LOGGER.isLoggable(Level.INFO))
+									LOGGER.info("Skipping url: "
+											+ entry.getKey());
+							}
+						}
+					}
+
+				}
+
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	class UnmanagedContentStatContainer {
+		public UnmanagedContentStat mUnmanagedContentStat;
+		public long mCount;
 	}
 }

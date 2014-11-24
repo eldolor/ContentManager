@@ -178,7 +178,7 @@ function handleDisplayApplications_Callback(pApplications) {
 
 			lInnerHtml += lApplication.trackingId
 					+ "\")'><i class='fi-page-edit light_gray'></i>&nbsp;send notification</a></li>";
-			
+
 			lInnerHtml += "</ul>";
 			// 
 
@@ -463,6 +463,13 @@ function editApplication(id) {
 							} else {
 								$('#application_enabled').removeAttr('checked');
 							}
+							if ((!application.collectUsageData)
+									|| application.collectUsageData == true) {
+								$('#collect_usage_data').attr('checked',
+										'checked');
+							} else {
+								$('#collect_usage_data').removeAttr('checked');
+							}
 							$('#application_save_button').html('update');
 
 							// not using valid.fndtn.abide & invalid.fndtn.abide
@@ -603,6 +610,9 @@ function newApplication() {
 							$('#application_enabled')
 									.attr('checked', 'checked');
 
+							// set default
+							$('#collect_usage_data').attr('checked', 'checked');
+
 							$('#application_errors').empty();
 							// Google Analytics
 							ga('send', 'event', Category.APPLICATION,
@@ -657,6 +667,12 @@ function createApplication() {
 		} else {
 			_updateOverWifiOnly = false;
 		}
+		var _collectUsageData;
+		if ($('#collect_usage_data').is(':checked')) {
+			_collectUsageData = true;
+		} else {
+			_collectUsageData = false;
+		}
 
 		var _date = new Date();
 		var _timeCreated = _date.getTime();
@@ -667,6 +683,7 @@ function createApplication() {
 			description : $('#application_description').val(),
 			updateOverWifiOnly : _updateOverWifiOnly,
 			enabled : _enabled,
+			collectUsageData : _collectUsageData,
 			timeCreatedMs : _timeCreated,
 			timeCreatedTimeZoneOffsetMs : (_date.getTimezoneOffset() * 60 * 1000),
 			timeUpdatedMs : _timeCreated,
@@ -752,6 +769,12 @@ function updateApplication() {
 	} else {
 		_updateOverWifiOnly = false;
 	}
+	var _collectUsageData;
+	if ($('#collect_usage_data').is(':checked')) {
+		_collectUsageData = true;
+	} else {
+		_collectUsageData = false;
+	}
 
 	try {
 		var _date = new Date();
@@ -761,6 +784,7 @@ function updateApplication() {
 			description : $('#application_description').val(),
 			updateOverWifiOnly : _updateOverWifiOnly,
 			enabled : _enabled,
+			collectUsageData : _collectUsageData,
 			timeUpdatedMs : _date.getTime(),
 			timeUpdatedTimeZoneOffsetMs : (_date.getTimezoneOffset() * 60 * 1000)
 		};
@@ -1014,7 +1038,7 @@ function sendNotificationMessages(pTrackingId) {
 					};
 					var applicationObjString = JSON.stringify(applicationObj,
 							null, 2);
-					//alert(applicationObjString);
+					// alert(applicationObjString);
 					var jqxhr = $
 							.ajax({
 								url : "/secured/gcm/sendnotificationmessages",

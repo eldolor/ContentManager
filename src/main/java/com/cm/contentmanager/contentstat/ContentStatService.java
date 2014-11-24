@@ -64,6 +64,30 @@ public class ContentStatService {
 				LOGGER.info("Exiting");
 		}
 	}
+	public List<UnmanagedContentStatByApplicationSummary> getUnmanagedSummaryByApplication(
+			Long applicationId) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+
+			return contentStatDao.getUnmanagedSummaryByApplication(applicationId);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+	public List<UnmanagedContentStatByUrlSummary> getUnmanagedSummaryByUrl(
+			Long applicationId) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+
+			return contentStatDao.getUnmanagedSummaryByUrl(applicationId);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
 
 	public List<ContentStatByApplicationSummary> getSummaryByApplication(
 			Long applicationId) {

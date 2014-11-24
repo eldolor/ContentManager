@@ -37,14 +37,14 @@
 			};
 
 			var lSticky = <c:out value="${param.sticky}" >true</c:out>;
-			
+
 			// run our function on load
-			if(lSticky){
+			if (lSticky) {
 				sticky_navigation();
 			}
 
 			// and run it again every time you scroll
-			if(lSticky){
+			if (lSticky) {
 				$(window).scroll(function() {
 					sticky_navigation();
 				});
@@ -130,7 +130,12 @@
 			</sec:authorize>
 			<sec:authorize ifAnyGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">
 				<li><a href="/account/plans">Plans &amp; Pricing</a></li>
-				<li><a href="/analytics/applications">Usage Reports</a></li>
+				<li class="has-dropdown"><a href="#">Usage Reports</a>
+					<ul class="dropdown">
+						<li><a href="/analytics/applications">Managed Content</a></li>
+						<li><a href="/analytics/applications/unmanaged">Unmanaged Content</a></li>
+					</ul></li>
+
 				<li class="has-dropdown"><a href="#">Account Settings</a>
 					<ul class="dropdown">
 						<li><a href="/account/clientkeys">Client Keys</a></li>

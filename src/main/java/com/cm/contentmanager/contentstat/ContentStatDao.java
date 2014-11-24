@@ -13,7 +13,6 @@ import javax.jdo.Query;
 
 import org.springframework.stereotype.Component;
 
-import com.cm.contentmanager.contentstat.transfer.UnmanagedContentStatByApplicationSummary;
 import com.cm.util.PMF;
 import com.cm.util.Utils;
 
@@ -182,6 +181,59 @@ class ContentStatDao {
 				LOGGER.info("Exiting");
 		}
 	}
+
+	List<UnmanagedContentStatByApplicationSummary> getUnmanagedSummaryByApplication(
+			Long applicationId) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(UnmanagedContentStatByApplicationSummary.class);
+				q.setFilter("applicationId == applicationIdParam");
+				q.declareParameters("Long applicationIdParam");
+				q.setOrdering("eventEndTimeMs desc");
+				return (List<UnmanagedContentStatByApplicationSummary>) q
+						.execute(applicationId);
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	List<UnmanagedContentStatByUrlSummary> getUnmanagedSummaryByUrl(
+			Long applicationId) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(UnmanagedContentStatByUrlSummary.class);
+				q.setFilter("applicationId == applicationIdParam");
+				q.declareParameters("Long applicationIdParam");
+				q.setOrdering("eventEndTimeMs desc");
+				return (List<UnmanagedContentStatByUrlSummary>) q
+						.execute(applicationId);
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
 
 	void rollupSummary(Long applicationId, Long eventStartTimeMs,
 			Long eventEndTimeMs) {

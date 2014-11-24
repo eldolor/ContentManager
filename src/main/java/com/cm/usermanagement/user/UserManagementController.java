@@ -253,6 +253,7 @@ public class UserManagementController {
 			lApplication
 					.setDescription("We've created a demo application for illustrative purposes only. The application contains 2 content groups, and a few Image and Video type contents. The demo application is enabled by default, and is configured such that the users can only download the contents (images & videos) over a Wi-Fi network, and not over a Cellular Network. This helps conserve the cellular data usage.");
 			lApplication.setEnabled(true);
+			lApplication.setCollectUsageData(true);
 			lApplication.setName("Demo Application");
 			long lTime = System.currentTimeMillis();
 			lApplication.setTimeCreatedMs(lTime);

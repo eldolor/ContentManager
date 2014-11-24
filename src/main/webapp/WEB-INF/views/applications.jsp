@@ -93,6 +93,16 @@
 							</div>
 							<div class="blog_snippet">
 								<div class="blog_details float_left">
+									<span class="title green">Usage Data &amp; Geolocation</span> <span class="date">Skok
+										collects usage data, including geolocation, of all your
+										managed and unmanaged content. This information is used to
+										provide Usage Reports.You can restrict collection of usage
+										statistics for this application. </span>
+								</div>
+								<div class="clearfix"></div>
+							</div>
+							<div class="blog_snippet">
+								<div class="blog_details float_left">
 									<span class="title green">Enabled</span> <span class="date">Disabling
 										an application will prevent all the rich content within the
 										application, from being downloaded</span>

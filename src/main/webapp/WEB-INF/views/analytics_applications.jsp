@@ -40,7 +40,7 @@
 	<jsp:include page="top_bar.jsp"></jsp:include>
 	<section>
 		<div class="row full-width">
-			<h2 class="text-center gray">Content Usage</h2>
+			<h2 class="text-center gray">Managed Content Usage</h2>
 			<p class="text-center page_sub_heading">Aggregate daily content impressions on mobile devices, for each
 				application.</p>
 <!-- 			<div class="line">

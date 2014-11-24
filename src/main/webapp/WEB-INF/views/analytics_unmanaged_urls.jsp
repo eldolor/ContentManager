@@ -22,7 +22,7 @@
 
 <!-- Begin Custom -->
 <script type="text/javascript"
-	src="/resources/javascripts/cm/cm.analytics.content.group.js"></script>
+	src="/resources/javascripts/cm/cm.analytics.unmanaged.urls.js"></script>
 <!-- End Custom -->
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 
@@ -43,9 +43,9 @@ var mApplicationId = ${applicationId};
 	<jsp:include page="top_bar.jsp"></jsp:include>
 	<section>
 		<div class="row full-width">
-			<h2 class="text-center gray">Managed Content Usage</h2>
+			<h2 class="text-center gray">Unmanaged Content Usage</h2>
 			<p class="text-center page_sub_heading">Aggregate daily content impressions on mobile devices, for each
-				content group</p>
+				URL</p>
 <!-- 			<div class="line">
 				<img src="/resources/images/cm/line.png" alt="line" />
 			</div>
@@ -69,8 +69,7 @@ var mApplicationId = ${applicationId};
 	<!-- At the bottom of your page but inside of the body tag -->
 	<ol class="joyride-list" data-joyride>
 		<li data-id="first_drill_down" data-button="End" data-options="prev_button: false">
-			<p>You can drill down to see content usage data for each content
-				 within the content group</p>
+			<p>You can drill down to see content usage data for each URL</p>
 		</li>
 	</ol>
 

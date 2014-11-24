@@ -47,12 +47,12 @@ public class ContentServerService {
 			if (lApplication != null && (!lApplication.isDeleted())
 					&& (!lApplication.isDeletedOnPlanDowngrade())
 					&& (lApplication.isEnabled())) {
-				//not deleted & enabled groups only
+				// not deleted & enabled groups only
 				List<ContentGroup> lContentGroups = filterContentGroupByEffectiveDate(contentGroupService
 						.get(lApplicationId, false, true));
 
 				for (ContentGroup lContentGroup : lContentGroups) {
-					//not deleted & enabled content only
+					// not deleted & enabled content only
 					lContents
 							.addAll(validateContent(contentService.get(
 									lApplicationId, lContentGroup.getId(),
@@ -86,6 +86,22 @@ public class ContentServerService {
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting isUpdateOverWifiOnly");
+		}
+
+	}
+
+	public boolean isCollectUsageData(ContentRequest pContentRequest) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			Long lApplicationId = this.resolveApplicationId(pContentRequest
+					.getTrackingId());
+			Application lApplication = applicationService
+					.getApplication(lApplicationId);
+			return lApplication.isCollectUsageData();
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
 		}
 
 	}

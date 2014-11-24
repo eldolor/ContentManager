@@ -43,7 +43,7 @@
 	<jsp:include page="top_bar.jsp"></jsp:include>
 	<section>
 		<div class="row full-width">
-			<h2 class="text-center gray">Content Usage</h2>
+			<h2 class="text-center gray">Managed Content Usage</h2>
 			<p class="text-center page_sub_heading">Daily content impressions on mobile devices, for each content</p>
 <!-- 			<div class="line">
 				<img src="/resources/images/cm/line.png" alt="line" />

@@ -11,6 +11,7 @@ public class Content implements Serializable {
 	private String type;
 	private String uri;
 	private boolean updateOverWifiOnly;
+	private boolean collectUsageData;
 	private Long sizeInBytes;
 	private Long timeCreatedMs;
 	private Long timeUpdatedMs;
@@ -101,6 +102,14 @@ public class Content implements Serializable {
 
 	public void setTags(String[] tags) {
 		this.tags = tags;
+	}
+
+	public boolean isCollectUsageData() {
+		return collectUsageData;
+	}
+
+	public void setCollectUsageData(boolean collectUsageData) {
+		this.collectUsageData = collectUsageData;
 	}
 
 }

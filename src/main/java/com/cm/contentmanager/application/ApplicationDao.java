@@ -508,7 +508,8 @@ class ApplicationDao {
 				if (lApplication != null) {
 					lApplication.setDeleted(false);
 					lApplication.setTimeUpdatedMs(timeUpdatedMs);
-					lApplication.setTimeUpdatedTimeZoneOffsetMs(timeUpdatedTimeZoneOffsetMs);
+					lApplication
+							.setTimeUpdatedTimeZoneOffsetMs(timeUpdatedTimeZoneOffsetMs);
 					if (LOGGER.isLoggable(Level.INFO))
 						LOGGER.info(id + " application restored");
 				} else {
@@ -544,6 +545,8 @@ class ApplicationDao {
 				lApplication.setUpdateOverWifiOnly(pApplication
 						.isUpdateOverWifiOnly());
 				lApplication.setEnabled(pApplication.isEnabled());
+				lApplication.setCollectUsageData(pApplication
+						.isCollectUsageData());
 				lApplication.setDeleted(pApplication.isDeleted());
 				// for existing contents
 				if (lApplication.getTimeCreatedMs() == null) {
@@ -557,7 +560,7 @@ class ApplicationDao {
 				lApplication.setTimeUpdatedMs(pApplication.getTimeUpdatedMs());
 				lApplication.setTimeUpdatedTimeZoneOffsetMs(pApplication
 						.getTimeUpdatedTimeZoneOffsetMs());
-				
+
 				return lApplication;
 
 			} finally {

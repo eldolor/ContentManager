@@ -109,9 +109,52 @@ public class ContentStatController {
 		}
 	}
 
+	/**
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/analytics/applications/unmanaged", method = RequestMethod.GET)
+	public ModelAndView displayApplicationsUnmanaged(ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering");
+		try {
+			return new ModelAndView("analytics_unmanaged_applications", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	@RequestMapping(value = "/analytics/applications/unmanaged/{tour}", method = RequestMethod.GET)
+	public ModelAndView displayApplicationsUnmanaged(@PathVariable String tour,
+			ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering");
+		try {
+			model.addAttribute("tour", tour);
+			return new ModelAndView("analytics_unmanaged_applications", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	@RequestMapping(value = "/analytics/{applicationId}/unmanaged/urls", method = RequestMethod.GET)
+	public ModelAndView displayUrlsUnmanaged(@PathVariable Long applicationId,
+			ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering");
+		try {
+			model.addAttribute("applicationId", applicationId);
+			return new ModelAndView("analytics_unmanaged_urls", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
 	@RequestMapping(value = "/contentstats", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-	public @ResponseBody
-	Result doCreateContentStat(
+	public @ResponseBody Result doCreateContentStat(
 			@RequestBody List<com.cm.contentmanager.contentstat.transfer.ContentStat> contentStats,
 			HttpServletResponse response) {
 		try {
@@ -122,7 +165,7 @@ public class ContentStatController {
 			for (ContentStat lContentStat : lContentStats) {
 				contentStatService.saveContentStat(lContentStat);
 			}
-			//rollup real time
+			// rollup real time
 			contentStatService.rollupSummaryRealTime(lContentStats);
 
 			response.setStatus(HttpServletResponse.SC_CREATED);
@@ -144,8 +187,7 @@ public class ContentStatController {
 	}
 
 	@RequestMapping(value = "/contentstats/unmanaged", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-	public @ResponseBody
-	Result doCreateUnmanagedContentStat(
+	public @ResponseBody Result doCreateUnmanagedContentStat(
 			@RequestBody List<com.cm.contentmanager.contentstat.transfer.UnmanagedContentStat> contentStats,
 			HttpServletResponse response) {
 		try {
@@ -163,6 +205,12 @@ public class ContentStatController {
 							.getApplicationByTrackingId(lTrackingId, true/**
 							 * 
 							 * 
+							 * 
+							 * 
+							 * 
+							 * 
+							 * 
+							 * 
 							 * include deleted applications, as that might have
 							 * been the change
 							 **/
@@ -178,8 +226,12 @@ public class ContentStatController {
 					}
 
 				}
+				//set the application Id
+				lContentStat.setApplicationId(lApplication.getId());
 				contentStatService.saveUnmanagedContentStat(lContentStat);
 			}
+			// rollup real time
+			contentStatService.rollupUnmanagedSummaryRealTime(lContentStats);
 
 			Result lResult = new Result();
 			lResult.setResult(Result.SUCCESS);
@@ -198,8 +250,7 @@ public class ContentStatController {
 	}
 
 	@RequestMapping(value = "/contentdownloadstats", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-	public @ResponseBody
-	Result doCreateContentDownloadStat(
+	public @ResponseBody Result doCreateContentDownloadStat(
 			@RequestBody List<com.cm.contentmanager.contentstat.transfer.ContentDownloadStat> contentDownloadStats,
 			HttpServletResponse response) {
 		try {
@@ -239,8 +290,7 @@ public class ContentStatController {
 	}
 
 	@RequestMapping(value = "/contentstats/application/daily", method = RequestMethod.GET, produces = "application/json")
-	public @ResponseBody
-	List<List<com.cm.contentmanager.contentstat.transfer.ContentStatByApplicationSummary>> getApplicationSummary(
+	public @ResponseBody List<List<com.cm.contentmanager.contentstat.transfer.ContentStatByApplicationSummary>> getApplicationSummary(
 			HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -275,8 +325,7 @@ public class ContentStatController {
 	}
 
 	@RequestMapping(value = "/contentstats/{applicationId}/contentgroups/daily", method = RequestMethod.GET, produces = "application/json")
-	public @ResponseBody
-	List<List<com.cm.contentmanager.contentstat.transfer.ContentStatByContentGroupSummary>> getContentGroupSummary(
+	public @ResponseBody List<List<com.cm.contentmanager.contentstat.transfer.ContentStatByContentGroupSummary>> getContentGroupSummary(
 			@PathVariable Long applicationId, HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -310,8 +359,7 @@ public class ContentStatController {
 	}
 
 	@RequestMapping(value = "/contentstats/{contentGroupId}/content/daily", method = RequestMethod.GET, produces = "application/json")
-	public @ResponseBody
-	List<List<com.cm.contentmanager.contentstat.transfer.ContentStatByContentSummary>> getContentSummary(
+	public @ResponseBody List<List<com.cm.contentmanager.contentstat.transfer.ContentStatByContentSummary>> getContentSummary(
 			@PathVariable Long contentGroupId, HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -329,6 +377,70 @@ public class ContentStatController {
 								+ " rows for content id " + content.getId());
 					lContentStats.add(convert(content, lList));
 				}
+			}
+
+			response.setStatus(HttpServletResponse.SC_OK);
+			return lContentStats;
+		} catch (Throwable e) {
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	@RequestMapping(value = "/contentstats/unmanaged/application/daily", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody List<List<com.cm.contentmanager.contentstat.transfer.UnmanagedContentStatByApplicationSummary>> getUnmanagedApplicationSummary(
+			HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			User lUser = userService.getLoggedInUser();
+			List<List<com.cm.contentmanager.contentstat.transfer.UnmanagedContentStatByApplicationSummary>> lContentStats = new ArrayList<List<com.cm.contentmanager.contentstat.transfer.UnmanagedContentStatByApplicationSummary>>();
+			List<Application> lApplications = applicationService
+					.getApplicationsByAccountId(lUser.getAccountId(), false);
+			// for each application in the account
+			for (Application application : lApplications) {
+				List<UnmanagedContentStatByApplicationSummary> lList = contentStatService
+						.getUnmanagedSummaryByApplication(application.getId());
+				if (lList != null && (!lList.isEmpty())) {
+					if (LOGGER.isLoggable(Level.INFO))
+						LOGGER.info("Retrieved " + lList.size()
+								+ " rows for application id "
+								+ application.getId());
+					lContentStats.add(convertUnmanaged(application, lList));
+				}
+			}
+
+			response.setStatus(HttpServletResponse.SC_OK);
+			return lContentStats;
+		} catch (Throwable e) {
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	@RequestMapping(value = "/contentstats/unmanaged/{applicationId}/urls/daily", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody List<List<com.cm.contentmanager.contentstat.transfer.UnmanagedContentStatByUrlSummary>> getUnmanagedUrlSummary(
+			@PathVariable Long applicationId, HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			List<List<com.cm.contentmanager.contentstat.transfer.UnmanagedContentStatByUrlSummary>> lContentStats = new ArrayList<List<com.cm.contentmanager.contentstat.transfer.UnmanagedContentStatByUrlSummary>>();
+
+			List<UnmanagedContentStatByUrlSummary> lList = contentStatService
+					.getUnmanagedSummaryByUrl(applicationId);
+			if (lList != null && (!lList.isEmpty())) {
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("Retrieved " + lList.size()
+							+ " rows for application id " + applicationId);
+				lContentStats.add(convertUnmanagedByUrl(lList));
 			}
 
 			response.setStatus(HttpServletResponse.SC_OK);
@@ -424,6 +536,62 @@ public class ContentStatController {
 		//
 		lSummary.setName(application.getName());
 		lSummary.setTrackingId(application.getTrackingId());
+
+		return lSummary;
+	}
+
+	private List<com.cm.contentmanager.contentstat.transfer.UnmanagedContentStatByApplicationSummary> convertUnmanaged(
+			Application application,
+			List<UnmanagedContentStatByApplicationSummary> lList) {
+		List<com.cm.contentmanager.contentstat.transfer.UnmanagedContentStatByApplicationSummary> lRtnList = new ArrayList<com.cm.contentmanager.contentstat.transfer.UnmanagedContentStatByApplicationSummary>();
+		for (UnmanagedContentStatByApplicationSummary contentStatByApplicationSummary : lList) {
+			lRtnList.add(convertUnmanaged(application,
+					contentStatByApplicationSummary));
+		}
+		return lRtnList;
+	}
+
+	private com.cm.contentmanager.contentstat.transfer.UnmanagedContentStatByApplicationSummary convertUnmanaged(
+			Application application,
+			UnmanagedContentStatByApplicationSummary contentStatByApplicationSummary) {
+		com.cm.contentmanager.contentstat.transfer.UnmanagedContentStatByApplicationSummary lSummary = new com.cm.contentmanager.contentstat.transfer.UnmanagedContentStatByApplicationSummary();
+		lSummary.setApplicationId(contentStatByApplicationSummary
+				.getApplicationId());
+		lSummary.setCount(contentStatByApplicationSummary.getCount());
+		lSummary.setEventStartTimeMs(contentStatByApplicationSummary
+				.getEventStartTimeMs());
+		lSummary.setEventEndTimeMs(contentStatByApplicationSummary
+				.getEventEndTimeMs());
+		lSummary.setEventTimeZoneOffsetMs(contentStatByApplicationSummary
+				.getEventTimeZoneOffsetMs());
+		//
+		lSummary.setName(application.getName());
+		lSummary.setTrackingId(application.getTrackingId());
+
+		return lSummary;
+	}
+
+	private List<com.cm.contentmanager.contentstat.transfer.UnmanagedContentStatByUrlSummary> convertUnmanagedByUrl(
+			List<UnmanagedContentStatByUrlSummary> lList) {
+		List<com.cm.contentmanager.contentstat.transfer.UnmanagedContentStatByUrlSummary> lRtnList = new ArrayList<com.cm.contentmanager.contentstat.transfer.UnmanagedContentStatByUrlSummary>();
+		for (UnmanagedContentStatByUrlSummary contentStat : lList) {
+			lRtnList.add(convertUnmanagedByUrl(contentStat));
+		}
+		return lRtnList;
+	}
+
+	private com.cm.contentmanager.contentstat.transfer.UnmanagedContentStatByUrlSummary convertUnmanagedByUrl(
+			UnmanagedContentStatByUrlSummary contentStat) {
+		com.cm.contentmanager.contentstat.transfer.UnmanagedContentStatByUrlSummary lSummary = new com.cm.contentmanager.contentstat.transfer.UnmanagedContentStatByUrlSummary();
+		lSummary.setApplicationId(contentStat.getApplicationId());
+		lSummary.setCount(contentStat.getCount());
+		lSummary.setEventStartTimeMs(contentStat.getEventStartTimeMs());
+		lSummary.setEventEndTimeMs(contentStat.getEventEndTimeMs());
+		lSummary.setEventTimeZoneOffsetMs(contentStat
+				.getEventTimeZoneOffsetMs());
+		//
+		lSummary.setUrl(lSummary.getUrl());
+		lSummary.setUrlHash(lSummary.getUrlHash());
 
 		return lSummary;
 	}

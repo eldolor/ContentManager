@@ -97,8 +97,7 @@ public class ContentServerController {
 	 * @return
 	 */
 	@RequestMapping(value = "/contentserver/contentlist", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-	public @ResponseBody
-	List<com.cm.contentserver.transfer.Content> getContent(
+	public @ResponseBody List<com.cm.contentserver.transfer.Content> getContent(
 			@RequestBody com.cm.contentserver.transfer.ContentRequest pContentRequest,
 			HttpServletResponse response) {
 		try {
@@ -144,6 +143,11 @@ public class ContentServerController {
 						lContent.setUpdateOverWifiOnly(true);
 					}
 				}
+				if (contentServerService.isCollectUsageData(lContentRequest)) {
+					for (com.cm.contentserver.transfer.Content lContent : lContentList) {
+						lContent.setCollectUsageData(true);
+					}
+				}
 			} else {
 				if (LOGGER.isLoggable(Level.INFO))
 					LOGGER.info("No Content Found!");
@@ -162,8 +166,7 @@ public class ContentServerController {
 	}
 
 	@RequestMapping(value = "/contentserver/handshake", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-	public @ResponseBody
-	List<ValidationError> doHandshakePost(
+	public @ResponseBody List<ValidationError> doHandshakePost(
 			@RequestBody com.cm.contentserver.transfer.Handshake pHandshake,
 			HttpServletResponse response) {
 		try {
@@ -450,9 +453,8 @@ public class ContentServerController {
 	 */
 	@Deprecated
 	@RequestMapping(value = "/contentserver/dropbox/{key}", method = RequestMethod.GET)
-	public @ResponseBody
-	String doServeGet(@PathVariable String key, HttpServletRequest request,
-			HttpServletResponse response) {
+	public @ResponseBody String doServeGet(@PathVariable String key,
+			HttpServletRequest request, HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
@@ -503,10 +505,9 @@ public class ContentServerController {
 	 */
 	@Deprecated
 	@RequestMapping(value = "/contentserver/dropbox/{key}/{keyWithExtension}", method = RequestMethod.GET)
-	public @ResponseBody
-	String doServeGetWithExtension(@PathVariable String key,
-			@PathVariable String keyWithExtension, HttpServletRequest request,
-			HttpServletResponse response) {
+	public @ResponseBody String doServeGetWithExtension(
+			@PathVariable String key, @PathVariable String keyWithExtension,
+			HttpServletRequest request, HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
@@ -547,8 +548,7 @@ public class ContentServerController {
 	}
 
 	@RequestMapping(value = "/contentserver/servingurl/{contentId}", method = RequestMethod.GET)
-	public @ResponseBody
-	String getServingUrl(@PathVariable Long contentId,
+	public @ResponseBody String getServingUrl(@PathVariable Long contentId,
 			HttpServletRequest request, HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))

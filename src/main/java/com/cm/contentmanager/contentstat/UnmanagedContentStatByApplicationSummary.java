@@ -1,21 +1,21 @@
 package com.cm.contentmanager.contentstat;
 
+import java.io.Serializable;
+
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 @PersistenceCapable
-public class UnmanagedContentStatByUrlSummary implements ContentStatSummary {
+public class UnmanagedContentStatByApplicationSummary implements Serializable {
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Long id;
 	@Persistent
 	private Long applicationId;
 	@Persistent
-	private String urlHash;
-	@Persistent
-	private String url;
+	private String trackingId;
 	@Persistent
 	private Long count;
 
@@ -26,14 +26,6 @@ public class UnmanagedContentStatByUrlSummary implements ContentStatSummary {
 	@Persistent
 	private Long eventTimeZoneOffsetMs;
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public Long getApplicationId() {
 		return applicationId;
 	}
@@ -42,20 +34,20 @@ public class UnmanagedContentStatByUrlSummary implements ContentStatSummary {
 		this.applicationId = applicationId;
 	}
 
-	public String getUrlHash() {
-		return urlHash;
+	public String getTrackingId() {
+		return trackingId;
 	}
 
-	public void setUrlHash(String urlHash) {
-		this.urlHash = urlHash;
+	public void setTrackingId(String trackingId) {
+		this.trackingId = trackingId;
 	}
 
-	public String getUrl() {
-		return url;
+	public Long getCount() {
+		return count;
 	}
 
-	public void setUrl(String url) {
-		this.url = url;
+	public void setCount(Long count) {
+		this.count = count;
 	}
 
 	public Long getEventStartTimeMs() {
@@ -80,14 +72,6 @@ public class UnmanagedContentStatByUrlSummary implements ContentStatSummary {
 
 	public void setEventTimeZoneOffsetMs(Long eventTimeZoneOffsetMs) {
 		this.eventTimeZoneOffsetMs = eventTimeZoneOffsetMs;
-	}
-
-	public Long getCount() {
-		return (count != null) ? count : 0L;
-	}
-
-	public void setCount(Long count) {
-		this.count = count;
 	}
 
 }

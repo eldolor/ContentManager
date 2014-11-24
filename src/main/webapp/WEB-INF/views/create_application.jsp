@@ -34,10 +34,10 @@
 				</label>
 			</div>
 			<div>
-				<label>Update
-						content over Wi-Fi only&nbsp;<span data-tooltip class="has-tip"
-					title="Specify if you like the content to be auto-updated to devices over Wi-Fi Only. This is enabled by default."><i class="fi-info light_gray"></i>
-				</span></label>
+				<label>Update content over Wi-Fi only&nbsp;<span
+					data-tooltip class="has-tip"
+					title="Specify if you like the content to be auto-updated to devices over Wi-Fi Only. This is enabled by default."><i
+						class="fi-info light_gray"></i> </span></label>
 			</div>
 			<div>
 				<div class="switch radius">
@@ -45,6 +45,19 @@
 						checked="checked" class="form-control switch-default"> <label
 						for="application_update_over_wifi_only">Update content
 						over Wi-Fi only</label>
+				</div>
+			</div>
+			<div>
+				<label>Collect Usage Data &amp; Geolocation&nbsp;<span data-tooltip
+					class="has-tip"
+					title="Skok collects usage data, including geolocation, of all your managed and unmanaged content. This information is used to provide Usage Reports.You can restrict collection of usage statistics for this application."><i
+						class="fi-info light_gray"></i></span></label>
+			</div>
+			<div>
+				<div class="switch radius ">
+					<input id="collect_usage_data" type="checkbox" checked="checked"
+						class="form-control switch-default"> <label
+						for="collect_usage_data">Usage Data &amp; Geolocation</label>
 				</div>
 			</div>
 

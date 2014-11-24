@@ -25,7 +25,7 @@ public class Application implements Searchable {
 	@Persistent
 	private String name;
 
-	/**search index**/
+	/** search index **/
 	@Persistent
 	private String nameIdx;
 
@@ -39,6 +39,10 @@ public class Application implements Searchable {
 	// default to true
 	@Persistent
 	private Boolean enabled = true;
+
+	// default to true
+	@Persistent
+	private Boolean collectUsageData = true;
 
 	@Persistent
 	private Boolean deleted = false;
@@ -88,6 +92,14 @@ public class Application implements Searchable {
 
 	public void setEnabled(Boolean enabled) {
 		this.enabled = enabled;
+	}
+
+	public Boolean isCollectUsageData() {
+		return collectUsageData;
+	}
+
+	public void setCollectUsageData(Boolean collectUsageData) {
+		this.collectUsageData = collectUsageData;
 	}
 
 	public void setName(String name) {

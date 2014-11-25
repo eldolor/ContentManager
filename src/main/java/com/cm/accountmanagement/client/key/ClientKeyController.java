@@ -16,7 +16,6 @@
 package com.cm.accountmanagement.client.key;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,7 +31,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.cm.contentmanager.application.Application;
 import com.cm.usermanagement.user.User;
 import com.cm.usermanagement.user.UserService;
 

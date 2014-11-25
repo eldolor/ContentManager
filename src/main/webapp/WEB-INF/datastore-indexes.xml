@@ -221,14 +221,25 @@
 		<property name="contentId" direction="asc" />
 		<property name="eventEndTimeMs" direction="desc" />
 	</datastore-index>
-	<datastore-index kind="ClientKey" ancestor="false"
+	<datastore-index kind="UnmanagedContentStatByApplicationSummary"
+		ancestor="false" source="manual">
+		<property name="applicationId" direction="asc" />
+		<property name="eventEndTimeMs" direction="desc" />
+	</datastore-index>
+	<datastore-index kind="UnmanagedContentStatByUrlSummary"
+		ancestor="false" source="manual">
+		<property name="applicationId" direction="asc" />
+		<property name="eventEndTimeMs" direction="desc" />
+	</datastore-index>
+		<datastore-index kind="ClientKey" ancestor="false"
 		source="manual">
 		<property name="accountId" direction="asc" />
 		<property name="deleted" direction="asc" />
 		<property name="timeCreatedMs" direction="desc" />
 	</datastore-index>
-	<datastore-index kind="ClientKey" ancestor="false" source="manual">
-        <property name="accountId" direction="asc"/>
-        <property name="timeCreatedMs" direction="desc"/>
-    </datastore-index>
+	<datastore-index kind="ClientKey" ancestor="false"
+		source="manual">
+		<property name="accountId" direction="asc" />
+		<property name="timeCreatedMs" direction="desc" />
+	</datastore-index>
 </datastore-indexes>

@@ -22,7 +22,7 @@ function setup() {
 		ga('send', {
 			'hitType' : 'pageview',
 			'page' : '/analytics/contentgroups',
-			'title' : PageTitle.USAGE_REPORTS_CONTENT_GROUPS
+			'title' : PageTitle.USAGE_REPORTS_UNMANAGED_CONTENTS_BY_URL
 		});
 		// End Google Analytics
 
@@ -52,44 +52,40 @@ function displayAnalytics() {
 
 							if (contentStats == null
 									|| contentStats.length == 0) {
-								lAccountUsageDetailsHtml = '<div class="row"><div class="large-12 columns" >No unmanaged content usage data available</div></div>';
+								lAccountUsageDetailsHtml = '<div class="row"><div class="large-12 columns" >No content usage data available</div></div>';
 							}
+							var lContentStatArray = contentStats[0];
+							var lGroupedContentStats = groupBy(
+									lContentStatArray, function(item) {
+										return [ item.urlHash ];
+									});
 
-							for (var i = 0; i < contentStats.length; i++) {
-
-								var lContentStatArray = contentStats[i];
-								if (lContentStatArray.length > 0) {
+							for (var i = 0; i < lGroupedContentStats.length; i++) {
+								var lArray = lGroupedContentStats[i];
+								if (lArray.length > 0) {
 									lAccountUsageDetailsHtml += '<div class="row">';
 									lAccountUsageDetailsHtml += '<div class="large-10 columns float_left" >';
 
 									// BANDWIDTH
 									lAccountUsageDetailsHtml += '<div id="id_'
-											+ lContentStatArray[0].contentGroupId
-											+ '"></div>';
+											+ lArray[i].urlHash + '"></div>';
 									lAccountUsageDetailsHtml += '</div>';
-									if (i == 0) {
-										lAccountUsageDetailsHtml += '<div  class="large-2 columns float_right"><div id="category"><h3 id="first_drill_down">Drill Down</h3><ul><li><i class="fi-arrow-right"></i><a  href="/analytics/'
-												+ lContentStatArray[0].contentGroupId
-												+ '/content">&nbsp;Content Data</a></li></ul></div>';
-									} else {
-										lAccountUsageDetailsHtml += '<div  class="large-2 columns float_right"><div id="category"><h3>Drill Down</h3><ul><li><i class="fi-arrow-right"></i><a  href="/analytics/'
-												+ lContentStatArray[0].contentGroupId
-												+ '/content">&nbsp;Content Data</a></li></ul></div>';
-									}
+									lAccountUsageDetailsHtml += '<div  class="large-2 columns float_right"><div id="category"><h3>&nbsp;</h3></div>';
 									// end large 10
 									lAccountUsageDetailsHtml += '</div>';
 									// end row
 									lAccountUsageDetailsHtml += '</div>';
 									lAccountUsageDetailsHtml += '<p class="clearfix"></p>';
+
 								}
 							}
 							$('#analytics_details').html(
 									lAccountUsageDetailsHtml);
 							// log("displayAnalytics",
 							// lAccountUsageDetailsHtml);
-							for (var i = 0; i < contentStats.length; i++) {
+							for (var i = 0; i < lGroupedContentStats.length; i++) {
 
-								var lContentStatArray = contentStats[i];
+								var lContentStatArray = lGroupedContentStats[i];
 								// GOOG Charts
 								var dataTable = new google.visualization.DataTable();
 								dataTable.addColumn({
@@ -115,10 +111,10 @@ function displayAnalytics() {
 									var chart = new google.visualization.Calendar(
 											document
 													.getElementById('id_'
-															+ lContentStatArray[0].contentGroupId));
+															+ lContentStatArray[0].urlHash));
 									var options = {
-										title : "Content Group: "
-												+ lContentStatArray[0].name,
+										title : "URL: "
+												+ lContentStatArray[0].url,
 										calendar : {
 											cellColor : {
 												stroke : '#1fad9d',
@@ -134,25 +130,6 @@ function displayAnalytics() {
 									handleError("displayAnalytics", err);
 								}
 
-							}
-							// call this post graph setup
-							var lPathName = window.location.pathname;
-
-							if (lPathName.lastIndexOf("tour") != -1) {
-								$(document).foundation('joyride', 'start');
-							} else if (typeof (Storage) !== "undefined") {
-								// Code for localStorage/sessionStorage.
-								// Store
-								var lReportsTour = localStorage.reportsTour;
-								if ((typeof (lReportsTour) === "undefined")
-										|| (lReportsTour == "N")) {
-									// set
-									localStorage.setItem("reportsTour", "N");
-									$(document).foundation('joyride', 'start');
-								}
-							} else {
-								// Sorry! No Web Storage support..
-								$(document).foundation('joyride', 'start');
 							}
 
 						},

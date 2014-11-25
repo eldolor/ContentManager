@@ -135,6 +135,8 @@
 		USAGE_REPORTS_APPLICATIONS : "usage_reports_applications",
 		USAGE_REPORTS_CONTENT_GROUPS : "usage_reports_content_groups",
 		USAGE_REPORTS_CONTENTS : "usage_reports_contents",
+		USAGE_REPORTS_UNMANAGED_CONTENTS_BY_APPLICATION : "usage_reports_unmanaged_contents_by_application",
+		USAGE_REPORTS_UNMANAGED_CONTENTS_BY_URL : "usage_reports_unmanaged_contents_by_url",
 		DOCUMENTS_GETTING_STARTED_ANDROID : "documents_getting_started_android",
 		DOCUMENTS_ANDROID_SDK_API_REFERENCE : "documents_android_sdk_api_reference",
 		DOWNLOADS_ANDROID_SDK : "downloads_android_sdk"

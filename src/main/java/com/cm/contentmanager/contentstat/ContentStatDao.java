@@ -220,7 +220,7 @@ class ContentStatDao {
 				Query q = pm.newQuery(UnmanagedContentStatByUrlSummary.class);
 				q.setFilter("applicationId == applicationIdParam");
 				q.declareParameters("Long applicationIdParam");
-				q.setOrdering("eventEndTimeMs desc");
+				q.setOrdering("urlHash, eventEndTimeMs desc");
 				return (List<UnmanagedContentStatByUrlSummary>) q
 						.execute(applicationId);
 			} finally {
@@ -806,6 +806,7 @@ class ContentStatDao {
 								} else {
 									// create new
 									UnmanagedContentStatByUrlSummary lSummary = new UnmanagedContentStatByUrlSummary();
+									lSummary.setApplicationId(lApplicationId);
 									lSummary.setUrlHash(entry2.getKey());
 									lSummary.setUrl(lContainer.mUnmanagedContentStat.getUrl());
 									lSummary.setCount(lContainer.mCount);

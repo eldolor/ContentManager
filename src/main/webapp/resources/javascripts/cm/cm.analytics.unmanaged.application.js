@@ -22,7 +22,7 @@ function setup() {
 		ga('send', {
 			'hitType' : 'pageview',
 			'page' : '/analytics/applications',
-			'title' : PageTitle.USAGE_REPORTS_APPLICATIONS
+			'title' : PageTitle.USAGE_REPORTS_UNMANAGED_CONTENTS_BY_APPLICATION
 		});
 		// End Google Analytics
 

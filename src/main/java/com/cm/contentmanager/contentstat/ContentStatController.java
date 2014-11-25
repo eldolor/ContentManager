@@ -441,6 +441,9 @@ public class ContentStatController {
 					LOGGER.info("Retrieved " + lList.size()
 							+ " rows for application id " + applicationId);
 				lContentStats.add(convertUnmanagedByUrl(lList));
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("Dispatching " + lContentStats.size()
+							+ " rows for application id " + applicationId);
 			}
 
 			response.setStatus(HttpServletResponse.SC_OK);
@@ -590,8 +593,8 @@ public class ContentStatController {
 		lSummary.setEventTimeZoneOffsetMs(contentStat
 				.getEventTimeZoneOffsetMs());
 		//
-		lSummary.setUrl(lSummary.getUrl());
-		lSummary.setUrlHash(lSummary.getUrlHash());
+		lSummary.setUrl(contentStat.getUrl());
+		lSummary.setUrlHash(contentStat.getUrlHash());
 
 		return lSummary;
 	}

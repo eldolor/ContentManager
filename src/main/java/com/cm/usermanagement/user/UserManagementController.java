@@ -438,6 +438,43 @@ public class UserManagementController {
 					}
 					lEod.add(Calendar.DATE, -1);
 				}
+
+				List<UnmanagedContentStat> lContentStats = new ArrayList<UnmanagedContentStat>();
+
+				for (int i = 0; i < lastNDays; i++) {
+					int lRandom = Utils.getRandomNumber(1, 10);
+					for (int j = 0; j < lRandom; j++) {
+						long lEodTimeMs = Utils.getEndOfDayMinusDays(i,
+								TimeZone.getTimeZone("UTC"));
+						if (LOGGER.isLoggable(Level.INFO))
+							LOGGER.info("Processing: " + lEod);
+						lContentStats.add(createDemoUnmanagedContentStat(
+								applicationId,
+								"e5eecc2bbea951f134d72b02b5aa900a6814396b",
+								"http://mywebsite.com/mycontent/myimage",
+								lEodTimeMs));
+					}
+
+				}
+				for (int i = 0; i < lastNDays; i++) {
+					int lRandom = Utils.getRandomNumber(1, 10);
+					for (int j = 0; j < lRandom; j++) {
+						long lEodTimeMs = Utils.getEndOfDayMinusDays(i,
+								TimeZone.getTimeZone("UTC"));
+						if (LOGGER.isLoggable(Level.INFO))
+							LOGGER.info("Processing: " + lEod);
+						lContentStats.add(createDemoUnmanagedContentStat(
+								applicationId,
+								"f6af154aab2bca72d6d91317c07471a582041bb8",
+								"http://mywebsite.com/mycontent/myvideo",
+								lEodTimeMs));
+					}
+
+				}
+
+				contentStatService
+						.rollupUnmanagedSummaryRealTime(lContentStats);
+
 			}
 
 			{

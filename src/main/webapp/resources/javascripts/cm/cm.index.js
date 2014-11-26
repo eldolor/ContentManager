@@ -3,7 +3,8 @@ jQuery(function($) {
 	try {
 
 		$("#owl-demo").owlCarousel({
-			navigation : true
+			navigation : true,
+			autoPlay : 3000
 		});
 
 		$("#intro").addClass("fadeInUp animated");

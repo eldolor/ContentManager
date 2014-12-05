@@ -17,7 +17,7 @@ public class Configuration {
 	public static final String STRIPE_PRIVATE_API_KEY = STRIPE_PRIVATE_API_KEY_PROD;
 	public static final String STRIPE_PUBLIC_API_KEY = STRIPE_PUBLIC_API_KEY_PROD;
 	
-	public static final String CURRENT_SDK_VERSION = "1.3";
+	public static final String CURRENT_SDK_VERSION = "1.4";
 	
 	public static final String GOOGLE_API_KEY = "AIzaSyDmUXoFreTugYfSL5B2QvM8mUDwhCte7BM";
 	public static final String MESSAGE_TYPE = "MESSAGE_TYPE";

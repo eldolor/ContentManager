@@ -10,11 +10,10 @@ import javax.jdo.Query;
 
 import org.springframework.stereotype.Component;
 
-import com.cm.config.CanonicalApplicationQuota;
-import com.cm.config.CanonicalPlanName;
-import com.cm.config.CanonicalStorageQuota;
+import com.cm.config.CanonicalPlan;
 import com.cm.contentmanager.application.Application;
 import com.cm.util.PMF;
+import com.cm.util.Utils;
 
 @Component
 class QuotaDao {
@@ -56,6 +55,30 @@ class QuotaDao {
 			List<ApplicationQuotaUsed> lQuotas = (List<ApplicationQuotaUsed>) q
 					.execute(accountId);
 			ApplicationQuotaUsed lQuota = null;
+			if (lQuotas != null && (lQuotas.size() > 0)) {
+				lQuota = lQuotas.get(0);
+			}
+			return lQuota;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+
+		}
+
+	}
+
+	BandwidthQuotaUsed getBandwidthQuotaUsed(Long accountId) {
+		PersistenceManager pm = null;
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			pm = PMF.get().getPersistenceManager();
+			Query q = pm.newQuery(BandwidthQuotaUsed.class);
+			q.setFilter("accountId == accountIdParam");
+			q.declareParameters("Long accountIdParam");
+			List<BandwidthQuotaUsed> lQuotas = (List<BandwidthQuotaUsed>) q
+					.execute(accountId);
+			BandwidthQuotaUsed lQuota = null;
 			if (lQuotas != null && (lQuotas.size() > 0)) {
 				lQuota = lQuotas.get(0);
 			}
@@ -161,9 +184,7 @@ class QuotaDao {
 		}
 	}
 
-	void updatePlan(Long accountId, CanonicalPlanName canonicalPlanName,
-			CanonicalStorageQuota canonicalStorageQuota,
-			CanonicalApplicationQuota canonicalApplicationQuota) {
+	void updatePlan(Long accountId, CanonicalPlan canonicalPlan) {
 		PersistenceManager pm = null;
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -176,12 +197,95 @@ class QuotaDao {
 			Quota lQuota = null;
 			if (lQuotas != null && (lQuotas.size() > 0)) {
 				lQuota = lQuotas.get(0);
-				lQuota.setCanonicalPlanName(canonicalPlanName.getValue());
-				lQuota.setStorageLimitInBytes(canonicalStorageQuota.getValue());
-				lQuota.setApplicationLimit(canonicalApplicationQuota.getValue());
+				lQuota.setCanonicalPlanId(canonicalPlan.getId());
+				lQuota.setBandwidthLimitInBytes(canonicalPlan
+						.getBandwidthQuota());
+				lQuota.setStorageLimitInBytes(canonicalPlan.getStorageQuota());
+				lQuota.setApplicationLimit(canonicalPlan.getApplicationQuota());
 				lQuota.setTimeUpdatedMs(System.currentTimeMillis());
 				lQuota.setTimeUpdatedTimeZoneOffsetMs((long) TimeZone
 						.getDefault().getRawOffset());
+			}
+
+		} finally {
+			if (pm != null) {
+				pm.close();
+			}
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	void upsertBandwidthUtilization(Application pApplication,
+			Long bandwidthUsedInBytes) {
+		PersistenceManager pm = null;
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			pm = PMF.get().getPersistenceManager();
+			Query q = pm.newQuery(BandwidthQuotaUsed.class);
+			q.setFilter("accountId == accountIdParam && applicationId == applicationIdParam && subscriptionPeriodEndMs >= subscriptionPeriodEndMsParam");
+			q.declareParameters("Long accountIdParam, Long applicationIdParam, Long subscriptionPeriodEndMsParam");
+			q.setOrdering("subscriptionPeriodEndMs");
+
+			long lTimeNow = System.currentTimeMillis();
+
+			Object[] _array = new Object[3];
+			_array[0] = pApplication.getAccountId();
+			_array[1] = pApplication.getId();
+			_array[2] = lTimeNow;
+
+			List<BandwidthQuotaUsed> lList = (List<BandwidthQuotaUsed>) q
+					.executeWithArray(_array);
+
+			boolean lFound = false;
+			for (BandwidthQuotaUsed bandwidthQuotaUsed : lList) {
+				if (lTimeNow >= bandwidthQuotaUsed
+						.getSubscriptionPeriodStartMs()
+						&& lTimeNow <= bandwidthQuotaUsed
+								.getSubscriptionPeriodEndMs()) {
+
+					bandwidthQuotaUsed.setTrackingId(pApplication
+							.getTrackingId());
+					long lExistingBandwidthUsed = bandwidthQuotaUsed
+							.getBandwidthUsedInBytes();
+					if (LOGGER.isLoggable(Level.INFO))
+						LOGGER.info("Updating bandwidth used to "
+								+ (lExistingBandwidthUsed + bandwidthUsedInBytes));
+					bandwidthQuotaUsed
+							.setBandwidthUsedInBytes(lExistingBandwidthUsed
+									+ bandwidthUsedInBytes);
+					bandwidthQuotaUsed.setTimeUpdatedMs(System
+							.currentTimeMillis());
+					bandwidthQuotaUsed
+							.setTimeUpdatedTimeZoneOffsetMs((long) TimeZone
+									.getDefault().getRawOffset());
+					lFound = true;
+					break;
+				}
+			}
+			if (!lFound) {
+				// create new
+				BandwidthQuotaUsed lQuotaUsed = new BandwidthQuotaUsed();
+				lQuotaUsed.setAccountId(pApplication.getAccountId());
+				lQuotaUsed.setApplicationId(pApplication.getId());
+				lQuotaUsed.setTrackingId(pApplication.getTrackingId());
+				lQuotaUsed.setBandwidthUsedInBytes(bandwidthUsedInBytes);
+
+				TimeZone timeZone = TimeZone.getTimeZone("UTC");
+
+				lQuotaUsed.setSubscriptionPeriodStartMs(Utils
+						.getStartOfDayToday(timeZone).getTimeInMillis());
+				lQuotaUsed.setSubscriptionPeriodEndMs(Utils
+						.getOneMonthFromToday(timeZone).getTimeInMillis());
+
+				lQuotaUsed.setTimeCreatedMs(System.currentTimeMillis());
+				lQuotaUsed.setTimeCreatedTimeZoneOffsetMs((long) TimeZone
+						.getDefault().getRawOffset());
+				pm.makePersistent(lQuotaUsed);
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("Adding bandwidth used to "
+							+ bandwidthUsedInBytes);
 			}
 
 		} finally {
@@ -208,7 +312,7 @@ class QuotaDao {
 			StorageQuotaUsed lQuotaUsed = null;
 			if (lList != null && (lList.size() > 0)) {
 				lQuotaUsed = lList.get(0);
-				//TODO: delete later
+				// TODO: delete later
 				lQuotaUsed.setTrackingId(pApplication.getTrackingId());
 				lQuotaUsed.setStorageUsedInBytes(storageUsedInBytes);
 				lQuotaUsed.setTimeUpdatedMs(System.currentTimeMillis());

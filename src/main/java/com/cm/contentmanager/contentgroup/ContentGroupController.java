@@ -16,6 +16,7 @@
 package com.cm.contentmanager.contentgroup;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.cm.contentmanager.application.Application;
 import com.cm.contentmanager.application.ApplicationService;
 import com.cm.contentmanager.content.ContentHelper;
 import com.cm.usermanagement.user.UserService;
@@ -71,6 +73,20 @@ public class ContentGroupController {
 		}
 	}
 
+	@RequestMapping(value = "/{applicationId}/contentgroups/{tour}", method = RequestMethod.GET)
+	public ModelAndView displayContentGroups(@PathVariable Long applicationId,
+			@PathVariable String tour, ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering displayContentGroups");
+		try {
+			model.addAttribute("tour", tour);
+			return new ModelAndView("content_groups", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting displayContentGroups");
+		}
+	}
+
 	/**
 	 * 
 	 * @param campaignUuid
@@ -84,7 +100,7 @@ public class ContentGroupController {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getContentGroups");
-		List<ContentGroup> contentGroups = null;
+			List<ContentGroup> contentGroups = null;
 
 			contentGroups = contentGroupService.get(applicationId, false);
 
@@ -105,6 +121,40 @@ public class ContentGroupController {
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting getContentGroups");
+		}
+	}
+
+	@RequestMapping(value = "/secured/{applicationId}/contentgroups/deleted", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody
+	List<ContentGroup> getDeletedContentGroups(
+			@PathVariable Long applicationId, HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			List<ContentGroup> deletedContentGroups = new ArrayList<ContentGroup>();
+			List<ContentGroup> contentGroups = contentGroupService.get(
+					applicationId, true);
+
+			for (Iterator iterator = contentGroups.iterator(); iterator
+					.hasNext();) {
+				ContentGroup contentGroup = (ContentGroup) iterator.next();
+				if (contentGroup.isDeleted()) {
+					deletedContentGroups.add(contentGroup);
+				}
+			}
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info(deletedContentGroups.size()
+						+ " Content Groups found");
+			response.setStatus(HttpServletResponse.SC_OK);
+			return deletedContentGroups;
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
 		}
 	}
 
@@ -149,18 +199,57 @@ public class ContentGroupController {
 				LOGGER.info("Entering deleteContentGroup");
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Content Group ID: " + id);
-			// get the application id of the content group being deleted
-			Long lApplicationId = contentGroupService.get(id)
-					.getApplicationId();
 
 			contentGroupService.delete(id, timeUpdatedMs,
 					timeUpdatedTimeZoneOffsetMs);
-			response.setStatus(HttpServletResponse.SC_OK);
-			String lTrackingId = applicationService.getApplication(
-					lApplicationId).getTrackingId();
-			Utils.triggerChangesStagedMessage(id, 0);
-			Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId, 0);
+			Long lApplicationId = contentGroupService.get(id)
+					.getApplicationId();
 
+			Application lApplication = applicationService
+					.getApplication(lApplicationId);
+			Utils.triggerChangesStagedMessage(lApplication.getId(), 0);
+			Utils.updateLastKnownTimestamp(lApplication.getTrackingId(),
+					timeUpdatedMs, 0);
+			Utils.triggerUpdateQuotaUtilizationMessage(
+					lApplication.getAccountId(), 3000);
+
+			response.setStatus(HttpServletResponse.SC_OK);
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting deleteContentGroup");
+		}
+	}
+
+	@RequestMapping(value = "/secured/contentgroup/restore/{id}/{timeUpdatedMs}/{timeUpdatedTimeZoneOffsetMs}", method = RequestMethod.PUT)
+	public void restoreContentGroup(@PathVariable Long id,
+			@PathVariable Long timeUpdatedMs,
+			@PathVariable Long timeUpdatedTimeZoneOffsetMs,
+			HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering deleteContentGroup");
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Content Group ID: " + id);
+			contentGroupService.restore(id, timeUpdatedMs,
+					timeUpdatedTimeZoneOffsetMs);
+
+			// get the application id of the content group being restored
+			Long lApplicationId = contentGroupService.get(id)
+					.getApplicationId();
+
+			Application lApplication = applicationService
+					.getApplication(lApplicationId);
+			Utils.triggerChangesStagedMessage(lApplication.getId(), 0);
+			Utils.updateLastKnownTimestamp(lApplication.getTrackingId(),
+					timeUpdatedMs, 0);
+			Utils.triggerUpdateQuotaUtilizationMessage(
+					lApplication.getAccountId(), 3000);
+
+			response.setStatus(HttpServletResponse.SC_OK);
 		} catch (Throwable e) {
 			// handled by GcmManager
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
@@ -189,12 +278,13 @@ public class ContentGroupController {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return errors;
 			} else {
-				contentGroupService.save(userService.getLoggedInUser(),
-						contentGroup);
+				ContentGroup lContentGroup = contentGroupService.save(
+						userService.getLoggedInUser(), contentGroup);
 				response.setStatus(HttpServletResponse.SC_CREATED);
 				String lTrackingId = applicationService.getApplication(
 						contentGroup.getApplicationId()).getTrackingId();
-				Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId, 0);
+				Utils.updateLastKnownTimestamp(lTrackingId,
+						lContentGroup.getTimeUpdatedMs(), 0);
 				return null;
 			}
 		} catch (Throwable e) {
@@ -224,13 +314,15 @@ public class ContentGroupController {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return errors;
 			} else {
-				contentGroupService.update(contentGroup);
+				ContentGroup lContentGroup = contentGroupService
+						.update(contentGroup);
 				response.setStatus(HttpServletResponse.SC_OK);
 				String lTrackingId = applicationService.getApplication(
 						contentGroup.getApplicationId()).getTrackingId();
-				Utils.triggerChangesStagedMessage(contentGroup
-						.getApplicationId(), 0);
-				Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId, 0);
+				Utils.triggerChangesStagedMessage(
+						contentGroup.getApplicationId(), 0);
+				Utils.updateLastKnownTimestamp(lTrackingId,
+						lContentGroup.getTimeUpdatedMs(), 0);
 
 				return null;
 			}
@@ -239,7 +331,7 @@ public class ContentGroupController {
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 			return null;
-	} finally {
+		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting doUpdateContentGroup");
 		}

@@ -494,7 +494,40 @@ class ApplicationDao {
 		}
 	}
 
-	void update(Application pApplication) {
+	void restoreApplication(Long id, Long timeUpdatedMs,
+			Long timeUpdatedTimeZoneOffsetMs) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Application lApplication = pm.getObjectById(Application.class,
+						id);
+				if (lApplication != null) {
+					lApplication.setDeleted(false);
+					lApplication.setTimeUpdatedMs(timeUpdatedMs);
+					lApplication
+							.setTimeUpdatedTimeZoneOffsetMs(timeUpdatedTimeZoneOffsetMs);
+					if (LOGGER.isLoggable(Level.INFO))
+						LOGGER.info(id + " application restored");
+				} else {
+					LOGGER.log(Level.WARNING, id + "  APPLICATION NOT FOUND!");
+				}
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting restore");
+		}
+	}
+
+	Application update(Application pApplication) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering update");
@@ -512,6 +545,8 @@ class ApplicationDao {
 				lApplication.setUpdateOverWifiOnly(pApplication
 						.isUpdateOverWifiOnly());
 				lApplication.setEnabled(pApplication.isEnabled());
+				lApplication.setCollectUsageData(pApplication
+						.isCollectUsageData());
 				lApplication.setDeleted(pApplication.isDeleted());
 				// for existing contents
 				if (lApplication.getTimeCreatedMs() == null) {
@@ -525,6 +560,8 @@ class ApplicationDao {
 				lApplication.setTimeUpdatedMs(pApplication.getTimeUpdatedMs());
 				lApplication.setTimeUpdatedTimeZoneOffsetMs(pApplication
 						.getTimeUpdatedTimeZoneOffsetMs());
+
+				return lApplication;
 
 			} finally {
 				if (pm != null) {

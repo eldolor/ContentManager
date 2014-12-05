@@ -3,6 +3,7 @@ package com.cm.admin;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,11 +20,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cm.accountmanagement.account.Account;
+import com.cm.accountmanagement.client.key.ClientKeyService;
 import com.cm.admin.plan.Plan;
 import com.cm.common.entity.Result;
-import com.cm.config.CanonicalApplicationQuota;
-import com.cm.config.CanonicalPlanName;
-import com.cm.config.CanonicalStorageQuota;
+import com.cm.config.CanonicalPlan;
 import com.cm.contentmanager.application.Application;
 import com.cm.contentmanager.application.ApplicationService;
 import com.cm.contentmanager.content.Content;
@@ -60,6 +60,8 @@ public class AdminController {
 	private ContentService contentService;
 	@Autowired
 	private ApplicationService applicationService;
+	@Autowired
+	private ClientKeyService clientKeyService;
 
 	@RequestMapping(value = "/admin/delete/users", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody
@@ -120,9 +122,13 @@ public class AdminController {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
-			Result lResult = this.cleanupBlobStore(response);
+			//Result lResult = this.cleanupBlobStore(response);
+//			if (LOGGER.isLoggable(Level.INFO))
+//				LOGGER.info(lResult.toString());
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info(lResult.toString());
+				LOGGER.warning("CLEANUP HAS BEEN DISABLED FOR NOW");
+			response.setStatus(HttpServletResponse.SC_OK);
+			
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting");
@@ -245,6 +251,7 @@ public class AdminController {
 		}
 	}
 
+	@Deprecated
 	@RequestMapping(value = "/admin/create/default/plans", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody
 	Result createPlans(HttpServletResponse response) {
@@ -252,25 +259,23 @@ public class AdminController {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering createPlans");
 			long lTime = System.currentTimeMillis();
-			long lTimezoneOffset = (long) TimeZone.getDefault()
-					.getOffset(lTime);
-			CanonicalPlanName[] lCanonicalPlanNames = CanonicalPlanName
-					.values();
-			for (int i = 0; i < lCanonicalPlanNames.length; i++) {
+			long lTimezoneOffset = (long) TimeZone.getTimeZone("UTC")
+					.getRawOffset();
+			CanonicalPlan[] lCanonicalPlans = CanonicalPlan.values();
+			for (int i = 0; i < lCanonicalPlans.length; i++) {
 				Plan lPlan = new Plan();
-				lPlan.setCanonicalPlanName(lCanonicalPlanNames[i].getValue());
+				lPlan.setCanonicalPlanId(lCanonicalPlans[i].getId());
 				lPlan.setCurrency("usd");
 				long lAmountInCents = 0;
-				if (lCanonicalPlanNames[i].equals(CanonicalPlanName.FREE))
+				if (lCanonicalPlans[i].equals(CanonicalPlan.FREE))
 					lAmountInCents = 0;
-				else if (lCanonicalPlanNames[i].equals(CanonicalPlanName.LARGE))
+				else if (lCanonicalPlans[i].equals(CanonicalPlan.LARGE))
 					lAmountInCents = 5000;
-				else if (lCanonicalPlanNames[i]
-						.equals(CanonicalPlanName.MEDIUM))
+				else if (lCanonicalPlans[i].equals(CanonicalPlan.MEDIUM))
 					lAmountInCents = 2500;
-				else if (lCanonicalPlanNames[i].equals(CanonicalPlanName.MICRO))
+				else if (lCanonicalPlans[i].equals(CanonicalPlan.MICRO))
 					lAmountInCents = 1500;
-				else if (lCanonicalPlanNames[i].equals(CanonicalPlanName.SMALL))
+				else if (lCanonicalPlans[i].equals(CanonicalPlan.SMALL))
 					lAmountInCents = 700;
 				lPlan.setAmountInCents(lAmountInCents);
 				lPlan.setTimeCreatedMs(lTime);
@@ -332,6 +337,78 @@ public class AdminController {
 		}
 	}
 
+	@RequestMapping(value = "/admin/reset/quota", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody
+	Result resetQuotaLimits(HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(Quota.class);
+				List<Quota> lList = (List<Quota>) q.execute();
+				for (Quota lQuota : lList) {
+
+					String lPlanId = lQuota.getCanonicalPlanId();
+					if (lPlanId.equals(CanonicalPlan.FREE.getId())) {
+						lQuota.setBandwidthLimitInBytes(CanonicalPlan.FREE
+								.getBandwidthQuota());
+						lQuota.setStorageLimitInBytes(CanonicalPlan.FREE
+								.getStorageQuota());
+						lQuota.setApplicationLimit(CanonicalPlan.FREE
+								.getApplicationQuota());
+					} else if (lPlanId.equals(CanonicalPlan.LARGE.getId())) {
+						lQuota.setBandwidthLimitInBytes(CanonicalPlan.LARGE
+								.getBandwidthQuota());
+						lQuota.setStorageLimitInBytes(CanonicalPlan.LARGE
+								.getStorageQuota());
+						lQuota.setApplicationLimit(CanonicalPlan.LARGE
+								.getApplicationQuota());
+					} else if (lPlanId.equals(CanonicalPlan.MEDIUM.getId())) {
+						lQuota.setBandwidthLimitInBytes(CanonicalPlan.MEDIUM
+								.getBandwidthQuota());
+						lQuota.setStorageLimitInBytes(CanonicalPlan.MEDIUM
+								.getStorageQuota());
+						lQuota.setApplicationLimit(CanonicalPlan.MEDIUM
+								.getApplicationQuota());
+					} else if (lPlanId.equals(CanonicalPlan.MICRO.getId())) {
+						lQuota.setBandwidthLimitInBytes(CanonicalPlan.MICRO
+								.getBandwidthQuota());
+						lQuota.setStorageLimitInBytes(CanonicalPlan.MICRO
+								.getStorageQuota());
+						lQuota.setApplicationLimit(CanonicalPlan.MICRO
+								.getApplicationQuota());
+					} else if (lPlanId.equals(CanonicalPlan.SMALL.getId())) {
+						lQuota.setBandwidthLimitInBytes(CanonicalPlan.SMALL
+								.getBandwidthQuota());
+						lQuota.setStorageLimitInBytes(CanonicalPlan.SMALL
+								.getStorageQuota());
+						lQuota.setApplicationLimit(CanonicalPlan.SMALL
+								.getApplicationQuota());
+					}
+
+					lQuota.setTimeCreatedMs(System.currentTimeMillis());
+					lQuota.setTimeCreatedTimeZoneOffsetMs((long) TimeZone
+							.getDefault().getRawOffset());
+
+				}
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+
+			Result result = new Result();
+			result.setResult(Result.SUCCESS);
+			return result;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting updateGcmRegistrationRequests");
+		}
+	}
+
 	@RequestMapping(value = "/admin/assign/default/quota", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody
 	Result assignFreeQuotas(HttpServletResponse response) {
@@ -353,12 +430,12 @@ public class AdminController {
 						Quota lQuota = new Quota();
 						lQuota.setAccountId(lAccount.getId());
 						// default to free
-						lQuota.setCanonicalPlanName(CanonicalPlanName.FREE
-								.getValue());
-						lQuota.setStorageLimitInBytes(CanonicalStorageQuota.FREE
-								.getValue());
-						lQuota.setApplicationLimit(CanonicalApplicationQuota.FREE
-								.getValue());
+						lQuota.setCanonicalPlanId(CanonicalPlan.FREE
+								.getId());
+						lQuota.setStorageLimitInBytes(CanonicalPlan.FREE
+								.getStorageQuota());
+						lQuota.setApplicationLimit(CanonicalPlan.FREE
+								.getApplicationQuota());
 
 						lQuota.setTimeCreatedMs(System.currentTimeMillis());
 						lQuota.setTimeCreatedTimeZoneOffsetMs((long) TimeZone
@@ -386,6 +463,99 @@ public class AdminController {
 		}
 	}
 
+	@RequestMapping(value = "/admin/assign/default/tags", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody
+	Result assignDefaultTags(HttpServletResponse response) {
+		PersistenceManager pm = null;
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			String[] lDefaultImageTag = { "image" };
+			String[] lDefaultVideoTag = { "video" };
+			pm = PMF.get().getPersistenceManager();
+
+			List<Content> lContentList = contentService.getAll();
+			for (Content lContent : lContentList) {
+
+				Content _content = pm.getObjectById(Content.class,
+						lContent.getId());
+				if (_content.getTags() == null) {
+					if (_content.getType().equals("image")) {
+						_content.setTags(lDefaultImageTag);
+					} else if (_content.getType().equals("video")) {
+						_content.setTags(lDefaultVideoTag);
+					}
+				} else {
+					String[] lTags = _content.getTags();
+					boolean lContainsImageTag = false;
+					boolean lContainsVideoTag = false;
+					for (int i = 0; i < lTags.length; i++) {
+						if (lTags[i].equals("image"))
+							lContainsImageTag = true;
+						else if (lTags[i].equals("video"))
+							lContainsVideoTag = true;
+					}
+					if (_content.getType().equals("image")
+							&& (!lContainsImageTag)) {
+						_content.setTags(lDefaultImageTag);
+					} else if (_content.getType().equals("video")
+							&& (!lContainsVideoTag)) {
+						_content.setTags(lDefaultVideoTag);
+					}
+				}
+
+			}
+			Result result = new Result();
+			result.setResult(Result.SUCCESS);
+			return result;
+		} finally {
+			if (pm != null) {
+				pm.close();
+			}
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	@RequestMapping(value = "/admin/assign/clientkeys", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody
+	Result assignClientKeys(HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			try {
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("Entering");
+
+				PersistenceManager pm = null;
+
+				try {
+					pm = PMF.get().getPersistenceManager();
+					Query q = pm.newQuery(Account.class);
+					List<Account> lList = (List<Account>) q.execute();
+					for (Account lAccount : lList) {
+						// assign
+						clientKeyService.generateClientKey(lAccount.getId());
+					}
+				} finally {
+					if (pm != null) {
+						pm.close();
+					}
+				}
+			} finally {
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("Exiting");
+			}
+
+			Result result = new Result();
+			result.setResult(Result.SUCCESS);
+			return result;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
 	@RequestMapping(value = "/admin/content/size/update", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody
 	Result updateSize(HttpServletResponse response) {
@@ -401,8 +571,13 @@ public class AdminController {
 							lApplication.getId(), false);
 					for (Content lContent : lContentList) {
 						if (!Utils.isEmpty(lContent.getUri())) {
+							// over the next
+							long lDelayInMs = new Random().nextInt(60 * 1000);
+							if (LOGGER.isLoggable(Level.INFO))
+								LOGGER.info("Adding delay of " + lDelayInMs
+										+ " ms before attempting to process");
 							Utils.triggerUpdateContentSizeInBytesMessage(
-									lContent.getId(), lContent.getUri(), 0);
+									lContent.getId(), lDelayInMs);
 						}
 					}
 				}

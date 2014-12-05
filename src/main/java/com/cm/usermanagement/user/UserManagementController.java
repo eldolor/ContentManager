@@ -2,6 +2,7 @@ package com.cm.usermanagement.user;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.UUID;
@@ -27,10 +28,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.cm.config.CanonicalApplicationQuota;
 import com.cm.config.CanonicalContentType;
-import com.cm.config.CanonicalPlanName;
-import com.cm.config.CanonicalStorageQuota;
+import com.cm.config.CanonicalPlan;
 import com.cm.config.Configuration;
 import com.cm.contentmanager.application.Application;
 import com.cm.contentmanager.application.ApplicationService;
@@ -38,6 +37,9 @@ import com.cm.contentmanager.content.Content;
 import com.cm.contentmanager.content.ContentService;
 import com.cm.contentmanager.contentgroup.ContentGroup;
 import com.cm.contentmanager.contentgroup.ContentGroupService;
+import com.cm.contentmanager.contentstat.ContentStat;
+import com.cm.contentmanager.contentstat.ContentStatService;
+import com.cm.contentmanager.contentstat.UnmanagedContentStat;
 import com.cm.quota.Quota;
 import com.cm.quota.QuotaService;
 import com.cm.stripe.StripeCustomer;
@@ -46,6 +48,10 @@ import com.cm.usermanagement.user.transfer.ForgotPasswordRequest;
 import com.cm.usermanagement.user.transfer.PasswordChangeRequest;
 import com.cm.util.Utils;
 import com.cm.util.ValidationError;
+import com.google.appengine.api.taskqueue.Queue;
+import com.google.appengine.api.taskqueue.QueueFactory;
+import com.google.appengine.api.taskqueue.TaskOptions;
+import com.google.appengine.api.taskqueue.TaskOptions.Method;
 
 @Controller
 public class UserManagementController {
@@ -63,9 +69,12 @@ public class UserManagementController {
 	private ContentService contentService;
 	@Autowired
 	private QuotaService quotaService;
+	@Autowired
+	private ContentStatService contentStatService;
 
 	private static final Logger LOGGER = Logger
 			.getLogger(UserManagementController.class.getName());
+	private static final String TEXT_HTML_CHARSET_UTF_8 = "text/html; charset=utf-8";
 
 	/**
 	 * @param model
@@ -121,25 +130,46 @@ public class UserManagementController {
 				User lDomainUser = userService.signUpUser(lUser);
 				// create the demo application
 				Application lApplication = createDemoApplication(lUser);
-				ContentGroup lContentGroup = createDemoContentGroup(
+				List<ContentGroup> lContentGroups = createDemoContentGroups(
 						lDomainUser, lApplication);
-				createDemoContent(lDomainUser, lApplication, lContentGroup);
+				Long[] lContentIds = createDemoContent(lDomainUser,
+						lApplication, lContentGroups);
+				// create demo usage reports for the last 10 days;
+				// asynchronously
+				int lLastNDays = 10;
+				// createDemoUsageReports(lApplication.getId(), lLastNDays);
+				Queue queue = QueueFactory
+						.getQueue(Configuration.CONTENT_STATS_QUEUE_NAME);
+				TaskOptions taskOptions = TaskOptions.Builder
+						.withUrl(
+								"/tasks/demo/usagereports/create/"
+										+ String.valueOf(lApplication.getId())
+										+ "/" + String.valueOf(lLastNDays))
+						.param("id", String.valueOf(lApplication.getId()))
+						.param("lastNDays", String.valueOf(lLastNDays))
+						.method(Method.POST).countdownMillis(5000);
+				queue.add(taskOptions);
 
 				// assign them the free quota
 				Quota lQuota = new Quota();
 				lQuota.setAccountId(lUser.getAccountId());
 				// default to free
-				lQuota.setCanonicalPlanName(CanonicalPlanName.FREE.getValue());
-				lQuota.setStorageLimitInBytes(CanonicalStorageQuota.FREE
-						.getValue());
-				lQuota.setApplicationLimit(CanonicalApplicationQuota.FREE
-						.getValue());
+				lQuota.setCanonicalPlanId(CanonicalPlan.FREE.getId());
+				lQuota.setStorageLimitInBytes(CanonicalPlan.FREE
+						.getStorageQuota());
+				lQuota.setApplicationLimit(CanonicalPlan.FREE
+						.getApplicationQuota());
 
 				lQuota.setTimeCreatedMs(System.currentTimeMillis());
 				lQuota.setTimeCreatedTimeZoneOffsetMs((long) TimeZone
 						.getDefault().getRawOffset());
 				quotaService.create(lQuota);
-
+				// update utilization
+				Utils.triggerUpdateQuotaUtilizationMessage(
+						lApplication.getAccountId(), 10000);
+				// Utils.triggerUpdateBandwidthUtilizationMessage(
+				// lApplication.getId(), 0L, 10000);
+				sendWelcomeEmail(lDomainUser);
 				response.setStatus(HttpServletResponse.SC_CREATED);
 				return null;
 			}
@@ -155,6 +185,65 @@ public class UserManagementController {
 
 	}
 
+	private void sendWelcomeEmail(User pUser) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			StringBuilder lHtmlFormattedHeader = new StringBuilder();
+
+			lHtmlFormattedHeader
+					.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">Welcome to Skok.</p>");
+			lHtmlFormattedHeader
+					.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">Skok is an Advanced Content Management and  Delivery platform for your Mobile Apps. Skok delivers rich content to your Mobile Apps, and stores it locally on mobile devices.</p>");
+			lHtmlFormattedHeader
+					.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">This elevates user experience of your Mobile Apps. Your content loads much faster, and users can engage with your rich content, even if they lose their data connection.</p>");
+
+			lHtmlFormattedHeader
+					.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">You can find out more at <a href=\"http://skok.co/docs/overview\">Skok</a> </p>");
+
+			StringBuilder lHtmlFormattedCallout = new StringBuilder();
+			lHtmlFormattedCallout
+					.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\"><b>Powerful New Features</b></p>");
+			lHtmlFormattedCallout.append("<ol>");
+			lHtmlFormattedCallout.append("<li>Cloud-driven Architecture</li>");
+			lHtmlFormattedCallout
+					.append("<li>Advanced Content Management Platform</li>");
+			lHtmlFormattedCallout
+					.append("<li>Streamlined Content Delivery</li>");
+			lHtmlFormattedCallout.append("<li>Auto-sizing of Images</li>");
+			lHtmlFormattedCallout
+					.append("<li>Say Goodbye to Google Play APK Expansion Files</li>");
+			lHtmlFormattedCallout.append("<li>Continuous Content Updates</li>");
+			lHtmlFormattedCallout.append("<li>No Extra Coding Required</li>");
+			lHtmlFormattedCallout
+					.append("<li>Easily-pluggable &amp; Feature-rich SDK</li>");
+			lHtmlFormattedCallout.append("<li>Mobile Device Storage</li>");
+			lHtmlFormattedCallout.append("<li>Advanced Caching on Device</li>");
+			lHtmlFormattedCallout
+					.append("<li>Non-Blocking Content Downloads</li>");
+			lHtmlFormattedCallout
+					.append("<li>Manages Content Downloads over Spotty Networks</li>");
+			lHtmlFormattedCallout.append("<li>Download Notifications</li>");
+			lHtmlFormattedCallout
+					.append("<li>Analytics to Track Usage Statistics of your Content</li>");
+			lHtmlFormattedCallout.append("</ol>");
+			String lEmailTemplate = new StripeChargeEmailBuilder().build(
+					lHtmlFormattedHeader.toString(),
+					lHtmlFormattedCallout.toString());
+			Utils.sendEmail(Configuration.FROM_EMAIL_ADDRESS,
+					Configuration.FROM_NAME, pUser.getUsername(), "",
+					"Welcome to " + Configuration.SITE_NAME, lEmailTemplate,
+					TEXT_HTML_CHARSET_UTF_8);
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
 	private Application createDemoApplication(User pUser) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -162,8 +251,9 @@ public class UserManagementController {
 			Application lApplication = new Application();
 			lApplication.setAccountId(pUser.getAccountId());
 			lApplication
-					.setDescription("We've created a demo application for illustrative purposes only. The application contains a demo content group, and a few Image and Video type contents. The demo application is enabled by default, and is configured such that the users can only download the contents (images & videos) over a Wi-Fi network, and not over a Cellular Network. This helps conserve the cellular data usage.");
+					.setDescription("We've created a demo application for illustrative purposes only. The application contains 2 content groups, and a few Image and Video type contents. The demo application is enabled by default, and is configured such that the users can only download the contents (images & videos) over a Wi-Fi network, and not over a Cellular Network. This helps conserve the cellular data usage.");
 			lApplication.setEnabled(true);
+			lApplication.setCollectUsageData(true);
 			lApplication.setName("Demo Application");
 			long lTime = System.currentTimeMillis();
 			lApplication.setTimeCreatedMs(lTime);
@@ -183,35 +273,66 @@ public class UserManagementController {
 
 	}
 
-	private ContentGroup createDemoContentGroup(User pUser,
+	private List<ContentGroup> createDemoContentGroups(User pUser,
 			Application pApplication) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering createDemoContentGroup");
-			ContentGroup lContentGroup = new ContentGroup();
-			lContentGroup.setAccountId(pUser.getAccountId());
-			lContentGroup
-					.setDescription("We've created a demo application for illustrative purposes only. The application contains a demo content group, and a few Image and Video type contents. The demo application is enabled by default, and is configured such that the users can only download the contents (images & videos) over a Wi-Fi network, and not over a Cellular Network. This helps conserve the cellular data usage.");
-			lContentGroup.setEnabled(true);
-			lContentGroup.setName("Demo Content Group");
-			long lTime = System.currentTimeMillis();
-			lContentGroup.setTimeCreatedMs(lTime);
-			lContentGroup.setTimeCreatedTimeZoneOffsetMs((long) TimeZone
-					.getDefault().getOffset(lTime));
-			lContentGroup.setUserId(pUser.getId());
+			List<ContentGroup> lContentGroups = new ArrayList<ContentGroup>();
 
-			lContentGroup.setApplicationId(pApplication.getId());
+			{
+				ContentGroup lContentGroup = new ContentGroup();
+				lContentGroup.setAccountId(pUser.getAccountId());
+				lContentGroup
+						.setDescription("This content group is used to organize Image type content.");
+				lContentGroup.setEnabled(true);
+				lContentGroup.setName("Demo Image Content Group");
+				long lTime = System.currentTimeMillis();
+				lContentGroup.setTimeCreatedMs(lTime);
+				lContentGroup.setTimeCreatedTimeZoneOffsetMs((long) TimeZone
+						.getDefault().getOffset(lTime));
+				lContentGroup.setUserId(pUser.getId());
 
-			DateTime lDt = new DateTime();
-			DateTimeFormatter lFmt = ISODateTimeFormat.dateTime();
-			String lStartDateIso8601 = lFmt.print(lDt);
-			lContentGroup.setStartDateIso8601(lStartDateIso8601);
+				lContentGroup.setApplicationId(pApplication.getId());
 
-			// set high date
-			lContentGroup.setEndDateMs(Long.MAX_VALUE);
+				DateTime lDt = new DateTime();
+				DateTimeFormatter lFmt = ISODateTimeFormat.dateTime();
+				String lStartDateIso8601 = lFmt.print(lDt);
+				lContentGroup.setStartDateIso8601(lStartDateIso8601);
 
-			lContentGroup = contentGroupService.save(pUser, lContentGroup);
-			return lContentGroup;
+				// set high date
+				lContentGroup.setEndDateMs(Long.MAX_VALUE);
+
+				lContentGroup = contentGroupService.save(pUser, lContentGroup);
+				lContentGroups.add(lContentGroup);
+			}
+			{
+				ContentGroup lContentGroup = new ContentGroup();
+				lContentGroup.setAccountId(pUser.getAccountId());
+				lContentGroup
+						.setDescription("This content group is used to organize Video type content.");
+				lContentGroup.setEnabled(true);
+				lContentGroup.setName("Demo Video Content Group");
+				long lTime = System.currentTimeMillis();
+				lContentGroup.setTimeCreatedMs(lTime);
+				lContentGroup.setTimeCreatedTimeZoneOffsetMs((long) TimeZone
+						.getDefault().getOffset(lTime));
+				lContentGroup.setUserId(pUser.getId());
+
+				lContentGroup.setApplicationId(pApplication.getId());
+
+				DateTime lDt = new DateTime();
+				DateTimeFormatter lFmt = ISODateTimeFormat.dateTime();
+				String lStartDateIso8601 = lFmt.print(lDt);
+				lContentGroup.setStartDateIso8601(lStartDateIso8601);
+
+				// set high date
+				lContentGroup.setEndDateMs(Long.MAX_VALUE);
+
+				lContentGroup = contentGroupService.save(pUser, lContentGroup);
+				lContentGroups.add(lContentGroup);
+			}
+			return lContentGroups;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting createDemoContentGroup");
@@ -219,15 +340,17 @@ public class UserManagementController {
 
 	}
 
-	private void createDemoContent(User pUser, Application pApplication,
-			ContentGroup pContentGroup) {
+	private Long[] createDemoContent(User pUser, Application pApplication,
+			List<ContentGroup> pContentGroups) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering createDemoContent");
+			Long[] lContentIds = new Long[2];
+
 			{
 				Content lContent = new Content();
 				lContent.setAccountId(pUser.getAccountId());
-				lContent.setDescription("We've created a demo application for illustrative purposes only. The application contains a demo content group, and a few Image and Video type contents. The demo application is enabled by default, and is configured such that the users can only download the contents (images & videos) over a Wi-Fi network, and not over a Cellular Network. This helps conserve the cellular data usage. Please upload any image of your choice.");
+				lContent.setDescription("This is a demo Image type content.");
 				lContent.setEnabled(true);
 				lContent.setName("Demo Image - with no attached image");
 				long lTime = System.currentTimeMillis();
@@ -236,7 +359,7 @@ public class UserManagementController {
 						.getDefault().getOffset(lTime));
 				lContent.setUserId(pUser.getId());
 				lContent.setApplicationId(pApplication.getId());
-				lContent.setContentGroupId(pContentGroup.getId());
+				lContent.setContentGroupId(pContentGroups.get(0).getId());
 				lContent.setType(CanonicalContentType.IMAGE.getValue());
 
 				DateTime lDt = new DateTime();
@@ -248,12 +371,13 @@ public class UserManagementController {
 				lContent.setEndDateMs(Long.MAX_VALUE);
 
 				lContent = contentService.save(pUser, lContent);
+				lContentIds[0] = lContent.getId();
 			}
 
 			{
 				Content lContent = new Content();
 				lContent.setAccountId(pUser.getAccountId());
-				lContent.setDescription("We've created a demo application for illustrative purposes only. The application contains a demo content group, and a few Image and Video type contents. The demo application is enabled by default, and is configured such that the users can only download the contents (images & videos) over a Wi-Fi network, and not over a Cellular Network. This helps conserve the cellular data usage. Please upload any video of your choice.");
+				lContent.setDescription("This is a demo Video type content.");
 				lContent.setEnabled(true);
 				lContent.setName("Demo Video - with no attached video");
 				long lTime = System.currentTimeMillis();
@@ -262,7 +386,7 @@ public class UserManagementController {
 						.getDefault().getOffset(lTime));
 				lContent.setUserId(pUser.getId());
 				lContent.setApplicationId(pApplication.getId());
-				lContent.setContentGroupId(pContentGroup.getId());
+				lContent.setContentGroupId(pContentGroups.get(1).getId());
 				lContent.setType(CanonicalContentType.VIDEO.getValue());
 
 				DateTime lDt = new DateTime();
@@ -274,13 +398,216 @@ public class UserManagementController {
 				lContent.setEndDateMs(Long.MAX_VALUE);
 
 				lContent = contentService.save(pUser, lContent);
+				lContentIds[1] = lContent.getId();
 			}
 
+			return lContentIds;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting createDemoContentGroup");
 		}
 
+	}
+
+	@RequestMapping(value = "/tasks/demo/usagereports/create/{applicationId}/{lastNDays}", method = RequestMethod.POST)
+	public void createDemoUsageReports(@PathVariable long applicationId,
+			@PathVariable int lastNDays, HttpServletResponse response) {
+
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			{
+				Calendar lEod = Utils.getEndOfDayToday(TimeZone
+						.getTimeZone("UTC"));
+				List<Content> lContents = contentService.get(applicationId,
+						false);
+				for (int i = 0; i < lastNDays; i++) {
+					if (LOGGER.isLoggable(Level.INFO))
+						LOGGER.info("Processing: "
+								+ lEod.getTime().toLocaleString());
+					for (Content content : lContents) {
+						int lRandom = Utils.getRandomNumber(1, 10);
+						for (int j = 0; j < lRandom; j++) {
+							contentStatService
+									.saveContentStat(createDemoContentStat(
+											content.getApplicationId(),
+											content.getContentGroupId(),
+											content.getId(),
+											lEod.getTimeInMillis()));
+						}
+					}
+					lEod.add(Calendar.DATE, -1);
+				}
+
+				List<UnmanagedContentStat> lContentStats = new ArrayList<UnmanagedContentStat>();
+
+				for (int i = 0; i < lastNDays; i++) {
+					int lRandom = Utils.getRandomNumber(1, 10);
+					for (int j = 0; j < lRandom; j++) {
+						long lEodTimeMs = Utils.getEndOfDayMinusDays(i,
+								TimeZone.getTimeZone("UTC"));
+						if (LOGGER.isLoggable(Level.INFO))
+							LOGGER.info("Processing: " + lEod);
+						lContentStats.add(createDemoUnmanagedContentStat(
+								applicationId,
+								"e5eecc2bbea951f134d72b02b5aa900a6814396b",
+								"http://mywebsite.com/mycontent/myimage",
+								lEodTimeMs));
+					}
+
+				}
+				for (int i = 0; i < lastNDays; i++) {
+					int lRandom = Utils.getRandomNumber(1, 10);
+					for (int j = 0; j < lRandom; j++) {
+						long lEodTimeMs = Utils.getEndOfDayMinusDays(i,
+								TimeZone.getTimeZone("UTC"));
+						if (LOGGER.isLoggable(Level.INFO))
+							LOGGER.info("Processing: " + lEod);
+						lContentStats.add(createDemoUnmanagedContentStat(
+								applicationId,
+								"f6af154aab2bca72d6d91317c07471a582041bb8",
+								"http://mywebsite.com/mycontent/myvideo",
+								lEodTimeMs));
+					}
+
+				}
+
+				contentStatService
+						.rollupUnmanagedSummaryRealTime(lContentStats);
+
+			}
+
+			{
+				Calendar lEod = Utils.getEndOfDayToday(TimeZone
+						.getTimeZone("UTC"));
+				Calendar lSod = Utils.getStartOfDayToday(TimeZone
+						.getTimeZone("UTC"));
+				for (int i = 0; i < lastNDays; i++) {
+					if (LOGGER.isLoggable(Level.INFO))
+						LOGGER.info("Processing: "
+								+ lSod.getTime().toLocaleString() + "::"
+								+ lEod.getTime().toLocaleString());
+					// Utils.triggerRollupMessage(applicationId,
+					// lSod.getTimeInMillis(), lEod.getTimeInMillis(), 0);
+					contentStatService.rollupSummary(applicationId,
+							lSod.getTimeInMillis(), lEod.getTimeInMillis());
+					lSod.add(Calendar.DATE, -1);
+					lEod.add(Calendar.DATE, -1);
+				}
+			}
+			response.setStatus(HttpServletResponse.SC_OK);
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+
+	}
+
+	@RequestMapping(value = "/test/rollupsummaryrealtime/{applicationId}/{lastNDays}", method = RequestMethod.GET)
+	public void testRollupSummaryRealTime(@PathVariable long applicationId,
+			@PathVariable int lastNDays, HttpServletResponse response) {
+
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			{
+				List<Content> lContents = contentService.get(applicationId,
+						false);
+				List<ContentStat> lContentStats = new ArrayList<ContentStat>();
+
+				for (int i = 0; i < lastNDays; i++) {
+					long lEod = Utils.getEndOfDayMinusDays(i,
+							TimeZone.getTimeZone("UTC"));
+					if (LOGGER.isLoggable(Level.INFO))
+						LOGGER.info("Processing: " + lEod);
+					for (Content content : lContents) {
+						int lRandom = Utils.getRandomNumber(1, 2);
+						for (int j = 0; j < lRandom; j++) {
+							lContentStats.add(createDemoContentStat(
+									content.getApplicationId(),
+									content.getContentGroupId(),
+									content.getId(), lEod));
+						}
+					}
+				}
+				contentStatService.rollupSummaryRealTime(lContentStats);
+			}
+
+			response.setStatus(HttpServletResponse.SC_OK);
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+
+	}
+
+	private ContentStat createDemoContentStat(long applicationId,
+			long contentGroupId, long contentId, long eventTime) {
+		ContentStat lContentStat = new ContentStat();
+		lContentStat.setApplicationId(applicationId);
+		lContentStat.setContentGroupId(contentGroupId);
+		lContentStat.setContentId(contentId);
+		lContentStat.setEventTimeMs(eventTime);
+		lContentStat.setEventTimeZoneOffsetMs((long) TimeZone
+				.getTimeZone("UTC").getRawOffset());
+		lContentStat.setEventType("impression");
+		return lContentStat;
+	}
+
+	@RequestMapping(value = "/test/rollupunmanagedsummaryrealtime/{applicationId}/{lastNDays}", method = RequestMethod.GET)
+	public void testRollupUnmanagedSummaryRealTime(
+			@PathVariable long applicationId, @PathVariable int lastNDays,
+			HttpServletResponse response) {
+
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+
+			List<UnmanagedContentStat> lContentStats = new ArrayList<UnmanagedContentStat>();
+
+			for (int i = 0; i < lastNDays; i++) {
+				long lEod = Utils.getEndOfDayMinusDays(i,
+						TimeZone.getTimeZone("UTC"));
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("Processing: " + lEod);
+				lContentStats.add(createDemoUnmanagedContentStat(applicationId,
+						"738ddf35b3a85a7a6ba7b232bd3d5f1e4d284ad1",
+						"http://www.google.com", lEod));
+
+			}
+			contentStatService.rollupUnmanagedSummaryRealTime(lContentStats);
+
+			response.setStatus(HttpServletResponse.SC_OK);
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+
+	}
+
+	private UnmanagedContentStat createDemoUnmanagedContentStat(
+			long applicationId, String urlHash, String url, long eventTime) {
+		UnmanagedContentStat lContentStat = new UnmanagedContentStat();
+		lContentStat.setApplicationId(applicationId);
+		lContentStat.setUrlHash(urlHash);
+		lContentStat.setUrl(url);
+		lContentStat.setEventTimeMs(eventTime);
+		lContentStat.setEventTimeZoneOffsetMs((long) TimeZone
+				.getTimeZone("UTC").getRawOffset());
+		lContentStat.setEventType("impression");
+		return lContentStat;
 	}
 
 	private String createTrackingId(User pUser) {
@@ -294,9 +621,10 @@ public class UserManagementController {
 			List<Application> lApplications = applicationService
 					.getApplicationsByAccountId(lAccountId, true);
 
-			String lTrackingId = "AI_" + lAccountId + "_"
-					+ (lApplications.size() + 1); // the collection will have
-													// size 0 at first
+			String lTrackingId = Configuration.TRACKING_ID_PREFIX + lAccountId
+					+ "_" + (lApplications.size() + 1); // the collection will
+														// have
+														// size 0 at first
 
 			return lTrackingId;
 
@@ -317,16 +645,16 @@ public class UserManagementController {
 		if (LOGGER.isLoggable(Level.INFO))
 			LOGGER.info("Entering displayAccountSettings");
 		try {
-			model.addAttribute("canonicalPlanNameFree",
-					CanonicalPlanName.FREE.getValue());
-			model.addAttribute("canonicalPlanNameMicro",
-					CanonicalPlanName.MICRO.getValue());
-			model.addAttribute("canonicalPlanNameSmall",
-					CanonicalPlanName.SMALL.getValue());
-			model.addAttribute("canonicalPlanNameMedium",
-					CanonicalPlanName.MEDIUM.getValue());
-			model.addAttribute("canonicalPlanNameLarge",
-					CanonicalPlanName.LARGE.getValue());
+			model.addAttribute("canonicalPlanIdFree",
+					CanonicalPlan.FREE.getId());
+			model.addAttribute("canonicalPlanIdMicro",
+					CanonicalPlan.MICRO.getId());
+			model.addAttribute("canonicalPlanIdSmall",
+					CanonicalPlan.SMALL.getId());
+			model.addAttribute("canonicalPlanIdMedium",
+					CanonicalPlan.MEDIUM.getId());
+			model.addAttribute("canonicalPlanIdLarge",
+					CanonicalPlan.LARGE.getId());
 			User lUser = userService.getLoggedInUser();
 			StripeCustomer lStripeCustomer = stripeCustomerService.get(lUser
 					.getAccountId());
@@ -335,20 +663,19 @@ public class UserManagementController {
 			if (lStripeCustomer == null) {
 				model.addAttribute("isSubscribed", false);
 				// default to free
-				model.addAttribute("subscribedCanonicalPlanName",
-						CanonicalPlanName.FREE.getValue());
+				model.addAttribute("subscribedCanonicalPlanId",
+						CanonicalPlan.FREE.getId());
 			} else {
 				// check to see if the user's CC is expiring or has expired
-				if (Utils.isCCExpired(lStripeCustomer.getCardExpirationYear(),
-						lStripeCustomer.getCardExpirationMonth())
-						|| Utils.isCCExpiring(
-								lStripeCustomer.getCardExpirationYear(),
-								lStripeCustomer.getCardExpirationMonth())) {
+				if (Utils.isCCExpired(lStripeCustomer.getCardExpYear(),
+						lStripeCustomer.getCardExpMonth())
+						|| Utils.isCCExpiring(lStripeCustomer.getCardExpYear(),
+								lStripeCustomer.getCardExpMonth())) {
 					lIsUpdateCCInfo = true;
 				}
 				model.addAttribute("isSubscribed", true);
-				model.addAttribute("subscribedCanonicalPlanName",
-						lStripeCustomer.getCanonicalPlanName());
+				model.addAttribute("subscribedCanonicalPlanId",
+						lStripeCustomer.getCanonicalPlanId());
 			}
 			model.addAttribute("isUpdateCCInfo", lIsUpdateCCInfo);
 			model.addAttribute("isError", false);
@@ -356,6 +683,279 @@ public class UserManagementController {
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting displayAccountSettings");
+		}
+	}
+
+	/**
+	 * Secured uri
+	 * 
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/account/billing", method = RequestMethod.GET)
+	public ModelAndView displayBilling(ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering");
+		try {
+			model.addAttribute("canonicalPlanIdFree",
+					CanonicalPlan.FREE.getId());
+			model.addAttribute("canonicalPlanIdMicro",
+					CanonicalPlan.MICRO.getId());
+			model.addAttribute("canonicalPlanIdSmall",
+					CanonicalPlan.SMALL.getId());
+			model.addAttribute("canonicalPlanIdMedium",
+					CanonicalPlan.MEDIUM.getId());
+			model.addAttribute("canonicalPlanIdLarge",
+					CanonicalPlan.LARGE.getId());
+			User lUser = userService.getLoggedInUser();
+			StripeCustomer lStripeCustomer = stripeCustomerService.get(lUser
+					.getAccountId());
+			boolean lIsUpdateCCInfo = false;
+
+			if (lStripeCustomer == null) {
+				model.addAttribute("isSubscribed", false);
+				// default to free
+				model.addAttribute("subscribedCanonicalPlanId",
+						CanonicalPlan.FREE.getId());
+			} else {
+				// check to see if the user's CC is expiring or has expired
+				if (Utils.isCCExpired(lStripeCustomer.getCardExpYear(),
+						lStripeCustomer.getCardExpMonth())
+						|| Utils.isCCExpiring(lStripeCustomer.getCardExpYear(),
+								lStripeCustomer.getCardExpMonth())) {
+					lIsUpdateCCInfo = true;
+				}
+				model.addAttribute("isSubscribed", true);
+				model.addAttribute("subscribedCanonicalPlanId",
+						lStripeCustomer.getCanonicalPlanId());
+			}
+			model.addAttribute("isUpdateCCInfo", lIsUpdateCCInfo);
+			model.addAttribute("isError", false);
+			return new ModelAndView("settings_billing", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	/**
+	 * Secured uri
+	 * 
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/account/usage", method = RequestMethod.GET)
+	public ModelAndView displayAccountUsage(ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering");
+		try {
+			model.addAttribute("canonicalPlanIdFree",
+					CanonicalPlan.FREE.getId());
+			model.addAttribute("canonicalPlanIdMicro",
+					CanonicalPlan.MICRO.getId());
+			model.addAttribute("canonicalPlanIdSmall",
+					CanonicalPlan.SMALL.getId());
+			model.addAttribute("canonicalPlanIdMedium",
+					CanonicalPlan.MEDIUM.getId());
+			model.addAttribute("canonicalPlanIdLarge",
+					CanonicalPlan.LARGE.getId());
+			User lUser = userService.getLoggedInUser();
+			StripeCustomer lStripeCustomer = stripeCustomerService.get(lUser
+					.getAccountId());
+			boolean lIsUpdateCCInfo = false;
+
+			if (lStripeCustomer == null) {
+				model.addAttribute("isSubscribed", false);
+				// default to free
+				model.addAttribute("subscribedCanonicalPlanId",
+						CanonicalPlan.FREE.getId());
+			} else {
+				// check to see if the user's CC is expiring or has expired
+				if (Utils.isCCExpired(lStripeCustomer.getCardExpYear(),
+						lStripeCustomer.getCardExpMonth())
+						|| Utils.isCCExpiring(lStripeCustomer.getCardExpYear(),
+								lStripeCustomer.getCardExpMonth())) {
+					lIsUpdateCCInfo = true;
+				}
+				model.addAttribute("isSubscribed", true);
+				model.addAttribute("subscribedCanonicalPlanId",
+						lStripeCustomer.getCanonicalPlanId());
+			}
+			model.addAttribute("isUpdateCCInfo", lIsUpdateCCInfo);
+			model.addAttribute("isError", false);
+			return new ModelAndView("settings_account_usage", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	/**
+	 * Secured uri
+	 * 
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/account/plans", method = RequestMethod.GET)
+	public ModelAndView displayPlansAndPricing(ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering");
+		try {
+			User lUser = userService.getLoggedInUser();
+			setupPlanAndPricing(model);
+
+			StripeCustomer lStripeCustomer = stripeCustomerService.get(lUser
+					.getAccountId());
+			boolean lIsUpdateCCInfo = false;
+
+			// user logged in but not yet subscribed to any other plans
+			if (lStripeCustomer == null) {
+				model.addAttribute("isSubscribed", false);
+				// default to free
+				model.addAttribute("subscribedCanonicalPlanId",
+						CanonicalPlan.FREE.getId());
+			} else {
+				// check to see if the user's CC is expiring or has expired
+				if (Utils.isCCExpired(lStripeCustomer.getCardExpYear(),
+						lStripeCustomer.getCardExpMonth())
+						|| Utils.isCCExpiring(lStripeCustomer.getCardExpYear(),
+								lStripeCustomer.getCardExpMonth())) {
+					lIsUpdateCCInfo = true;
+				}
+				model.addAttribute("isSubscribed", true);
+				model.addAttribute("subscribedCanonicalPlanId",
+						lStripeCustomer.getCanonicalPlanId());
+			}
+			model.addAttribute("isUpdateCCInfo", lIsUpdateCCInfo);
+			model.addAttribute("isError", false);
+
+			return new ModelAndView("settings_plans_and_pricing_post_login",
+					model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	private void setupPlanAndPricing(ModelMap model) {
+		model.addAttribute("stripePublicKey",
+				Configuration.STRIPE_PUBLIC_API_KEY);
+
+		model.addAttribute("canonicalPlanIdFree", CanonicalPlan.FREE.getId());
+		model.addAttribute("canonicalPlanFreeNetworkBandwidth",
+				CanonicalPlan.FREE.getDisplayNetworkBandwidth());
+		model.addAttribute("canonicalPlanFreeStorage",
+				CanonicalPlan.FREE.getDisplayStorage());
+		model.addAttribute("canonicalPlanFreePrice",
+				CanonicalPlan.FREE.getDisplayPrice());
+		model.addAttribute("canonicalPlanFreePriceInCents",
+				CanonicalPlan.FREE.getPriceInCents());
+
+		model.addAttribute("canonicalPlanIdMicro", CanonicalPlan.MICRO.getId());
+		model.addAttribute("canonicalPlanMicroNetworkBandwidth",
+				CanonicalPlan.MICRO.getDisplayNetworkBandwidth());
+		model.addAttribute("canonicalPlanMicroStorage",
+				CanonicalPlan.MICRO.getDisplayStorage());
+		model.addAttribute("canonicalPlanMicroPrice",
+				CanonicalPlan.MICRO.getDisplayPrice());
+		model.addAttribute("canonicalPlanMicroPriceInCents",
+				CanonicalPlan.MICRO.getPriceInCents());
+
+		model.addAttribute("canonicalPlanIdSmall", CanonicalPlan.SMALL.getId());
+		model.addAttribute("canonicalPlanSmallNetworkBandwidth",
+				CanonicalPlan.SMALL.getDisplayNetworkBandwidth());
+		model.addAttribute("canonicalPlanSmallStorage",
+				CanonicalPlan.SMALL.getDisplayStorage());
+		model.addAttribute("canonicalPlanSmallPrice",
+				CanonicalPlan.SMALL.getDisplayPrice());
+		model.addAttribute("canonicalPlanSmallPriceInCents",
+				CanonicalPlan.SMALL.getPriceInCents());
+
+		model.addAttribute("canonicalPlanIdMedium",
+				CanonicalPlan.MEDIUM.getId());
+		model.addAttribute("canonicalPlanMediumNetworkBandwidth",
+				CanonicalPlan.MEDIUM.getDisplayNetworkBandwidth());
+		model.addAttribute("canonicalPlanMediumStorage",
+				CanonicalPlan.MEDIUM.getDisplayStorage());
+		model.addAttribute("canonicalPlanMediumPrice",
+				CanonicalPlan.MEDIUM.getDisplayPrice());
+		model.addAttribute("canonicalPlanMediumPriceInCents",
+				CanonicalPlan.MEDIUM.getPriceInCents());
+
+		model.addAttribute("canonicalPlanIdLarge", CanonicalPlan.LARGE.getId());
+		model.addAttribute("canonicalPlanLargeNetworkBandwidth",
+				CanonicalPlan.LARGE.getDisplayNetworkBandwidth());
+		model.addAttribute("canonicalPlanLargeStorage",
+				CanonicalPlan.LARGE.getDisplayStorage());
+		model.addAttribute("canonicalPlanLargePrice",
+				CanonicalPlan.LARGE.getDisplayPrice());
+		model.addAttribute("canonicalPlanLargePriceInCents",
+				CanonicalPlan.LARGE.getPriceInCents());
+	}
+
+	@RequestMapping(value = "/plans", method = RequestMethod.GET)
+	public ModelAndView displayPlansAndPricingUnsecured(ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering");
+		try {
+			setupPlanAndPricing(model);
+			return new ModelAndView("settings_plans_and_pricing_no_login",
+					model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	/**
+	 * Secured uri
+	 * 
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/account/changepassword", method = RequestMethod.GET)
+	public ModelAndView displayChangePassword(ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering");
+		try {
+			model.addAttribute("canonicalPlanIdFree",
+					CanonicalPlan.FREE.getId());
+			model.addAttribute("canonicalPlanIdMicro",
+					CanonicalPlan.MICRO.getId());
+			model.addAttribute("canonicalPlanIdSmall",
+					CanonicalPlan.SMALL.getId());
+			model.addAttribute("canonicalPlanIdMedium",
+					CanonicalPlan.MEDIUM.getId());
+			model.addAttribute("canonicalPlanIdLarge",
+					CanonicalPlan.LARGE.getId());
+			User lUser = userService.getLoggedInUser();
+			StripeCustomer lStripeCustomer = stripeCustomerService.get(lUser
+					.getAccountId());
+			boolean lIsUpdateCCInfo = false;
+
+			if (lStripeCustomer == null) {
+				model.addAttribute("isSubscribed", false);
+				// default to free
+				model.addAttribute("subscribedCanonicalPlanId",
+						CanonicalPlan.FREE.getId());
+			} else {
+				// check to see if the user's CC is expiring or has expired
+				if (Utils.isCCExpired(lStripeCustomer.getCardExpYear(),
+						lStripeCustomer.getCardExpMonth())
+						|| Utils.isCCExpiring(lStripeCustomer.getCardExpYear(),
+								lStripeCustomer.getCardExpMonth())) {
+					lIsUpdateCCInfo = true;
+				}
+				model.addAttribute("isSubscribed", true);
+				model.addAttribute("subscribedCanonicalPlanId",
+						lStripeCustomer.getCanonicalPlanId());
+			}
+			model.addAttribute("isUpdateCCInfo", lIsUpdateCCInfo);
+			model.addAttribute("isError", false);
+			return new ModelAndView("settings_change_password", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
 		}
 	}
 
@@ -405,6 +1005,10 @@ public class UserManagementController {
 			}
 			// always
 			response.setStatus(HttpServletResponse.SC_ACCEPTED);
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting processForgotPasswordRequest");
@@ -427,17 +1031,21 @@ public class UserManagementController {
 			StringBuilder htmlBody = new StringBuilder();
 			htmlBody.append(lEmailMessage);
 			try {
-				Utils.sendEmail(
-						Configuration.FORGOT_PASSWORD_FROM_EMAIL_ADDRESS,
-						Configuration.FORGOT_PASSWORD_FROM_NAME,
-						lRequest.getEmail(), "", Configuration.SITE_NAME,
-						htmlBody.toString(), null);
+				Utils.sendEmail(Configuration.FROM_EMAIL_ADDRESS,
+						Configuration.FROM_NAME, lRequest.getEmail(), "",
+						Configuration.SITE_NAME, htmlBody.toString(),
+						TEXT_HTML_CHARSET_UTF_8);
 			} catch (UnsupportedEncodingException e) {
 				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			} catch (MessagingException e) {
 				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}
 
+			response.setStatus(HttpServletResponse.SC_OK);
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting sendForgotPasswordEmail");
@@ -555,6 +1163,11 @@ public class UserManagementController {
 				return null;
 
 			}
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting processForgotPassword");

@@ -2,29 +2,37 @@ package com.cm.util;
 
 import java.io.Serializable;
 
-public class ValidationError implements Serializable
-{
+public class ValidationError implements Serializable {
+	public static final String CATEGORY_WARNING = "warning";
+	public static final String CATEGORY_ERROR = "error";
 
 	private String code;
 	private String description;
+	//default
+	private String category = CATEGORY_ERROR;
 
-	public void setDescription(String description)
-	{
+	public void setDescription(String description) {
 		this.description = description;
 	}
 
-	public String getDescription()
-	{
+	public String getDescription() {
 		return description;
 	}
 
-	public void setCode(String code)
-	{
+	public void setCode(String code) {
 		this.code = code;
 	}
 
-	public String getCode()
-	{
+	public String getCode() {
 		return code;
 	}
+
+	public String getCategory() {
+		return (category == null) ? CATEGORY_ERROR : category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
 }

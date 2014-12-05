@@ -128,6 +128,37 @@ class ContentDao {
 		}
 	}
 
+	Content get(String uri) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering get");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(Content.class);
+				q.setFilter("uri == uriParam");
+				q.declareParameters("Long uriParam");
+				Object[] _array = new Object[1];
+				_array[0] = uri;
+				List<Content> lList = (List<Content>) q
+						.executeWithArray(_array);
+				if (lList != null && (!lList.isEmpty()))
+					return lList.get(0);
+				else
+					return null;
+
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting get");
+		}
+	}
+
 	Content get(Long id) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -271,6 +302,41 @@ class ContentDao {
 		}
 	}
 
+	List<Content> getByContentGroupId(Long contentGroupId,
+			boolean includeDeleted) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(Content.class);
+				if (includeDeleted) {
+					q.setFilter("contentGroupId == contentGroupIdParam");
+					q.declareParameters("Long contentGroupIdParam");
+					q.setOrdering("timeUpdatedMs desc");
+					return (List<Content>) q.execute(contentGroupId);
+
+				} else {
+					q.setFilter("contentGroupId == contentGroupIdParam && deleted == deletedParam");
+					q.declareParameters("Long contentGroupIdParam, Boolean deletedParam");
+					q.setOrdering("timeUpdatedMs desc");
+					return (List<Content>) q.execute(contentGroupId,
+							Boolean.valueOf(false));
+				}
+
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting get");
+		}
+	}
+
 	List<Content> get(Long applicationId, boolean includeDeleted) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -397,7 +463,7 @@ class ContentDao {
 		}
 	}
 
-	void update(Content content) {
+	Content update(Content content) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering update");
@@ -419,6 +485,7 @@ class ContentDao {
 				_content.setName(content.getName());
 				_content.setNameIdx(content.getName().toLowerCase());
 				_content.setDescription(content.getDescription());
+				_content.setTags(content.getTags());
 
 				// for existing contents
 				if (_content.getTimeCreatedMs() == null) {
@@ -434,6 +501,8 @@ class ContentDao {
 				_content.setSizeInBytes(content.getSizeInBytes());
 				_content.setUri(content.getUri());
 				_content.setType(content.getType());
+
+				return _content;
 			} finally {
 				if (pm != null) {
 					pm.close();
@@ -442,6 +511,30 @@ class ContentDao {
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting update");
+		}
+	}
+
+	void moveContentGroup(Long id, Long contentGroupId, Long timeUpdatedMs,
+			Long timeUpdatedTimeZoneOffsetMs) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Content _content = pm.getObjectById(Content.class, id);
+				_content.setContentGroupId(contentGroupId);
+				_content.setTimeUpdatedMs(timeUpdatedMs);
+				_content.setTimeUpdatedTimeZoneOffsetMs(timeUpdatedTimeZoneOffsetMs);
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
 		}
 	}
 
@@ -466,6 +559,27 @@ class ContentDao {
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting updateContentSize");
+		}
+	}
+
+	List<Content> getAll() {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(Content.class);
+				return (List<Content>) q.execute();
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
 		}
 	}
 

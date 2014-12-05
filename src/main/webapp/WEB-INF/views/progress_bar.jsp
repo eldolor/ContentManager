@@ -5,12 +5,11 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@page
-	import="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"%><html>
+	import="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"%>
 <div class="row" id="content_progress_bar">
 	<div class="large-12 columns">
-		<label>Loading...</label><br>
 		<div class="progress radius">
-			<span class="meter" style="width: 40%"></span>
+			<span class="meter" style="width: 40%; background-color: #5cb85c;">Loading...</span>
 		</div>
 	</div>
 </div>

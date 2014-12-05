@@ -17,6 +17,7 @@ package com.cm.contentmanager.application;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,6 +38,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.cm.config.Configuration;
 import com.cm.contentmanager.content.ContentHelper;
 import com.cm.quota.QuotaService;
 import com.cm.usermanagement.user.User;
@@ -80,6 +82,20 @@ public class ApplicationController {
 		if (LOGGER.isLoggable(Level.INFO))
 			LOGGER.info("Entering displayApplications");
 		try {
+			return new ModelAndView("applications", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting displayApplications");
+		}
+	}
+
+	@RequestMapping(value = "/applications/{tour}", method = RequestMethod.GET)
+	public ModelAndView displayApplications(ModelMap model,
+			@PathVariable String tour) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering displayApplications");
+		try {
+			model.addAttribute("tour", tour);
 			return new ModelAndView("applications", model);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -139,10 +155,10 @@ public class ApplicationController {
 
 			if (applications != null) {
 				if (LOGGER.isLoggable(Level.INFO))
-					LOGGER.info(applications.size() + " Content Groups found");
+					LOGGER.info(applications.size() + " applications found");
 			} else {
 				if (LOGGER.isLoggable(Level.INFO))
-					LOGGER.info("No Content Groups Found!");
+					LOGGER.info("No applications Found!");
 			}
 			response.setStatus(HttpServletResponse.SC_OK);
 			return applications;
@@ -154,6 +170,39 @@ public class ApplicationController {
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting getApplications");
+		}
+	}
+
+	@RequestMapping(value = "/secured/applications/deleted", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody
+	List<Application> getDeletedApplications(HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			User user = userService.getLoggedInUser();
+			List<Application> lDeletedApps = new ArrayList<Application>();
+			List<Application> applications = applicationService
+					.getApplicationsByUserId(user.getId(), true);
+			for (Iterator iterator = applications.iterator(); iterator
+					.hasNext();) {
+				Application application = (Application) iterator.next();
+				if (application.isDeleted()) {
+					lDeletedApps.add(application);
+				}
+
+			}
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info(applications.size() + " applications found");
+			response.setStatus(HttpServletResponse.SC_OK);
+			return lDeletedApps;
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
 		}
 	}
 
@@ -172,17 +221,17 @@ public class ApplicationController {
 				LOGGER.info("Entering deleteApplication");
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Content Group ID: " + id);
-			response.setStatus(HttpServletResponse.SC_OK);
 			applicationService.deleteApplication(id, timeUpdatedMs,
 					timeUpdatedTimeZoneOffsetMs);
-			String lTrackingId = applicationService.getApplication(id)
-					.getTrackingId();
-			Utils.triggerChangesStagedMessage(id, 0);
-			Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId, 0);
 
-			// trigger message to update quota
-			Utils.triggerUpdateQuotaUtilizationMessage(userService.getLoggedInUser()
-					.getAccountId(), 0);
+			Application lApplication = applicationService.getApplication(id);
+			Utils.triggerChangesStagedMessage(id, 0);
+			Utils.updateLastKnownTimestamp(lApplication.getTrackingId(),
+					timeUpdatedMs, 0);
+			Utils.triggerUpdateQuotaUtilizationMessage(
+					lApplication.getAccountId(), 3000);
+
+			response.setStatus(HttpServletResponse.SC_OK);
 
 		} catch (Throwable e) {
 			// handled by GcmManager
@@ -191,6 +240,38 @@ public class ApplicationController {
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting deleteApplication");
+		}
+	}
+
+	@RequestMapping(value = "/secured/application/restore/{id}/{timeUpdatedMs}/{timeUpdatedTimeZoneOffsetMs}", method = RequestMethod.PUT)
+	public void restoreApplication(@PathVariable Long id,
+			@PathVariable Long timeUpdatedMs,
+			@PathVariable Long timeUpdatedTimeZoneOffsetMs,
+			HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Content Group ID: " + id);
+			applicationService.restoreApplication(id, timeUpdatedMs,
+					timeUpdatedTimeZoneOffsetMs);
+
+			Application lApplication = applicationService.getApplication(id);
+			Utils.triggerChangesStagedMessage(id, 0);
+			Utils.updateLastKnownTimestamp(lApplication.getTrackingId(),
+					lApplication.getTimeUpdatedMs(), 0);
+			Utils.triggerUpdateQuotaUtilizationMessage(
+					lApplication.getAccountId(), 3000);
+
+			response.setStatus(HttpServletResponse.SC_OK);
+
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
 		}
 	}
 
@@ -226,13 +307,18 @@ public class ApplicationController {
 
 				String lTrackingId = createTrackingId(userService
 						.getLoggedInUser());
-				applicationService
+				Application lApplication = applicationService
 						.saveApplication(userService.getLoggedInUser(),
 								lTrackingId, application);
-				Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId, 0);
+				Utils.updateLastKnownTimestamp(lTrackingId,
+						lApplication.getTimeUpdatedMs(), 0);
+
 				// trigger message to update quota
-				Utils.triggerUpdateQuotaUtilizationMessage(userService.getLoggedInUser()
-						.getAccountId(), 0);
+				Utils.triggerUpdateQuotaUtilizationMessage(userService
+						.getLoggedInUser().getAccountId(), 0);
+//				Utils.triggerUpdateBandwidthUtilizationMessage(
+//						lApplication.getId(), 0L, 0);
+
 				response.setStatus(HttpServletResponse.SC_CREATED);
 				return null;
 			}
@@ -258,9 +344,10 @@ public class ApplicationController {
 			List<Application> lApplications = applicationService
 					.getApplicationsByAccountId(lAccountId, true);
 
-			String lTrackingId = "AI_" + lAccountId + "_"
-					+ (lApplications.size() + 1); // the collection will have
-													// size 0 at first
+			String lTrackingId = Configuration.TRACKING_ID_PREFIX + lAccountId
+					+ "_" + (lApplications.size() + 1); // the collection will
+														// have
+														// size 0 at first
 
 			return lTrackingId;
 
@@ -286,11 +373,13 @@ public class ApplicationController {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return errors;
 			} else {
-				applicationService.updateApplication(application);
+				Application lApplication = applicationService
+						.updateApplication(application);
 				String lTrackingId = applicationService.getApplication(
 						application.getId()).getTrackingId();
 				Utils.triggerChangesStagedMessage(application.getId(), 0);
-				Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId, 0);
+				Utils.updateLastKnownTimestamp(lTrackingId,
+						lApplication.getTimeUpdatedMs(), 0);
 
 				response.setStatus(HttpServletResponse.SC_OK);
 
@@ -325,6 +414,8 @@ public class ApplicationController {
 					if (LOGGER.isLoggable(Level.INFO))
 						LOGGER.info("updating memcache");
 				}
+				response.setStatus(HttpServletResponse.SC_OK);
+
 			} catch (Throwable t) {
 				LOGGER.log(Level.SEVERE, "Unable to update Memcache", t);
 			}
@@ -350,7 +441,8 @@ public class ApplicationController {
 				return;
 			}
 			applicationService.updateChangesStaged(lApplication.getId(), false);
-			Utils.triggerSendContentListMessages(lApplication.getTrackingId(), 0);
+			Utils.triggerSendContentListMessages(lApplication.getTrackingId(),
+					0);
 			// remove from memcache
 			try {
 				if (mCache != null) {

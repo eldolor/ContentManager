@@ -5,13 +5,12 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@page
-	import="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"%><html>
+	import="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"%>
 
-
-	<div class="row">
-		<div class="large-12 columns">
-			<ul class="breadcrumbs radius" id="breadcrumbs">
-				<li><a href="/">Home</a></li>
-			</ul>
-		</div>
+<div class="row">
+	<div class="large-12 columns">
+		<ul class="breadcrumbs radius" id="breadcrumbs">
+			<li><a href="/">Home</a></li>
+		</ul>
 	</div>
+</div>

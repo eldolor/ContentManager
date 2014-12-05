@@ -1,8 +1,6 @@
 package com.cm.accountmanagement.account;
 
 import java.util.List;
-import java.util.UUID;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,28 +38,6 @@ public class AccountService {
 		Account account = (Account) SecurityContextHolder.getContext()
 				.getAuthentication().getPrincipal();
 		return account;
-	}
-
-	public boolean generateApiKey(Long id) {
-		try {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering");
-			Account account = getAccount(id);
-			if (account != null) {
-				// generate an api key
-				account.setApiKey(UUID.randomUUID().toString());
-				accountDao.updateApiKey(account);
-				return true;
-			} else {
-				if (LOGGER.isLoggable(Level.INFO))
-					LOGGER.info("No Account Found!");
-				return false;
-			}
-		} finally {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting");
-
-		}
 	}
 
 }

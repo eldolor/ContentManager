@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import com.cm.util.PMF;
 
+@Deprecated
 @Component
 public class PlanDao {
 	private static final Logger LOGGER = Logger.getLogger(PlanDao.class

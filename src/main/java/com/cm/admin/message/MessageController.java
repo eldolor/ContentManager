@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.cm.quota.QuotaService;
 import com.cm.stripe.StripeCustomer;
 import com.cm.stripe.StripeCustomerService;
 import com.cm.usermanagement.user.User;
@@ -33,6 +34,8 @@ public class MessageController {
 	private UserService userService;
 	@Autowired
 	private StripeCustomerService stripeCustomerService;
+	@Autowired
+	private QuotaService quotaService;
 
 	/**
 	 * Supports only 1 message for now
@@ -47,52 +50,87 @@ public class MessageController {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getMessages");
-
-			// check to see if CC is expiring
+			List<com.cm.admin.message.transfer.Message> lTfrMessages = new ArrayList<com.cm.admin.message.transfer.Message>();
 			User lUser = userService.getLoggedInUser();
-			StripeCustomer lStripeCustomer = stripeCustomerService.get(lUser
-					.getAccountId());
 
-			if (lStripeCustomer != null) {
-				List<com.cm.admin.message.transfer.Message> lTfrMessages = new ArrayList<com.cm.admin.message.transfer.Message>();
-				List<Message> lMessages = this.createMessages(lUser,
-						lStripeCustomer);
-				if (lMessages.isEmpty())
-					return null;
+			try {
+				// check to see if CC is expiring
+				StripeCustomer lStripeCustomer = stripeCustomerService
+						.get(lUser.getAccountId());
 
-				for (Message lMessage : lMessages) {
-					// only one message per type will ever be displayed to
-					// the user
-					Message lUnviewedMessageByType = messageDao
-							.getMessageByType(lMessage.getType());
-					if (lUnviewedMessageByType == null) {
-						// save message to db, which returns a message with an
-						// id
-						lMessage = messageDao.save(lMessage);
-					} else {
-						if (session.getAttribute(lMessage.getType()) == null) {
-							// set it in the user's session so that its not
-							// displayed for the rest of the session
-							session.setAttribute(lMessage.getType(),
-									lMessage.getId());
-							lMessage = lUnviewedMessageByType;
+				/**** CC Related Messages ****/
+				if (lStripeCustomer != null) {
+					List<Message> lMessages = this.createCCRelatedMessages(
+							lUser, lStripeCustomer);
+					for (Message lMessage : lMessages) {
+						// only one message per type will ever be displayed to
+						// the user
+						Message lUnviewedMessageByType = messageDao
+								.getMessageByType(lMessage.getType());
+						if (lUnviewedMessageByType == null) {
+							// save message to db, which returns a message with
+							// an
+							// id
+							lMessage = messageDao.save(lMessage);
+						} else if /**
+						 * different message for the same type
+						 * generated
+						 **/
+						(!lUnviewedMessageByType.getMessage().equalsIgnoreCase(
+								lMessage.getMessage())) {
+							// delete the previous message
+							messageDao.delete(lUnviewedMessageByType.getId());
+							// save the new message
+							lMessage = messageDao.save(lMessage);
 						} else {
-							// its still in the session, implies that it's
-							// already been displayed for the session, so dont
-							// display it again
-							lMessage = null;
+							if (session.getAttribute(lMessage.getType()) == null) {
+								// set it in the user's session so that its not
+								// displayed for the rest of the session
+								session.setAttribute(lMessage.getType(),
+										lMessage.getId());
+								lMessage = lUnviewedMessageByType;
+							} else {
+								// its still in the session, implies that it's
+								// already been displayed for the session, so
+								// dont
+								// display it again
+								lMessage = null;
+							}
 						}
+						if (lMessage != null)
+							lTfrMessages.add(convert(lMessage));
 					}
-					if (lMessage != null)
-						lTfrMessages.add(convert(lMessage));
-				}
-				response.setStatus(HttpServletResponse.SC_OK);
-				return lTfrMessages;
 
+				}
+			} catch (Throwable e) {
+				LOGGER.warning(e.getMessage());
+			}
+
+			/*** Quota related messages ***/
+			// Bandwidth Quota
+			try {
+				Message lQuota = createBandwidthQuotaRelatedMessage(lUser);
+				if (lQuota != null) {
+					lTfrMessages.add(convert(lQuota));
+				}
+			} catch (Throwable e) {
+				LOGGER.warning(e.getMessage());
+			}
+			// Storage Quota
+			try {
+				Message lQuota = createStorageQuotaRelatedMessage(lUser);
+				if (lQuota != null) {
+					lTfrMessages.add(convert(lQuota));
+				}
+			} catch (Throwable e) {
+				LOGGER.warning(e.getMessage());
 			}
 
 			response.setStatus(HttpServletResponse.SC_OK);
-			return null;
+			if (lTfrMessages.isEmpty())
+				return null;
+			else
+				return lTfrMessages;
 
 		} catch (Throwable e) {
 			// handled by GcmManager
@@ -148,7 +186,70 @@ public class MessageController {
 		return lMessage;
 	}
 
-	private List<Message> createMessages(User pLoggedInUser,
+	private Message createBandwidthQuotaRelatedMessage(User pLoggedInUser) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+
+			if (!quotaService.hasSufficientBandwidthQuota(pLoggedInUser
+					.getAccountId())) {
+				// create message
+				Message lMessage = new Message();
+				lMessage.setMessage("You have exceeded the bandwidth quota for your plan. Please click <a href=\"/account/plans\">here</a> to upgrade your plan.");
+				lMessage.setAccountId(pLoggedInUser.getAccountId());
+				lMessage.setUserId(pLoggedInUser.getId());
+				lMessage.setUserName(pLoggedInUser.getUsername());
+				lMessage.setType(MessageType.BANDWIDTH_QUOTA_EXCEEDED
+						.getValue());
+				lMessage.setMessageClass(MessageClass.ALERT.getValue());
+
+				long lTime = System.currentTimeMillis();
+				lMessage.setTimeCreatedMs(lTime);
+				lMessage.setTimeCreatedTimeZoneOffsetMs((long) TimeZone
+						.getDefault().getOffset(lTime));
+				return lMessage;
+			} else {
+				return null;
+			}
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	private Message createStorageQuotaRelatedMessage(User pLoggedInUser) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+
+			if (!quotaService.hasSufficientStorageQuota(pLoggedInUser
+					.getAccountId())) {
+				// create message
+				Message lMessage = new Message();
+				lMessage.setMessage("You have exceeded the storage quota for your plan. Please click <a href=\"/account/plans\">here</a> to upgrade your plan.");
+				lMessage.setAccountId(pLoggedInUser.getAccountId());
+				lMessage.setUserId(pLoggedInUser.getId());
+				lMessage.setUserName(pLoggedInUser.getUsername());
+				lMessage.setType(MessageType.STORAGE_QUOTA_EXCEEDED.getValue());
+				lMessage.setMessageClass(MessageClass.ALERT.getValue());
+
+				long lTime = System.currentTimeMillis();
+				lMessage.setTimeCreatedMs(lTime);
+				lMessage.setTimeCreatedTimeZoneOffsetMs((long) TimeZone
+						.getDefault().getOffset(lTime));
+				return lMessage;
+			} else {
+				return null;
+			}
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	private List<Message> createCCRelatedMessages(User pLoggedInUser,
 			StripeCustomer pStripeCustomer) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -186,8 +287,8 @@ public class MessageController {
 				return null;
 			}
 
-			if (Utils.isCCExpiring(pStripeCustomer.getCardExpirationYear(),
-					pStripeCustomer.getCardExpirationMonth())) {
+			if (Utils.isCCExpiring(pStripeCustomer.getCardExpYear(),
+					pStripeCustomer.getCardExpMonth())) {
 
 				// create message
 				Message lMessage = new Message();
@@ -195,7 +296,7 @@ public class MessageController {
 						+ pStripeCustomer.getCardBrand()
 						+ " card ending in "
 						+ pStripeCustomer.getCardLast4()
-						+ " is expiring soon. Please click <a href=\"/account\">here</a> to update your credit card information.");
+						+ " is expiring soon. Please click <a href=\"/account/billing\">here</a> to update your credit card information.");
 				lMessage.setAccountId(pLoggedInUser.getAccountId());
 				lMessage.setUserId(pLoggedInUser.getId());
 				lMessage.setUserName(pLoggedInUser.getUsername());
@@ -226,8 +327,8 @@ public class MessageController {
 				LOGGER.log(Level.WARNING, "Stripe Customer is null");
 				return null;
 			}
-			if (Utils.isCCExpired(pStripeCustomer.getCardExpirationYear(),
-					pStripeCustomer.getCardExpirationMonth())) {
+			if (Utils.isCCExpired(pStripeCustomer.getCardExpYear(),
+					pStripeCustomer.getCardExpMonth())) {
 
 				// create message
 				Message lMessage = new Message();
@@ -235,7 +336,7 @@ public class MessageController {
 						+ pStripeCustomer.getCardBrand()
 						+ " card ending in "
 						+ pStripeCustomer.getCardLast4()
-						+ " has expired. Please click <a href=\"/account\">here</a> to update your credit card information.");
+						+ " has expired. Please click <a href=\"/account/billing\">here</a> to update your credit card information.");
 				lMessage.setAccountId(pLoggedInUser.getAccountId());
 				lMessage.setUserId(pLoggedInUser.getId());
 				lMessage.setUserName(pLoggedInUser.getUsername());

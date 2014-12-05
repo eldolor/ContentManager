@@ -85,7 +85,7 @@ public class SearchController {
 	Map<String, List<Searchable>> getSearchResults(
 			@PathVariable String searchTerm, HttpServletResponse response) {
 		try {
-			 String lSearchTerm = URLDecoder.decode(searchTerm, "UTF-8");
+			String lSearchTerm = URLDecoder.decode(searchTerm, "UTF-8");
 			if (LOGGER.isLoggable(Level.INFO)) {
 				LOGGER.info("Entering getSearchResults");
 				LOGGER.info("Search Term: " + lSearchTerm);
@@ -150,6 +150,40 @@ public class SearchController {
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting getSearchResults");
+		}
+	}
+
+	@RequestMapping(value = "/docs/overview", method = RequestMethod.GET)
+	public ModelAndView displayOverview(ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering");
+		try {
+			return new ModelAndView("docs_overview", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+	@RequestMapping(value = "/docs/android", method = RequestMethod.GET)
+	public ModelAndView displayAndroidGuide(ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering");
+		try {
+			return new ModelAndView("docs_android_guide", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+	@RequestMapping(value = "/docs/javadoc", method = RequestMethod.GET)
+	public ModelAndView displayJavadoc(ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering");
+		try {
+			return new ModelAndView("docs_javadoc", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
 		}
 	}
 

@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cm.config.CanonicalErrorCodes;
 import com.cm.util.ValidationError;
 
 @Service
@@ -18,13 +19,6 @@ public class GcmService {
 
 	private static final Logger LOGGER = Logger.getLogger(GcmService.class
 			.getName());
-	public static final String DEVICE_REGISTRATION_ID_DEPRECATED_ERROR_CODE = "DeviceRegistrationIdDeprecated";
-	public static final String DEVICE_REGISTRATION_ID_DELETED_ERROR_CODE = "DeviceRegistrationIdDeleted";
-	public static final String DEVICE_HAS_MULTIPLE_REGISTRATIONS_ERROR_CODE = "DeviceHasMultipleRegistrations";
-	public static final String DEVICE_NOT_REGISTERED_ERROR_CODE = "DeviceNotRegistered";
-	public static final String MISSING_TRACKING_ID_ERROR_CODE = "MissingTrackingId";
-	public static final String MISSING_GCM_ID_ERROR_CODE = "MissingGcmId";
-	public static final String MISSING_DEPRECATED_GCM_ID_ERROR_CODE = "MissingDeprecatedGcmId";
 
 	public void register(GcmRegistrationRequest gcmRegistrationRequest) {
 		try {
@@ -143,7 +137,8 @@ public class GcmService {
 			LOGGER.log(Level.WARNING, "Registration id is Deprecated");
 			ValidationError lError = new ValidationError();
 			// The exception contains the GCM error code
-			lError.setCode(GcmService.DEVICE_REGISTRATION_ID_DEPRECATED_ERROR_CODE);
+			lError.setCode(CanonicalErrorCodes.DEVICE_REGISTRATION_ID_DEPRECATED
+					.getValue());
 			lError.setDescription("Registration id is Deprecated");
 			lErrors.add(lError);
 		}
@@ -151,7 +146,8 @@ public class GcmService {
 			LOGGER.log(Level.WARNING, "Registration id is Deleted");
 			ValidationError lError = new ValidationError();
 			// The exception contains the GCM error code
-			lError.setCode(GcmService.DEVICE_REGISTRATION_ID_DELETED_ERROR_CODE);
+			lError.setCode(CanonicalErrorCodes.DEVICE_REGISTRATION_ID_DELETED
+					.getValue());
 			lError.setDescription("Registration id is Deleted");
 			lErrors.add(lError);
 		}
@@ -162,7 +158,8 @@ public class GcmService {
 							+ pGcmRegistrationRequest.getCanonicalGcmId());
 			ValidationError lError = new ValidationError();
 			// The exception contains the GCM error code
-			lError.setCode(GcmService.DEVICE_HAS_MULTIPLE_REGISTRATIONS_ERROR_CODE);
+			lError.setCode(CanonicalErrorCodes.DEVICE_HAS_MULTIPLE_REGISTRATIONS
+					.getValue());
 			lError.setDescription(pGcmRegistrationRequest.getCanonicalGcmId());
 			lErrors.add(lError);
 		}
@@ -171,7 +168,7 @@ public class GcmService {
 			// ask the device to retry the GCM registration process
 			ValidationError lError = new ValidationError();
 			// The exception contains the GCM error code
-			lError.setCode(GcmService.DEVICE_NOT_REGISTERED_ERROR_CODE);
+			lError.setCode(CanonicalErrorCodes.DEVICE_NOT_REGISTERED.getValue());
 			lError.setDescription("Device not registered with GCM Servers");
 			lErrors.add(lError);
 		}

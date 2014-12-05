@@ -1,0 +1,669 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+<!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
+
+<url>
+  <loc>https://www.skok.co/</loc>
+  <changefreq>weekly</changefreq>
+  <priority>1.00</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/docs/overview</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/login</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/docs/android</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/signup</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/site/terms</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/site/privacy</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/overview-summary.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/overview-frame.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/allclasses-frame.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/overview-tree.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/deprecated-list.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index-files/index-1.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/help-doc.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?overview-summary.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/allclasses-noframe.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/package-summary.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/download/package-summary.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/util/package-summary.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/package-frame.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/download/package-frame.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/util/package-frame.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/util/BitmapScaler.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/Content.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/ContentManager.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/ContentManagerFactory.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/ContentType.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/download/DownloaderBroadcastReceiver.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/download/DownloaderService.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/util/ExternalStorageNotReadyException.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/util/Logger.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/download/StatusCode.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/ThumbnailTypeImage.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/ThumbnailTypeVideo.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/util/Utils.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?overview-tree.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/package-tree.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/download/package-tree.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/util/package-tree.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?deprecated-list.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index-files/index-2.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?index-filesindex-1.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index-files/index-3.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index-files/index-4.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index-files/index-5.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index-files/index-6.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index-files/index-7.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index-files/index-8.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index-files/index-9.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index-files/index-10.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index-files/index-11.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index-files/index-12.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index-files/index-13.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index-files/index-14.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index-files/index-15.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index-files/index-16.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index-files/index-17.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index-files/index-18.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?help-doc.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/constant-values.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/package-use.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?com/cm/contentmanager/android/api/package-summary.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/download/package-use.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?com/cm/contentmanager/android/api/download/package-summary.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/util/package-use.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?com/cm/contentmanager/android/api/util/package-summary.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/util/class-use/BitmapScaler.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?com/cm/contentmanager/android/api/util/BitmapScaler.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/class-use/Content.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?com/cm/contentmanager/android/api/Content.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/serialized-form.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/class-use/ContentManager.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?com/cm/contentmanager/android/api/ContentManager.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/class-use/ContentManagerFactory.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?com/cm/contentmanager/android/api/ContentManagerFactory.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/class-use/ContentType.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?com/cm/contentmanager/android/api/ContentType.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/download/class-use/DownloaderBroadcastReceiver.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?com/cm/contentmanager/android/api/download/DownloaderBroadcastReceiver.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/download/class-use/DownloaderService.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?com/cm/contentmanager/android/api/download/DownloaderService.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/util/class-use/ExternalStorageNotReadyException.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?com/cm/contentmanager/android/api/util/ExternalStorageNotReadyException.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/util/class-use/Logger.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?com/cm/contentmanager/android/api/util/Logger.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/download/class-use/StatusCode.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?com/cm/contentmanager/android/api/download/StatusCode.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/class-use/ThumbnailTypeImage.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?com/cm/contentmanager/android/api/ThumbnailTypeImage.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/class-use/ThumbnailTypeVideo.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?com/cm/contentmanager/android/api/ThumbnailTypeVideo.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/com/cm/contentmanager/android/api/util/class-use/Utils.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?com/cm/contentmanager/android/api/util/Utils.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?com/cm/contentmanager/android/api/package-tree.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?com/cm/contentmanager/android/api/download/package-tree.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?com/cm/contentmanager/android/api/util/package-tree.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?index-filesindex-2.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?index-filesindex-3.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?index-filesindex-4.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?index-filesindex-5.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?index-filesindex-6.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?index-filesindex-7.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?index-filesindex-8.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?index-filesindex-9.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?index-filesindex-10.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?index-filesindex-11.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?index-filesindex-12.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?index-filesindex-13.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?index-filesindex-14.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?index-filesindex-15.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?index-filesindex-16.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?index-filesindex-17.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?index-filesindex-18.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?constant-values.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?com/cm/contentmanager/android/api/package-use.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?com/cm/contentmanager/android/api/download/package-use.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?com/cm/contentmanager/android/api/util/package-use.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?com/cm/contentmanager/android/api/util/class-use/BitmapScaler.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?com/cm/contentmanager/android/api/class-use/Content.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?serialized-form.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?com/cm/contentmanager/android/api/class-use/ContentManager.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?com/cm/contentmanager/android/api/class-use/ContentManagerFactory.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?com/cm/contentmanager/android/api/class-use/ContentType.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?com/cm/contentmanager/android/api/download/class-use/DownloaderBroadcastReceiver.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?com/cm/contentmanager/android/api/download/class-use/DownloaderService.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?com/cm/contentmanager/android/api/util/class-use/ExternalStorageNotReadyException.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?com/cm/contentmanager/android/api/util/class-use/Logger.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?com/cm/contentmanager/android/api/download/class-use/StatusCode.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?com/cm/contentmanager/android/api/class-use/ThumbnailTypeImage.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?com/cm/contentmanager/android/api/class-use/ThumbnailTypeVideo.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://www.skok.co/resources/api/current/javadoc/index.html?com/cm/contentmanager/android/api/util/class-use/Utils.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.33</priority>
+</url>
+</urlset>

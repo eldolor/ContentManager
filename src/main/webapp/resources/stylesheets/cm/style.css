@@ -1,0 +1,101 @@
+.switch-default {
+	background-color: #1fad9d;
+	border-color: #1fad9d;
+	border-bottom: 4px solid #0A776B;
+	padding: 15px;
+	margin: 10px auto;
+	color: #fff;
+}
+
+.switch-default:hover,.switch-default:focus,.switch-default:active,.switch-default.active,.open .dropdown-toggle.switch-default
+	{
+	color: #fff;
+	background-color: #333d46;
+	border-color: #222A31;
+	-webkit-transition: all 0.35s ease-in-out;
+	-moz-transition: all 0.35s ease-in-out;
+	-o-transition: all 0.35s ease-in-out;
+	transition: all 0.35s ease-in-out;
+}
+
+.switch:hover,.switch:focus {
+	color: #fff;
+	text-decoration: none;
+}
+
+#free {
+	background: #1fad9d;
+	width: 100%;
+	height: 150px;
+	padding: 10px;
+}
+
+#micro {
+	background: #12A796;
+	width: 100%;
+	height: 150px;
+	padding: 10px;
+}
+
+#small {
+	background: #12A796;
+	width: 100%;
+	height: 150px;
+	padding: 10px;
+}
+
+#medium {
+	background: #1fad9d;
+	width: 100%;
+	height: 150px;
+	padding: 10px;
+}
+
+#large {
+	background: #1fad9d;
+	width: 100%;
+	height: 150px;
+	padding: 10px;
+}
+
+#charts {
+	width: 100%;
+	margin: auto;
+	min-height: 450px;
+	background-color: #fff;
+}
+
+#charts .row div:nth-child(1),#charts .row div:nth-child(2),#charts .row div:nth-child(3),#charts .row div:nth-child(4)
+	{
+	padding: 10px; 
+	//height: 330px;
+}
+
+#charts h5 {
+	font-weight: 300 !important;
+	font-family: 'Roboto', sans-serif;
+	margin-top: 20px;
+}
+
+#charts .columns,#charts .columns {
+	border: 1px solid rgba(31, 173, 157, 0);
+	transition: all 1s linear;
+	-moz-transition: border-color 1s linear; /* FF3.7+ */
+	-o-transition: border-color 1s linear; /* Opera 10.5 */
+	-webkit-transition: all 1s linear; /* Saf3.2+, Chrome */
+}
+
+#charts .columns:hover .box {
+	-webkit-transform: rotate(360deg);
+	-moz-transform: rotate(360deg);
+	-o-transform: rotate(360deg);
+	border: 0px;
+}
+
+#charts .columns:hover .box i {
+	font-size: 48px;
+}
+
+#charts .columns:hover {
+	border: 1px solid rgba(31, 173, 157, 1);
+}

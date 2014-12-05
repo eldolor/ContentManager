@@ -13,6 +13,8 @@ public class Handshake {
 	@Persistent
 	private String trackingId;
 	@Persistent
+	private String clientKey;
+	@Persistent
 	private String gcmRegistrationId;
 	@Persistent
 	private Long lastKnownTimestamp;
@@ -48,6 +50,14 @@ public class Handshake {
 
 	public void setTrackingId(String trackingId) {
 		this.trackingId = trackingId;
+	}
+
+	public String getClientKey() {
+		return clientKey;
+	}
+
+	public void setClientKey(String clientKey) {
+		this.clientKey = clientKey;
 	}
 
 	public String getGcmRegistrationId() {

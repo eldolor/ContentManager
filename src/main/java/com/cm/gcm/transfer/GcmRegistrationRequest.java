@@ -5,6 +5,7 @@ public class GcmRegistrationRequest {
 	private String gcmId;
 	private String deprecatedGcmId;
 	private String trackingId;
+	private String clientKey;
 	private String deviceId;
 	private String latitude;
 	private String longitude;
@@ -16,6 +17,14 @@ public class GcmRegistrationRequest {
 	private Long timeCreatedMs;
 	private Long timeCreatedTimeZoneOffsetMs;
 
+
+	public String getClientKey() {
+		return clientKey;
+	}
+
+	public void setClientKey(String clientKey) {
+		this.clientKey = clientKey;
+	}
 
 	public String getTrackingId() {
 		return trackingId;

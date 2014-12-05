@@ -43,6 +43,11 @@ public class ContentHelper {
 					lContent.setUpdateOverWifiOnly(true);
 				}
 			}
+			if (contentServerService.isCollectUsageData(pContentRequest)) {
+				for (com.cm.contentserver.transfer.Content lContent : lContentList) {
+					lContent.setCollectUsageData(true);
+				}
+			}
 			// convert the list to a JSON Array
 			JSONArray lJsonArray = new JSONArray();
 			for (com.cm.contentserver.transfer.Content content : lContentList) {
@@ -64,6 +69,8 @@ public class ContentHelper {
 							content.isUpdateOverWifiOnly());
 					lJsonObject.put("sizeInBytes",
 							content.getSizeInBytes());
+					lJsonObject.put("tags", content.getTags());
+					
 					lJsonArray.put(lJsonObject);
 				} catch (JSONException e) {
 					LOGGER.log(Level.WARNING,

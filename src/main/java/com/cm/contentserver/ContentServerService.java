@@ -14,6 +14,7 @@ import com.cm.contentmanager.content.Content;
 import com.cm.contentmanager.content.ContentService;
 import com.cm.contentmanager.contentgroup.ContentGroup;
 import com.cm.contentmanager.contentgroup.ContentGroupService;
+import com.cm.util.Utils;
 
 @Service
 public class ContentServerService {
@@ -35,6 +36,9 @@ public class ContentServerService {
 				LOGGER.info("Entering getContent");
 			Long lApplicationId = this.resolveApplicationId(pContentRequest
 					.getTrackingId());
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Application Id is " + lApplicationId
+						+ " for Tracking Id " + pContentRequest.getTrackingId());
 			List<Content> lContents = new ArrayList<Content>();
 
 			Application lApplication = applicationService
@@ -43,11 +47,12 @@ public class ContentServerService {
 			if (lApplication != null && (!lApplication.isDeleted())
 					&& (!lApplication.isDeletedOnPlanDowngrade())
 					&& (lApplication.isEnabled())) {
-				//
+				// not deleted & enabled groups only
 				List<ContentGroup> lContentGroups = filterContentGroupByEffectiveDate(contentGroupService
-						.get(lApplicationId, false));
+						.get(lApplicationId, false, true));
 
 				for (ContentGroup lContentGroup : lContentGroups) {
+					// not deleted & enabled content only
 					lContents
 							.addAll(validateContent(contentService.get(
 									lApplicationId, lContentGroup.getId(),
@@ -81,6 +86,22 @@ public class ContentServerService {
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting isUpdateOverWifiOnly");
+		}
+
+	}
+
+	public boolean isCollectUsageData(ContentRequest pContentRequest) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			Long lApplicationId = this.resolveApplicationId(pContentRequest
+					.getTrackingId());
+			Application lApplication = applicationService
+					.getApplication(lApplicationId);
+			return lApplication.isCollectUsageData();
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
 		}
 
 	}
@@ -135,10 +156,13 @@ public class ContentServerService {
 	private List<Content> validateContent(List<Content> pContents) {
 		List<Content> lValidatedContent = new ArrayList<Content>();
 		for (Content lContent : pContents) {
+			// effective date
 			if (isEffectiveDateValid(lContent.getStartDateMs(),
 					lContent.getEndDateMs())) {
-
-				lValidatedContent.add(lContent);
+				// URI not empty
+				if (!Utils.isEmpty(lContent.getUri())) {
+					lValidatedContent.add(lContent);
+				}
 			}
 		}
 

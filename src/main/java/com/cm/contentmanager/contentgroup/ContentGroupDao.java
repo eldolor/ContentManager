@@ -27,7 +27,7 @@ public class ContentGroupDao {
 			try {
 				pm = PMF.get().getPersistenceManager();
 				Query q = pm.newQuery(ContentGroup.class);
-				
+
 				q.setFilter("nameIdx >= nameParam1 && nameIdx < nameParam2 && deleted == deletedParam");
 				q.declareParameters("String nameParam1, String nameParam2, Boolean deletedParam");
 				q.setOrdering("nameIdx, timeUpdatedMs desc");
@@ -107,6 +107,7 @@ public class ContentGroupDao {
 				LOGGER.info("Exiting");
 		}
 	}
+
 	public ContentGroup save(ContentGroup contentGroup) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -189,6 +190,43 @@ public class ContentGroupDao {
 		}
 	}
 
+	List<ContentGroup> get(Long applicationId, boolean includeDeleted,
+			boolean enabled) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering get");
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(ContentGroup.class);
+
+				if (includeDeleted) {
+					q.setFilter("applicationId == applicationIdParam && enabled == enabledParam");
+					q.declareParameters("long applicationIdParam, Boolean enabledParam");
+					q.setOrdering("timeUpdatedMs desc");
+					return (List<ContentGroup>) q.execute(applicationId,
+							Boolean.valueOf(enabled));
+
+				} else {
+					q.setFilter("applicationId == applicationIdParam && deleted == deletedParam && enabled == enabledParam");
+					q.declareParameters("Long applicationIdParam, Boolean deletedParam, Boolean enabledParam");
+					q.setOrdering("timeUpdatedMs desc");
+					return (List<ContentGroup>) q.execute(applicationId,
+							Boolean.valueOf(false), Boolean.valueOf(enabled));
+				}
+
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting get");
+		}
+	}
+
 	void delete(Long id, Long timeUpdatedMs, Long timeUpdatedTimeZoneOffsetMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -253,7 +291,7 @@ public class ContentGroupDao {
 		}
 	}
 
-	void update(ContentGroup contentGroup) {
+	ContentGroup update(ContentGroup contentGroup) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering update");
@@ -286,7 +324,7 @@ public class ContentGroupDao {
 				_contentGroup.setTimeUpdatedMs(contentGroup.getTimeUpdatedMs());
 				_contentGroup.setTimeUpdatedTimeZoneOffsetMs(contentGroup
 						.getTimeUpdatedTimeZoneOffsetMs());
-
+				return _contentGroup;
 			} finally {
 				if (pm != null) {
 					pm.close();

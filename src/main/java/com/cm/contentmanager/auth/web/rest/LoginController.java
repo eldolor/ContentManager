@@ -88,8 +88,8 @@ public class LoginController {
 			LOGGER.log(Level.WARNING, "login_failure");
 
 			map.addAttribute(
-					"errors",
-					"[{  \"code\": \"login_failure\", \"description\": \"Either the user does not exist or the password is incorrect\"  }]");
+					"error",
+					"{  \"code\": \"login_failure\", \"description\": \"Either the user does not exist or the password is incorrect\"  }");
 
 			return new ModelAndView("login", map);
 		} finally {

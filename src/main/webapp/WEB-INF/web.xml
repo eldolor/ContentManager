@@ -53,6 +53,15 @@
 
 	<security-constraint>
 		<web-resource-collection>
+			<web-resource-name>test</web-resource-name>
+			<url-pattern>/test/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>admin</role-name>
+		</auth-constraint>
+	</security-constraint>
+		<security-constraint>
+		<web-resource-collection>
 			<web-resource-name>tasks</web-resource-name>
 			<url-pattern>/tasks/*</url-pattern>
 		</web-resource-collection>
@@ -81,8 +90,8 @@
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>security</web-resource-name>
-			<url-pattern>/applications</url-pattern>
-			<url-pattern>/**/content</url-pattern>
+			<url-pattern>/**</url-pattern>
+<!-- 			<url-pattern>/**/content</url-pattern>
 			<url-pattern>/**/contentgroups</url-pattern>
 			<url-pattern>/resources/*</url-pattern>
 			<url-pattern>/contentserver**</url-pattern>
@@ -92,7 +101,7 @@
 			<url-pattern>/am**</url-pattern>
 			<url-pattern>/um**</url-pattern>
 			<url-pattern>/contentstats**</url-pattern>
-		</web-resource-collection>
+ -->		</web-resource-collection>
 		<user-data-constraint>
 			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
 		</user-data-constraint>

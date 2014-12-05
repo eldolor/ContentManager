@@ -15,15 +15,13 @@
 
 
 <head>
-<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-<meta http-equiv="CACHE-CONTROL" content="NO-CACHE" />
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Content Manager</title>
+<jsp:include page="meta_tags.jsp"></jsp:include>
+<title>Skok</title>
 <jsp:include page="resources.jsp" flush="true"></jsp:include>
 
 <!-- Begin Custom -->
-<script type="text/javascript" src="/resources/js/cm.change.password.js"></script>
+<script type="text/javascript"
+	src="/resources/javascripts/cm/cm.change.password.js"></script>
 <!-- End Custom -->
 <script type="text/javascript">
 	var lIsRequestExpired = $
@@ -34,96 +32,72 @@
 
 </head>
 <body>
-
-
 	<jsp:include page="common.jsp"></jsp:include>
-	<jsp:include page="header.jsp"></jsp:include>
-	<br>
+	<jsp:include page="top_bar.jsp"></jsp:include>
+	<section>
+		<div class="row full-width">
+			<h3 class="gray">Change Password</h3>
+			<div id="change_password">
 
-	<div class="row">
-
-		<div class="large-12 columns" style="display: none">
-			<form id="changePasswordForm" name="changePasswordForm"
-				data-abide="ajax">
-				<fieldset>
-					<legend>Change Password</legend>
+				<form role="form" id="changePasswordForm" name="changePasswordForm"
+					data-abide="ajax">
 					<input type="hidden" id="user_forgot_password_request_guid"
 						name="user_forgot_password_request_guid" value="${guid}" />
 
-					<div>&nbsp;</div>
-					<div class="row">
-						<div class="large-12 columns">
-							<span id="user_message" class="success radius label"
-								style="display: none">Password has been updated</span>
-						</div>
+					<div id="user_message" style="display: none">
+						<ul id="vision">
+							<li><div>
+									<i class="fi-lightbulb"></i>
+								</div> <span>Password has been updated</span>
+								<p class="clearfix"></p></li>
+						</ul>
 					</div>
 
-					<div>&nbsp;</div>
-					<div class="row">
-						<div class="large-12 columns">
-							<div class="password-field">
-								<label>Password <small>required</small><input
-									type="password" id="user_new_password" name="user_new_password"
-									required="required" required
-									pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" />
-								</label> <small class="error">New password is required</small>
-							</div>
-						</div>
+					<div>
+						<label>Password <small>required</small><input
+							class="form-control" type="password" id="user_new_password"
+							name="user_new_password" required="required" required
+							pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" />
+						</label><small class="error">Your password must match the
+							requirements: Must include upper-case, lower-case, number/special
+							character, and be minimum of 8 characters</small>
 					</div>
-					<div class="row">
-						<div class="large-12 columns">
-							<div class="password-confirmation-field">
-								<label>Confirm Password <small>required</small><input
-									type="password" id="user_confirm_new_password"
-									name="user_confirm_new_password"
-									data-equalto="user_new_password" required="required" required
-									pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" />
-								</label> <small class="error">The password did not match</small>
-							</div>
-						</div>
+					<div>
+						<label>Confirm Password <small>required</small><input
+							type="password" id="user_confirm_new_password"
+							class="form-control" name="user_confirm_new_password"
+							data-equalto="user_new_password" required="required" required
+							pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" />
+						</label> <small class="error">The password did not match</small>
 					</div>
 
-					<div>&nbsp;</div>
-					<div class="row">
-						<div class="large-12 columns">
-							<span id="user_errors" class="alert radius label"
-								style="display: none"></span>
+					<div id="cm_errors_container" style="display: none">
+						<ul id="vision">
+							<li><div>
+									<i class="fi-alert"></i>
+								</div> <span id="user_errors"></span>
+								<p class="clearfix"></p></li>
+						</ul>
+					</div>
+					<div>
+						<button id="user_password_change_button"
+							class="button radius btn-default">update password</button>
+					</div>
+					<div id="progress_bar" style="display: none">
+						<div class="progress radius">
+							<span class="meter"
+								style="width: 40%; background-color: #5cb85c;">Updating...</span>
 						</div>
 					</div>
-
-					<div>&nbsp;</div>
-					<div class="row">
-						<div class="large-12 columns">
-							<button id="user_password_change_button" class="button radius">change
-								password</button>
-						</div>
-					</div>
-					<div class="row" id="progress_bar" style="display: none">
-						<div class="large-12 columns">
-							<label>Loading...</label><br>
-							<div class="progress radius">
-								<span class="meter" style="width: 40%"></span>
-							</div>
-						</div>
-					</div>
-				</fieldset>
-			</form>
+				</form>
+			</div>
+			<!-- End Content  -->
 		</div>
-		<!-- End Content  -->
-	</div>
-
-
-
+	</section>
 	<br>
-	<jsp:include page="footer.jsp" flush="false"></jsp:include>
+	<section id="footer">
 
-
-	<!-- At the bottom of your page but inside of the body tag -->
-	<ol class="joyride-list" data-joyride>
-		<li data-id="left_nav_bar_link_1"
-			data-options="tip_location:bottom;tip_animation:fade" data-text="End">
-			<p>Click here to create a new Content</p>
-		</li>
-	</ol>
+		<jsp:include page="footer.jsp"></jsp:include>
+	</section>
 </body>
 </html>

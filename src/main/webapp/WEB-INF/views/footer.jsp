@@ -5,23 +5,12 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@page
-	import="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"%><html>
+	import="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"%>
 
 
-<footer class="row">
-	<div class="large-12 columns">
-		<hr>
-		<div class="row">
-			<div class="large-5 columns">
-				<p>&#169; Copyright Coconut Martini Inc.</p>
-			</div>
-			<div class="large-7 columns">
-				<ul class="inline-list right">
-					<li><a href="/site/terms">Terms</a></li>
-					<li><a href="/site/privacy">Privacy</a></li>
-					<li><a href="/site/contact">Contact</a></li>
-				</ul>
-			</div>
-		</div>
-	</div>
-</footer>
+<div class="container va-align">
+	<a href="/site/terms">Terms</a>&nbsp;|&nbsp;<a href="/site/privacy">Privacy</a>
+	<p>&#169; Copyright Coconut Martini Inc.</p>
+	<img src="/resources/images/cm/logo-48x48.png" alt="small logo" />
+	Skok
+</div>

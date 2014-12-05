@@ -5,8 +5,6 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-import com.cm.config.CanonicalPlanName;
-
 @PersistenceCapable
 public class Account {
 
@@ -14,13 +12,10 @@ public class Account {
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Long id;
 
-	/** Required attribute for API access **/
-	@Persistent
-	private String apiKey;
 	// default to free
-	@Persistent
-	private String canonicalPlanName = CanonicalPlanName.FREE.getValue();
-
+//	@Persistent
+//	private String canonicalPlanId = CanonicalPlan.FREE.getId();
+	
 	@Persistent
 	private String name;
 	@Persistent
@@ -105,20 +100,12 @@ public class Account {
 		this.enabled = enabled;
 	}
 
-	public String getApiKey() {
-		return apiKey;
-	}
-
-	public void setApiKey(String apiKey) {
-		this.apiKey = apiKey;
-	}
-
-	public String getCanonicalPlanName() {
-		return canonicalPlanName;
-	}
-
-	public void setCanonicalPlanName(String canonicalPlanName) {
-		this.canonicalPlanName = canonicalPlanName;
-	}
+//	public String getCanonicalPlanId() {
+//		return canonicalPlanId;
+//	}
+//
+//	public void setCanonicalPlanId(String canonicalPlanId) {
+//		this.canonicalPlanId = canonicalPlanId;
+//	}
 
 }

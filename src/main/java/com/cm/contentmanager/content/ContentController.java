@@ -16,6 +16,7 @@
 package com.cm.contentmanager.content;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,13 +33,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.cm.config.Configuration;
+import com.cm.contentmanager.application.Application;
 import com.cm.contentmanager.application.ApplicationService;
 import com.cm.usermanagement.user.UserService;
 import com.cm.util.Utils;
 import com.cm.util.ValidationError;
-import com.google.appengine.api.blobstore.BlobInfo;
 import com.google.appengine.api.blobstore.BlobInfoFactory;
-import com.google.appengine.api.blobstore.BlobKey;
+import com.google.appengine.api.blobstore.BlobstoreService;
+import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
+import com.google.appengine.tools.cloudstorage.GcsFilename;
+import com.google.appengine.tools.cloudstorage.GcsService;
+import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
+import com.google.appengine.tools.cloudstorage.RetryParams;
 
 @Controller
 public class ContentController {
@@ -53,21 +60,56 @@ public class ContentController {
 
 	private static final Logger LOGGER = Logger
 			.getLogger(ContentController.class.getName());
+	private BlobstoreService mBlobstoreService = BlobstoreServiceFactory
+			.getBlobstoreService();
 	private final BlobInfoFactory mBlobInfoFactory = new BlobInfoFactory();
+	private final GcsService mGcsService = GcsServiceFactory
+			.createGcsService(RetryParams.getDefaultInstance());
 
 	/**
 	 * @param model
 	 * @return
 	 */
 	@RequestMapping(value = "/{applicationId}/{contentGroupId}/content", method = RequestMethod.GET)
-	public ModelAndView displayContent(@PathVariable Long applicationId,
+	public ModelAndView displayContentAsGrid(@PathVariable Long applicationId,
 			@PathVariable Long contentGroupId, ModelMap model) {
 		if (LOGGER.isLoggable(Level.INFO))
 			LOGGER.info("Entering displayContent");
 		try {
 			// pass it along to the view
 			// model.addAttribute("contentGroupId", contentGroupId);
-			return new ModelAndView("content", model);
+			return new ModelAndView("content_portfolio_view", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting displayContent");
+		}
+	}
+
+	@RequestMapping(value = "/{applicationId}/{contentGroupId}/content/list", method = RequestMethod.GET)
+	public ModelAndView displayContentAsList(@PathVariable Long applicationId,
+			@PathVariable Long contentGroupId, ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering displayContent");
+		try {
+			// pass it along to the view
+			// model.addAttribute("contentGroupId", contentGroupId);
+			return new ModelAndView("content_list_view", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting displayContent");
+		}
+	}
+
+	@RequestMapping(value = "/{applicationId}/{contentGroupId}/content/{tour}", method = RequestMethod.GET)
+	public ModelAndView displayContent(@PathVariable Long applicationId,
+			@PathVariable Long contentGroupId, @PathVariable String tour,
+			ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering displayContent");
+		try {
+			// pass it along to the view
+			model.addAttribute("tour", tour);
+			return new ModelAndView("content_portfolio_view", model);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting displayContent");
@@ -112,6 +154,44 @@ public class ContentController {
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting getAllContent");
+		}
+	}
+
+	@RequestMapping(value = "/secured/{applicationId}/{contentGroupId}/content/deleted", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody
+	List<Content> getDeletedContent(@PathVariable Long applicationId,
+			@PathVariable Long contentGroupId, HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			if (contentGroupId == null || contentGroupId.equals("")) {
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("No Content Group Id Found!");
+				return null;
+			}
+			List<Content> deletedContent = new ArrayList<Content>();
+
+			List<Content> content = contentService.get(applicationId,
+					contentGroupId, true);
+			for (Iterator iterator = content.iterator(); iterator.hasNext();) {
+				Content content2 = (Content) iterator.next();
+				if (content2.isDeleted()) {
+					deletedContent.add(content2);
+				}
+			}
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info(deletedContent.size() + " Content found");
+			response.setStatus(HttpServletResponse.SC_OK);
+			return deletedContent;
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
 		}
 	}
 
@@ -167,7 +247,6 @@ public class ContentController {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return errors;
 			} else {
-				
 
 				Content lContent = contentService.save(
 						userService.getLoggedInUser(), content);
@@ -175,14 +254,15 @@ public class ContentController {
 				String lTrackingId = applicationService.getApplication(
 						content.getApplicationId()).getTrackingId();
 				Utils.triggerChangesStagedMessage(content.getApplicationId(), 0);
-				Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId, 0);
+				Utils.updateLastKnownTimestamp(lTrackingId,
+						lContent.getTimeUpdatedMs(), 0);
 				if (!Utils.isEmpty(content.getId())
 						&& (!Utils.isEmpty(content.getUri())))
 					Utils.triggerUpdateContentSizeInBytesMessage(
-							lContent.getId(), lContent.getUri(), 0);
+							lContent.getId(), 0);
 				// trigger message to update quota
-				Utils.triggerUpdateQuotaUtilizationMessage(userService.getLoggedInUser()
-						.getAccountId(), 0);
+				Utils.triggerUpdateQuotaUtilizationMessage(userService
+						.getLoggedInUser().getAccountId(), 0);
 				return null;
 			}
 		} catch (Throwable e) {
@@ -208,21 +288,22 @@ public class ContentController {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return errors;
 			} else {
-				contentService.update(content);
+				Content lContent = contentService.update(content);
 				response.setStatus(HttpServletResponse.SC_OK);
 
 				String lTrackingId = applicationService.getApplication(
 						content.getApplicationId()).getTrackingId();
 				Utils.triggerChangesStagedMessage(content.getApplicationId(), 0);
-				Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId, 0);
+				Utils.updateLastKnownTimestamp(lTrackingId,
+						lContent.getTimeUpdatedMs(), 0);
 				if (!Utils.isEmpty(content.getId())
 						&& (!Utils.isEmpty(content.getUri())))
 					Utils.triggerUpdateContentSizeInBytesMessage(
-							content.getId(), content.getUri(), 0);
+							content.getId(), 0);
 				// trigger message to update quota
-				//TODO: added artificial delay. Should this be removed in prod?
-				Utils.triggerUpdateQuotaUtilizationMessage(userService.getLoggedInUser()
-						.getAccountId(), 3000);
+				// TODO: added artificial delay. Should this be removed in prod?
+				Utils.triggerUpdateQuotaUtilizationMessage(userService
+						.getLoggedInUser().getAccountId(), 3000);
 				return null;
 			}
 		} catch (Throwable e) {
@@ -233,6 +314,33 @@ public class ContentController {
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting doUpdateContentGroup");
+		}
+	}
+
+	@RequestMapping(value = "/secured/content/move/{id}/{contentGroupId}/{applicationId}/{timeUpdatedMs}/{timeUpdatedTimeZoneOffsetMs}", method = RequestMethod.PUT, consumes = "application/json")
+	public void doMoveContent(@PathVariable Long id,
+			@PathVariable Long contentGroupId,
+			@PathVariable Long applicationId, @PathVariable Long timeUpdatedMs,
+			@PathVariable Long timeUpdatedTimeZoneOffsetMs,
+			HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			contentService.moveContentGroup(id, contentGroupId, timeUpdatedMs,
+					timeUpdatedTimeZoneOffsetMs);
+			String lTrackingId = applicationService.getApplication(
+					applicationId).getTrackingId();
+			Utils.triggerChangesStagedMessage(applicationId, 0);
+			Utils.updateLastKnownTimestamp(lTrackingId, timeUpdatedMs, 0);
+			response.setStatus(HttpServletResponse.SC_OK);
+
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
 		}
 	}
 
@@ -251,20 +359,59 @@ public class ContentController {
 				if (LOGGER.isLoggable(Level.INFO))
 					LOGGER.info("No Content Id Found!");
 			}
-			// Get the application id for the content that is about to be
-			// deleted
-			Long lApplicationId = contentService.get(id).getApplicationId();
 			contentService.delete(id, timeUpdatedMs,
 					timeUpdatedTimeZoneOffsetMs);
-			response.setStatus(HttpServletResponse.SC_OK);
-			String lTrackingId = applicationService.getApplication(
-					lApplicationId).getTrackingId();
-			Utils.triggerChangesStagedMessage(id, 0);
-			Utils.triggerUpdateLastKnownTimestampMessage(lTrackingId, 0);
-			// trigger message to update quota
-			Utils.triggerUpdateQuotaUtilizationMessage(userService.getLoggedInUser()
-					.getAccountId(), 0);
+			Long lApplicationId = contentService.get(id).getApplicationId();
 
+			Application lApplication = applicationService
+					.getApplication(lApplicationId);
+			Utils.triggerChangesStagedMessage(lApplication.getId(), 0);
+			Utils.updateLastKnownTimestamp(lApplication.getTrackingId(),
+					timeUpdatedMs, 0);
+			Utils.triggerUpdateQuotaUtilizationMessage(
+					lApplication.getAccountId(), 3000);
+
+			response.setStatus(HttpServletResponse.SC_OK);
+
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting deleteContent");
+		}
+	}
+
+	@RequestMapping(value = "/secured/content/restore/{id}/{timeUpdatedMs}/{timeUpdatedTimeZoneOffsetMs}", method = RequestMethod.PUT, produces = "application/json")
+	public void restoreContent(@PathVariable Long id,
+			@PathVariable Long timeUpdatedMs,
+			@PathVariable Long timeUpdatedTimeZoneOffsetMs,
+			HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering deleteContent");
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Content ID: " + id);
+			if (id == null || id.equals("")) {
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("No Content Id Found!");
+			}
+			contentService.restore(id, timeUpdatedMs,
+					timeUpdatedTimeZoneOffsetMs);
+
+			Long lApplicationId = contentService.get(id).getApplicationId();
+
+			Application lApplication = applicationService
+					.getApplication(lApplicationId);
+			Utils.triggerChangesStagedMessage(lApplication.getId(), 0);
+			Utils.updateLastKnownTimestamp(lApplication.getTrackingId(),
+					timeUpdatedMs, 0);
+			Utils.triggerUpdateQuotaUtilizationMessage(
+					lApplication.getAccountId(), 0);
+
+			response.setStatus(HttpServletResponse.SC_OK);
 		} catch (Throwable e) {
 			// handled by GcmManager
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
@@ -334,27 +481,45 @@ public class ContentController {
 		return errors;
 	}
 
-	@RequestMapping(value = "/tasks/content/updatesize/{id}/{uri}", method = RequestMethod.POST)
-	public void updateSize(@PathVariable Long id, @PathVariable String uri,
-			HttpServletResponse response) {
+	@RequestMapping(value = "/tasks/content/updatesize/{id}", method = RequestMethod.POST)
+	public void updateSize(@PathVariable Long id, HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering updateSize");
-			if (Utils.isEmpty(uri)) {
+			Content lContent = contentService.get(id);
+			if (Utils.isEmpty(lContent.getUri())) {
 				if (LOGGER.isLoggable(Level.INFO))
 					LOGGER.info("URI is null. Skipping...");
 				return;
 			}
+			String lUri[] = lContent.getUri().split(
+					"/gs/" + Configuration.GCS_STORAGE_BUCKET + "/");
+			GcsFilename lGcsFilename = new GcsFilename(
+					Configuration.GCS_STORAGE_BUCKET, lUri[1]);
 
-			BlobKey blobKey = new BlobKey(uri);
-			final BlobInfo blobInfo = mBlobInfoFactory.loadBlobInfo(blobKey);
-			if (blobInfo != null) {
-				if (LOGGER.isLoggable(Level.INFO))
-					LOGGER.info("Content size is " + blobInfo.getSize());
-				contentService.updateContentSize(id, blobInfo.getSize());
-			} else {
-				LOGGER.warning("No size found for uri " + uri);
-			}
+			long lFileSize = mGcsService.getMetadata(lGcsFilename).getLength();
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Content size is " + lFileSize + " bytes");
+			contentService.updateContentSize(id, lFileSize);
+
+			// BlobKey lGsBlobKey = mBlobstoreService.createGsBlobKey(lContent
+			// .getUri());
+			//
+			// // BlobKey blobKey = new BlobKey(lContent.getUri());
+			// final BlobInfo blobInfo =
+			// mBlobInfoFactory.loadBlobInfo(lGsBlobKey);
+			// if (blobInfo != null) {
+			// if (LOGGER.isLoggable(Level.INFO))
+			// LOGGER.info("Content size is " + blobInfo.getSize());
+			// contentService.updateContentSize(id, blobInfo.getSize());
+			// } else {
+			// LOGGER.warning("No size found for id " + id);
+			// }
+			response.setStatus(HttpServletResponse.SC_OK);
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting updateSize");

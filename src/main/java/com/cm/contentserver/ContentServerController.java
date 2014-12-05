@@ -1,10 +1,12 @@
 package com.cm.contentserver;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sf.jsr107cache.Cache;
@@ -17,9 +19,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.cm.accountmanagement.client.key.ClientKeyService;
+import com.cm.config.CanonicalContentType;
+import com.cm.config.CanonicalErrorCodes;
+import com.cm.config.Configuration;
 import com.cm.contentmanager.application.Application;
 import com.cm.contentmanager.application.ApplicationService;
 import com.cm.contentmanager.content.Content;
@@ -28,12 +33,17 @@ import com.cm.contentmanager.contentgroup.ContentGroup;
 import com.cm.contentmanager.contentgroup.ContentGroupService;
 import com.cm.gcm.GcmRegistrationRequest;
 import com.cm.gcm.GcmService;
+import com.cm.quota.QuotaService;
 import com.cm.util.Utils;
 import com.cm.util.ValidationError;
 import com.google.appengine.api.blobstore.BlobInfo;
 import com.google.appengine.api.blobstore.BlobInfoFactory;
 import com.google.appengine.api.blobstore.BlobKey;
+import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
+import com.google.appengine.api.images.ImagesService;
+import com.google.appengine.api.images.ImagesServiceFactory;
+import com.google.appengine.api.images.ServingUrlOptions;
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
@@ -51,9 +61,16 @@ public class ContentServerController {
 	private ContentService contentService;
 	@Autowired
 	private GcmService gcmService;
+	@Autowired
+	private QuotaService quotaService;
+	@Autowired
+	private ClientKeyService clientKeyService;
 
+	private BlobstoreService mBlobstoreService = BlobstoreServiceFactory
+			.getBlobstoreService();
 	private final BlobInfoFactory mBlobInfoFactory = new BlobInfoFactory();
-
+	private final ImagesService mImagesService = ImagesServiceFactory
+			.getImagesService();
 	private Cache mCache;
 
 	private static final Logger LOGGER = Logger
@@ -76,8 +93,7 @@ public class ContentServerController {
 	 * @return
 	 */
 	@RequestMapping(value = "/contentserver/contentlist", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-	public @ResponseBody
-	List<com.cm.contentserver.transfer.Content> getContent(
+	public @ResponseBody List<com.cm.contentserver.transfer.Content> getContent(
 			@RequestBody com.cm.contentserver.transfer.ContentRequest pContentRequest,
 			HttpServletResponse response) {
 		try {
@@ -88,10 +104,30 @@ public class ContentServerController {
 				LOGGER.warning("No Content Request Found!");
 				return null;
 			}
+			if (!clientKeyService.validateClientKey(
+					pContentRequest.getClientKey(),
+					pContentRequest.getTrackingId())) {
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				LOGGER.log(Level.SEVERE,
+						CanonicalErrorCodes.INVALID_CLIENT_KEY.getValue()
+								+ pContentRequest.getClientKey());
+				return null;
+			}
+
 			ContentRequest lContentRequest = convertToDomainFormat(pContentRequest);
-			List<com.cm.contentserver.transfer.Content> lContentList = Utils
-					.convertToTransferFormat(contentServerService
-							.getContent(lContentRequest));
+			List<com.cm.contentserver.transfer.Content> lContentList = null;
+
+			Long lAccountId = applicationService.getApplicationByTrackingId(
+					pContentRequest.getTrackingId(), false).getAccountId();
+
+			if (quotaService.hasSufficientBandwidthQuota(lAccountId)) {
+				lContentList = Utils
+						.convertToTransferFormat(contentServerService
+								.getContent(lContentRequest));
+			} else {
+				LOGGER.warning("Bandwidth Quota Exceeded for Tracking Id: "
+						+ pContentRequest.getTrackingId());
+			}
 			if (lContentList != null) {
 				if (LOGGER.isLoggable(Level.INFO))
 					LOGGER.info(lContentList.size() + " Content found");
@@ -101,6 +137,11 @@ public class ContentServerController {
 				if (contentServerService.isUpdateOverWifiOnly(lContentRequest)) {
 					for (com.cm.contentserver.transfer.Content lContent : lContentList) {
 						lContent.setUpdateOverWifiOnly(true);
+					}
+				}
+				if (contentServerService.isCollectUsageData(lContentRequest)) {
+					for (com.cm.contentserver.transfer.Content lContent : lContentList) {
+						lContent.setCollectUsageData(true);
 					}
 				}
 			} else {
@@ -121,8 +162,7 @@ public class ContentServerController {
 	}
 
 	@RequestMapping(value = "/contentserver/handshake", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-	public @ResponseBody
-	List<ValidationError> doHandshakePost(
+	public @ResponseBody List<ValidationError> doHandshakePost(
 			@RequestBody com.cm.contentserver.transfer.Handshake pHandshake,
 			HttpServletResponse response) {
 		try {
@@ -132,11 +172,39 @@ public class ContentServerController {
 			Handshake lHandshake = convertToDomainFormat(pHandshake);
 			contentServerService.upsert(lHandshake);
 
+			if (!clientKeyService.validateClientKey(lHandshake.getClientKey(),
+					lHandshake.getTrackingId())) {
+				List<ValidationError> lErrors = new ArrayList<ValidationError>();
+				ValidationError lError = new ValidationError();
+				lError.setCode(CanonicalErrorCodes.INVALID_CLIENT_KEY
+						.getValue());
+				lError.setDescription("Client Key is Invalid!");
+				lErrors.add(lError);
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				LOGGER.log(Level.SEVERE,
+						CanonicalErrorCodes.INVALID_CLIENT_KEY.getValue()
+								+ lHandshake.getClientKey());
+				return lErrors;
+			}
 			{
 				// device sends its stored gcm id
 				GcmRegistrationRequest lGcmRegistrationRequest = gcmService
 						.getGcmRegistrationRequest(pHandshake
 								.getGcmRegistrationId());
+				//
+				if (lGcmRegistrationRequest == null) {
+					List<ValidationError> lErrors = new ArrayList<ValidationError>();
+					ValidationError lError = new ValidationError();
+					lError.setCode(CanonicalErrorCodes.INVALID_REQUEST
+							.getValue());
+					lError.setDescription("Request is Invalid!");
+					lErrors.add(lError);
+					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+					LOGGER.log(Level.SEVERE,
+							CanonicalErrorCodes.INVALID_REQUEST.getValue()
+									+ lHandshake.getClientKey());
+					return lErrors;
+				}
 				// validate GCM registration id
 				List<ValidationError> lErrors = gcmService
 						.evaluateGcmRegistrationStatus(lGcmRegistrationRequest);
@@ -245,10 +313,31 @@ public class ContentServerController {
 				// in
 				// case both values are zero (uninitialized)
 				if (lLastKnownTimestamp >= lHandshake.getLastKnownTimestamp()) {
-					Utils.triggerSendContentListMessages(
-							lHandshake.getTrackingId(), 0);
+					if (LOGGER.isLoggable(Level.INFO))
+						LOGGER.info("Last known timestamp does not match. Triggering content list message...");
+					Utils.triggerSendContentListMessage(
+							lHandshake.getTrackingId(),
+							lHandshake.getGcmRegistrationId(), 0L);
 				}
 			}
+
+			// perform this as the last action, as its just a warning
+			if (!pHandshake.getCurrentSdkVersion().equals(
+					Configuration.CURRENT_SDK_VERSION)) {
+				List<ValidationError> lErrors = new ArrayList<ValidationError>();
+				ValidationError lError = new ValidationError();
+				lError.setCode(CanonicalErrorCodes.UPDATED_SDK_AVAILABLE
+						.getValue());
+				lError.setDescription("An update for Skok Android API Library is now available.");
+				lError.setCategory(ValidationError.CATEGORY_WARNING);
+				lErrors.add(lError);
+				response.setStatus(HttpServletResponse.SC_OK);
+				LOGGER.log(Level.INFO,
+						CanonicalErrorCodes.UPDATED_SDK_AVAILABLE.getValue()
+								+ lHandshake.getClientKey());
+				return lErrors;
+			}
+
 			// always
 			response.setStatus(HttpServletResponse.SC_OK);
 			return null;
@@ -260,74 +349,6 @@ public class ContentServerController {
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting");
-		}
-	}
-
-	/**
-	 * Access to this API is unsecured
-	 * 
-	 * @param key
-	 * @param response
-	 * @return
-	 */
-	@RequestMapping(value = "/contentserver/dropbox/{key}", method = RequestMethod.GET)
-	public @ResponseBody
-	String doServe(@PathVariable String key, HttpServletResponse response) {
-		try {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering doServe");
-			BlobKey blobKey = new BlobKey(key);
-			final BlobInfo blobInfo = mBlobInfoFactory.loadBlobInfo(blobKey);
-			if (blobInfo != null) {
-				response.setHeader("Content-Disposition",
-						"attachment; filename=" + blobInfo.getFilename());
-				BlobstoreServiceFactory.getBlobstoreService().serve(blobKey,
-						response);
-			} else {
-				LOGGER.info("No content found for key " + key);
-				response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-			}
-		} catch (Throwable e) {
-			// handled by GcmManager
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
-			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-			return null;
-		} finally {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting doServe");
-		}
-		return null;
-	}
-
-	@RequestMapping(value = "/contentserver/dropbox", method = RequestMethod.POST)
-	public void doServePost(@RequestParam String key,
-			HttpServletResponse response) {
-		try {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering doServePost");
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Key: " + key);
-
-			BlobKey blobKey = new BlobKey(key);
-			final BlobInfo blobInfo = mBlobInfoFactory.loadBlobInfo(blobKey);
-			if (blobInfo != null) {
-				if (LOGGER.isLoggable(Level.INFO))
-					LOGGER.info("Returning content for key " + key);
-				response.setHeader("Content-Disposition",
-						"attachment; filename=" + blobInfo.getFilename());
-				BlobstoreServiceFactory.getBlobstoreService().serve(blobKey,
-						response);
-			} else {
-				LOGGER.info("No content found for key " + key);
-				response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-			}
-		} catch (Throwable e) {
-			// handled by GcmManager
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
-			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-		} finally {
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting doServePost");
 		}
 	}
 
@@ -374,12 +395,316 @@ public class ContentServerController {
 			} catch (Throwable t) {
 				LOGGER.log(Level.SEVERE, "Unable to add to Memcache", t);
 			}
-
+			response.setStatus(HttpServletResponse.SC_OK);
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting updateLastKnownTimestamp");
 		}
 	}
+
+	@Deprecated
+	@RequestMapping(value = "/tasks/contentserver/updatelastknowntimestamp/{trackingId}/{timestamp}", method = RequestMethod.POST)
+	public void updateLastKnownTimestamp(@PathVariable String trackingId,
+			long timestamp, HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering updateLastKnownTimestamp");
+
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("updateLastKnownTimestamp: Tracking Id: "
+						+ trackingId);
+			if (timestamp == 0L)
+				LOGGER.warning("Last known timestamp for tracking id "
+						+ trackingId + "  is ZERO");
+			try {
+				if (mCache != null) {
+					mCache.put(trackingId, timestamp);
+					if (LOGGER.isLoggable(Level.INFO))
+						LOGGER.info("Added to Memcache: " + timestamp);
+				}
+			} catch (Throwable t) {
+				LOGGER.log(Level.SEVERE, "Unable to add to Memcache", t);
+			}
+			response.setStatus(HttpServletResponse.SC_OK);
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting updateLastKnownTimestamp");
+		}
+	}
+
+	/**
+	 * 
+	 * @param key
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@Deprecated
+	@RequestMapping(value = "/contentserver/dropbox/{key}", method = RequestMethod.GET)
+	public @ResponseBody String doServeGet(@PathVariable String key,
+			HttpServletRequest request, HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			BlobKey blobKey = new BlobKey(key);
+			final BlobInfo blobInfo = mBlobInfoFactory.loadBlobInfo(blobKey);
+			if (blobInfo != null) {
+				String lRangeRequestedHeader = request.getHeader("Range");
+				LOGGER.info("Range requested is " + lRangeRequestedHeader);
+				/****
+				 * Anshu: Commented out. Bandwidth is now measured by
+				 * /contentdownloadstats, provided by the devices. This provides
+				 * a more accurate measure of the bandwidth utilized, and works
+				 * well with the CDN use
+				 ***/
+				// not a partial request. Done so that bandwidth utilization is
+				// not counted multiple times
+				// if ((lRangeRequestedHeader != null)
+				// && lRangeRequestedHeader.contains("0-")) {
+				// Utils.triggerUpdateBandwidthUtilizationMessage(key, 0);
+				// }
+				// response.setHeader("Content-Disposition",
+				// "attachment; filename=" + blobInfo.getFilename());
+				response.setHeader("Cache-Control", "max-age=86400");
+				BlobstoreServiceFactory.getBlobstoreService().serve(blobKey,
+						response);
+			} else {
+				LOGGER.info("No content found for key " + key);
+				response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+			}
+		} catch (Throwable e) {
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting doServeGet");
+		}
+		return null;
+	}
+
+	/**
+	 * keyWithExtension is required for the CDN to cache the creative. This
+	 * value is ignored
+	 * 
+	 * @param key
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@Deprecated
+	@RequestMapping(value = "/contentserver/dropbox/{key}/{keyWithExtension}", method = RequestMethod.GET)
+	public @ResponseBody String doServeGetWithExtension(
+			@PathVariable String key, @PathVariable String keyWithExtension,
+			HttpServletRequest request, HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			BlobKey blobKey = new BlobKey(key);
+			final BlobInfo blobInfo = mBlobInfoFactory.loadBlobInfo(blobKey);
+			if (blobInfo != null) {
+				String lRangeRequestedHeader = request.getHeader("Range");
+				LOGGER.info("Range requested is " + lRangeRequestedHeader);
+				/****
+				 * Anshu: Commented out. Bandwidth is now measured by
+				 * /contentdownloadstats, provided by the devices. This provides
+				 * a more accurate measure of the bandwidth utilized, and works
+				 * well with the CDN use
+				 ***/
+				// not a partial request. Done so that bandwidth utilization is
+				// not counted multiple times
+				// if ((lRangeRequestedHeader != null)
+				// && lRangeRequestedHeader.contains("0-")) {
+				// Utils.triggerUpdateBandwidthUtilizationMessage(key, 0);
+				// }
+				// response.setHeader("Content-Disposition",
+				// "attachment; filename=" + blobInfo.getFilename());
+				response.setHeader("Cache-Control", "max-age=86400");
+				BlobstoreServiceFactory.getBlobstoreService().serve(blobKey,
+						response);
+			} else {
+				LOGGER.info("No content found for key " + key);
+				response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+			}
+		} catch (Throwable e) {
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+		return null;
+	}
+
+	@RequestMapping(value = "/contentserver/servingurl/{contentId}", method = RequestMethod.GET)
+	public @ResponseBody String getServingUrl(@PathVariable Long contentId,
+			HttpServletRequest request, HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			if (Utils.isEmpty(contentId)) {
+				LOGGER.warning("No content id provided");
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				return null;
+			}
+			String lServingUrl = null;
+
+			Content lContent = contentService.get(contentId);
+			if (lContent.getType()
+					.equals(CanonicalContentType.IMAGE.getValue())) {
+				// String lUri[] = lContent.getUri().split("/");
+				// BlobKey blob_key = BlobstoreServiceFactory
+				// .getBlobstoreService().createGsBlobKey(lContent.getUri());
+				// ServingUrlOptions serving_options = ServingUrlOptions.Builder
+				// .withBlobKey(blob_key);
+				// lServingUrl = ImagesServiceFactory.getImagesService()
+				// .getServingUrl(serving_options);
+				// if (LOGGER.isLoggable(Level.INFO))
+				// LOGGER.info(lServingUrl);
+				// ServingUrlOptions lServingUrlOptions =
+				// ServingUrlOptions.Builder
+				// .withBlobKey(mBlobstoreService.createGsBlobKey(lContent
+				// .getUri()));
+				// lServingUrlOptions.secureUrl(true);
+				// lServingUrl =
+				// mImagesService.getServingUrl(lServingUrlOptions);
+
+				// ServingUrlOptions lServingUrlOptions =
+				// ServingUrlOptions.Builder
+				// .withBlobKey(new BlobKey(lContent.getUri()));
+				// lServingUrlOptions.secureUrl(true);
+				// lServingUrl =
+				// mImagesService.getServingUrl(lServingUrlOptions);
+
+				ServingUrlOptions lServingUrlOptions = ServingUrlOptions.Builder
+						.withGoogleStorageFileName(lContent.getUri());
+				lServingUrlOptions.secureUrl(true);
+				lServingUrl = mImagesService.getServingUrl(lServingUrlOptions);
+
+				// GcsFilename gcsFilename = new
+				// GcsFilename("skok-dev.appspot.com/media",
+				// lContent.getUri());
+				// String filename = String.format("/gs/%s/%s",
+				// gcsFilename.getBucketName(),
+				// gcsFilename.getObjectName());
+				// ServingUrlOptions lServingUrlOptions =
+				// ServingUrlOptions.Builder
+				// .withGoogleStorageFileName(filename);
+				// lServingUrl = mImagesService
+				// .getServingUrl(ServingUrlOptions.Builder
+				// .withGoogleStorageFileName(filename));
+
+			} else if (lContent.getType().equals(
+					CanonicalContentType.VIDEO.getValue())) {
+				// lServingUrl = "https://storage.googleapis.com/"
+				// + Configuration.GCS_STORAGE_BUCKET + "/"
+				// + lContent.getUri();
+				String lUri[] = lContent.getUri().split("/gs");
+				lServingUrl = "https://storage.googleapis.com" + lUri[1];
+			}
+
+			if (Utils.isEmpty(lServingUrl)) {
+				LOGGER.info("No content found for content id " + contentId);
+				response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+				return null;
+			}
+
+			response.setStatus(HttpServletResponse.SC_OK);
+			return "{ \"servingUrl\" : \"" + lServingUrl + "\" }";
+		} catch (IllegalArgumentException e) {
+			LOGGER.log(Level.WARNING, e.getMessage());
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+		} catch (Throwable e) {
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+		return null;
+	}
+
+	// @Deprecated
+	// @RequestMapping(value =
+	// "/contentserver/servingurl/image/{gs}/{bucket}/{folder}/{gsBlobKey}",
+	// method = RequestMethod.GET)
+	// public @ResponseBody
+	// String getServingUrlForImage(@PathVariable String gsObjectName,
+	// HttpServletRequest request, HttpServletResponse response) {
+	// try {
+	// if (LOGGER.isLoggable(Level.INFO))
+	// LOGGER.info("Entering");
+	// if (Utils.isEmpty(gsObjectName)) {
+	// LOGGER.warning("No key provided");
+	// response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+	// return null;
+	// }
+	// ServingUrlOptions lServingUrlOptions = ServingUrlOptions.Builder
+	// .withGoogleStorageFileName(gsObjectName);
+	// lServingUrlOptions.secureUrl(true);
+	//
+	// String lServingUrl = mImagesService
+	// .getServingUrl(lServingUrlOptions);
+	//
+	// if (Utils.isEmpty(lServingUrl)) {
+	// LOGGER.info("No content found for key " + gsObjectName);
+	// response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+	// return null;
+	// }
+	//
+	// response.setStatus(HttpServletResponse.SC_OK);
+	// return "{ \"servingUrl\" : \"" + lServingUrl + "\" }";
+	// } catch (IllegalArgumentException e) {
+	// LOGGER.log(Level.WARNING, e.getMessage());
+	// response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+	// } catch (Throwable e) {
+	// LOGGER.log(Level.SEVERE, e.getMessage(), e);
+	// response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+	// } finally {
+	// if (LOGGER.isLoggable(Level.INFO))
+	// LOGGER.info("Exiting");
+	// }
+	// return null;
+	// }
+	//
+	// @Deprecated
+	// @RequestMapping(value = "/contentserver/servingurl/video/{gsObjectName}",
+	// method = RequestMethod.GET)
+	// public @ResponseBody
+	// String getServingUrlForVideo(@PathVariable String gsObjectName,
+	// HttpServletRequest request, HttpServletResponse response) {
+	// try {
+	// if (LOGGER.isLoggable(Level.INFO))
+	// LOGGER.info("Entering");
+	// if (Utils.isEmpty(gsObjectName)) {
+	// LOGGER.warning("No key provided");
+	// response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+	// return null;
+	// }
+	// String lServingUrl = "https://storage.googleapis.com/"
+	// + Configuration.GCS_STORAGE_BUCKET + "/" + gsObjectName;
+	//
+	// response.setStatus(HttpServletResponse.SC_OK);
+	// return "{ \"servingUrl\" : \"" + lServingUrl + "\" }";
+	// } catch (IllegalArgumentException e) {
+	// LOGGER.log(Level.WARNING, e.getMessage());
+	// response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+	// } catch (Throwable e) {
+	// LOGGER.log(Level.SEVERE, e.getMessage(), e);
+	// response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+	// } finally {
+	// if (LOGGER.isLoggable(Level.INFO))
+	// LOGGER.info("Exiting");
+	// }
+	// return null;
+	// }
 
 	private ContentRequest convertToDomainFormat(
 			com.cm.contentserver.transfer.ContentRequest pContentRequest) {
@@ -387,6 +712,7 @@ public class ContentServerController {
 		lContentRequest.setAccuracy(pContentRequest.getAccuracy());
 		lContentRequest.setAltitude(pContentRequest.getAltitude());
 		lContentRequest.setTrackingId(pContentRequest.getTrackingId());
+		lContentRequest.setClientKey(pContentRequest.getClientKey());
 		lContentRequest.setBearing(pContentRequest.getBearing());
 		lContentRequest.setDeviceId(pContentRequest.getDeviceId());
 		lContentRequest.setLatitude(pContentRequest.getLatitude());
@@ -404,6 +730,7 @@ public class ContentServerController {
 			com.cm.contentserver.transfer.Handshake pHandshake) {
 		Handshake lHandshake = new Handshake();
 		lHandshake.setTrackingId(pHandshake.getTrackingId());
+		lHandshake.setClientKey(pHandshake.getClientKey());
 		lHandshake.setGcmRegistrationId(pHandshake.getGcmRegistrationId());
 		lHandshake.setLastKnownTimestamp(pHandshake.getLastKnownTimestamp());
 		lHandshake.setAccuracy(pHandshake.getAccuracy());

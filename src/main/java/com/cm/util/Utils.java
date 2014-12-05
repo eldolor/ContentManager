@@ -3,9 +3,12 @@ package com.cm.util;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.Random;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,6 +21,14 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+
+import net.sf.jsr107cache.Cache;
+import net.sf.jsr107cache.CacheFactory;
+import net.sf.jsr107cache.CacheManager;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.Days;
 
 import com.cm.config.Configuration;
 import com.cm.contentmanager.application.Application;
@@ -35,16 +46,64 @@ public class Utils {
 	private static final Logger LOGGER = Logger
 			.getLogger(Utils.class.getName());
 
-	public static void triggerForgotPasswordEmailMessage(String pGuid,
-			long delay) {
+	public static void triggerSendNotificationMessages(String pTrackingId,
+			String pMessage, long delayInMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
-			Queue queue = QueueFactory.getQueue(Configuration.EMAIL_QUEUE_NAME);
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Triggering message to send notification messages to handsets");
+			Queue queue = QueueFactory.getQueue(Configuration.GCM_QUEUE_NAME);
 			TaskOptions taskOptions = TaskOptions.Builder
-					.withUrl("/tasks/email/sendforgotpasswordemail/" + pGuid)
-					.param("guid", pGuid).method(Method.POST)
-					.countdownMillis(delay);
+					.withUrl(
+							"/tasks/gcm/sendnotificationmessages/"
+									+ pTrackingId)
+					.param("trackingId", pTrackingId)
+					.param("message", pMessage).method(Method.POST)
+					.countdownMillis(delayInMs);
+			queue.add(taskOptions);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	public static void triggerSendNotificationMessage(String pGcmId,
+			String pMessage, long delayInMs) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Triggering message to send notification message to a single handset");
+			Queue queue = QueueFactory.getQueue(Configuration.GCM_QUEUE_NAME);
+			TaskOptions taskOptions = TaskOptions.Builder
+					.withUrl("/tasks/gcm/sendnotificationmessage/" + pGcmId)
+					.param("gcmId", pGcmId).param("message", pMessage)
+					.method(Method.POST).countdownMillis(delayInMs);
+			queue.add(taskOptions);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	public static void triggerRollupMessage(Long pApplicationId,
+			Long eventStartTimeMs, Long eventEndTimeMs, long delayInMs) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			Queue queue = QueueFactory
+					.getQueue(Configuration.CONTENT_STATS_QUEUE_NAME);
+			TaskOptions taskOptions = TaskOptions.Builder
+					.withUrl(
+							"/tasks/rollup/contentstats/"
+									+ String.valueOf(pApplicationId) + "/"
+									+ String.valueOf(eventStartTimeMs) + "/"
+									+ String.valueOf(eventEndTimeMs))
+					.param("id", String.valueOf(pApplicationId))
+					.param("eventStartTimeMs", String.valueOf(eventStartTimeMs))
+					.param("eventEndTimeMs", String.valueOf(eventEndTimeMs))
+					.method(Method.POST).countdownMillis(delayInMs);
 			queue.add(taskOptions);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -53,7 +112,66 @@ public class Utils {
 
 	}
 
-	public static void triggerUpdateQuotaMessage(Long pAccountId, long delay) {
+	// public static void triggerUpdateBandwidthUtilizationMessage(Long pId,
+	// long delayInMs) {
+	// try {
+	// if (LOGGER.isLoggable(Level.INFO))
+	// LOGGER.info("Entering");
+	// Queue queue = QueueFactory
+	// .getQueue(Configuration.CONTENT_QUEUE_NAME);
+	// TaskOptions taskOptions = TaskOptions.Builder
+	// .withUrl("/tasks/bandwidth/utilization/update/" + pId)
+	// .param("id", String.valueOf(pId)).method(Method.POST)
+	// .countdownMillis(delayInMs);
+	// queue.add(taskOptions);
+	// } finally {
+	// if (LOGGER.isLoggable(Level.INFO))
+	// LOGGER.info("Exiting");
+	// }
+	//
+	// }
+
+	public static void triggerUpdateBandwidthUtilizationMessage(
+			Long applicationId, Long sizeInBytes, long delayInMs) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			Queue queue = QueueFactory
+					.getQueue(Configuration.CONTENT_QUEUE_NAME);
+			TaskOptions taskOptions = TaskOptions.Builder
+					.withUrl(
+							"/tasks/bandwidth/utilization/update/"
+									+ applicationId + "/" + sizeInBytes)
+					.param("applicationId", String.valueOf(applicationId))
+					.param("sizeInBytes", String.valueOf(sizeInBytes))
+					.method(Method.POST).countdownMillis(delayInMs);
+			queue.add(taskOptions);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+
+	}
+
+	public static void triggerForgotPasswordEmailMessage(String pGuid,
+			long delayInMs) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			Queue queue = QueueFactory.getQueue(Configuration.EMAIL_QUEUE_NAME);
+			TaskOptions taskOptions = TaskOptions.Builder
+					.withUrl("/tasks/email/sendforgotpasswordemail/" + pGuid)
+					.param("guid", pGuid).method(Method.POST)
+					.countdownMillis(delayInMs);
+			queue.add(taskOptions);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+
+	}
+
+	public static void triggerUpdateQuotaMessage(Long pAccountId, long delayInMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
@@ -64,7 +182,7 @@ public class Utils {
 			TaskOptions taskOptions = TaskOptions.Builder
 					.withUrl("/tasks/quota/update/" + pAccountId)
 					.param("accountId", String.valueOf(pAccountId))
-					.method(Method.POST).countdownMillis(delay);
+					.method(Method.POST).countdownMillis(delayInMs);
 			queue.add(taskOptions);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -73,7 +191,7 @@ public class Utils {
 	}
 
 	public static void triggerUpdateQuotaUtilizationMessage(Long pAccountId,
-			long delay) {
+			long delayInMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
@@ -84,7 +202,7 @@ public class Utils {
 			TaskOptions taskOptions = TaskOptions.Builder
 					.withUrl("/tasks/quota/utilization/update/" + pAccountId)
 					.param("accountId", String.valueOf(pAccountId))
-					.method(Method.POST).countdownMillis(delay);
+					.method(Method.POST).countdownMillis(delayInMs);
 			queue.add(taskOptions);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -93,7 +211,7 @@ public class Utils {
 	}
 
 	public static void triggerChangesStagedMessage(Long pApplicationId,
-			long delay) {
+			long delayInMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering triggerChangesStagedMessage");
@@ -106,7 +224,7 @@ public class Utils {
 							"/tasks/application/changesstaged/"
 									+ pApplicationId)
 					.param("applicationId", String.valueOf(pApplicationId))
-					.method(Method.POST).countdownMillis(delay);
+					.method(Method.POST).countdownMillis(delayInMs);
 			queue.add(taskOptions);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -115,7 +233,7 @@ public class Utils {
 	}
 
 	public static void triggerUpdateContentSizeInBytesMessage(Long pContentId,
-			String pUri, long delay) {
+			long delayInMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering triggerUpdateContentSizeInBytesMessage");
@@ -124,12 +242,9 @@ public class Utils {
 			Queue queue = QueueFactory
 					.getQueue(Configuration.CONTENT_QUEUE_NAME);
 			TaskOptions taskOptions = TaskOptions.Builder
-					.withUrl(
-							"/tasks/content/updatesize/" + pContentId + "/"
-									+ pUri)
+					.withUrl("/tasks/content/updatesize/" + pContentId)
 					.param("id", String.valueOf(pContentId))
-					.param("uri", String.valueOf(pUri)).method(Method.POST)
-					.countdownMillis(delay);
+					.method(Method.POST).countdownMillis(delayInMs);
 			queue.add(taskOptions);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -138,7 +253,7 @@ public class Utils {
 	}
 
 	public static void triggerSendContentListMessages(String pTrackingId,
-			long delay) {
+			long delayInMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering triggerSendContentListMessage");
@@ -149,7 +264,7 @@ public class Utils {
 					.withUrl(
 							"/tasks/gcm/sendcontentlistmessages/" + pTrackingId)
 					.param("trackingId", pTrackingId).method(Method.POST)
-					.countdownMillis(delay);
+					.countdownMillis(delayInMs);
 			queue.add(taskOptions);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -158,7 +273,7 @@ public class Utils {
 	}
 
 	public static void triggerSendContentListMessage(String pTrackingId,
-			String pGcmId, long delay) {
+			String pGcmId, long delayInMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering triggerSendContentListMessage");
@@ -168,8 +283,9 @@ public class Utils {
 			TaskOptions taskOptions = TaskOptions.Builder
 					.withUrl(
 							"/tasks/gcm/sendcontentlistmessage/" + pTrackingId
-									+ pGcmId).param("gcmId", pGcmId)
-					.method(Method.POST).countdownMillis(delay);
+									+ "/" + pGcmId)
+					.param("trackingId", pTrackingId).param("gcmId", pGcmId)
+					.method(Method.POST).countdownMillis(delayInMs);
 			queue.add(taskOptions);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -177,8 +293,9 @@ public class Utils {
 		}
 	}
 
+	@Deprecated
 	public static void triggerUpdateLastKnownTimestampMessage(
-			String pTrackingId, long delay) {
+			String pTrackingId, long delayInMs) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering triggerUpdateLastKnownTimestampMessage");
@@ -191,8 +308,31 @@ public class Utils {
 							"/tasks/contentserver/updatelastknowntimestamp/"
 									+ pTrackingId)
 					.param("trackingId", pTrackingId).method(Method.POST)
-					.countdownMillis(delay);
+					.countdownMillis(delayInMs);
 			queue.add(taskOptions);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting triggerUpdateLastKnownTimestampMessage");
+		}
+	}
+
+	public static void updateLastKnownTimestamp(String pTrackingId,
+			long pTimestamp, long delayInMs) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering triggerUpdateLastKnownTimestampMessage");
+			try {
+				CacheFactory cacheFactory = CacheManager.getInstance()
+						.getCacheFactory();
+				Cache lCache = cacheFactory.createCache(Collections.emptyMap());
+				if (lCache != null) {
+					lCache.put(pTrackingId, pTimestamp);
+					if (LOGGER.isLoggable(Level.INFO))
+						LOGGER.info("Added to Memcache: " + pTimestamp);
+				}
+			} catch (Throwable t) {
+				LOGGER.log(Level.SEVERE, "Unable to add to Memcache", t);
+			}
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting triggerUpdateLastKnownTimestampMessage");
@@ -296,6 +436,8 @@ public class Utils {
 		lContent.setType(pContent.getType());
 		lContent.setUri(pContent.getUri());
 		lContent.setSizeInBytes(pContent.getSizeInBytes());
+		lContent.setTags(pContent.getTags());
+
 		return lContent;
 
 	}
@@ -317,27 +459,32 @@ public class Utils {
 	 * @throws MessagingException
 	 * @throws UnsupportedEncodingException
 	 */
-	public static void sendEmail(String fromEmailAddress, String fromName,
-			String toEmailAddress, String toName, String subject,
-			String htmlBody, String textBody) throws MessagingException,
-			UnsupportedEncodingException {
+	public static void sendMultipartEmail(String fromEmailAddress,
+			String fromName, String toEmailAddress, String toName,
+			String subject, String htmlBody, String textBody)
+			throws MessagingException, UnsupportedEncodingException {
 		if (LOGGER.isLoggable(Level.INFO))
-			LOGGER.info("Entering sendEmail");
-		Multipart mp = new MimeMultipart();
-		MimeBodyPart htmlPart = new MimeBodyPart();
-		if (htmlBody != null) {
-			htmlPart.setContent(htmlBody, "text/html");
-			mp.addBodyPart(htmlPart);
+			LOGGER.info("Entering");
+		Multipart lMultipart = new MimeMultipart();
+
+		// according to the multipart MIME spec, the order of the parts are
+		// important. They should be added in order from low fidelity to high
+		// fidelity.
+		// add text part first
+		if (textBody != null) {
+			MimeBodyPart textPart = new MimeBodyPart();
+			textPart.setText(textBody, "utf-8");
+			lMultipart.addBodyPart(textPart);
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("sendEmail: Html body part: " + htmlBody);
+				LOGGER.info("Text body part: " + textBody);
 		}
 
-		MimeBodyPart textPart = new MimeBodyPart();
-		if (textBody != null) {
-			textPart.setContent(textBody, "text/plain");
-			mp.addBodyPart(textPart);
+		if (htmlBody != null) {
+			MimeBodyPart htmlPart = new MimeBodyPart();
+			htmlPart.setContent(htmlBody, "text/html; charset=utf-8");
+			lMultipart.addBodyPart(htmlPart);
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("sendEmail: Text body part: " + textBody);
+				LOGGER.info("Html body part: " + htmlBody);
 		}
 
 		Properties props = new Properties();
@@ -347,10 +494,43 @@ public class Utils {
 		msg.addRecipient(Message.RecipientType.TO, new InternetAddress(
 				toEmailAddress, toName));
 		msg.setSubject(subject);
-		msg.setContent(mp);
+		msg.setContent(lMultipart);
 		Transport.send(msg);
 		if (LOGGER.isLoggable(Level.INFO))
-			LOGGER.info("Exiting sendEmail");
+			LOGGER.info("Exiting");
+	}
+
+	/**
+	 * 
+	 * @param fromEmailAddress
+	 * @param fromName
+	 * @param toEmailAddress
+	 * @param toName
+	 * @param subject
+	 * @param messageBody
+	 * @param charset
+	 * @throws MessagingException
+	 * @throws UnsupportedEncodingException
+	 */
+	public static void sendEmail(String fromEmailAddress, String fromName,
+			String toEmailAddress, String toName, String subject,
+			String messageBody, String charset) throws MessagingException,
+			UnsupportedEncodingException {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering");
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Message:" + messageBody);
+		Properties props = new Properties();
+		Session lSession = Session.getDefaultInstance(props, null);
+		MimeMessage lMesssage = new MimeMessage(lSession);
+		lMesssage.setContent(messageBody, charset);
+		lMesssage.setFrom(new InternetAddress(fromEmailAddress, fromName));
+		lMesssage.addRecipient(Message.RecipientType.TO, new InternetAddress(
+				toEmailAddress, toName));
+		lMesssage.setSubject(subject);
+		Transport.send(lMesssage);
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Exiting");
 	}
 
 	/**
@@ -398,4 +578,116 @@ public class Utils {
 
 	}
 
+	public static Calendar getStartOfDay(long timeInMs, TimeZone timeZone) {
+		Calendar calendar = Calendar.getInstance(timeZone);
+		calendar.setTimeInMillis(timeInMs);
+		int year = calendar.get(Calendar.YEAR);
+		int month = calendar.get(Calendar.MONTH);
+		int day = calendar.get(Calendar.DATE);
+		calendar.set(year, month, day, 0, 0, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+		return calendar;
+	}
+
+	public static Calendar getEndOfDay(long timeInMs, TimeZone timeZone) {
+		Calendar calendar = Calendar.getInstance(timeZone);
+		calendar.setTimeInMillis(timeInMs);
+		int year = calendar.get(Calendar.YEAR);
+		int month = calendar.get(Calendar.MONTH);
+		int day = calendar.get(Calendar.DATE);
+		calendar.set(year, month, day, 23, 59, 59);
+		calendar.set(Calendar.MILLISECOND, 999);
+		return calendar;
+	}
+
+	public static Calendar getStartOfDayToday(TimeZone timeZone) {
+		Calendar calendar = Calendar.getInstance(timeZone);
+		int year = calendar.get(Calendar.YEAR);
+		int month = calendar.get(Calendar.MONTH);
+		int day = calendar.get(Calendar.DATE);
+		calendar.set(year, month, day, 0, 0, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+		return calendar;
+	}
+
+	public static Calendar getEndOfDayToday(TimeZone timeZone) {
+		Calendar calendar = Calendar.getInstance(timeZone);
+		int year = calendar.get(Calendar.YEAR);
+		int month = calendar.get(Calendar.MONTH);
+		int day = calendar.get(Calendar.DATE);
+		calendar.set(year, month, day, 23, 59, 59);
+		calendar.set(Calendar.MILLISECOND, 999);
+		return calendar;
+	}
+
+	public static Calendar getStartOfDayYesterday(TimeZone timeZone) {
+		Calendar calendar = getStartOfDayToday(timeZone);
+		calendar.add(Calendar.DATE, -1);
+		return calendar;
+	}
+
+	public static Calendar getEndOfDayYesterday(TimeZone timeZone) {
+		Calendar calendar = getEndOfDayToday(timeZone);
+		calendar.add(Calendar.DATE, -1);
+		return calendar;
+	}
+
+	public static Calendar getOneMonthFromToday(TimeZone timeZone) {
+		Calendar calendar = getEndOfDayToday(timeZone);
+		calendar.add(Calendar.MONTH, 1);
+		return calendar;
+	}
+
+	public static int getRandomNumber(int rangeBegin, int rangeEnd) {
+		Random r = new Random();
+		return r.nextInt(rangeEnd - rangeBegin) + rangeBegin;
+	}
+
+	public static int getDaysBetweenTodayAndTimestamp(long timeInMs,
+			TimeZone timeZone) {
+		Calendar calendarToday = getEndOfDayToday(timeZone);
+
+		return Days.daysBetween(new DateTime(timeInMs),
+				new DateTime(calendarToday)).getDays();
+	}
+
+	public static long getEndOfDayMinusDays(int days, TimeZone timeZone) {
+		DateTime lEod = DateTime.now(DateTimeZone.forTimeZone(timeZone));
+		lEod = lEod.withTimeAtStartOfDay();
+		// roll over to next day
+		lEod = lEod.plusDays(1);
+		// roll back 1 millisec to bring it to EOD time
+		lEod = lEod.minus(1);
+		// do the math
+		lEod = lEod.minusDays(days);
+		return lEod.getMillis();
+	}
+
+	public static long getEndOfDayPlusDays(int days, TimeZone timeZone) {
+		DateTime lEod = DateTime.now(DateTimeZone.forTimeZone(timeZone));
+		lEod = lEod.withTimeAtStartOfDay();
+		// roll over to next day
+		lEod = lEod.plusDays(1);
+		// roll back 1 millisec to bring it to EOD time
+		lEod = lEod.minus(1);
+		// do the math
+		lEod = lEod.plusDays(days);
+		return lEod.getMillis();
+	}
+
+	public static long getStartOfDayMinusDays(int days, TimeZone timeZone) {
+		DateTime lSod = DateTime.now(DateTimeZone.forTimeZone(timeZone));
+		lSod = lSod.withTimeAtStartOfDay();
+		// do the math
+		lSod = lSod.minusDays(days);
+		return lSod.getMillis();
+	}
+
+	public static long getStartOfDayPlusDays(int days, TimeZone timeZone) {
+		DateTime lSod = DateTime.now(DateTimeZone.forTimeZone(timeZone));
+		lSod = lSod.withTimeAtStartOfDay();
+		// do the math
+		lSod = lSod.plusDays(days);
+		return lSod.getMillis();
+	}
 }

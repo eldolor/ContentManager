@@ -64,6 +64,16 @@ public class ContentService {
 				LOGGER.info("Exiting");
 		}
 	}
+	public List<Content> getAll() {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			return contentDao.getAll();
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
 
 	public List<Content> get(Long applicationId, Long contentGroupId,
 			boolean deleted, boolean enabled) {
@@ -120,6 +130,20 @@ public class ContentService {
 				LOGGER.info("Exiting get");
 		}
 	}
+	public List<Content> getByContentGroupId(Long contentGroupId, boolean includeDeleted) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			List<Content> contents = contentDao.getByContentGroupId(contentGroupId,
+					includeDeleted);
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Returning " + contents.size() + " contents");
+			return contents;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
 
 	public List<Content> get(boolean deleted, boolean enabled) {
 		try {
@@ -137,6 +161,17 @@ public class ContentService {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering get");
 			return contentDao.get(id);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting get");
+		}
+	}
+
+	public Content get(String uri) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering get");
+			return contentDao.get(uri);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting get");
@@ -202,7 +237,7 @@ public class ContentService {
 
 	}
 
-	public void update(Content content) {
+	public Content update(Content content) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering update");
@@ -218,11 +253,25 @@ public class ContentService {
 			else
 				// set high date
 				content.setEndDateMs(Long.MAX_VALUE);
-			contentDao.update(content);
+			return contentDao.update(content);
+			
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting update");
 		}
+	}
+	public void moveContentGroup(Long id, Long contentGroupId,
+			Long timeUpdatedMs, Long timeUpdatedTimeZoneOffsetMs) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering deleteAllContents");
+			contentDao.moveContentGroup(id, contentGroupId, timeUpdatedMs,
+					timeUpdatedTimeZoneOffsetMs);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting delete");
+		}
+
 	}
 
 	public void delete(Long applicationId, Long contentGroupId,

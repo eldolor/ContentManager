@@ -3,12 +3,9 @@ package com.cm.quota.transfer;
 import java.io.Serializable;
 
 public class StorageQuota implements Serializable {
-	private String canonicalPlanName;
 	private long applicationId;
 	private String trackingId;
-	private long storageLimitInBytes;
 	private long storageUsedInBytes;
-	private int percentageStorageUsed;
 
 	public long getApplicationId() {
 		return applicationId;
@@ -26,29 +23,6 @@ public class StorageQuota implements Serializable {
 		this.storageUsedInBytes = storageUsedInBytes;
 	}
 
-	public long getStorageLimitInBytes() {
-		return storageLimitInBytes;
-	}
-
-	public void setStorageLimitInBytes(long storageLimitInBytes) {
-		this.storageLimitInBytes = storageLimitInBytes;
-	}
-
-	public String getCanonicalPlanName() {
-		return canonicalPlanName;
-	}
-
-	public void setCanonicalPlanName(String canonicalPlanName) {
-		this.canonicalPlanName = canonicalPlanName;
-	}
-
-	public int getPercentageStorageUsed() {
-		return percentageStorageUsed;
-	}
-
-	public void setPercentageStorageUsed(int percentageStorageUsed) {
-		this.percentageStorageUsed = percentageStorageUsed;
-	}
 
 	public String getTrackingId() {
 		return trackingId;

@@ -5,9 +5,7 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-import com.cm.config.CanonicalApplicationQuota;
-import com.cm.config.CanonicalPlanName;
-import com.cm.config.CanonicalStorageQuota;
+import com.cm.config.CanonicalPlan;
 
 @PersistenceCapable
 public class Quota {
@@ -21,14 +19,15 @@ public class Quota {
 
 	// default to free
 	@Persistent
-	private String canonicalPlanName = CanonicalPlanName.FREE.getValue();
+	private String canonicalPlanId = CanonicalPlan.FREE.getId();
 	// default to free
 	@Persistent
-	private Long storageLimitInBytes = CanonicalStorageQuota.FREE.getValue();
+	private Long storageLimitInBytes = CanonicalPlan.FREE.getStorageQuota();
+	@Persistent
+	private Long bandwidthLimitInBytes = CanonicalPlan.FREE.getBandwidthQuota();
 
 	@Persistent
-	private Integer applicationLimit = CanonicalApplicationQuota.FREE
-			.getValue();
+	private Integer applicationLimit = CanonicalPlan.FREE.getApplicationQuota();
 
 	@Persistent
 	private Long timeCreatedMs;
@@ -83,12 +82,12 @@ public class Quota {
 		this.timeUpdatedTimeZoneOffsetMs = timeUpdatedTimeZoneOffsetMs;
 	}
 
-	public String getCanonicalPlanName() {
-		return canonicalPlanName;
+	public String getCanonicalPlanId() {
+		return canonicalPlanId;
 	}
 
-	public void setCanonicalPlanName(String canonicalPlanName) {
-		this.canonicalPlanName = canonicalPlanName;
+	public void setCanonicalPlanId(String canonicalPlanId) {
+		this.canonicalPlanId = canonicalPlanId;
 	}
 
 	public Long getAccountId() {
@@ -113,6 +112,14 @@ public class Quota {
 
 	public void setStorageLimitInBytes(Long storageLimitInBytes) {
 		this.storageLimitInBytes = storageLimitInBytes;
+	}
+
+	public Long getBandwidthLimitInBytes() {
+		return bandwidthLimitInBytes;
+	}
+
+	public void setBandwidthLimitInBytes(Long bandwidthLimitInBytes) {
+		this.bandwidthLimitInBytes = bandwidthLimitInBytes;
 	}
 
 }

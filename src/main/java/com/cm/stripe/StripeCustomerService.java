@@ -16,35 +16,58 @@ public class StripeCustomerService {
 	public void save(StripeCustomer customer) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering save");
+				LOGGER.info("Entering");
 			stripeCustomerDao.save(customer);
 
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting save");
+				LOGGER.info("Exiting");
 		}
 	}
 
 	public StripeCustomer get(Long accountId) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering get");
+				LOGGER.info("Entering");
 			return stripeCustomerDao.get(accountId);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting get");
+				LOGGER.info("Exiting");
+		}
+	}
+	
+	public StripeCustomer getByStripeId(String stripeId) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			return stripeCustomerDao.getByStripeId(stripeId);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
 		}
 	}
 
 	public void update(StripeCustomer customer) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Entering update");
+				LOGGER.info("Entering");
 			stripeCustomerDao.update(customer);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting updateApplication");
+				LOGGER.info("Exiting");
 		}
 	}
 
+	public void delete(Long id, Long timeUpdatedMs,
+			Long timeUpdatedTimeZoneOffsetMs) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			stripeCustomerDao.delete(id, timeUpdatedMs,
+					timeUpdatedTimeZoneOffsetMs);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
 }

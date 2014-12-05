@@ -10,7 +10,7 @@
 
 <div class="container va-align">
 	<a href="/site/terms">Terms</a>&nbsp;|&nbsp;<a href="/site/privacy">Privacy</a>
-	<p>&#169; Copyright Coconut Martini Inc.</p>
+	<p>Skok Demo</p>
 	<img src="/resources/images/cm/logo-48x48.png" alt="small logo" />
 	Skok
 </div>

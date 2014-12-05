@@ -26,9 +26,6 @@
 
 			var doc = document.documentElement;
 			doc.setAttribute('data-useragent', navigator.userAgent);
-			var lSrc = ContentManagerJsi.getAnyImage();
-			log("function($)", "src: " + lSrc);
-			$('#any_image').attr('src', lSrc);
 		} catch (err) {
 			handleError("function($)", err);
 		} finally {
@@ -39,16 +36,23 @@
 
 </head>
 <body>
-	<jsp:include page="top_bar.jsp"></jsp:include>
+	<jsp:include page="top_bar.jsp"><jsp:param name="sticky"
+			value="false" /></jsp:include>
 	<br>
 
 	<section id="privacy">
 		<div class="row full-width">
 
-			<h3 class="gray">Any Image</h3>
-			<div>
-				<img id="any_image" alt="image" />
-			</div>
+			<h3 class="gray">Skok Demo</h3>
+			<p>Skok SDK also supports a Javascript interface. This allows you
+				to deliver web pages as part of your Android application, using
+				WebView.</p>
+			<p>Click on Menu, to interact with the Content Manager Javascript
+				interface.</p>
+			<p>
+				You can find out more at <a href="http://skok.co">http://skok.co</a>
+			</p>
+
 			<div class="clearfix"></div>
 		</div>
 	</section>

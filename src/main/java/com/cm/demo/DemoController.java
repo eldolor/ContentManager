@@ -48,35 +48,88 @@ public class DemoController {
 		}
 	}
 
-	/**
-	 * @param model
-	 * @return
-	 */
 	@RequestMapping(value = "/demo", method = RequestMethod.GET)
-	public ModelAndView displayApplications(ModelMap model) {
+	public ModelAndView index(ModelMap model) {
 		if (LOGGER.isLoggable(Level.INFO))
-			LOGGER.info("Entering displayApplications");
+			LOGGER.info("Entering");
 		try {
 			return new ModelAndView("skokdemo/index", model);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting displayApplications");
+				LOGGER.info("Exiting");
 		}
 	}
 
-	// @RequestMapping(value = "/applications/{tour}", method =
-	// RequestMethod.GET)
-	// public ModelAndView displayApplications(ModelMap model,
-	// @PathVariable String tour) {
-	// if (LOGGER.isLoggable(Level.INFO))
-	// LOGGER.info("Entering displayApplications");
-	// try {
-	// model.addAttribute("tour", tour);
-	// return new ModelAndView("applications", model);
-	// } finally {
-	// if (LOGGER.isLoggable(Level.INFO))
-	// LOGGER.info("Exiting displayApplications");
-	// }
-	// }
+	@RequestMapping(value = "/demo/all", method = RequestMethod.GET)
+	public ModelAndView all(ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering");
+		try {
+			return new ModelAndView("skokdemo/all", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	@RequestMapping(value = "/demo/tag", method = RequestMethod.GET)
+	public ModelAndView tagged(ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering");
+		try {
+			return new ModelAndView("skokdemo/tagged", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	@RequestMapping(value = "/demo/all/images", method = RequestMethod.GET)
+	public ModelAndView allImages(ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering");
+		try {
+			return new ModelAndView("skokdemo/all_images", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	@RequestMapping(value = "/demo/all/videos", method = RequestMethod.GET)
+	public ModelAndView allVideos(ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering");
+		try {
+			return new ModelAndView("skokdemo/all_videos", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	@RequestMapping(value = "/demo/any/image", method = RequestMethod.GET)
+	public ModelAndView anyImage(ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering");
+		try {
+			return new ModelAndView("skokdemo/any_image", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	@RequestMapping(value = "/demo/any/video", method = RequestMethod.GET)
+	public ModelAndView anyVideo(ModelMap model) {
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Entering");
+		try {
+			return new ModelAndView("skokdemo/any_video", model);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
 
 }

@@ -518,6 +518,8 @@ public class Utils {
 			UnsupportedEncodingException {
 		if (LOGGER.isLoggable(Level.INFO))
 			LOGGER.info("Entering");
+		if (LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Message:" + messageBody);
 		Properties props = new Properties();
 		Session lSession = Session.getDefaultInstance(props, null);
 		MimeMessage lMesssage = new MimeMessage(lSession);

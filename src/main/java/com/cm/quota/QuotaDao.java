@@ -150,6 +150,28 @@ class QuotaDao {
 		}
 	}
 
+	void update(Quota pQuota) {
+		PersistenceManager pm = null;
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			pm = PMF.get().getPersistenceManager();
+			Quota lQuota = pm.getObjectById(Quota.class, pQuota.getId());
+			lQuota.setBandwidthLimitInBytes(pQuota.getBandwidthLimitInBytes());
+			lQuota.setStorageLimitInBytes(pQuota.getStorageLimitInBytes());
+			lQuota.setTimeUpdatedMs(pQuota.getTimeUpdatedMs());
+			lQuota.setTimeUpdatedTimeZoneOffsetMs(pQuota
+					.getTimeUpdatedTimeZoneOffsetMs());
+
+		} finally {
+			if (pm != null) {
+				pm.close();
+			}
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
 	void create(ApplicationQuotaUsed quota) {
 		PersistenceManager pm = null;
 		try {

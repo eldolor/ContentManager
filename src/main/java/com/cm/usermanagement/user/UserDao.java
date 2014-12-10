@@ -118,6 +118,31 @@ class UserDao {
 		}
 	}
 
+	User getUserByPromoCode(String promoCode) {
+		PersistenceManager pm = null;
+
+		try {
+			pm = PMF.get().getPersistenceManager();
+			Query q = pm.newQuery(User.class);
+			q.setFilter("promoCode == promoCodeParam");
+			q.declareParameters("String promoCodeParam");
+			List<User> users = (List<User>) q.execute(promoCode);
+			User user = null;
+			if (users != null && (users.size() > 0)) {
+				user = users.get(0);
+			}
+			return user;
+		} catch (NoResultException e) {
+			// No matching result so return null
+			return null;
+		} finally {
+			if (pm != null) {
+				pm.close();
+			}
+		}
+
+	}
+
 	User signUpUser(User user) {
 		PersistenceManager pm = null;
 		Transaction tx = null;
@@ -143,7 +168,7 @@ class UserDao {
 			User lUser = pm.makePersistent(user);
 
 			tx.commit();
-			
+
 			return lUser;
 
 		} finally {

@@ -77,6 +77,7 @@ function signup() {
 		var signupObj = {
 			userName : $('#userName').val(),
 			password : $('#password').val(),
+			promoCode : $('#promoCode').val(),
 			timeCreatedMs : lTimeCreated,
 			timeCreatedTimeZoneOffsetMs : (lDate.getTimezoneOffset() * 60 * 1000),
 			timeUpdatedMs : lTimeCreated,

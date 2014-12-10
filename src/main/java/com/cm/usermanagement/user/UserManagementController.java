@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -94,8 +95,7 @@ public class UserManagementController {
 	}
 
 	@RequestMapping(value = "/signup", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-	public @ResponseBody
-	List<ValidationError> doSignup(
+	public @ResponseBody List<ValidationError> doSignup(
 			@RequestBody com.cm.usermanagement.user.transfer.User pUser,
 			HttpServletResponse response) {
 		try {
@@ -116,6 +116,9 @@ public class UserManagementController {
 				lUser.setEmail(pUser.getUserName());
 				lUser.setPassword(new BCryptPasswordEncoder().encode(pUser
 						.getPassword()));
+				// set personal promo code
+				lUser.setPromoCode(Utils.generatePromoCode());
+
 				lUser.setRole(User.ROLE_USER);
 				// default to true
 				lUser.setEnabled(true);
@@ -136,19 +139,22 @@ public class UserManagementController {
 						lApplication, lContentGroups);
 				// create demo usage reports for the last 10 days;
 				// asynchronously
-				int lLastNDays = 10;
-				// createDemoUsageReports(lApplication.getId(), lLastNDays);
-				Queue queue = QueueFactory
-						.getQueue(Configuration.CONTENT_STATS_QUEUE_NAME);
-				TaskOptions taskOptions = TaskOptions.Builder
-						.withUrl(
-								"/tasks/demo/usagereports/create/"
-										+ String.valueOf(lApplication.getId())
-										+ "/" + String.valueOf(lLastNDays))
-						.param("id", String.valueOf(lApplication.getId()))
-						.param("lastNDays", String.valueOf(lLastNDays))
-						.method(Method.POST).countdownMillis(5000);
-				queue.add(taskOptions);
+				{
+					int lLastNDays = 10;
+					// createDemoUsageReports(lApplication.getId(), lLastNDays);
+					Queue queue = QueueFactory
+							.getQueue(Configuration.CONTENT_STATS_QUEUE_NAME);
+					TaskOptions taskOptions = TaskOptions.Builder
+							.withUrl(
+									"/tasks/demo/usagereports/create/"
+											+ String.valueOf(lApplication
+													.getId()) + "/"
+											+ String.valueOf(lLastNDays))
+							.param("id", String.valueOf(lApplication.getId()))
+							.param("lastNDays", String.valueOf(lLastNDays))
+							.method(Method.POST).countdownMillis(5000);
+					queue.add(taskOptions);
+				}
 
 				// assign them the free quota
 				Quota lQuota = new Quota();
@@ -170,6 +176,22 @@ public class UserManagementController {
 				// Utils.triggerUpdateBandwidthUtilizationMessage(
 				// lApplication.getId(), 0L, 10000);
 				sendWelcomeEmail(lDomainUser);
+				{
+					String lPromoCode = pUser.getPromoCode();
+					// if the new user was referred
+					if (!Utils.isEmpty(lPromoCode)) {
+						Queue queue = QueueFactory
+								.getQueue(Configuration.USER_QUEUE_NAME);
+						TaskOptions taskOptions = TaskOptions.Builder
+								.withUrl("/tasks/process/promocode")
+								.param("userId", String.valueOf(pUser.getId()))
+								.param("promoCode", pUser.getPromoCode())
+								.method(Method.POST).countdownMillis(5000);
+						queue.add(taskOptions);
+
+					}
+				}
+
 				response.setStatus(HttpServletResponse.SC_CREATED);
 				return null;
 			}
@@ -181,6 +203,59 @@ public class UserManagementController {
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting doSignup");
+		}
+
+	}
+
+	@RequestMapping(value = "/tasks/process/promocode", method = RequestMethod.POST)
+	public void processPromoCode(@RequestParam Long userId,
+			@RequestParam String promoCode, HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			// validate the promo code
+			User lUser = userService.getUserByPromoCode(promoCode);
+			if (lUser != null) {
+				User lReferredUser = userService.getUser(userId);
+				// if valid, then add storage and bandwidth quota
+				Quota lUserQuota = quotaService.get(lUser.getAccountId());
+
+				lUserQuota.setBandwidthLimitInBytes(lUserQuota
+						.getBandwidthLimitInBytes()
+						+ Configuration.REFERERAL_BONUS_IN_BYTES);
+				lUserQuota.setStorageLimitInBytes(lUserQuota
+						.getStorageLimitInBytes()
+						+ Configuration.REFERERAL_BONUS_IN_BYTES);
+				lUserQuota.setTimeUpdatedMs(System.currentTimeMillis());
+				lUserQuota.setTimeUpdatedTimeZoneOffsetMs((long) TimeZone
+						.getDefault().getRawOffset());
+				quotaService.update(lUserQuota);
+				
+				//referred user
+				Quota lReferredUserQuota = quotaService.get(lReferredUser
+						.getAccountId());
+				lReferredUserQuota.setBandwidthLimitInBytes(lUserQuota
+						.getBandwidthLimitInBytes()
+						+ Configuration.REFERERAL_BONUS_IN_BYTES);
+				lReferredUserQuota.setStorageLimitInBytes(lUserQuota
+						.getStorageLimitInBytes()
+						+ Configuration.REFERERAL_BONUS_IN_BYTES);
+				lReferredUserQuota.setTimeUpdatedMs(System.currentTimeMillis());
+				lReferredUserQuota
+						.setTimeUpdatedTimeZoneOffsetMs((long) TimeZone
+								.getDefault().getRawOffset());
+				quotaService.update(lReferredUserQuota);
+				// make a record of the changes to the quota
+				
+				//TODO
+
+			}
+			response.setStatus(HttpServletResponse.SC_OK);
+		} catch (Throwable e) {
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
 		}
 
 	}
@@ -1100,8 +1175,7 @@ public class UserManagementController {
 	 * @return
 	 */
 	@RequestMapping(value = "/forgotpassword", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
-	public @ResponseBody
-	List<ValidationError> processForgotPassword(
+	public @ResponseBody List<ValidationError> processForgotPassword(
 			@RequestBody ForgotPasswordRequest pForgotPasswordRequest,
 			HttpServletResponse response) {
 		try {
@@ -1179,8 +1253,7 @@ public class UserManagementController {
 	/******** CHANGE PASSWORD ****************/
 
 	@RequestMapping(value = "/secured/changepassword", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
-	public @ResponseBody
-	List<ValidationError> doChangePassword(
+	public @ResponseBody List<ValidationError> doChangePassword(
 			@RequestBody PasswordChangeRequest passwordChangeRequest,
 			HttpServletResponse response) {
 		try {
@@ -1236,8 +1309,7 @@ public class UserManagementController {
 	 * @return
 	 */
 	@RequestMapping(value = "/secured/loggedinuser", method = RequestMethod.GET, produces = "application/json")
-	public @ResponseBody
-	com.cm.usermanagement.user.transfer.User getLoggedInUser(
+	public @ResponseBody com.cm.usermanagement.user.transfer.User getLoggedInUser(
 			HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -1365,8 +1437,7 @@ public class UserManagementController {
 	}
 
 	@RequestMapping(value = "/secured/loggedinuser", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
-	public @ResponseBody
-	List<ValidationError> doUpdateLoggedInUser(
+	public @ResponseBody List<ValidationError> doUpdateLoggedInUser(
 			@RequestBody com.cm.usermanagement.user.transfer.User userAccount,
 			HttpServletResponse response) {
 		try {
@@ -1405,8 +1476,7 @@ public class UserManagementController {
 	 * @return
 	 */
 	@RequestMapping(value = "/um/users", method = RequestMethod.GET, produces = "application/json")
-	public @ResponseBody
-	List<com.cm.usermanagement.user.transfer.User> getUsers(
+	public @ResponseBody List<com.cm.usermanagement.user.transfer.User> getUsers(
 			HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -1433,9 +1503,8 @@ public class UserManagementController {
 	 * @return
 	 */
 	@RequestMapping(value = "/um/user/{id}", method = RequestMethod.GET, produces = "application/json")
-	public @ResponseBody
-	com.cm.usermanagement.user.transfer.User getUser(@PathVariable Long id,
-			HttpServletResponse response) {
+	public @ResponseBody com.cm.usermanagement.user.transfer.User getUser(
+			@PathVariable Long id, HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getUser");
@@ -1453,8 +1522,7 @@ public class UserManagementController {
 	}
 
 	@RequestMapping(value = "/um/user", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-	public @ResponseBody
-	List<ValidationError> doCreateUser(
+	public @ResponseBody List<ValidationError> doCreateUser(
 			@RequestBody com.cm.usermanagement.user.transfer.User user,
 			HttpServletResponse response) {
 		try {
@@ -1511,8 +1579,7 @@ public class UserManagementController {
 	}
 
 	@RequestMapping(value = "/um/user", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
-	public @ResponseBody
-	List<ValidationError> doUpdateUser(
+	public @ResponseBody List<ValidationError> doUpdateUser(
 			@RequestBody com.cm.usermanagement.user.transfer.User user,
 			HttpServletResponse response) {
 		try {

@@ -55,6 +55,9 @@ public class User implements Serializable, UserDetails {
 	private String password;
 
 	@Persistent
+	private String promoCode;
+
+	@Persistent
 	private Boolean enabled = true;
 
 	@Persistent
@@ -134,6 +137,14 @@ public class User implements Serializable, UserDetails {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getPromoCode() {
+		return promoCode;
+	}
+
+	public void setPromoCode(String promoCode) {
+		this.promoCode = promoCode;
 	}
 
 	public void setEnabled(Boolean enabled) {

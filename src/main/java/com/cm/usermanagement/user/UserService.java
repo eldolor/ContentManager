@@ -65,6 +65,10 @@ public class UserService {
 		return userDao.getUserByAccountId(accountId, userId);
 	}
 
+	public User getUserByPromoCode(String promoCode) {
+		return userDao.getUserByPromoCode(promoCode);
+	}
+
 	public void saveUser(User user) {
 		// hard wired
 		if (user.getUsername().equals(User.DEFAULT_SUPER_ADMIN_USER_NAME))

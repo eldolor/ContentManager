@@ -278,4 +278,17 @@ public class QuotaService {
 
 	}
 
+	public void update(Quota quota) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			quotaDao.update(quota);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+
+		}
+
+	}
+
 }

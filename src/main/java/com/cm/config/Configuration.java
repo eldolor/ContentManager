@@ -40,12 +40,15 @@ public class Configuration {
 	public static final String CONTENT_QUEUE_NAME = "contentqueue";
 	public static final String GCM_QUEUE_NAME = "gcmqueue";
 	public static final String EMAIL_QUEUE_NAME = "emailqueue";
+	public static final String USER_QUEUE_NAME = "userqueue";
 	
 	public static final int GCM_MAX_ATTEMPTS = 10;
 	public static final int GCM_MESSAGE_SIZE_LIMIT_BYTES = 4096;
 	
 	public static final String TRACKING_ID_PREFIX = "SKOK_";
 	
+	//5GB
+	public static final long REFERERAL_BONUS_IN_BYTES = 5368709120L;
 	
 
 }

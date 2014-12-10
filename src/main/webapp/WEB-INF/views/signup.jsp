@@ -24,7 +24,12 @@
 <!-- Begin Custom -->
 <script type="text/javascript"
 	src="/resources/javascripts/cm/cm.signup.js"></script>
-
+<script type="text/javascript">
+var mPromoCode = ${promoCode};
+if(mPromoCode){
+	$('#promoCode').val(mPromoCode);
+}
+</script>
 <!-- End Custom -->
 
 
@@ -59,6 +64,11 @@
 							requirements: Must include upper-case, lower-case, number/special
 							character, and be minimum of 8 characters</small>
 						<!-- / generic password: upper-case, lower-case, number/special character, and min 8 characters -->
+					</div>
+					<div>
+						<label for="promoCode">Promo Code<input
+							class="form-control" type="text" id="promoCode" name="promoCode"
+							class="form-control" placeholder="Promo Code"/></label>
 					</div>
 					<div id="cm_errors_container" style="display: none">
 						<ul id="vision">

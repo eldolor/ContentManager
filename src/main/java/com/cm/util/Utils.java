@@ -638,6 +638,12 @@ public class Utils {
 		return calendar;
 	}
 
+	public static Calendar getNMonthsFromToday(int months, TimeZone timeZone) {
+		Calendar calendar = getEndOfDayToday(timeZone);
+		calendar.add(Calendar.MONTH, months);
+		return calendar;
+	}
+
 	public static int getRandomNumber(int rangeBegin, int rangeEnd) {
 		Random r = new Random();
 		return r.nextInt(rangeEnd - rangeBegin) + rangeBegin;

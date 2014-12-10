@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.cm.config.CanonicalContentType;
+import com.cm.config.CanonicalCouponTypes;
 import com.cm.config.CanonicalPlan;
 import com.cm.config.Configuration;
 import com.cm.contentmanager.application.Application;
@@ -116,8 +117,6 @@ public class UserManagementController {
 				lUser.setEmail(pUser.getUserName());
 				lUser.setPassword(new BCryptPasswordEncoder().encode(pUser
 						.getPassword()));
-				// set personal promo code
-				lUser.setPromoCode(Utils.generatePromoCode());
 
 				lUser.setRole(User.ROLE_USER);
 				// default to true
@@ -172,25 +171,30 @@ public class UserManagementController {
 				quotaService.create(lQuota);
 				// update utilization
 				Utils.triggerUpdateQuotaUtilizationMessage(
-						lApplication.getAccountId(), 10000);
+						lApplication.getAccountId(), 1000);
 				// Utils.triggerUpdateBandwidthUtilizationMessage(
 				// lApplication.getId(), 0L, 10000);
-				sendWelcomeEmail(lDomainUser);
+				Coupon lCoupon = generateReferAFriendCoupon(lDomainUser);
+
 				{
-					String lPromoCode = pUser.getPromoCode();
+					String lReferAFriendPromoCode = lCoupon.getCode();
 					// if the new user was referred
-					if (!Utils.isEmpty(lPromoCode)) {
+					if (!Utils.isEmpty(lReferAFriendPromoCode)) {
 						Queue queue = QueueFactory
 								.getQueue(Configuration.USER_QUEUE_NAME);
 						TaskOptions taskOptions = TaskOptions.Builder
-								.withUrl("/tasks/process/promocode")
-								.param("userId", String.valueOf(pUser.getId()))
+								.withUrl(
+										"/tasks/process/promocode/referafriend")
+								.param("referredUserId",
+										String.valueOf(pUser.getId()))
 								.param("promoCode", pUser.getPromoCode())
 								.method(Method.POST).countdownMillis(5000);
 						queue.add(taskOptions);
 
 					}
 				}
+
+				sendWelcomeEmail(lDomainUser, lCoupon);
 
 				response.setStatus(HttpServletResponse.SC_CREATED);
 				return null;
@@ -207,48 +211,94 @@ public class UserManagementController {
 
 	}
 
-	@RequestMapping(value = "/tasks/process/promocode", method = RequestMethod.POST)
-	public void processPromoCode(@RequestParam Long userId,
+	private Coupon generateReferAFriendCoupon(User pUser) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			Coupon lCoupon = new Coupon();
+			lCoupon.setAccountId(pUser.getAccountId());
+			lCoupon.setUserId(pUser.getId());
+			lCoupon.setType(CanonicalCouponTypes.REFER_A_FRIEND.getValue());
+			lCoupon.setCode(Utils.generatePromoCode());
+			// valid for the next 6 months, ends EOD for the user's timezone
+			TimeZone lTimeZone = TimeZone.getTimeZone("UTC");
+			lTimeZone.setRawOffset(pUser.getTimeCreatedTimeZoneOffsetMs()
+					.intValue());
+			lCoupon.setRedeemByMs(Utils.getNMonthsFromToday(6, lTimeZone)
+					.getTimeInMillis());
+
+			lCoupon.setTimeCreatedMs(pUser.getTimeCreatedMs());
+			lCoupon.setTimeCreatedTimeZoneOffsetMs(pUser
+					.getTimeCreatedTimeZoneOffsetMs());
+
+			// save the coupon
+			return userService.saveCoupon(lCoupon);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+
+	}
+
+	@RequestMapping(value = "/tasks/process/promocode/referafriend", method = RequestMethod.POST)
+	public void processReferAFriendPromoCode(@RequestParam Long referredUserId,
 			@RequestParam String promoCode, HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
 			// validate the promo code
-			User lUser = userService.getUserByPromoCode(promoCode);
+			Coupon lCoupon = userService.getCoupon(promoCode);
+			User lUser = userService.getUser(lCoupon.getUserId());
+
 			if (lUser != null) {
-				User lReferredUser = userService.getUser(userId);
+				User lReferredUser = userService.getUser(referredUserId);
 				// if valid, then add storage and bandwidth quota
-				Quota lUserQuota = quotaService.get(lUser.getAccountId());
+				{
+					Quota lUserQuota = quotaService.get(lUser.getAccountId());
 
-				lUserQuota.setBandwidthLimitInBytes(lUserQuota
-						.getBandwidthLimitInBytes()
-						+ Configuration.REFERERAL_BONUS_IN_BYTES);
-				lUserQuota.setStorageLimitInBytes(lUserQuota
-						.getStorageLimitInBytes()
-						+ Configuration.REFERERAL_BONUS_IN_BYTES);
-				lUserQuota.setTimeUpdatedMs(System.currentTimeMillis());
-				lUserQuota.setTimeUpdatedTimeZoneOffsetMs((long) TimeZone
-						.getDefault().getRawOffset());
-				quotaService.update(lUserQuota);
-				
-				//referred user
-				Quota lReferredUserQuota = quotaService.get(lReferredUser
-						.getAccountId());
-				lReferredUserQuota.setBandwidthLimitInBytes(lUserQuota
-						.getBandwidthLimitInBytes()
-						+ Configuration.REFERERAL_BONUS_IN_BYTES);
-				lReferredUserQuota.setStorageLimitInBytes(lUserQuota
-						.getStorageLimitInBytes()
-						+ Configuration.REFERERAL_BONUS_IN_BYTES);
-				lReferredUserQuota.setTimeUpdatedMs(System.currentTimeMillis());
-				lReferredUserQuota
-						.setTimeUpdatedTimeZoneOffsetMs((long) TimeZone
-								.getDefault().getRawOffset());
-				quotaService.update(lReferredUserQuota);
+					lUserQuota.setBandwidthLimitInBytes(lUserQuota
+							.getBandwidthLimitInBytes()
+							+ Configuration.REFERERAL_BONUS_IN_BYTES);
+					lUserQuota.setStorageLimitInBytes(lUserQuota
+							.getStorageLimitInBytes()
+							+ Configuration.REFERERAL_BONUS_IN_BYTES);
+					lUserQuota.setTimeUpdatedMs(System.currentTimeMillis());
+					lUserQuota.setTimeUpdatedTimeZoneOffsetMs((long) TimeZone
+							.getDefault().getRawOffset());
+					quotaService.update(lUserQuota);
+				}
+				// referred user
+				{
+					Quota lReferredUserQuota = quotaService.get(lReferredUser
+							.getAccountId());
+					lReferredUserQuota.setBandwidthLimitInBytes(lReferredUserQuota
+							.getBandwidthLimitInBytes()
+							+ Configuration.REFERERAL_BONUS_IN_BYTES);
+					lReferredUserQuota.setStorageLimitInBytes(lReferredUserQuota
+							.getStorageLimitInBytes()
+							+ Configuration.REFERERAL_BONUS_IN_BYTES);
+					lReferredUserQuota.setTimeUpdatedMs(System
+							.currentTimeMillis());
+					lReferredUserQuota
+							.setTimeUpdatedTimeZoneOffsetMs((long) TimeZone
+									.getDefault().getRawOffset());
+					quotaService.update(lReferredUserQuota);
+				}
 				// make a record of the changes to the quota
-				
-				//TODO
-
+				{
+					lCoupon.setNumberOfTimesRedeemed((lCoupon
+							.getNumberOfTimesRedeemed() + 1));
+					lCoupon.setTimeUpdatedMs(System.currentTimeMillis());
+					long lTimezoneOffset = (long) TimeZone.getTimeZone("UTC")
+							.getRawOffset();
+					lCoupon.setTimeUpdatedTimeZoneOffsetMs(lTimezoneOffset);
+					userService.updateCouponRedemption(lCoupon);
+				}
+				// send email indicating that coupon was used and quota was
+				// added
+				{
+					
+				}
 			}
 			response.setStatus(HttpServletResponse.SC_OK);
 		} catch (Throwable e) {
@@ -260,7 +310,7 @@ public class UserManagementController {
 
 	}
 
-	private void sendWelcomeEmail(User pUser) {
+	private void sendWelcomeEmail(User pUser, Coupon pCoupon) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");

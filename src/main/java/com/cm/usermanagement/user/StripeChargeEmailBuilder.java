@@ -24,6 +24,9 @@ public class StripeChargeEmailBuilder {
 	static final String CONTAINER_CALLOUT_BEGIN = "<table class=\"row callout\" style=\"border-spacing: 0; border-collapse: collapse; vertical-align: top; text-align: left; width: 100%; position: relative; display: block; padding: 0px;\"> <tr style=\"vertical-align: top; text-align: left; padding: 0;\" align=\"left\"> <td class=\"wrapper last\" style=\"word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; hyphens: auto; border-collapse: collapse !important; vertical-align: top; text-align: left; position: relative; color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; line-height: 19px; font-size: 14px; margin: 0; padding: 10px 0px 20px;\" align=\"left\" valign=\"top\"><table class=\"twelve columns\" style=\"border-spacing: 0; border-collapse: collapse; vertical-align: top; text-align: left; width: 580px; margin: 0 auto; padding: 0;\"> <tr style=\"vertical-align: top; text-align: left; padding: 0;\" align=\"left\"> <td class=\"panel\" style=\"word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; hyphens: auto; border-collapse: collapse !important; vertical-align: top; text-align: left; color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; line-height: 19px; font-size: 14px; background: #ECF8FF; margin: 0; padding: 10px; border: 1px solid #b9e5ff;\" align=\"left\" bgcolor=\"#E2FBF8\" valign=\"top\">";
 	static final String CONTAINER_CALLOUT_END = "</td> <td class=\"expander\" style=\"word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; hyphens: auto; border-collapse: collapse !important; vertical-align: top; text-align: left; visibility: hidden; width: 0px; color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; line-height: 19px; font-size: 14px; margin: 0; padding: 0;\" align=\"left\" valign=\"top\"></td> </tr> </table></td> </tr> </table>";
 
+	static final String CONTAINER_REFER_A_FRIEND_BEGIN = "<table class=\"row callout\" style=\"border-spacing: 0; border-collapse: collapse; vertical-align: top; text-align: left; width: 100%; position: relative; display: block; padding: 0px;\"> <tr style=\"vertical-align: top; text-align: left; padding: 0;\" align=\"left\"> <td class=\"wrapper last\" style=\"word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; hyphens: auto; border-collapse: collapse !important; vertical-align: top; text-align: left; position: relative; color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; line-height: 19px; font-size: 14px; margin: 0; padding: 10px 0px 20px;\" align=\"left\" valign=\"top\"><table class=\"twelve columns\" style=\"border-spacing: 0; border-collapse: collapse; vertical-align: top; text-align: left; width: 580px; margin: 0 auto; padding: 0;\"> <tr style=\"vertical-align: top; text-align: left; padding: 0;\" align=\"left\"> <td class=\"panel\" style=\"word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; hyphens: auto; border-collapse: collapse !important; vertical-align: top; text-align: left; color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; line-height: 19px; font-size: 14px; background: #ECF8FF; margin: 0; padding: 10px; border: 1px solid #b9e5ff;\" align=\"left\" bgcolor=\"#E2FBF8\" valign=\"top\"> ";
+	static final String CONTAINER_REFER_A_FRIEND_END = "</td> <td class=\"expander\" style=\"word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; hyphens: auto; border-collapse: collapse !important; vertical-align: top; text-align: left; visibility: hidden; width: 0px; color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; line-height: 19px; font-size: 14px; margin: 0; padding: 0;\" align=\"left\" valign=\"top\"></td> </tr> </table></td> </tr> </table>";
+
 	static final String CONTAINER_SOCIAL = "<table class=\"row footer\" style=\"border-spacing: 0; border-collapse: collapse; vertical-align: top; text-align: left; width: 100%; position: relative; padding: 0px;\"> <tr style=\"vertical-align: top; text-align: left; padding: 0;\" align=\"left\"> <td class=\"wrapper\" style=\"word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; hyphens: auto; border-collapse: collapse !important; vertical-align: top; text-align: left; position: relative; color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; line-height: 19px; font-size: 14px; background: #ebebeb; margin: 0; padding: 10px 20px 0px 0px;\" align=\"left\" bgcolor=\"#ebebeb\" valign=\"top\"><table class=\"six columns\" style=\"border-spacing: 0; border-collapse: collapse; vertical-align: top; text-align: left; width: 280px; margin: 0 auto; padding: 0;\"> <tr style=\"vertical-align: top; text-align: left; padding: 0;\" align=\"left\"> <td class=\"left-text-pad\" style=\"word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; hyphens: auto; border-collapse: collapse !important; vertical-align: top; text-align: left; color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; line-height: 19px; font-size: 14px; margin: 0; padding: 0px 0px 10px 10px;\" align=\"left\" valign=\"top\"><h5 style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 1.3; word-break: normal; font-size: 24px; margin: 0; padding: 0 0 10px;\" align=\"left\">Connect With Us:</h5><table class=\"tiny-button facebook\" style=\"border-spacing: 0; border-collapse: collapse; vertical-align: top; text-align: left; width: 100%; overflow: hidden; padding: 0;\"> <tr style=\"vertical-align: top; text-align: left; padding: 0;\" align=\"left\"> <td style=\"word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; hyphens: auto; border-collapse: collapse !important; vertical-align: top; text-align: center; color: #ffffff; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; line-height: 19px; font-size: 14px; display: block; width: auto !important; background: #3b5998; margin: 0; padding: 5px 0 4px; border: 1px solid #2d4473;\" align=\"center\" bgcolor=\"#3b5998\" valign=\"top\"><a href=\"https://www.facebook.com/skokco\" style=\"color: #ffffff; text-decoration: none; font-weight: normal; font-family: Helvetica, Arial, sans-serif; font-size: 12px;\">Facebook</a> </td> </tr> </table> <br /> <table class=\"tiny-button twitter\" style=\"border-spacing: 0; border-collapse: collapse; vertical-align: top; text-align: left; width: 100%; overflow: hidden; padding: 0;\"> <tr style=\"vertical-align: top; text-align: left; padding: 0;\" align=\"left\"> <td style=\"word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; hyphens: auto; border-collapse: collapse !important; vertical-align: top; text-align: center; color: #ffffff; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; line-height: 19px; font-size: 14px; display: block; width: auto !important; background: #00acee; margin: 0; padding: 5px 0 4px; border: 1px solid #0087bb;\" align=\"center\" bgcolor=\"#00acee\" valign=\"top\"><a href=\"https://twitter.com/SkokCo\" style=\"color: #ffffff; text-decoration: none; font-weight: normal; font-family: Helvetica, Arial, sans-serif; font-size: 12px;\">Twitter</a> </td> </tr> </table> <br /> <table class=\"tiny-button google-plus\" style=\"border-spacing: 0; border-collapse: collapse; vertical-align: top; text-align: left; width: 100%; overflow: hidden; padding: 0;\"> <tr style=\"vertical-align: top; text-align: left; padding: 0;\" align=\"left\"> <td style=\"word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; hyphens: auto; border-collapse: collapse !important; vertical-align: top; text-align: center; color: #ffffff; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; line-height: 19px; font-size: 14px; display: block; width: auto !important; background: #DB4A39; margin: 0; padding: 5px 0 4px; border: 1px solid #cc0000;\" align=\"center\" bgcolor=\"#DB4A39\" valign=\"top\"><a href=\"https://plus.google.com/+SkokCoPage\" style=\"color: #ffffff; text-decoration: none; font-weight: normal; font-family: Helvetica, Arial, sans-serif; font-size: 12px;\">Google +</a></td> </tr> </table> </td> <td class=\"expander\" style=\"word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; hyphens: auto; border-collapse: collapse !important; vertical-align: top; text-align: left; visibility: hidden; width: 0px; color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; line-height: 19px; font-size: 14px; margin: 0; padding: 0;\" align=\"left\" valign=\"top\"></td> </tr> </table> </td> <td class=\"wrapper last\" style=\"word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; hyphens: auto; border-collapse: collapse !important; vertical-align: top; text-align: left; position: relative; color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; line-height: 19px; font-size: 14px; background: #ebebeb; margin: 0; padding: 10px 0px 0px;\" align=\"left\" bgcolor=\"#ebebeb\" valign=\"top\"><table class=\"six columns\" style=\"border-spacing: 0; border-collapse: collapse; vertical-align: top; text-align: left; width: 280px; margin: 0 auto; padding: 0;\"> <tr style=\"vertical-align: top; text-align: left; padding: 0;\" align=\"left\"> <td class=\"last right-text-pad\" style=\"word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; hyphens: auto; border-collapse: collapse !important; vertical-align: top; text-align: left; color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; line-height: 19px; font-size: 14px; margin: 0; padding: 0px 0px 10px;\" align=\"left\" valign=\"top\"> <h5 style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 1.3; word-break: normal; font-size: 24px; margin: 0; padding: 0 0 10px;\" align=\"left\">Contact Info:</h5> <p style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 19px; font-size: 14px; margin: 0 0 10px; padding: 0;\" align=\"left\"> Email: <a href=\"mailto:support@skok.co\" style=\"color: #2ba6cb; text-decoration: none;\">support@skok.co</a> </p> </td> <td class=\"expander\" style=\"word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; hyphens: auto; border-collapse: collapse !important; vertical-align: top; text-align: left; visibility: hidden; width: 0px; color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; line-height: 19px; font-size: 14px; margin: 0; padding: 0;\" align=\"left\" valign=\"top\"></td> </tr> </table> </td> </tr> </table>";
 	static final String CONTAINER_FOOTER = "<table class=\"row\" style=\"border-spacing: 0; border-collapse: collapse; vertical-align: top; text-align: left; width: 100%; position: relative; display: block; padding: 0px;\"> <tr style=\"vertical-align: top; text-align: left; padding: 0;\" align=\"left\"> <td class=\"wrapper last\" style=\"word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; hyphens: auto; border-collapse: collapse !important; vertical-align: top; text-align: left; position: relative; color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; line-height: 19px; font-size: 14px; margin: 0; padding: 10px 0px 0px;\" align=\"left\" valign=\"top\"> <table class=\"twelve columns\" style=\"border-spacing: 0; border-collapse: collapse; vertical-align: top; text-align: left; width: 580px; margin: 0 auto; padding: 0;\"> <tr style=\"vertical-align: top; text-align: left; padding: 0;\" align=\"left\"> <td align=\"center\" style=\"word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; hyphens: auto; border-collapse: collapse !important; vertical-align: top; text-align: left; color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; line-height: 19px; font-size: 14px; margin: 0; padding: 0px 0px 10px;\" valign=\"top\"><center style=\"width: 100%; min-width: 580px;\"> <p style=\"text-align: center; color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; line-height: 19px; font-size: 14px; margin: 0 0 10px; padding: 0;\" align=\"center\"> <a href=\"http://skok.co/site/terms\" style=\"color: #2ba6cb; text-decoration: none;\">Terms</a> | <a href=\"http://skok.co/site/privacy\" style=\"color: #2ba6cb; text-decoration: none;\">Privacy</a> </p> </center></td> <td class=\"expander\" style=\"word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; hyphens: auto; border-collapse: collapse !important; vertical-align: top; text-align: left; visibility: hidden; width: 0px; color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; line-height: 19px; font-size: 14px; margin: 0; padding: 0;\" align=\"left\" valign=\"top\"></td> </tr> </table> </td> </tr> </table>";
 	static final String CONTAINER_END = "<!-- container end below --></td></tr></table>";
@@ -34,7 +37,8 @@ public class StripeChargeEmailBuilder {
 	@Autowired
 	private UserService userService;
 
-	public String build(String htmlFormattedHeader, String htmlFormattedCallout) {
+	public String build(String htmlFormattedHeader,
+			String htmlFormattedCallout, String htmlFormatedReferAFriend) {
 		log.info("Entering build()");
 
 		StringBuilder email = new StringBuilder();
@@ -55,6 +59,10 @@ public class StripeChargeEmailBuilder {
 		email.append(htmlFormattedCallout);
 		email.append(CONTAINER_CALLOUT_END);
 
+		email.append(CONTAINER_REFER_A_FRIEND_BEGIN);
+		email.append(htmlFormatedReferAFriend);
+		email.append(CONTAINER_REFER_A_FRIEND_END);
+
 		email.append(CONTAINER_SOCIAL);
 		email.append(CONTAINER_FOOTER);
 		email.append(CONTAINER_END);
@@ -69,7 +77,8 @@ public class StripeChargeEmailBuilder {
 	public static void main(String[] args) {
 		StringBuilder lHtmlFormattedHeader = new StringBuilder();
 
-		lHtmlFormattedHeader.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">Welcome to Skok.</p>");
+		lHtmlFormattedHeader
+				.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">Welcome to Skok.</p>");
 		lHtmlFormattedHeader
 				.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">Skok is an Advanced Content Management and  Delivery platform for your Mobile Apps. Skok delivers rich content to your Mobile Apps, and stores it locally on mobile devices.</p>");
 		lHtmlFormattedHeader
@@ -79,7 +88,8 @@ public class StripeChargeEmailBuilder {
 				.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">You can find out more at <a href=\"http://skok.co/docs/overview\">Skok</a> </p>");
 
 		StringBuilder lHtmlFormattedCallout = new StringBuilder();
-		lHtmlFormattedCallout.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\"><b>Powerful New Features</b></p>");
+		lHtmlFormattedCallout
+				.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\"><b>Powerful New Features</b></p>");
 		lHtmlFormattedCallout.append("<ol>");
 		lHtmlFormattedCallout.append("<li>Cloud-driven Architecture</li>");
 		lHtmlFormattedCallout
@@ -101,8 +111,55 @@ public class StripeChargeEmailBuilder {
 		lHtmlFormattedCallout
 				.append("<li>Analytics to Track Usage Statistics of your Content</li>");
 		lHtmlFormattedCallout.append("</ol>");
+
+		StringBuilder lHtmlFormatedReferAFriend = new StringBuilder();
+		lHtmlFormatedReferAFriend
+				.append("<h5 style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 1.3; word-break: normal; font-size: 24px; margin: 0; padding: 0 0 10px;\" align=\"left\">Refer a Friend:</h5> <p>Take advantage of this exclusive limited-time offer.</p> <p>We are giving you a big gift when your friend signs up for Skok. You get an additional 5GB of Bandwidth per Month, and an additional 5GB of Storage for each friend that you refer.</p> <p>You friend also gets an additional 5GB of Bandwidth per Month, and an additional 5GB of Storage.</p>");
+		lHtmlFormatedReferAFriend.append("<p>You friend must sign up by ");
+		lHtmlFormatedReferAFriend.append(" for you to be eligible.</p>");
+
+		lHtmlFormatedReferAFriend
+				.append("<p><a href=\"http://www.facebook.com/sharer/sharer.php?u=http://skok.co/invite/");
+		lHtmlFormatedReferAFriend.append("<code>");
+		lHtmlFormatedReferAFriend.append("&t=");
+		lHtmlFormatedReferAFriend
+				.append("I%20am%20using%20Skok%20for%20my%20mobile%20content%20management%20and%20delivery%20needs.%20Use%20promo%20code%20");
+		lHtmlFormatedReferAFriend.append("<code>");
+		lHtmlFormatedReferAFriend
+				.append("%20and%20get%20an%20additional%205GB%20of%20Bandwidth%20per%20Month,%20and%20an%20additional%205GB%20of%20Storage.");
+		lHtmlFormatedReferAFriend
+				.append("Find%20out%20more%20at%20http://skok.co/invite/");
+		lHtmlFormatedReferAFriend.append("<code>");
+		lHtmlFormatedReferAFriend.append("\"");
+		lHtmlFormatedReferAFriend
+				.append(" style=\"text-decoration: none; font-weight: normal; font-family: Helvetica, Arial, sans-serif; font-size: 16px;\">Share on Facebook</a>");
+		
+		lHtmlFormatedReferAFriend
+				.append("&nbsp;|&nbsp;<a href=\"https://twitter.com/intent/tweet?text=");
+		lHtmlFormatedReferAFriend
+				.append("I%20am%20using%20Skok%20for%20my%20mobile%20content%20management%20and%20delivery%20needs.%20Use%20promo%20code%20and%20get%20an%20additional%205GB%20of%20Bandwidth%20per%20Month,%20and%20an%20additional%205GB%20of%20Storage.");
+		lHtmlFormatedReferAFriend.append("\"");
+		lHtmlFormatedReferAFriend
+				.append(" style=\"text-decoration: none; font-weight: normal; font-family: Helvetica, Arial, sans-serif; font-size: 16px;\">Share on Twitter</a>");
+		
+		
+		lHtmlFormatedReferAFriend
+				.append("&nbsp;|&nbsp;<a href=\"https://m.google.com/app/plus/x/?v=compose&content=");
+		lHtmlFormatedReferAFriend
+				.append("I%20am%20using%20Skok%20for%20my%20mobile%20content%20management%20and%20delivery%20needs.%20Use%20promo%20code%20");
+		lHtmlFormatedReferAFriend.append("<code>");
+		lHtmlFormatedReferAFriend
+				.append("%20and%20get%20an%20additional%205GB%20of%20Bandwidth%20per%20Month,%20and%20an%20additional%205GB%20of%20Storage.");
+		lHtmlFormatedReferAFriend
+				.append("Find%20out%20more%20at%20http://skok.co/invite/");
+		lHtmlFormatedReferAFriend.append("<code>");
+		lHtmlFormatedReferAFriend.append("\"");
+		lHtmlFormatedReferAFriend
+				.append(" style=\"text-decoration: none; font-weight: normal; font-family: Helvetica, Arial, sans-serif; font-size: 16px;\">Share on Google+</a></p>");
+
 		System.out.println(new StripeChargeEmailBuilder().build(
 				lHtmlFormattedHeader.toString(),
-				lHtmlFormattedCallout.toString()));
+				lHtmlFormattedCallout.toString(),
+				lHtmlFormatedReferAFriend.toString()));
 	}
 }

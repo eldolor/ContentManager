@@ -20,10 +20,19 @@ public class Coupon implements Searchable {
 	private Long userId;
 
 	@Persistent
+	private String type;
+
+	@Persistent
 	private String code;
 
 	@Persistent
 	private Long numberOfTimesRedeemed;
+
+	@Persistent
+	private Long maxRedemptions;
+
+	@Persistent
+	private Long redeemByMs;
 
 	@Persistent
 	private Boolean deleted = false;
@@ -45,6 +54,14 @@ public class Coupon implements Searchable {
 		this.id = id;
 	}
 
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
 	public String getCode() {
 		return code;
 	}
@@ -59,6 +76,22 @@ public class Coupon implements Searchable {
 
 	public void setNumberOfTimesRedeemed(Long numberOfTimesRedeemed) {
 		this.numberOfTimesRedeemed = numberOfTimesRedeemed;
+	}
+
+	public Long getMaxRedemptions() {
+		return maxRedemptions;
+	}
+
+	public void setMaxRedemptions(Long maxRedemptions) {
+		this.maxRedemptions = maxRedemptions;
+	}
+
+	public Long getRedeemByMs() {
+		return redeemByMs;
+	}
+
+	public void setRedeemByMs(Long redeemByMs) {
+		this.redeemByMs = redeemByMs;
 	}
 
 	public Boolean isDeleted() {

@@ -48,6 +48,7 @@ import com.cm.stripe.StripeCustomer;
 import com.cm.stripe.StripeCustomerService;
 import com.cm.usermanagement.user.transfer.ForgotPasswordRequest;
 import com.cm.usermanagement.user.transfer.PasswordChangeRequest;
+import com.cm.util.SkokEmailBuilder;
 import com.cm.util.Utils;
 import com.cm.util.ValidationError;
 import com.google.appengine.api.taskqueue.Queue;
@@ -96,7 +97,8 @@ public class UserManagementController {
 	}
 
 	@RequestMapping(value = "/signup", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-	public @ResponseBody List<ValidationError> doSignup(
+	public @ResponseBody
+	List<ValidationError> doSignup(
 			@RequestBody com.cm.usermanagement.user.transfer.User pUser,
 			HttpServletResponse response) {
 		try {
@@ -175,8 +177,10 @@ public class UserManagementController {
 				// Utils.triggerUpdateBandwidthUtilizationMessage(
 				// lApplication.getId(), 0L, 10000);
 				Coupon lCoupon = generateReferAFriendCoupon(lDomainUser);
-
-				{
+				boolean lIsReferral = false;
+				// if there's a promo code
+				if (!Utils.isEmpty(pUser.getPromoCode())) {
+					lIsReferral = true;
 					String lReferAFriendPromoCode = lCoupon.getCode();
 					// if the new user was referred
 					if (!Utils.isEmpty(lReferAFriendPromoCode)) {
@@ -186,15 +190,15 @@ public class UserManagementController {
 								.withUrl(
 										"/tasks/process/promocode/referafriend")
 								.param("referredUserId",
-										String.valueOf(pUser.getId()))
-								.param("promoCode", pUser.getPromoCode())
+										String.valueOf(lDomainUser.getId()))
+								.param("promoCodeUsed", pUser.getPromoCode())
 								.method(Method.POST).countdownMillis(5000);
 						queue.add(taskOptions);
 
 					}
 				}
 
-				sendWelcomeEmail(lDomainUser, lCoupon);
+				sendWelcomeEmail(lDomainUser, lCoupon, lIsReferral);
 
 				response.setStatus(HttpServletResponse.SC_CREATED);
 				return null;
@@ -242,41 +246,44 @@ public class UserManagementController {
 
 	@RequestMapping(value = "/tasks/process/promocode/referafriend", method = RequestMethod.POST)
 	public void processReferAFriendPromoCode(@RequestParam Long referredUserId,
-			@RequestParam String promoCode, HttpServletResponse response) {
+			@RequestParam String promoCodeUsed, HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
 			// validate the promo code
-			Coupon lCoupon = userService.getCoupon(promoCode);
-			User lUser = userService.getUser(lCoupon.getUserId());
+			Coupon lCoupon = userService.getCoupon(promoCodeUsed);
+			User lReferrer = userService.getUser(lCoupon.getUserId());
 
-			if (lUser != null) {
+			if (lCoupon != null && lReferrer != null) {
 				User lReferredUser = userService.getUser(referredUserId);
 				// if valid, then add storage and bandwidth quota
 				{
-					Quota lUserQuota = quotaService.get(lUser.getAccountId());
-
-					lUserQuota.setBandwidthLimitInBytes(lUserQuota
-							.getBandwidthLimitInBytes()
+					Quota lReferrerQuota = quotaService.get(lReferrer
+							.getAccountId());
+					lReferrerQuota.setBonusBandwidthLimitInBytes(lReferrerQuota
+							.getBonusBandwidthLimitInBytes()
 							+ Configuration.REFERERAL_BONUS_IN_BYTES);
-					lUserQuota.setStorageLimitInBytes(lUserQuota
-							.getStorageLimitInBytes()
+					lReferrerQuota.setBonusStorageLimitInBytes(lReferrerQuota
+							.getBonusStorageLimitInBytes()
 							+ Configuration.REFERERAL_BONUS_IN_BYTES);
-					lUserQuota.setTimeUpdatedMs(System.currentTimeMillis());
-					lUserQuota.setTimeUpdatedTimeZoneOffsetMs((long) TimeZone
-							.getDefault().getRawOffset());
-					quotaService.update(lUserQuota);
+					lReferrerQuota.setTimeUpdatedMs(System.currentTimeMillis());
+					lReferrerQuota
+							.setTimeUpdatedTimeZoneOffsetMs((long) TimeZone
+									.getDefault().getRawOffset());
+					quotaService.update(lReferrerQuota);
 				}
 				// referred user
 				{
 					Quota lReferredUserQuota = quotaService.get(lReferredUser
 							.getAccountId());
-					lReferredUserQuota.setBandwidthLimitInBytes(lReferredUserQuota
-							.getBandwidthLimitInBytes()
-							+ Configuration.REFERERAL_BONUS_IN_BYTES);
-					lReferredUserQuota.setStorageLimitInBytes(lReferredUserQuota
-							.getStorageLimitInBytes()
-							+ Configuration.REFERERAL_BONUS_IN_BYTES);
+					lReferredUserQuota
+							.setBonusBandwidthLimitInBytes(lReferredUserQuota
+									.getBonusBandwidthLimitInBytes()
+									+ Configuration.REFERERAL_BONUS_IN_BYTES);
+					lReferredUserQuota
+							.setBonusStorageLimitInBytes(lReferredUserQuota
+									.getBonusStorageLimitInBytes()
+									+ Configuration.REFERERAL_BONUS_IN_BYTES);
 					lReferredUserQuota.setTimeUpdatedMs(System
 							.currentTimeMillis());
 					lReferredUserQuota
@@ -286,8 +293,9 @@ public class UserManagementController {
 				}
 				// make a record of the changes to the quota
 				{
-					lCoupon.setNumberOfTimesRedeemed((lCoupon
-							.getNumberOfTimesRedeemed() + 1));
+					long lTimesRedeemed = (lCoupon.getNumberOfTimesRedeemed() == null) ? 0L
+							: lCoupon.getNumberOfTimesRedeemed();
+					lCoupon.setNumberOfTimesRedeemed(++lTimesRedeemed);
 					lCoupon.setTimeUpdatedMs(System.currentTimeMillis());
 					long lTimezoneOffset = (long) TimeZone.getTimeZone("UTC")
 							.getRawOffset();
@@ -297,7 +305,8 @@ public class UserManagementController {
 				// send email indicating that coupon was used and quota was
 				// added
 				{
-					
+					sendReferAFriendPromoClaimedEmailToReferrer(lReferrer,
+							lCoupon);
 				}
 			}
 			response.setStatus(HttpServletResponse.SC_OK);
@@ -310,14 +319,17 @@ public class UserManagementController {
 
 	}
 
-	private void sendWelcomeEmail(User pUser, Coupon pCoupon) {
+	private void sendReferAFriendPromoClaimedEmailToReferrer(User pUser,
+			Coupon pCoupon) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
 			StringBuilder lHtmlFormattedHeader = new StringBuilder();
 
 			lHtmlFormattedHeader
-					.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">Welcome to Skok.</p>");
+					.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">Thank you for referring a friend to Skok.</p>");
+			lHtmlFormattedHeader
+					.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">You get an additional 5GB of Bandwidth per Month, and an additional 5GB of Storage.</p>");
 			lHtmlFormattedHeader
 					.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">Skok is an Advanced Content Management and  Delivery platform for your Mobile Apps. Skok delivers rich content to your Mobile Apps, and stores it locally on mobile devices.</p>");
 			lHtmlFormattedHeader
@@ -352,9 +364,74 @@ public class UserManagementController {
 			lHtmlFormattedCallout
 					.append("<li>Analytics to Track Usage Statistics of your Content</li>");
 			lHtmlFormattedCallout.append("</ol>");
-			String lEmailTemplate = new StripeChargeEmailBuilder().build(
+			String lEmailTemplate = new SkokEmailBuilder().build(
 					lHtmlFormattedHeader.toString(),
-					lHtmlFormattedCallout.toString());
+					lHtmlFormattedCallout.toString(), pCoupon);
+			Utils.sendEmail(Configuration.FROM_EMAIL_ADDRESS,
+					Configuration.FROM_NAME, pUser.getUsername(), "",
+					"Thank you for referring a friend to "
+							+ Configuration.SITE_NAME, lEmailTemplate,
+					TEXT_HTML_CHARSET_UTF_8);
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	private void sendWelcomeEmail(User pUser, Coupon pCoupon,
+			boolean pIsReferral) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			StringBuilder lHtmlFormattedHeader = new StringBuilder();
+
+			lHtmlFormattedHeader
+					.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">Welcome to Skok.</p>");
+			if (pIsReferral) {
+				lHtmlFormattedHeader
+						.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">You get an additional 5GB of Bandwidth per Month, and an additional 5GB of Storage, for being referred.</p>");
+			}
+			lHtmlFormattedHeader
+					.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">Skok is an Advanced Content Management and  Delivery platform for your Mobile Apps. Skok delivers rich content to your Mobile Apps, and stores it locally on mobile devices.</p>");
+			lHtmlFormattedHeader
+					.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">This elevates user experience of your Mobile Apps. Your content loads much faster, and users can engage with your rich content, even if they lose their data connection.</p>");
+
+			lHtmlFormattedHeader
+					.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">You can find out more at <a href=\"http://skok.co/docs/overview\">Skok</a> </p>");
+
+			StringBuilder lHtmlFormattedCallout = new StringBuilder();
+			lHtmlFormattedCallout
+					.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\"><b>Powerful New Features</b></p>");
+			lHtmlFormattedCallout.append("<ol>");
+			lHtmlFormattedCallout.append("<li>Cloud-driven Architecture</li>");
+			lHtmlFormattedCallout
+					.append("<li>Advanced Content Management Platform</li>");
+			lHtmlFormattedCallout
+					.append("<li>Streamlined Content Delivery</li>");
+			lHtmlFormattedCallout.append("<li>Auto-sizing of Images</li>");
+			lHtmlFormattedCallout
+					.append("<li>Say Goodbye to Google Play APK Expansion Files</li>");
+			lHtmlFormattedCallout.append("<li>Continuous Content Updates</li>");
+			lHtmlFormattedCallout.append("<li>No Extra Coding Required</li>");
+			lHtmlFormattedCallout
+					.append("<li>Easily-pluggable &amp; Feature-rich SDK</li>");
+			lHtmlFormattedCallout.append("<li>Mobile Device Storage</li>");
+			lHtmlFormattedCallout.append("<li>Advanced Caching on Device</li>");
+			lHtmlFormattedCallout
+					.append("<li>Non-Blocking Content Downloads</li>");
+			lHtmlFormattedCallout
+					.append("<li>Manages Content Downloads over Spotty Networks</li>");
+			lHtmlFormattedCallout.append("<li>Download Notifications</li>");
+			lHtmlFormattedCallout
+					.append("<li>Analytics to Track Usage Statistics of your Content</li>");
+			lHtmlFormattedCallout.append("</ol>");
+			String lEmailTemplate = new SkokEmailBuilder().build(
+					lHtmlFormattedHeader.toString(),
+					lHtmlFormattedCallout.toString(), pCoupon);
 			Utils.sendEmail(Configuration.FROM_EMAIL_ADDRESS,
 					Configuration.FROM_NAME, pUser.getUsername(), "",
 					"Welcome to " + Configuration.SITE_NAME, lEmailTemplate,
@@ -1225,7 +1302,8 @@ public class UserManagementController {
 	 * @return
 	 */
 	@RequestMapping(value = "/forgotpassword", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
-	public @ResponseBody List<ValidationError> processForgotPassword(
+	public @ResponseBody
+	List<ValidationError> processForgotPassword(
 			@RequestBody ForgotPasswordRequest pForgotPasswordRequest,
 			HttpServletResponse response) {
 		try {
@@ -1303,7 +1381,8 @@ public class UserManagementController {
 	/******** CHANGE PASSWORD ****************/
 
 	@RequestMapping(value = "/secured/changepassword", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
-	public @ResponseBody List<ValidationError> doChangePassword(
+	public @ResponseBody
+	List<ValidationError> doChangePassword(
 			@RequestBody PasswordChangeRequest passwordChangeRequest,
 			HttpServletResponse response) {
 		try {
@@ -1359,7 +1438,8 @@ public class UserManagementController {
 	 * @return
 	 */
 	@RequestMapping(value = "/secured/loggedinuser", method = RequestMethod.GET, produces = "application/json")
-	public @ResponseBody com.cm.usermanagement.user.transfer.User getLoggedInUser(
+	public @ResponseBody
+	com.cm.usermanagement.user.transfer.User getLoggedInUser(
 			HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -1487,7 +1567,8 @@ public class UserManagementController {
 	}
 
 	@RequestMapping(value = "/secured/loggedinuser", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
-	public @ResponseBody List<ValidationError> doUpdateLoggedInUser(
+	public @ResponseBody
+	List<ValidationError> doUpdateLoggedInUser(
 			@RequestBody com.cm.usermanagement.user.transfer.User userAccount,
 			HttpServletResponse response) {
 		try {
@@ -1526,7 +1607,8 @@ public class UserManagementController {
 	 * @return
 	 */
 	@RequestMapping(value = "/um/users", method = RequestMethod.GET, produces = "application/json")
-	public @ResponseBody List<com.cm.usermanagement.user.transfer.User> getUsers(
+	public @ResponseBody
+	List<com.cm.usermanagement.user.transfer.User> getUsers(
 			HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -1553,8 +1635,9 @@ public class UserManagementController {
 	 * @return
 	 */
 	@RequestMapping(value = "/um/user/{id}", method = RequestMethod.GET, produces = "application/json")
-	public @ResponseBody com.cm.usermanagement.user.transfer.User getUser(
-			@PathVariable Long id, HttpServletResponse response) {
+	public @ResponseBody
+	com.cm.usermanagement.user.transfer.User getUser(@PathVariable Long id,
+			HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering getUser");
@@ -1572,7 +1655,8 @@ public class UserManagementController {
 	}
 
 	@RequestMapping(value = "/um/user", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-	public @ResponseBody List<ValidationError> doCreateUser(
+	public @ResponseBody
+	List<ValidationError> doCreateUser(
 			@RequestBody com.cm.usermanagement.user.transfer.User user,
 			HttpServletResponse response) {
 		try {
@@ -1629,7 +1713,8 @@ public class UserManagementController {
 	}
 
 	@RequestMapping(value = "/um/user", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
-	public @ResponseBody List<ValidationError> doUpdateUser(
+	public @ResponseBody
+	List<ValidationError> doUpdateUser(
 			@RequestBody com.cm.usermanagement.user.transfer.User user,
 			HttpServletResponse response) {
 		try {

@@ -159,6 +159,8 @@ class QuotaDao {
 			Quota lQuota = pm.getObjectById(Quota.class, pQuota.getId());
 			lQuota.setBandwidthLimitInBytes(pQuota.getBandwidthLimitInBytes());
 			lQuota.setStorageLimitInBytes(pQuota.getStorageLimitInBytes());
+			lQuota.setBonusBandwidthLimitInBytes(pQuota.getBonusBandwidthLimitInBytes());
+			lQuota.setBonusStorageLimitInBytes(pQuota.getBonusStorageLimitInBytes());
 			lQuota.setTimeUpdatedMs(pQuota.getTimeUpdatedMs());
 			lQuota.setTimeUpdatedTimeZoneOffsetMs(pQuota
 					.getTimeUpdatedTimeZoneOffsetMs());

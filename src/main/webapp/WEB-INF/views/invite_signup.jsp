@@ -26,9 +26,17 @@
 	src="/resources/javascripts/cm/cm.signup.js"></script>
 
 <!-- End Custom -->
-<jsp:include page="facebook_generic_tags.jsp"></jsp:include>
-
-
+<meta property="og:title"
+	content="Advanced Mobile Content Management and Delivery Platform" />
+<meta property="og:site_name" content="Skok" />
+<meta property="og:url" content="http://skok.co" />
+<meta property="og:description"
+	content="Sign up now to get an additional 5GB of Bandwidth per Month, and an additional 5GB of Storage." />
+<meta property="fb:app_id" content="1374722596158356" />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:image"
+	content="http://skok.co/resources/images/cm/logo-512x512.png" />
 </head>
 <body>
 	<jsp:include page="common.jsp"></jsp:include>
@@ -67,7 +75,7 @@
 							class="form-control" placeholder="Promo Code" /></label>
 					</div>
 					<div id="invite_message" style="display: none;">
-						<span class="success radius label" >Sign up to get an
+						<span class="success radius label">Sign up Now, to get an
 							additional 5GB of Bandwidth per Month, and an additional 5GB of
 							Storage.</span>
 					</div>
@@ -139,5 +147,12 @@
 
 		<jsp:include page="footer.jsp"></jsp:include>
 	</section>
+	<script type="text/javascript">
+		var mPromoCode = '${validatedPromoCode}';
+		if (mPromoCode != '') {
+			$('#promoCode').val(mPromoCode);
+			$('#invite_message').show();
+		}
+	</script>
 </body>
 </html>

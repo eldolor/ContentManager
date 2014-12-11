@@ -206,6 +206,16 @@ public class UserService {
 				LOGGER.info("Exiting");
 		}
 	}
+	public Coupon getCouponByType(Long userId, String type) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			return userDao.getCouponByType(userId, type);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
 
 	public Coupon saveCoupon(Coupon coupon) {
 		try {

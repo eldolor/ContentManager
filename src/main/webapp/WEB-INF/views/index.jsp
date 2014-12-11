@@ -24,7 +24,7 @@
 <script type="text/javascript"
 	src="/resources/javascripts/cm/cm.index.js"></script>
 <!-- End Custom -->
-
+<jsp:include page="facebook_generic_tags.jsp"></jsp:include>
 </head>
 <body>
 	<section id="home">

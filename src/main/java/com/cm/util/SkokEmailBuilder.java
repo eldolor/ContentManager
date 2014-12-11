@@ -1,14 +1,25 @@
-package com.cm.usermanagement.user;
+package com.cm.util;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.TimeZone;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.cm.config.CanonicalCouponTypes;
+import com.cm.usermanagement.user.Coupon;
+import com.cm.usermanagement.user.UserService;
+
 @Component
-public class StripeChargeEmailBuilder {
-	private static final Logger log = Logger
-			.getLogger(StripeChargeEmailBuilder.class.getName());
+public class SkokEmailBuilder {
+	private static final Logger LOGGER = Logger.getLogger(SkokEmailBuilder.class
+			.getName());
 
 	static final String HTML_BEGIN = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns=\"http://www.w3.org/1999/xhtml\">";
 	static final String HEAD = "<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" /><meta name=\"viewport\" content=\"width=device-width\" /></head>";
@@ -34,12 +45,34 @@ public class StripeChargeEmailBuilder {
 	static final String BODY_END = "</body>";
 	static final String HTML_END = "</html>";
 
+	static final String HTML_REFER_A_FRIEND_1_1 = "<h5 style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 1.3; word-break: normal; font-size: 24px; margin: 0; padding: 0 0 10px;\" align=\"left\">Refer a Friend:</h5> <p>Take advantage of this exclusive limited-time offer.</p> <p>We are giving you a big gift when your friend signs up for Skok. You get an additional 5GB of Bandwidth per Month, and an additional 5GB of Storage for each friend that you refer.</p> <p>You friend also gets an additional 5GB of Bandwidth per Month, and an additional 5GB of Storage.</p>";
+	static final String HTML_REFER_A_FRIEND_1_2 = "<p>You friend must use ";
+	static final String HTML_REFER_A_FRIEND_1_3 = " to sign up, and must sign up by </p>";
+	static final String HTML_REFER_A_FRIEND_1_4 = " for you to be eligible.</p>";
+
+	/*******FACEBOOK***********/
+	static final String HTML_REFER_A_FRIEND_FB_1 = "<p><a href=\"http://www.facebook.com/sharer/sharer.php?u=http://skok.co/invite/";
+	static final String HTML_REFER_A_FRIEND_FB_2 = "\" target=\"_blank\" style=\"text-decoration: none; font-weight: normal; font-family: Helvetica, Arial, sans-serif; font-size: 16px;\">Share on Facebook</a>";
+	/*******FACEBOOK***********/
+
+	/*******TWITTER***********/
+	static final String HTML_REFER_A_FRIEND_TWITTER_1 = "&nbsp;|&nbsp;<a href=\"https://twitter.com/intent/tweet?text=";
+	static final String TWEET_1 = "Sign up at http://skok.co/invite/";
+	static final String TWEET_2 = " to get an additional 5GB of Bandwidth per Month, and an additional 5GB of Storage.";
+	static final String HTML_REFER_A_FRIEND_TWITTER_2 = "\" target=\"_blank\" style=\"text-decoration: none; font-weight: normal; font-family: Helvetica, Arial, sans-serif; font-size: 16px;\">Share on Twitter</a>";
+	/*******TWITTER***********/
+
+	/*******G PLUS***********/
+	static final String HTML_REFER_A_FRIEND_G_PLUS_1 = "&nbsp;|&nbsp;<a href=\"https://plus.google.com/share?url=http://skok.co/invite/";
+	static final String HTML_REFER_A_FRIEND_G_PLUS_2 = "\" target=\"_blank\" style=\"text-decoration: none; font-weight: normal; font-family: Helvetica, Arial, sans-serif; font-size: 16px;\">Share on Google+</a></p>";
+	/*******G PLUS***********/
+
 	@Autowired
 	private UserService userService;
 
 	public String build(String htmlFormattedHeader,
-			String htmlFormattedCallout, String htmlFormatedReferAFriend) {
-		log.info("Entering build()");
+			String htmlFormattedCallout, Coupon coupon) {
+		LOGGER.info("Entering build()");
 
 		StringBuilder email = new StringBuilder();
 		// email.append(DOCTYPE);
@@ -59,10 +92,42 @@ public class StripeChargeEmailBuilder {
 		email.append(htmlFormattedCallout);
 		email.append(CONTAINER_CALLOUT_END);
 
-		email.append(CONTAINER_REFER_A_FRIEND_BEGIN);
-		email.append(htmlFormatedReferAFriend);
-		email.append(CONTAINER_REFER_A_FRIEND_END);
+		if (coupon != null
+				&& coupon.getType().equals(
+						CanonicalCouponTypes.REFER_A_FRIEND.getValue())
+				&& coupon.getRedeemByMs() >= System.currentTimeMillis()) {
+			email.append(CONTAINER_REFER_A_FRIEND_BEGIN);
+			email.append(HTML_REFER_A_FRIEND_1_1);
+			email.append(HTML_REFER_A_FRIEND_1_2);
+			String lPromoUrl = "http://skok.co/invite/" + coupon.getCode();
+			email.append("<a href=\"" + lPromoUrl + "\">" + lPromoUrl + "</a>");
+			email.append(HTML_REFER_A_FRIEND_1_3);
+			DateTime lDt = new DateTime().withMillis(coupon.getRedeemByMs());
+			DateTimeFormatter lFmt = DateTimeFormat.forPattern("MMMM dd, yyyy");
+			String lFormattedDate = lFmt.print(lDt);
+			email.append(lFormattedDate);
+			email.append(HTML_REFER_A_FRIEND_1_4);
+			
+			
+			email.append(HTML_REFER_A_FRIEND_FB_1);
+			email.append(coupon.getCode());
+			email.append(HTML_REFER_A_FRIEND_FB_2);			
+			
+			email.append(HTML_REFER_A_FRIEND_TWITTER_1);
+			try {
+				String lTweet = TWEET_1 + coupon.getCode() + TWEET_2;
+				email.append(URLEncoder.encode(lTweet, "UTF-8"));
+			} catch (UnsupportedEncodingException e) {
+				LOGGER.log(Level.WARNING, e.getMessage());
+			}
+			email.append(HTML_REFER_A_FRIEND_TWITTER_2);
+			
+			email.append(HTML_REFER_A_FRIEND_G_PLUS_1);
+			email.append(coupon.getCode());
+			email.append(HTML_REFER_A_FRIEND_G_PLUS_2);
 
+			email.append(CONTAINER_REFER_A_FRIEND_END);
+		}
 		email.append(CONTAINER_SOCIAL);
 		email.append(CONTAINER_FOOTER);
 		email.append(CONTAINER_END);
@@ -70,7 +135,7 @@ public class StripeChargeEmailBuilder {
 		email.append(TABLE_END);
 		email.append(BODY_END);
 		email.append(HTML_END);
-		log.info("Exiting build()");
+		LOGGER.info("Exiting build()");
 		return email.toString();
 	}
 
@@ -112,54 +177,21 @@ public class StripeChargeEmailBuilder {
 				.append("<li>Analytics to Track Usage Statistics of your Content</li>");
 		lHtmlFormattedCallout.append("</ol>");
 
-		StringBuilder lHtmlFormatedReferAFriend = new StringBuilder();
-		lHtmlFormatedReferAFriend
-				.append("<h5 style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 1.3; word-break: normal; font-size: 24px; margin: 0; padding: 0 0 10px;\" align=\"left\">Refer a Friend:</h5> <p>Take advantage of this exclusive limited-time offer.</p> <p>We are giving you a big gift when your friend signs up for Skok. You get an additional 5GB of Bandwidth per Month, and an additional 5GB of Storage for each friend that you refer.</p> <p>You friend also gets an additional 5GB of Bandwidth per Month, and an additional 5GB of Storage.</p>");
-		lHtmlFormatedReferAFriend.append("<p>You friend must sign up by ");
-		lHtmlFormatedReferAFriend.append(" for you to be eligible.</p>");
+		Coupon lCoupon = new Coupon();
+		lCoupon.setAccountId(1234L);
+		lCoupon.setUserId(123456L);
+		lCoupon.setType(CanonicalCouponTypes.REFER_A_FRIEND.getValue());
+		lCoupon.setCode(Utils.generatePromoCode());
+		// valid for the next 6 months, ends EOD for the user's timezone
+		TimeZone lTimeZone = TimeZone.getTimeZone("UTC");
+		lTimeZone.setRawOffset(lTimeZone.getRawOffset());
+		lCoupon.setRedeemByMs(Utils.getNMonthsFromToday(6, lTimeZone)
+				.getTimeInMillis());
 
-		lHtmlFormatedReferAFriend
-				.append("<p><a href=\"http://www.facebook.com/sharer/sharer.php?u=http://skok.co/invite/");
-		lHtmlFormatedReferAFriend.append("<code>");
-		lHtmlFormatedReferAFriend.append("&t=");
-		lHtmlFormatedReferAFriend
-				.append("I%20am%20using%20Skok%20for%20my%20mobile%20content%20management%20and%20delivery%20needs.%20Use%20promo%20code%20");
-		lHtmlFormatedReferAFriend.append("<code>");
-		lHtmlFormatedReferAFriend
-				.append("%20and%20get%20an%20additional%205GB%20of%20Bandwidth%20per%20Month,%20and%20an%20additional%205GB%20of%20Storage.");
-		lHtmlFormatedReferAFriend
-				.append("Find%20out%20more%20at%20http://skok.co/invite/");
-		lHtmlFormatedReferAFriend.append("<code>");
-		lHtmlFormatedReferAFriend.append("\"");
-		lHtmlFormatedReferAFriend
-				.append(" style=\"text-decoration: none; font-weight: normal; font-family: Helvetica, Arial, sans-serif; font-size: 16px;\">Share on Facebook</a>");
-		
-		lHtmlFormatedReferAFriend
-				.append("&nbsp;|&nbsp;<a href=\"https://twitter.com/intent/tweet?text=");
-		lHtmlFormatedReferAFriend
-				.append("I%20am%20using%20Skok%20for%20my%20mobile%20content%20management%20and%20delivery%20needs.%20Use%20promo%20code%20and%20get%20an%20additional%205GB%20of%20Bandwidth%20per%20Month,%20and%20an%20additional%205GB%20of%20Storage.");
-		lHtmlFormatedReferAFriend.append("\"");
-		lHtmlFormatedReferAFriend
-				.append(" style=\"text-decoration: none; font-weight: normal; font-family: Helvetica, Arial, sans-serif; font-size: 16px;\">Share on Twitter</a>");
-		
-		
-		lHtmlFormatedReferAFriend
-				.append("&nbsp;|&nbsp;<a href=\"https://m.google.com/app/plus/x/?v=compose&content=");
-		lHtmlFormatedReferAFriend
-				.append("I%20am%20using%20Skok%20for%20my%20mobile%20content%20management%20and%20delivery%20needs.%20Use%20promo%20code%20");
-		lHtmlFormatedReferAFriend.append("<code>");
-		lHtmlFormatedReferAFriend
-				.append("%20and%20get%20an%20additional%205GB%20of%20Bandwidth%20per%20Month,%20and%20an%20additional%205GB%20of%20Storage.");
-		lHtmlFormatedReferAFriend
-				.append("Find%20out%20more%20at%20http://skok.co/invite/");
-		lHtmlFormatedReferAFriend.append("<code>");
-		lHtmlFormatedReferAFriend.append("\"");
-		lHtmlFormatedReferAFriend
-				.append(" style=\"text-decoration: none; font-weight: normal; font-family: Helvetica, Arial, sans-serif; font-size: 16px;\">Share on Google+</a></p>");
-
-		System.out.println(new StripeChargeEmailBuilder().build(
+		lCoupon.setTimeCreatedMs(System.currentTimeMillis());
+		lCoupon.setTimeCreatedTimeZoneOffsetMs(0L);
+		System.out.println(new SkokEmailBuilder().build(
 				lHtmlFormattedHeader.toString(),
-				lHtmlFormattedCallout.toString(),
-				lHtmlFormatedReferAFriend.toString()));
+				lHtmlFormattedCallout.toString(), lCoupon));
 	}
 }

@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.cm.config.CanonicalCouponTypes;
 import com.cm.contentmanager.content.ContentHelper;
 import com.cm.quota.QuotaService;
 
@@ -46,16 +47,22 @@ public class InviteController {
 	}
 
 	@RequestMapping(value = "/invite/{promoCode}", method = RequestMethod.GET)
-	public ModelAndView displayApplications(ModelMap model,
-			@PathVariable String promoCode) {
+	public ModelAndView invite(ModelMap model, @PathVariable String promoCode) {
 		if (LOGGER.isLoggable(Level.INFO))
-			LOGGER.info("Entering displayApplications");
+			LOGGER.info("Entering");
 		try {
-			model.addAttribute("promoCode", promoCode);
-			return new ModelAndView("signup", model);
+			// validate the promo code
+			Coupon lCoupon = userService.getCoupon(promoCode);
+			if (lCoupon != null
+					&& lCoupon.getType().equals(
+							CanonicalCouponTypes.REFER_A_FRIEND.getValue())
+					&& lCoupon.getRedeemByMs() >= System.currentTimeMillis()) {
+				model.addAttribute("validatedPromoCode", promoCode);
+			}
+			return new ModelAndView("invite_signup", model);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Exiting displayApplications");
+				LOGGER.info("Exiting");
 		}
 	}
 

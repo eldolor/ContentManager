@@ -39,6 +39,7 @@
 </script>
 <!-- End Custom -->
 
+<jsp:include page="facebook_generic_tags.jsp"></jsp:include>
 
 </head>
 <body>

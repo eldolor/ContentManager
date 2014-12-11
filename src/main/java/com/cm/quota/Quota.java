@@ -24,7 +24,11 @@ public class Quota {
 	@Persistent
 	private Long storageLimitInBytes = CanonicalPlan.FREE.getStorageQuota();
 	@Persistent
+	private Long bonusStorageLimitInBytes = 0L;
+	@Persistent
 	private Long bandwidthLimitInBytes = CanonicalPlan.FREE.getBandwidthQuota();
+	@Persistent
+	private Long bonusBandwidthLimitInBytes = 0L;
 
 	@Persistent
 	private Integer applicationLimit = CanonicalPlan.FREE.getApplicationQuota();
@@ -120,6 +124,22 @@ public class Quota {
 
 	public void setBandwidthLimitInBytes(Long bandwidthLimitInBytes) {
 		this.bandwidthLimitInBytes = bandwidthLimitInBytes;
+	}
+
+	public Long getBonusStorageLimitInBytes() {
+		return bonusStorageLimitInBytes;
+	}
+
+	public void setBonusStorageLimitInBytes(Long bonusStorageLimitInBytes) {
+		this.bonusStorageLimitInBytes = bonusStorageLimitInBytes;
+	}
+
+	public Long getBonusBandwidthLimitInBytes() {
+		return bonusBandwidthLimitInBytes;
+	}
+
+	public void setBonusBandwidthLimitInBytes(Long bonusBandwidthLimitInBytes) {
+		this.bonusBandwidthLimitInBytes = bonusBandwidthLimitInBytes;
 	}
 
 }

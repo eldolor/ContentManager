@@ -25,12 +25,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.cm.config.CanonicalCouponTypes;
 import com.cm.config.CanonicalPlan;
 import com.cm.config.Configuration;
 import com.cm.stripe.transfer.StripeCard;
-import com.cm.usermanagement.user.StripeChargeEmailBuilder;
+import com.cm.usermanagement.user.Coupon;
 import com.cm.usermanagement.user.User;
 import com.cm.usermanagement.user.UserService;
+import com.cm.util.SkokEmailBuilder;
 import com.cm.util.Utils;
 import com.cm.util.ValidationError;
 import com.stripe.Stripe;
@@ -671,7 +673,7 @@ public class StripeController {
 			Map lData = (Map) json.get("data");
 
 			// String lCurrency = (String) lCharge.get("currency");
-			StripeChargeEmailBuilder lEmailBuilder = new StripeChargeEmailBuilder();
+			SkokEmailBuilder lEmailBuilder = new SkokEmailBuilder();
 
 			String lType = (String) json.get("type");
 			if (lType.equals("charge.succeeded")) {
@@ -703,7 +705,8 @@ public class StripeController {
 				String lInvoice = (String) lCharge.get("invoice");
 				StringBuilder lHtmlFormattedHeader = new StringBuilder();
 
-				lHtmlFormattedHeader.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">Hi,</p>");
+				lHtmlFormattedHeader
+						.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">Hi,</p>");
 				lHtmlFormattedHeader
 						.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">We have received your payment for your Skok subscription. You can keep this receipt for your records.</p>");
 				lHtmlFormattedHeader
@@ -720,9 +723,11 @@ public class StripeController {
 						+ " card ending in " + lLast4 + "</p>");
 				lHtmlFormattedCallout
 						.append("<p>Invoice: " + lInvoice + "</p>");
+				Coupon lReferAFriendCoupon = getReferAFriendCoupon(lStripeCustomer
+						.getUserId());
 				String lEmailTemplate = lEmailBuilder.build(
 						lHtmlFormattedHeader.toString(),
-						lHtmlFormattedCallout.toString());
+						lHtmlFormattedCallout.toString(), lReferAFriendCoupon);
 				// Email sent by SKOK
 				// try {
 				// Utils.sendEmail(Configuration.FROM_EMAIL_ADDRESS,
@@ -776,7 +781,8 @@ public class StripeController {
 					String lInvoice = (String) lCharge.get("invoice");
 					StringBuilder lHtmlFormattedHeader = new StringBuilder();
 
-					lHtmlFormattedHeader.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">Hi,</p>");
+					lHtmlFormattedHeader
+							.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">Hi,</p>");
 					lHtmlFormattedHeader
 							.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">We were unable to process your payment for your Skok subscription.</p>");
 
@@ -798,9 +804,12 @@ public class StripeController {
 							+ " card ending in " + lLast4 + "</p>");
 					lHtmlFormattedCallout.append("<p>Invoice: " + lInvoice
 							+ "</p>");
+					Coupon lReferAFriendCoupon = getReferAFriendCoupon(lStripeCustomer
+							.getUserId());
 					String lEmailTemplate = lEmailBuilder.build(
 							lHtmlFormattedHeader.toString(),
-							lHtmlFormattedCallout.toString());
+							lHtmlFormattedCallout.toString(),
+							lReferAFriendCoupon);
 					try {
 						// Utils.sendEmail(Configuration.FROM_EMAIL_ADDRESS,
 						// Configuration.FROM_NAME,
@@ -839,7 +848,8 @@ public class StripeController {
 				}
 				StringBuilder lHtmlFormattedHeader = new StringBuilder();
 
-				lHtmlFormattedHeader.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">Hi,</p>");
+				lHtmlFormattedHeader
+						.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">Hi,</p>");
 				lHtmlFormattedHeader
 						.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">You have successfully updated your payment information for your Skok subscription.</p>");
 				lHtmlFormattedHeader
@@ -854,9 +864,11 @@ public class StripeController {
 
 				lHtmlFormattedCallout.append("<p>Card: " + lBrand
 						+ " card ending in " + lLast4 + "</p>");
+				Coupon lReferAFriendCoupon = getReferAFriendCoupon(lStripeCustomer
+						.getUserId());
 				String lEmailTemplate = lEmailBuilder.build(
 						lHtmlFormattedHeader.toString(),
-						lHtmlFormattedCallout.toString());
+						lHtmlFormattedCallout.toString(), lReferAFriendCoupon);
 				try {
 					// Utils.sendEmail(Configuration.FROM_EMAIL_ADDRESS,
 					// Configuration.FROM_NAME,
@@ -893,7 +905,8 @@ public class StripeController {
 				}
 				StringBuilder lHtmlFormattedHeader = new StringBuilder();
 
-				lHtmlFormattedHeader.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">Hi,</p>");
+				lHtmlFormattedHeader
+						.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">Hi,</p>");
 				lHtmlFormattedHeader
 						.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">You have successfully subscribed to the following plan.</p>");
 				lHtmlFormattedHeader
@@ -907,10 +920,12 @@ public class StripeController {
 						+ "</p>");
 				lHtmlFormattedCallout.append("<p>Amount: "
 						+ lPlan.getDisplayPrice() + "</p>");
+				Coupon lReferAFriendCoupon = getReferAFriendCoupon(lStripeCustomer
+						.getUserId());
 
 				String lEmailTemplate = lEmailBuilder.build(
 						lHtmlFormattedHeader.toString(),
-						lHtmlFormattedCallout.toString());
+						lHtmlFormattedCallout.toString(), lReferAFriendCoupon);
 				try {
 					// Utils.sendEmail(Configuration.FROM_EMAIL_ADDRESS,
 					// Configuration.FROM_NAME,
@@ -935,6 +950,18 @@ public class StripeController {
 			// handled by GcmManager
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	private Coupon getReferAFriendCoupon(Long userId) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			return userService.getCouponByType(userId,
+					CanonicalCouponTypes.REFER_A_FRIEND.getValue());
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting");

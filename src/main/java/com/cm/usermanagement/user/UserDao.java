@@ -278,6 +278,32 @@ class UserDao {
 				LOGGER.info("Exiting");
 		}
 	}
+	Coupon getCouponByType(Long userId, String type) {
+		PersistenceManager pm = null;
+
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			pm = PMF.get().getPersistenceManager();
+			Query q = pm.newQuery(Coupon.class);
+			q.setFilter("userId == userIdParam && type = typeParam");
+			q.declareParameters("Long userIdParam, String typeParam");
+			List<Coupon> lCoupons = (List<Coupon>) q.execute(userId, type);
+			if (lCoupons != null && (!lCoupons.isEmpty()))
+				return lCoupons.get(0);
+			else
+				return null;
+		} catch (NoResultException e) {
+			// No matching result so return null
+			return null;
+		} finally {
+			if (pm != null) {
+				pm.close();
+			}
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
 
 	Coupon saveCoupon(Coupon coupon) {
 		PersistenceManager pm = null;

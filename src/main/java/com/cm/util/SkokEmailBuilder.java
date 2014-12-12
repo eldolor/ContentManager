@@ -58,7 +58,7 @@ public class SkokEmailBuilder {
 	/*******TWITTER***********/
 	static final String HTML_REFER_A_FRIEND_TWITTER_1 = "&nbsp;|&nbsp;<a href=\"https://twitter.com/intent/tweet?text=";
 	static final String TWEET_1 = "Sign up at http://skok.co/invite/";
-	static final String TWEET_2 = " to get an additional 5GB of Bandwidth per Month, and an additional 5GB of Storage.";
+	static final String TWEET_2 = " to get an additional 5GB of Bandwidth per Month, and an additional 5GB of Storage. #skok";
 	static final String HTML_REFER_A_FRIEND_TWITTER_2 = "\" target=\"_blank\" style=\"text-decoration: none; font-weight: normal; font-family: Helvetica, Arial, sans-serif; font-size: 16px;\">Share on Twitter</a>";
 	/*******TWITTER***********/
 

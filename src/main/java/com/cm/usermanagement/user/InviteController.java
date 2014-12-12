@@ -18,6 +18,8 @@ package com.cm.usermanagement.user;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -47,7 +49,7 @@ public class InviteController {
 	}
 
 	@RequestMapping(value = "/invite/{promoCode}", method = RequestMethod.GET)
-	public ModelAndView invite(ModelMap model, @PathVariable String promoCode) {
+	public ModelAndView invite(ModelMap model, @PathVariable String promoCode, HttpServletRequest request) {
 		if (LOGGER.isLoggable(Level.INFO))
 			LOGGER.info("Entering");
 		try {
@@ -59,6 +61,7 @@ public class InviteController {
 					&& lCoupon.getRedeemByMs() >= System.currentTimeMillis()) {
 				model.addAttribute("validatedPromoCode", promoCode);
 			}
+			model.addAttribute("ogUrl", request.getRequestURL());
 			return new ModelAndView("invite_signup", model);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))

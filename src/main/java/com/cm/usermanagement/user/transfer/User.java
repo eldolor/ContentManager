@@ -11,6 +11,7 @@ public class User implements Serializable {
 	private Long id;
 	private String firstName;
 	private String lastName;
+	private String promoCode;
 	private String email;
 	private Boolean enabled;
 	private String role;
@@ -53,6 +54,14 @@ public class User implements Serializable {
 
 	public String getPassword2() {
 		return password2;
+	}
+
+	public String getPromoCode() {
+		return promoCode;
+	}
+
+	public void setPromoCode(String promoCode) {
+		this.promoCode = promoCode;
 	}
 
 	public Long getTimeCreatedMs() {

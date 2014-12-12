@@ -1,6 +1,8 @@
 package com.cm.usermanagement.user;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
@@ -10,18 +12,21 @@ import javax.persistence.NoResultException;
 import org.springframework.stereotype.Component;
 
 import com.cm.accountmanagement.account.Account;
+import com.cm.contentmanager.application.Application;
 import com.cm.util.PMF;
 import com.cm.util.Utils;
 
 @Component
 class UserDao {
-	// private static final Logger LOGGER =
-	// Logger.getLogger(UserDao.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(UserDao.class
+			.getName());
 
 	List<Account> getAccounts() {
 		PersistenceManager pm = null;
 
 		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
 			pm = PMF.get().getPersistenceManager();
 			Query q = pm.newQuery(Account.class);
 
@@ -30,6 +35,8 @@ class UserDao {
 			if (pm != null) {
 				pm.close();
 			}
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
 		}
 	}
 
@@ -37,6 +44,8 @@ class UserDao {
 		PersistenceManager pm = null;
 
 		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
 			pm = PMF.get().getPersistenceManager();
 			Query q = pm.newQuery(User.class);
 
@@ -45,6 +54,8 @@ class UserDao {
 			if (pm != null) {
 				pm.close();
 			}
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
 		}
 	}
 
@@ -52,6 +63,8 @@ class UserDao {
 		PersistenceManager pm = null;
 
 		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
 			pm = PMF.get().getPersistenceManager();
 			Query q = pm.newQuery(User.class);
 			q.setFilter("accountId == accountIdParam");
@@ -64,6 +77,8 @@ class UserDao {
 			if (pm != null) {
 				pm.close();
 			}
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
 		}
 	}
 
@@ -71,6 +86,8 @@ class UserDao {
 		PersistenceManager pm = null;
 
 		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
 			pm = PMF.get().getPersistenceManager();
 			Query q = pm.newQuery(User.class);
 			q.setFilter("username == userNameParam");
@@ -88,6 +105,8 @@ class UserDao {
 			if (pm != null) {
 				pm.close();
 			}
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
 		}
 	}
 
@@ -95,6 +114,8 @@ class UserDao {
 		PersistenceManager pm = null;
 
 		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
 			pm = PMF.get().getPersistenceManager();
 			Query q = pm.newQuery(User.class);
 			q.setFilter("accountId == accountIdParam");
@@ -115,6 +136,8 @@ class UserDao {
 			if (pm != null) {
 				pm.close();
 			}
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
 		}
 	}
 
@@ -122,6 +145,8 @@ class UserDao {
 		PersistenceManager pm = null;
 		Transaction tx = null;
 		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
 			pm = PMF.get().getPersistenceManager();
 			tx = pm.currentTransaction();
 			tx.begin();
@@ -143,7 +168,7 @@ class UserDao {
 			User lUser = pm.makePersistent(user);
 
 			tx.commit();
-			
+
 			return lUser;
 
 		} finally {
@@ -153,6 +178,8 @@ class UserDao {
 			if (pm != null) {
 				pm.close();
 			}
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
 		}
 
 	}
@@ -160,6 +187,8 @@ class UserDao {
 	void saveUser(User user) {
 		PersistenceManager pm = null;
 		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
 			pm = PMF.get().getPersistenceManager();
 			pm.makePersistent(user);
 
@@ -167,12 +196,16 @@ class UserDao {
 			if (pm != null) {
 				pm.close();
 			}
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
 		}
 	}
 
 	void updateUser(User user) {
 		PersistenceManager pm = null;
 		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
 			pm = PMF.get().getPersistenceManager();
 			User _user = pm.getObjectById(User.class, user.getId());
 			_user.setEmail(user.getEmail());
@@ -192,6 +225,8 @@ class UserDao {
 			if (pm != null) {
 				pm.close();
 			}
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
 		}
 	}
 
@@ -199,6 +234,8 @@ class UserDao {
 		PersistenceManager pm = null;
 
 		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
 			pm = PMF.get().getPersistenceManager();
 			User _user = pm.getObjectById(User.class, id);
 			return _user;
@@ -210,6 +247,123 @@ class UserDao {
 			if (pm != null) {
 				pm.close();
 			}
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	Coupon getCoupon(String promoCode) {
+		PersistenceManager pm = null;
+
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			pm = PMF.get().getPersistenceManager();
+			Query q = pm.newQuery(Coupon.class);
+			q.setFilter("code == codeParam");
+			q.declareParameters("String codeParam");
+			List<Coupon> lCoupons = (List<Coupon>) q.execute(promoCode);
+			if (lCoupons != null && (!lCoupons.isEmpty()))
+				return lCoupons.get(0);
+			else
+				return null;
+		} catch (NoResultException e) {
+			// No matching result so return null
+			return null;
+		} finally {
+			if (pm != null) {
+				pm.close();
+			}
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	Coupon getCouponByType(Long userId, String type) {
+		PersistenceManager pm = null;
+
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			pm = PMF.get().getPersistenceManager();
+			Query q = pm.newQuery(Coupon.class);
+			q.setFilter("userId == userIdParam && type == typeParam");
+			q.declareParameters("Long userIdParam, String typeParam");
+			List<Coupon> lCoupons = (List<Coupon>) q.execute(userId, type);
+			if (lCoupons != null && (!lCoupons.isEmpty()))
+				return lCoupons.get(0);
+			else
+				return null;
+		} catch (NoResultException e) {
+			// No matching result so return null
+			return null;
+		} finally {
+			if (pm != null) {
+				pm.close();
+			}
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	Coupon saveCoupon(Coupon coupon) {
+		PersistenceManager pm = null;
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			pm = PMF.get().getPersistenceManager();
+			return pm.makePersistent(coupon);
+
+		} finally {
+			if (pm != null) {
+				pm.close();
+			}
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	void updateCouponRedemption(Coupon pCoupon) {
+		PersistenceManager pm = null;
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			pm = PMF.get().getPersistenceManager();
+			Coupon lCoupon = pm.getObjectById(Coupon.class, pCoupon.getId());
+
+			lCoupon.setNumberOfTimesRedeemed(pCoupon.getNumberOfTimesRedeemed());
+			lCoupon.setTimeUpdatedMs(pCoupon.getTimeUpdatedMs());
+			lCoupon.setTimeUpdatedTimeZoneOffsetMs(pCoupon
+					.getTimeUpdatedTimeZoneOffsetMs());
+
+		} finally {
+			if (pm != null) {
+				pm.close();
+			}
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	void updateCouponRedeemByMs(Coupon pCoupon) {
+		PersistenceManager pm = null;
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			pm = PMF.get().getPersistenceManager();
+			Coupon lCoupon = pm.getObjectById(Coupon.class, pCoupon.getId());
+
+			lCoupon.setRedeemByMs(pCoupon.getRedeemByMs());
+			lCoupon.setTimeUpdatedMs(pCoupon.getTimeUpdatedMs());
+			lCoupon.setTimeUpdatedTimeZoneOffsetMs(pCoupon
+					.getTimeUpdatedTimeZoneOffsetMs());
+
+		} finally {
+			if (pm != null) {
+				pm.close();
+			}
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
 		}
 	}
 

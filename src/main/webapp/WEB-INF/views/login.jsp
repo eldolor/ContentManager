@@ -35,6 +35,7 @@
 	}
 </script>
 <!-- End Custom -->
+<jsp:include page="og_tags.jsp"></jsp:include>
 
 
 </head>

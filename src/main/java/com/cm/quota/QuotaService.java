@@ -93,9 +93,13 @@ public class QuotaService {
 			Quota lQuota = quotaDao.get(accountId);
 
 			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info("Storage used: " + lStorageQuotaUsed
-						+ " Storage Limit: " + lQuota.getStorageLimitInBytes());
-			if (lStorageQuotaUsed < lQuota.getStorageLimitInBytes())
+				LOGGER.info("Storage used: "
+						+ lStorageQuotaUsed
+						+ " Storage Limit: "
+						+ (lQuota.getStorageLimitInBytes() + lQuota
+								.getBonusStorageLimitInBytes()));
+			if (lStorageQuotaUsed < (lQuota.getStorageLimitInBytes() + lQuota
+					.getBonusStorageLimitInBytes()))
 				return true;
 			return false;
 		} finally {
@@ -117,9 +121,12 @@ public class QuotaService {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Storage used: "
 						+ lStorageQuotaUsed.getStorageUsedInBytes()
-						+ " Storage Limit: " + lQuota.getStorageLimitInBytes());
-			if (lStorageQuotaUsed.getStorageUsedInBytes() < lQuota
-					.getStorageLimitInBytes())
+						+ " Storage Limit: "
+						+ (lQuota.getStorageLimitInBytes() + lQuota
+								.getBonusStorageLimitInBytes()));
+			if (lStorageQuotaUsed.getStorageUsedInBytes() < (lQuota
+					.getStorageLimitInBytes() + lQuota
+					.getBonusStorageLimitInBytes()))
 				return true;
 			return false;
 		} finally {
@@ -178,10 +185,12 @@ public class QuotaService {
 				LOGGER.info("Bandwidth used: "
 						+ lQuotaUsed.getBandwidthUsedInBytes()
 						+ " Bandwidth Limit: "
-						+ lQuota.getBandwidthLimitInBytes());
+						+ (lQuota.getBandwidthLimitInBytes() + lQuota
+								.getBonusBandwidthLimitInBytes()));
 
-			if (lQuotaUsed.getBandwidthUsedInBytes() < lQuota
-					.getBandwidthLimitInBytes()) {
+			if (lQuotaUsed.getBandwidthUsedInBytes() < (lQuota
+					.getBandwidthLimitInBytes() + lQuota
+					.getBonusBandwidthLimitInBytes())) {
 				return true;
 			}
 			return false;
@@ -270,6 +279,19 @@ public class QuotaService {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
 			return quotaDao.get(accountId);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+
+		}
+
+	}
+
+	public void update(Quota quota) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			quotaDao.update(quota);
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting");

@@ -26,9 +26,17 @@
 	src="/resources/javascripts/cm/cm.signup.js"></script>
 
 <!-- End Custom -->
-<jsp:include page="og_tags.jsp"></jsp:include>
-
-
+<meta property="og:title"
+	content="Sign up now to get an additional 5GB of Bandwidth per Month, and an additional 5GB of Storage. Advanced Mobile Content Management and Delivery Platform for Mobile Apps." />
+<meta property="og:site_name" content="Skok" />
+<meta property="og:description"
+	content="Skok is an Advanced Content Management and Delivery platform for your Mobile Apps. Skok delivers rich content to your Mobile Apps, and stores it locally on mobile devices. This elevates user experience of your Mobile Apps. Your content loads much faster, and users can engage with your rich content, even if they lose their data connection." />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:image"
+	content="https://www.skok.co/resources/images/cm/logo-250x250.png" />
+<meta property="og:url" content="${ogUrl}" />
+	
 </head>
 <body>
 	<jsp:include page="common.jsp"></jsp:include>
@@ -67,7 +75,7 @@
 							class="form-control" placeholder="Promo Code" /></label>
 					</div>
 					<div id="invite_message" style="display: none;">
-						<span class="success radius label" >Sign up to get an
+						<span class="success radius label">Sign up Now, to get an
 							additional 5GB of Bandwidth per Month, and an additional 5GB of
 							Storage.</span>
 					</div>
@@ -139,5 +147,12 @@
 
 		<jsp:include page="footer.jsp"></jsp:include>
 	</section>
+	<script type="text/javascript">
+		var mPromoCode = '${validatedPromoCode}';
+		if (mPromoCode != '') {
+			$('#promoCode').val(mPromoCode);
+			$('#invite_message').show();
+		}
+	</script>
 </body>
 </html>

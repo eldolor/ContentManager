@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -23,7 +24,9 @@ import com.cm.accountmanagement.account.Account;
 import com.cm.accountmanagement.client.key.ClientKeyService;
 import com.cm.admin.plan.Plan;
 import com.cm.common.entity.Result;
+import com.cm.config.CanonicalCouponTypes;
 import com.cm.config.CanonicalPlan;
+import com.cm.config.Configuration;
 import com.cm.contentmanager.application.Application;
 import com.cm.contentmanager.application.ApplicationService;
 import com.cm.contentmanager.content.Content;
@@ -32,6 +35,7 @@ import com.cm.contentmanager.contentgroup.ContentGroup;
 import com.cm.gcm.GcmRegistrationRequest;
 import com.cm.quota.Quota;
 import com.cm.quota.QuotaService;
+import com.cm.usermanagement.user.Coupon;
 import com.cm.usermanagement.user.User;
 import com.cm.usermanagement.user.UserService;
 import com.cm.util.PMF;
@@ -84,6 +88,7 @@ public class AdminController {
 			}
 			Result result = new Result();
 			result.setResult(Result.SUCCESS);
+			response.setStatus(HttpServletResponse.SC_OK);
 			return result;
 
 		} finally {
@@ -110,6 +115,7 @@ public class AdminController {
 			}
 			Result result = new Result();
 			result.setResult(Result.SUCCESS);
+			response.setStatus(HttpServletResponse.SC_OK);
 			return result;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -122,13 +128,13 @@ public class AdminController {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
-			//Result lResult = this.cleanupBlobStore(response);
-//			if (LOGGER.isLoggable(Level.INFO))
-//				LOGGER.info(lResult.toString());
+			// Result lResult = this.cleanupBlobStore(response);
+			// if (LOGGER.isLoggable(Level.INFO))
+			// LOGGER.info(lResult.toString());
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.warning("CLEANUP HAS BEEN DISABLED FOR NOW");
 			response.setStatus(HttpServletResponse.SC_OK);
-			
+
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting");
@@ -184,6 +190,7 @@ public class AdminController {
 						+ " blobs skipped.");
 			Result result = new Result();
 			result.setResult(Result.SUCCESS);
+			response.setStatus(HttpServletResponse.SC_OK);
 			return result;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -244,6 +251,7 @@ public class AdminController {
 
 			Result result = new Result();
 			result.setResult(Result.SUCCESS);
+			response.setStatus(HttpServletResponse.SC_OK);
 			return result;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -284,6 +292,7 @@ public class AdminController {
 			}
 			Result result = new Result();
 			result.setResult(Result.SUCCESS);
+			response.setStatus(HttpServletResponse.SC_OK);
 			return result;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -330,6 +339,7 @@ public class AdminController {
 
 			Result result = new Result();
 			result.setResult(Result.SUCCESS);
+			response.setStatus(HttpServletResponse.SC_OK);
 			return result;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -402,6 +412,7 @@ public class AdminController {
 
 			Result result = new Result();
 			result.setResult(Result.SUCCESS);
+			response.setStatus(HttpServletResponse.SC_OK);
 			return result;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -430,8 +441,7 @@ public class AdminController {
 						Quota lQuota = new Quota();
 						lQuota.setAccountId(lAccount.getId());
 						// default to free
-						lQuota.setCanonicalPlanId(CanonicalPlan.FREE
-								.getId());
+						lQuota.setCanonicalPlanId(CanonicalPlan.FREE.getId());
 						lQuota.setStorageLimitInBytes(CanonicalPlan.FREE
 								.getStorageQuota());
 						lQuota.setApplicationLimit(CanonicalPlan.FREE
@@ -456,6 +466,7 @@ public class AdminController {
 
 			Result result = new Result();
 			result.setResult(Result.SUCCESS);
+			response.setStatus(HttpServletResponse.SC_OK);
 			return result;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -507,6 +518,7 @@ public class AdminController {
 			}
 			Result result = new Result();
 			result.setResult(Result.SUCCESS);
+			response.setStatus(HttpServletResponse.SC_OK);
 			return result;
 		} finally {
 			if (pm != null) {
@@ -549,6 +561,7 @@ public class AdminController {
 
 			Result result = new Result();
 			result.setResult(Result.SUCCESS);
+			response.setStatus(HttpServletResponse.SC_OK);
 			return result;
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
@@ -584,6 +597,7 @@ public class AdminController {
 			}
 			Result result = new Result();
 			result.setResult(Result.SUCCESS);
+			response.setStatus(HttpServletResponse.SC_OK);
 			return result;
 
 		} finally {
@@ -621,6 +635,7 @@ public class AdminController {
 			}
 			Result result = new Result();
 			result.setResult(Result.SUCCESS);
+			response.setStatus(HttpServletResponse.SC_OK);
 			return result;
 
 		} finally {
@@ -652,6 +667,7 @@ public class AdminController {
 			}
 			Result result = new Result();
 			result.setResult(Result.SUCCESS);
+			response.setStatus(HttpServletResponse.SC_OK);
 			return result;
 
 		} finally {
@@ -694,6 +710,7 @@ public class AdminController {
 			}
 			Result result = new Result();
 			result.setResult(Result.SUCCESS);
+			response.setStatus(HttpServletResponse.SC_OK);
 			return result;
 
 		} finally {
@@ -766,12 +783,177 @@ public class AdminController {
 			}
 			Result result = new Result();
 			result.setResult(Result.SUCCESS);
+			response.setStatus(HttpServletResponse.SC_OK);
 			return result;
 
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting");
 
+		}
+	}
+
+	@RequestMapping(value = "/admin/assign/coupon/referafriend", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody
+	Result assignReferAFriendCoupon(HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(User.class);
+				List<User> lList = (List<User>) q.execute();
+				for (User lUser : lList) {
+					Coupon lCoupon = userService.getCouponByType(lUser.getId(),
+							CanonicalCouponTypes.REFER_A_FRIEND.getValue());
+					if (lCoupon == null) {
+						lCoupon = Utils.generateReferAFriendCoupon(lUser);
+						userService.saveCoupon(lCoupon);
+					}
+				}
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+
+			Result result = new Result();
+			result.setResult(Result.SUCCESS);
+			response.setStatus(HttpServletResponse.SC_OK);
+			return result;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	@RequestMapping(value = "/admin/extend/coupon/referafriend", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody
+	Result extendReferAFriendCoupon(HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(User.class);
+				List<User> lList = (List<User>) q.execute();
+				for (User lUser : lList) {
+					Coupon lCoupon = userService.getCouponByType(lUser.getId(),
+							CanonicalCouponTypes.REFER_A_FRIEND.getValue());
+					if (lCoupon == null) {
+						lCoupon = Utils.generateReferAFriendCoupon(lUser);
+						userService.saveCoupon(lCoupon);
+					} else {
+						// valid for the next 3 months, ends EOD for the user's
+						// timezone
+						TimeZone lTimeZone = TimeZone.getTimeZone("UTC");
+						lTimeZone.setRawOffset(lCoupon
+								.getTimeCreatedTimeZoneOffsetMs().intValue());
+						lCoupon.setRedeemByMs(Utils
+								.getNMonthsFromToday(
+										Configuration.REFER_A_FRIEND_EXTENSION_PERIOD_IN_MONTHS,
+										lTimeZone).getTimeInMillis());
+						lCoupon.setTimeUpdatedMs(System.currentTimeMillis());
+						lCoupon.setTimeUpdatedTimeZoneOffsetMs(0L);
+
+						userService.updateCouponRedeemByMs(lCoupon);
+
+					}
+				}
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+
+			Result result = new Result();
+			result.setResult(Result.SUCCESS);
+			response.setStatus(HttpServletResponse.SC_OK);
+			return result;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	@RequestMapping(value = "/admin/send/referafriend/email", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody
+	Result sendReferAFriendEmail(HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(User.class);
+				List<User> lList = (List<User>) q.execute();
+				for (User lUser : lList) {
+					Coupon lCoupon = userService.getCouponByType(lUser.getId(),
+							CanonicalCouponTypes.REFER_A_FRIEND.getValue());
+					if (lCoupon != null) {
+						Utils.sendReferAFriendEmail(lUser, lCoupon);
+					}
+				}
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+
+			Result result = new Result();
+			result.setResult(Result.SUCCESS);
+			response.setStatus(HttpServletResponse.SC_OK);
+			return result;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	@RequestMapping(value = "/admin/send/referafriend/email/{accountId}", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody
+	Result sendTestReferAFriendEmail(@PathVariable Long accountId,
+			HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+
+			PersistenceManager pm = null;
+
+			try {
+				pm = PMF.get().getPersistenceManager();
+				Query q = pm.newQuery(User.class);
+				q.setFilter("accountId == accountIdParam");
+				q.declareParameters("Long accountIdParam");
+				List<User> lList = (List<User>) q.execute(accountId);
+				for (User lUser : lList) {
+					Coupon lCoupon = userService.getCouponByType(lUser.getId(),
+							CanonicalCouponTypes.REFER_A_FRIEND.getValue());
+					if (lCoupon != null) {
+						Utils.sendReferAFriendEmail(lUser, lCoupon);
+					}
+				}
+			} finally {
+				if (pm != null) {
+					pm.close();
+				}
+			}
+
+			Result result = new Result();
+			result.setResult(Result.SUCCESS);
+			response.setStatus(HttpServletResponse.SC_OK);
+			return result;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
 		}
 	}
 

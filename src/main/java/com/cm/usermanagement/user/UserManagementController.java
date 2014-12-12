@@ -25,10 +25,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.cm.config.CanonicalContentType;
+import com.cm.config.CanonicalCouponTypes;
 import com.cm.config.CanonicalPlan;
 import com.cm.config.Configuration;
 import com.cm.contentmanager.application.Application;
@@ -46,6 +48,7 @@ import com.cm.stripe.StripeCustomer;
 import com.cm.stripe.StripeCustomerService;
 import com.cm.usermanagement.user.transfer.ForgotPasswordRequest;
 import com.cm.usermanagement.user.transfer.PasswordChangeRequest;
+import com.cm.util.SkokEmailBuilder;
 import com.cm.util.Utils;
 import com.cm.util.ValidationError;
 import com.google.appengine.api.taskqueue.Queue;
@@ -116,6 +119,7 @@ public class UserManagementController {
 				lUser.setEmail(pUser.getUserName());
 				lUser.setPassword(new BCryptPasswordEncoder().encode(pUser
 						.getPassword()));
+
 				lUser.setRole(User.ROLE_USER);
 				// default to true
 				lUser.setEnabled(true);
@@ -136,19 +140,22 @@ public class UserManagementController {
 						lApplication, lContentGroups);
 				// create demo usage reports for the last 10 days;
 				// asynchronously
-				int lLastNDays = 10;
-				// createDemoUsageReports(lApplication.getId(), lLastNDays);
-				Queue queue = QueueFactory
-						.getQueue(Configuration.CONTENT_STATS_QUEUE_NAME);
-				TaskOptions taskOptions = TaskOptions.Builder
-						.withUrl(
-								"/tasks/demo/usagereports/create/"
-										+ String.valueOf(lApplication.getId())
-										+ "/" + String.valueOf(lLastNDays))
-						.param("id", String.valueOf(lApplication.getId()))
-						.param("lastNDays", String.valueOf(lLastNDays))
-						.method(Method.POST).countdownMillis(5000);
-				queue.add(taskOptions);
+				{
+					int lLastNDays = 10;
+					// createDemoUsageReports(lApplication.getId(), lLastNDays);
+					Queue queue = QueueFactory
+							.getQueue(Configuration.CONTENT_STATS_QUEUE_NAME);
+					TaskOptions taskOptions = TaskOptions.Builder
+							.withUrl(
+									"/tasks/demo/usagereports/create/"
+											+ String.valueOf(lApplication
+													.getId()) + "/"
+											+ String.valueOf(lLastNDays))
+							.param("id", String.valueOf(lApplication.getId()))
+							.param("lastNDays", String.valueOf(lLastNDays))
+							.method(Method.POST).countdownMillis(5000);
+					queue.add(taskOptions);
+				}
 
 				// assign them the free quota
 				Quota lQuota = new Quota();
@@ -166,10 +173,34 @@ public class UserManagementController {
 				quotaService.create(lQuota);
 				// update utilization
 				Utils.triggerUpdateQuotaUtilizationMessage(
-						lApplication.getAccountId(), 10000);
+						lApplication.getAccountId(), 1000);
 				// Utils.triggerUpdateBandwidthUtilizationMessage(
 				// lApplication.getId(), 0L, 10000);
-				sendWelcomeEmail(lDomainUser);
+				Coupon lCoupon = Utils.generateReferAFriendCoupon(lDomainUser);
+				userService.saveCoupon(lCoupon);
+				boolean lIsReferral = false;
+				// if there's a promo code
+				if (!Utils.isEmpty(pUser.getPromoCode())) {
+					lIsReferral = true;
+					String lReferAFriendPromoCode = lCoupon.getCode();
+					// if the new user was referred
+					if (!Utils.isEmpty(lReferAFriendPromoCode)) {
+						Queue queue = QueueFactory
+								.getQueue(Configuration.USER_QUEUE_NAME);
+						TaskOptions taskOptions = TaskOptions.Builder
+								.withUrl(
+										"/tasks/process/promocode/referafriend")
+								.param("referredUserId",
+										String.valueOf(lDomainUser.getId()))
+								.param("promoCodeUsed", pUser.getPromoCode())
+								.method(Method.POST).countdownMillis(5000);
+						queue.add(taskOptions);
+
+					}
+				}
+
+				Utils.sendWelcomeEmail(lDomainUser, lCoupon, lIsReferral);
+
 				response.setStatus(HttpServletResponse.SC_CREATED);
 				return null;
 			}
@@ -185,64 +216,81 @@ public class UserManagementController {
 
 	}
 
-	private void sendWelcomeEmail(User pUser) {
+	@RequestMapping(value = "/tasks/process/promocode/referafriend", method = RequestMethod.POST)
+	public void processReferAFriendPromoCode(@RequestParam Long referredUserId,
+			@RequestParam String promoCodeUsed, HttpServletResponse response) {
 		try {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Entering");
-			StringBuilder lHtmlFormattedHeader = new StringBuilder();
+			// validate the promo code
+			Coupon lCoupon = userService.getCoupon(promoCodeUsed);
+			User lReferrer = userService.getUser(lCoupon.getUserId());
 
-			lHtmlFormattedHeader
-					.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">Welcome to Skok.</p>");
-			lHtmlFormattedHeader
-					.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">Skok is an Advanced Content Management and  Delivery platform for your Mobile Apps. Skok delivers rich content to your Mobile Apps, and stores it locally on mobile devices.</p>");
-			lHtmlFormattedHeader
-					.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">This elevates user experience of your Mobile Apps. Your content loads much faster, and users can engage with your rich content, even if they lose their data connection.</p>");
-
-			lHtmlFormattedHeader
-					.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">You can find out more at <a href=\"http://skok.co/docs/overview\">Skok</a> </p>");
-
-			StringBuilder lHtmlFormattedCallout = new StringBuilder();
-			lHtmlFormattedCallout
-					.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\"><b>Powerful New Features</b></p>");
-			lHtmlFormattedCallout.append("<ol>");
-			lHtmlFormattedCallout.append("<li>Cloud-driven Architecture</li>");
-			lHtmlFormattedCallout
-					.append("<li>Advanced Content Management Platform</li>");
-			lHtmlFormattedCallout
-					.append("<li>Streamlined Content Delivery</li>");
-			lHtmlFormattedCallout.append("<li>Auto-sizing of Images</li>");
-			lHtmlFormattedCallout
-					.append("<li>Say Goodbye to Google Play APK Expansion Files</li>");
-			lHtmlFormattedCallout.append("<li>Continuous Content Updates</li>");
-			lHtmlFormattedCallout.append("<li>No Extra Coding Required</li>");
-			lHtmlFormattedCallout
-					.append("<li>Easily-pluggable &amp; Feature-rich SDK</li>");
-			lHtmlFormattedCallout.append("<li>Mobile Device Storage</li>");
-			lHtmlFormattedCallout.append("<li>Advanced Caching on Device</li>");
-			lHtmlFormattedCallout
-					.append("<li>Non-Blocking Content Downloads</li>");
-			lHtmlFormattedCallout
-					.append("<li>Manages Content Downloads over Spotty Networks</li>");
-			lHtmlFormattedCallout.append("<li>Download Notifications</li>");
-			lHtmlFormattedCallout
-					.append("<li>Analytics to Track Usage Statistics of your Content</li>");
-			lHtmlFormattedCallout.append("</ol>");
-			String lEmailTemplate = new StripeChargeEmailBuilder().build(
-					lHtmlFormattedHeader.toString(),
-					lHtmlFormattedCallout.toString());
-			Utils.sendEmail(Configuration.FROM_EMAIL_ADDRESS,
-					Configuration.FROM_NAME, pUser.getUsername(), "",
-					"Welcome to " + Configuration.SITE_NAME, lEmailTemplate,
-					TEXT_HTML_CHARSET_UTF_8);
+			if (lCoupon != null && lReferrer != null) {
+				User lReferredUser = userService.getUser(referredUserId);
+				// if valid, then add storage and bandwidth quota
+				{
+					Quota lReferrerQuota = quotaService.get(lReferrer
+							.getAccountId());
+					lReferrerQuota.setBonusBandwidthLimitInBytes(lReferrerQuota
+							.getBonusBandwidthLimitInBytes()
+							+ Configuration.REFERERAL_BONUS_IN_BYTES);
+					lReferrerQuota.setBonusStorageLimitInBytes(lReferrerQuota
+							.getBonusStorageLimitInBytes()
+							+ Configuration.REFERERAL_BONUS_IN_BYTES);
+					lReferrerQuota.setTimeUpdatedMs(System.currentTimeMillis());
+					lReferrerQuota
+							.setTimeUpdatedTimeZoneOffsetMs((long) TimeZone
+									.getDefault().getRawOffset());
+					quotaService.update(lReferrerQuota);
+				}
+				// referred user
+				{
+					Quota lReferredUserQuota = quotaService.get(lReferredUser
+							.getAccountId());
+					lReferredUserQuota
+							.setBonusBandwidthLimitInBytes(lReferredUserQuota
+									.getBonusBandwidthLimitInBytes()
+									+ Configuration.REFERERAL_BONUS_IN_BYTES);
+					lReferredUserQuota
+							.setBonusStorageLimitInBytes(lReferredUserQuota
+									.getBonusStorageLimitInBytes()
+									+ Configuration.REFERERAL_BONUS_IN_BYTES);
+					lReferredUserQuota.setTimeUpdatedMs(System
+							.currentTimeMillis());
+					lReferredUserQuota
+							.setTimeUpdatedTimeZoneOffsetMs((long) TimeZone
+									.getDefault().getRawOffset());
+					quotaService.update(lReferredUserQuota);
+				}
+				// make a record of the changes to the quota
+				{
+					long lTimesRedeemed = (lCoupon.getNumberOfTimesRedeemed() == null) ? 0L
+							: lCoupon.getNumberOfTimesRedeemed();
+					lCoupon.setNumberOfTimesRedeemed(++lTimesRedeemed);
+					lCoupon.setTimeUpdatedMs(System.currentTimeMillis());
+					long lTimezoneOffset = (long) TimeZone.getTimeZone("UTC")
+							.getRawOffset();
+					lCoupon.setTimeUpdatedTimeZoneOffsetMs(lTimezoneOffset);
+					userService.updateCouponRedemption(lCoupon);
+				}
+				// send email indicating that coupon was used and quota was
+				// added
+				{
+					Utils.sendReferAFriendPromoClaimedEmailToReferrer(lReferrer,
+							lCoupon);
+				}
+			}
+			response.setStatus(HttpServletResponse.SC_OK);
 		} catch (Throwable e) {
-			// handled by GcmManager
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
-
 		} finally {
 			if (LOGGER.isLoggable(Level.INFO))
 				LOGGER.info("Exiting");
 		}
+
 	}
+
 
 	private Application createDemoApplication(User pUser) {
 		try {

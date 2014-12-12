@@ -8,14 +8,14 @@ public class Configuration {
 	private static final String STRIPE_PRIVATE_API_KEY_PROD = "sk_live_4aEirz6nwUZNsh7DggmeHREZ";
 	
 	//DEV
-//	private static final String DOMAIN = "skok-dev.appspot.com";
-//	public static final String STRIPE_PRIVATE_API_KEY = STRIPE_PRIVATE_API_KEY_TEST;
-//	public static final String STRIPE_PUBLIC_API_KEY = STRIPE_PUBLIC_API_KEY_TEST;
+	private static final String DOMAIN = "skok-dev.appspot.com";
+	public static final String STRIPE_PRIVATE_API_KEY = STRIPE_PRIVATE_API_KEY_TEST;
+	public static final String STRIPE_PUBLIC_API_KEY = STRIPE_PUBLIC_API_KEY_TEST;
 	
 	//PROD
-	private static final String DOMAIN = "skok.co";
-	public static final String STRIPE_PRIVATE_API_KEY = STRIPE_PRIVATE_API_KEY_PROD;
-	public static final String STRIPE_PUBLIC_API_KEY = STRIPE_PUBLIC_API_KEY_PROD;
+//	private static final String DOMAIN = "skok.co";
+//	public static final String STRIPE_PRIVATE_API_KEY = STRIPE_PRIVATE_API_KEY_PROD;
+//	public static final String STRIPE_PUBLIC_API_KEY = STRIPE_PUBLIC_API_KEY_PROD;
 	
 	public static final String CURRENT_SDK_VERSION = "1.4";
 	
@@ -40,12 +40,17 @@ public class Configuration {
 	public static final String CONTENT_QUEUE_NAME = "contentqueue";
 	public static final String GCM_QUEUE_NAME = "gcmqueue";
 	public static final String EMAIL_QUEUE_NAME = "emailqueue";
+	public static final String USER_QUEUE_NAME = "userqueue";
 	
 	public static final int GCM_MAX_ATTEMPTS = 10;
 	public static final int GCM_MESSAGE_SIZE_LIMIT_BYTES = 4096;
 	
 	public static final String TRACKING_ID_PREFIX = "SKOK_";
 	
-	
+	//5GB
+	public static final long REFERERAL_BONUS_IN_BYTES = 5368709120L;
+
+	public static final int REFER_A_FRIEND_PERIOD_IN_MONTHS = 3;
+	public static final int REFER_A_FRIEND_EXTENSION_PERIOD_IN_MONTHS = 3;
 
 }

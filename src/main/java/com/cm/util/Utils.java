@@ -30,10 +30,13 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Days;
 
+import com.cm.config.CanonicalCouponTypes;
 import com.cm.config.Configuration;
 import com.cm.contentmanager.application.Application;
 import com.cm.contentmanager.content.Content;
 import com.cm.contentmanager.contentgroup.ContentGroup;
+import com.cm.usermanagement.user.Coupon;
+import com.cm.usermanagement.user.User;
 import com.google.appengine.api.blobstore.BlobInfo;
 import com.google.appengine.api.blobstore.BlobInfoFactory;
 import com.google.appengine.api.blobstore.BlobKey;
@@ -43,6 +46,7 @@ import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.appengine.api.taskqueue.TaskOptions.Method;
 
 public class Utils {
+	private static final String TEXT_HTML_CHARSET_UTF_8 = "text/html; charset=utf-8";
 	private static final Logger LOGGER = Logger
 			.getLogger(Utils.class.getName());
 
@@ -709,4 +713,174 @@ public class Utils {
 		}
 		return sb.toString();
 	}
+
+	public static Coupon generateReferAFriendCoupon(User pUser) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			Coupon lCoupon = new Coupon();
+			lCoupon.setAccountId(pUser.getAccountId());
+			lCoupon.setUserId(pUser.getId());
+			lCoupon.setType(CanonicalCouponTypes.REFER_A_FRIEND.getValue());
+			lCoupon.setCode(Utils.generatePromoCode());
+			// valid for the next 6 months, ends EOD for the user's timezone
+			TimeZone lTimeZone = TimeZone.getTimeZone("UTC");
+			lTimeZone.setRawOffset(pUser.getTimeCreatedTimeZoneOffsetMs()
+					.intValue());
+			lCoupon.setRedeemByMs(Utils.getNMonthsFromToday(Configuration.REFER_A_FRIEND_PERIOD_IN_MONTHS, lTimeZone)
+					.getTimeInMillis());
+
+			lCoupon.setTimeCreatedMs(pUser.getTimeCreatedMs());
+			lCoupon.setTimeCreatedTimeZoneOffsetMs(pUser
+					.getTimeCreatedTimeZoneOffsetMs());
+			return lCoupon;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+
+	}
+
+	public static void sendReferAFriendPromoClaimedEmailToReferrer(User pUser,
+			Coupon pCoupon) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			StringBuilder lHtmlFormattedHeader = new StringBuilder();
+
+			lHtmlFormattedHeader
+					.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">Thank you for referring a friend to Skok.</p>");
+			lHtmlFormattedHeader
+					.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">You get an additional 5GB of Bandwidth per Month, and an additional 5GB of Storage. See <a href=\"https://www.skok.co/account/usage\">Account Usage</a></p>");
+
+			StringBuilder lHtmlFormattedCallout = new StringBuilder();
+			lHtmlFormattedCallout
+					.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\"><b>Powerful New Features</b></p>");
+			lHtmlFormattedCallout.append("<ol>");
+			lHtmlFormattedCallout.append("<li>Cloud-driven Architecture</li>");
+			lHtmlFormattedCallout
+					.append("<li>Advanced Content Management Platform</li>");
+			lHtmlFormattedCallout
+					.append("<li>Streamlined Content Delivery</li>");
+			lHtmlFormattedCallout.append("<li>Auto-sizing of Images</li>");
+			lHtmlFormattedCallout
+					.append("<li>Say Goodbye to Google Play APK Expansion Files</li>");
+			lHtmlFormattedCallout.append("<li>Continuous Content Updates</li>");
+			lHtmlFormattedCallout.append("<li>No Extra Coding Required</li>");
+			lHtmlFormattedCallout
+					.append("<li>Easily-pluggable &amp; Feature-rich SDK</li>");
+			lHtmlFormattedCallout.append("<li>Mobile Device Storage</li>");
+			lHtmlFormattedCallout.append("<li>Advanced Caching on Device</li>");
+			lHtmlFormattedCallout
+					.append("<li>Non-Blocking Content Downloads</li>");
+			lHtmlFormattedCallout
+					.append("<li>Manages Content Downloads over Spotty Networks</li>");
+			lHtmlFormattedCallout.append("<li>Download Notifications</li>");
+			lHtmlFormattedCallout
+					.append("<li>Analytics to Track Usage Statistics of your Content</li>");
+			lHtmlFormattedCallout.append("</ol>");
+			String lEmailTemplate = new SkokEmailBuilder().build(
+					lHtmlFormattedHeader.toString(),
+					lHtmlFormattedCallout.toString(), pCoupon);
+			Utils.sendEmail(Configuration.FROM_EMAIL_ADDRESS,
+					Configuration.FROM_NAME, pUser.getUsername(), "",
+					"Thank you for referring a friend to "
+							+ Configuration.SITE_NAME, lEmailTemplate,
+					TEXT_HTML_CHARSET_UTF_8);
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	public static void sendWelcomeEmail(User pUser, Coupon pCoupon,
+			boolean pIsReferral) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			StringBuilder lHtmlFormattedHeader = new StringBuilder();
+
+			lHtmlFormattedHeader
+					.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">Welcome to Skok.</p>");
+			if (pIsReferral) {
+				lHtmlFormattedHeader
+						.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">You get an additional 5GB of Bandwidth per Month, and an additional 5GB of Storage, for being referred. See <a href=\"https://www.skok.co/account/usage\">Account Usage</a></p>");
+			}
+			lHtmlFormattedHeader
+					.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">Skok is an Advanced Content Management and  Delivery platform for your Mobile Apps. Skok delivers rich content to your Mobile Apps, and stores it locally on mobile devices.</p>");
+			lHtmlFormattedHeader
+					.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">This elevates user experience of your Mobile Apps. Your content loads much faster, and users can engage with your rich content, even if they lose their data connection.</p>");
+
+			lHtmlFormattedHeader
+					.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\">You can find out more at <a href=\"http://skok.co/docs/overview\">Skok</a> </p>");
+
+			StringBuilder lHtmlFormattedCallout = new StringBuilder();
+			lHtmlFormattedCallout
+					.append("<p class=\"lead\" style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 21px; font-size: 18px; margin: 0 0 10px; padding: 0;\" align=\"left\"><b>Powerful New Features</b></p>");
+			lHtmlFormattedCallout.append("<ol>");
+			lHtmlFormattedCallout.append("<li>Cloud-driven Architecture</li>");
+			lHtmlFormattedCallout
+					.append("<li>Advanced Content Management Platform</li>");
+			lHtmlFormattedCallout
+					.append("<li>Streamlined Content Delivery</li>");
+			lHtmlFormattedCallout.append("<li>Auto-sizing of Images</li>");
+			lHtmlFormattedCallout
+					.append("<li>Say Goodbye to Google Play APK Expansion Files</li>");
+			lHtmlFormattedCallout.append("<li>Continuous Content Updates</li>");
+			lHtmlFormattedCallout.append("<li>No Extra Coding Required</li>");
+			lHtmlFormattedCallout
+					.append("<li>Easily-pluggable &amp; Feature-rich SDK</li>");
+			lHtmlFormattedCallout.append("<li>Mobile Device Storage</li>");
+			lHtmlFormattedCallout.append("<li>Advanced Caching on Device</li>");
+			lHtmlFormattedCallout
+					.append("<li>Non-Blocking Content Downloads</li>");
+			lHtmlFormattedCallout
+					.append("<li>Manages Content Downloads over Spotty Networks</li>");
+			lHtmlFormattedCallout.append("<li>Download Notifications</li>");
+			lHtmlFormattedCallout
+					.append("<li>Analytics to Track Usage Statistics of your Content</li>");
+			lHtmlFormattedCallout.append("</ol>");
+			String lEmailTemplate = new SkokEmailBuilder().build(
+					lHtmlFormattedHeader.toString(),
+					lHtmlFormattedCallout.toString(), pCoupon);
+			Utils.sendEmail(Configuration.FROM_EMAIL_ADDRESS,
+					Configuration.FROM_NAME, pUser.getUsername(), "",
+					"Welcome to " + Configuration.SITE_NAME, lEmailTemplate,
+					TEXT_HTML_CHARSET_UTF_8);
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	public static void sendReferAFriendEmail(User pUser, Coupon pReferAFriendCoupon) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+
+			String lEmailTemplate = new SkokEmailBuilder().build(null, null,
+					pReferAFriendCoupon);
+			Utils.sendEmail(Configuration.FROM_EMAIL_ADDRESS,
+					Configuration.FROM_NAME, pUser.getUsername(), "",
+					"Refer a friend to "
+							+ Configuration.SITE_NAME, lEmailTemplate,
+					TEXT_HTML_CHARSET_UTF_8);
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
 }

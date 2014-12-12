@@ -278,6 +278,7 @@ class UserDao {
 				LOGGER.info("Exiting");
 		}
 	}
+
 	Coupon getCouponByType(Long userId, String type) {
 		PersistenceManager pm = null;
 
@@ -286,7 +287,7 @@ class UserDao {
 				LOGGER.info("Entering");
 			pm = PMF.get().getPersistenceManager();
 			Query q = pm.newQuery(Coupon.class);
-			q.setFilter("userId == userIdParam && type = typeParam");
+			q.setFilter("userId == userIdParam && type == typeParam");
 			q.declareParameters("Long userIdParam, String typeParam");
 			List<Coupon> lCoupons = (List<Coupon>) q.execute(userId, type);
 			if (lCoupons != null && (!lCoupons.isEmpty()))
@@ -331,6 +332,28 @@ class UserDao {
 			Coupon lCoupon = pm.getObjectById(Coupon.class, pCoupon.getId());
 
 			lCoupon.setNumberOfTimesRedeemed(pCoupon.getNumberOfTimesRedeemed());
+			lCoupon.setTimeUpdatedMs(pCoupon.getTimeUpdatedMs());
+			lCoupon.setTimeUpdatedTimeZoneOffsetMs(pCoupon
+					.getTimeUpdatedTimeZoneOffsetMs());
+
+		} finally {
+			if (pm != null) {
+				pm.close();
+			}
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
+
+	void updateCouponRedeemByMs(Coupon pCoupon) {
+		PersistenceManager pm = null;
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			pm = PMF.get().getPersistenceManager();
+			Coupon lCoupon = pm.getObjectById(Coupon.class, pCoupon.getId());
+
+			lCoupon.setRedeemByMs(pCoupon.getRedeemByMs());
 			lCoupon.setTimeUpdatedMs(pCoupon.getTimeUpdatedMs());
 			lCoupon.setTimeUpdatedTimeZoneOffsetMs(pCoupon
 					.getTimeUpdatedTimeZoneOffsetMs());

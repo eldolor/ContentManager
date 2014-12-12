@@ -127,7 +127,8 @@ public class Quota {
 	}
 
 	public Long getBonusStorageLimitInBytes() {
-		return bonusStorageLimitInBytes;
+		return (bonusStorageLimitInBytes != null) ? bonusStorageLimitInBytes
+				: 0L;
 	}
 
 	public void setBonusStorageLimitInBytes(Long bonusStorageLimitInBytes) {
@@ -135,7 +136,8 @@ public class Quota {
 	}
 
 	public Long getBonusBandwidthLimitInBytes() {
-		return bonusBandwidthLimitInBytes;
+		return (bonusBandwidthLimitInBytes != null) ? bonusBandwidthLimitInBytes
+				: 0L;
 	}
 
 	public void setBonusBandwidthLimitInBytes(Long bonusBandwidthLimitInBytes) {

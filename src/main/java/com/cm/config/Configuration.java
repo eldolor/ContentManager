@@ -49,6 +49,8 @@ public class Configuration {
 	
 	//5GB
 	public static final long REFERERAL_BONUS_IN_BYTES = 5368709120L;
-	
+
+	public static final int REFER_A_FRIEND_PERIOD_IN_MONTHS = 3;
+	public static final int REFER_A_FRIEND_EXTENSION_PERIOD_IN_MONTHS = 3;
 
 }

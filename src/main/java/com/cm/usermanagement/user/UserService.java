@@ -238,5 +238,15 @@ public class UserService {
 				LOGGER.info("Exiting");
 		}
 	}
+	public void updateCouponRedeemByMs(Coupon coupon) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering");
+			userDao.updateCouponRedeemByMs(coupon);
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting");
+		}
+	}
 
 }

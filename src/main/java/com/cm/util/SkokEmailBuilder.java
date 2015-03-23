@@ -46,8 +46,8 @@ public class SkokEmailBuilder {
 	static final String BODY_END = "</body>";
 	static final String HTML_END = "</html>";
 
-	static final String HTML_REFER_A_FRIEND_1_1 = "<h5 style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 1.3; word-break: normal; font-size: 24px; margin: 0; padding: 0 0 10px;\" align=\"left\">Refer a Friend:</h5> <p>Take advantage of this exclusive limited-time offer.</p> <p>We are giving you a big gift when your friend signs up for Skok. You get an additional 5GB of Bandwidth per Month, and an additional 5GB of Storage for each friend that you refer.</p> <p>Your friend also gets an additional 5GB of Bandwidth per Month, and an additional 5GB of Storage.</p>";
-	static final String HTML_REFER_A_FRIEND_1_2 = "<p>Your friend must use ";
+	static final String HTML_REFER_A_FRIEND_1_1 = "<h5 style=\"color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 1.3; word-break: normal; font-size: 24px; margin: 0; padding: 0 0 10px;\" align=\"left\">Refer a Friend:</h5> <p>Take advantage of this exclusive limited-time offer.</p> <p>We are giving you a big gift when your friends sign up for Skok. You get an additional 5GB of Bandwidth per Month, and an additional 5GB of Storage for each friend that you refer.</p> <p>Your friends also gets an additional 5GB of Bandwidth per Month, and an additional 5GB of Storage.</p><p>Post your referral link on Facebook, Twitter, or Google+, explaining to people what Skok is and why it's awesome.</p>";
+	static final String HTML_REFER_A_FRIEND_1_2 = "<p>Your friends must use ";
 	static final String HTML_REFER_A_FRIEND_1_3 = " to sign up, and must sign up by </p>";
 	static final String HTML_REFER_A_FRIEND_1_4 = " for you to be eligible.</p>";
 

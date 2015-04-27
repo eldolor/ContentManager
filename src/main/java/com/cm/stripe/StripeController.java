@@ -49,6 +49,11 @@ import com.stripe.model.Subscription;
 @Controller
 public class StripeController {
 
+	private static final String CHARGE_SUCCEEDED = "charge.succeeded";
+	private static final String CHARGE_FAILED = "charge.failed";
+	private static final String CUSTOMER_CARD_UPDATED = "customer.card.updated";
+	private static final String CUSTOMER_SUBSCRIPTION_UPDATED = "customer.subscription.updated";
+	private static final String CUSTOMER_SUBSCRIPTION_CREATED = "customer.subscription.created";
 	private static final String TEXT_HTML_CHARSET_UTF_8 = "text/html; charset=utf-8";
 	private static final Logger LOGGER = Logger
 			.getLogger(StripeController.class.getName());
@@ -676,7 +681,7 @@ public class StripeController {
 			SkokEmailBuilder lEmailBuilder = new SkokEmailBuilder();
 
 			String lType = (String) json.get("type");
-			if (lType.equals("charge.succeeded")) {
+			if (lType.equals(CHARGE_SUCCEEDED)) {
 				// TODO: send out an email
 				if (LOGGER.isLoggable(Level.INFO))
 					LOGGER.info("Charge Succeeded");
@@ -741,7 +746,7 @@ public class StripeController {
 				// LOGGER.log(Level.SEVERE, e.getMessage(), e);
 				// }
 
-			} else if (lType.equals("charge.failed")) {
+			} else if (lType.equals(CHARGE_FAILED)) {
 				// TODO: send out an email
 				LOGGER.warning("Charge Failed!!!");
 				Map lCharge = (Map) lData.get("object");
@@ -811,11 +816,6 @@ public class StripeController {
 							lHtmlFormattedCallout.toString(),
 							lReferAFriendCoupon);
 					try {
-						// Utils.sendEmail(Configuration.FROM_EMAIL_ADDRESS,
-						// Configuration.FROM_NAME,
-						// lStripeCustomer.getUsername(), "",
-						// Configuration.SITE_NAME + " Payment Failure",
-						// lEmailTemplate, TEXT_HTML_CHARSET_UTF_8);
 						Utils.sendMultipartEmail(
 								Configuration.FROM_EMAIL_ADDRESS,
 								Configuration.FROM_NAME,
@@ -829,7 +829,7 @@ public class StripeController {
 					}
 
 				}
-			} else if (lType.equals("customer.card.updated")) {
+			} else if (lType.equals(CUSTOMER_CARD_UPDATED)) {
 				// TODO: send out an email
 				if (LOGGER.isLoggable(Level.INFO))
 					LOGGER.info("Customer Card updated");
@@ -870,12 +870,6 @@ public class StripeController {
 						lHtmlFormattedHeader.toString(),
 						lHtmlFormattedCallout.toString(), lReferAFriendCoupon);
 				try {
-					// Utils.sendEmail(Configuration.FROM_EMAIL_ADDRESS,
-					// Configuration.FROM_NAME,
-					// lStripeCustomer.getUsername(), "",
-					// Configuration.SITE_NAME
-					// + " Payment Information Updated",
-					// lEmailTemplate, TEXT_HTML_CHARSET_UTF_8);
 					Utils.sendMultipartEmail(Configuration.FROM_EMAIL_ADDRESS,
 							Configuration.FROM_NAME,
 							lStripeCustomer.getUsername(), "",
@@ -887,8 +881,8 @@ public class StripeController {
 				} catch (MessagingException e) {
 					LOGGER.log(Level.SEVERE, e.getMessage(), e);
 				}
-			} else if (lType.equals("customer.subscription.created")
-					|| lType.equals("customer.subscription.updated")) {
+			} else if (lType.equals(CUSTOMER_SUBSCRIPTION_CREATED)
+					|| lType.equals(CUSTOMER_SUBSCRIPTION_UPDATED)) {
 				// TODO: send out an email
 				if (LOGGER.isLoggable(Level.INFO))
 					LOGGER.info("Customer Subscription");
@@ -926,22 +920,18 @@ public class StripeController {
 				String lEmailTemplate = lEmailBuilder.build(
 						lHtmlFormattedHeader.toString(),
 						lHtmlFormattedCallout.toString(), lReferAFriendCoupon);
-				try {
-					// Utils.sendEmail(Configuration.FROM_EMAIL_ADDRESS,
-					// Configuration.FROM_NAME,
-					// lStripeCustomer.getUsername(), "",
-					// Configuration.SITE_NAME + " Subscription Updated",
-					// lEmailTemplate, TEXT_HTML_CHARSET_UTF_8);
-					Utils.sendMultipartEmail(Configuration.FROM_EMAIL_ADDRESS,
-							Configuration.FROM_NAME,
-							lStripeCustomer.getUsername(), "",
-							Configuration.SITE_NAME + " Subscription Updated",
-							lEmailTemplate, "");
-				} catch (UnsupportedEncodingException e) {
-					LOGGER.log(Level.SEVERE, e.getMessage(), e);
-				} catch (MessagingException e) {
-					LOGGER.log(Level.SEVERE, e.getMessage(), e);
-				}
+				//Anshu: 4/27/2015: Subscription updated/created email blocked.
+//				try {
+//					Utils.sendMultipartEmail(Configuration.FROM_EMAIL_ADDRESS,
+//							Configuration.FROM_NAME,
+//							lStripeCustomer.getUsername(), "",
+//							Configuration.SITE_NAME + " Subscription Updated",
+//							lEmailTemplate, "");
+//				} catch (UnsupportedEncodingException e) {
+//					LOGGER.log(Level.SEVERE, e.getMessage(), e);
+//				} catch (MessagingException e) {
+//					LOGGER.log(Level.SEVERE, e.getMessage(), e);
+//				}
 
 			}
 			response.setStatus(HttpServletResponse.SC_OK);

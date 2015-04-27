@@ -166,7 +166,7 @@
 		<!-- Left Nav Section -->
 		<sec:authorize ifNotGranted="ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_USER">
 			<ul class="right">
-				<li><a href="<c:url value="/signup"/>">Sign Up </a></li>
+				<li><a href="<c:url value="/signup"/>">Sign up for FREE </a></li>
 				<li class="divider"></li>
 				<li><a href="<c:url value="/login"/>">Sign In </a></li>
 				<li class="divider"></li>

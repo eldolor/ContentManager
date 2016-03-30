@@ -97,5 +97,78 @@ public class DropBoxController {
 				LOGGER.info("Exiting getDropboxUrl");
 		}
 	}
+	
+	
+	@RequestMapping(value = "/dropbox", method = RequestMethod.POST, produces = "application/json", headers = { "content-type=multipart/form-data" })
+	public @ResponseBody
+	String doUploadMobile(HttpServletRequest req, HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering doUploadMobile");
+			// Map<String, List<BlobKey>> blobs = mBlobstoreService
+			// .getUploads(req);
+			// List<BlobKey> keys = blobs.get("file");
+			// if (keys != null && keys.size() > 0) {
+			// response.setStatus(HttpServletResponse.SC_CREATED);
+			// String lKeyString = keys.get(0).getKeyString();
+			//
+			// if (LOGGER.isLoggable(Level.INFO))
+			// LOGGER.info("Returning Key " + lKeyString);
+			// return "{\"uri\":\"" + lKeyString + "\"}";
+
+			Map<String, List<FileInfo>> lFileInfoMap = mBlobstoreService
+					.getFileInfos(req);
+			List<FileInfo> lFileInfoList = lFileInfoMap.get("file");
+			if (lFileInfoList != null && lFileInfoList.size() > 0) {
+				response.setStatus(HttpServletResponse.SC_CREATED);
+				String lGsObjectName = lFileInfoList.get(0).getGsObjectName();
+
+				if (LOGGER.isLoggable(Level.INFO))
+					LOGGER.info("Returning Key " + lGsObjectName);
+				return "{\"uri\":\"" + lGsObjectName + "\"}";
+			} else {
+				LOGGER.log(Level.SEVERE, "Unable to upload file!");
+				response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+				return null;
+			}
+
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting doUploadMobile");
+		}
+	}
+
+
+	@RequestMapping(value = "/dropbox/url", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody
+	String getDropboxUrlMobile(HttpServletResponse response) {
+		try {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Entering getDropboxUrlMobile");
+			String url = mBlobstoreService
+					.createUploadUrl(
+							"/dropbox",
+							UploadOptions.Builder
+									.withGoogleStorageBucketName(Configuration.GCS_STORAGE_BUCKET));
+
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Returning Url " + url);
+			return "{\"url\":\"" + url + "\"}";
+
+		} catch (Throwable e) {
+			// handled by GcmManager
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return null;
+		} finally {
+			if (LOGGER.isLoggable(Level.INFO))
+				LOGGER.info("Exiting getDropboxUrl");
+		}
+	}
 
 }

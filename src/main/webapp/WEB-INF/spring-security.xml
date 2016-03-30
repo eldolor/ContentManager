@@ -26,6 +26,10 @@
 	<security:http pattern="/webhook/stripe/**" security="none" />
 	<!-- End: utilized by the SDK -->
 
+	<!-- Begin: used by Wine Cellar -->
+	<security:http pattern="/winecellar**" security="none" />
+	<security:http pattern="/dropbox**" security="none" />
+	<!-- End: used by Wine Cellar -->
 
 	<security:http auto-config="true" disable-url-rewriting="true">
 

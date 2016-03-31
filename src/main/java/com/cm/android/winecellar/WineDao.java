@@ -1,4 +1,4 @@
-package cm.cm.android.winecellar;
+package com.cm.android.winecellar;
 
 import java.util.List;
 import java.util.logging.Level;
@@ -192,7 +192,7 @@ class WineDao {
 					_wine.setWineIdx(wine.getWine().toLowerCase());
 
 					_wine.setRating(wine.getRating());
-					_wine.setRatingIdx(wine.getRatingIdx().toLowerCase());
+					_wine.setRatingIdx(wine.getRating().toLowerCase());
 
 					_wine.setTextExtract(wine.getTextExtract());
 					_wine.setTextExtractIdx(wine.getTextExtract().toLowerCase());

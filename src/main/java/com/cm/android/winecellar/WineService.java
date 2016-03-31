@@ -1,4 +1,4 @@
-package cm.cm.android.winecellar;
+package com.cm.android.winecellar;
 
 import java.util.List;
 import java.util.logging.Level;
